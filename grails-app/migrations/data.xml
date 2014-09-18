@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+    <changeSet author="victor" id="add_default_request_maps">
+        <sql>
+            INSERT INTO request_map (id, config_attribute, http_method, url)
+            VALUES
+            ('846b2c10556d4f22ad96289e496bb91e', 'ROLE_ADMIN,ROLE_SUPER_ADMIN', null, '/**'),
+            ('6530b042f93f4681be6d09dd8f9a7854', 'permitAll', null, '/login/auth'),
+            ('98d402d802954ffd96037543bf63bd20', 'permitAll', null, '/**/js/**'),
+            ('f4e3b862dec84db99fded02caff54a9f', 'permitAll', null, '/**/css/**'),
+            ('801f9ef133ff43babba28abd13a30ecd', 'permitAll', null, '/**/images/**'),
+            ('fc9b6e5daca94555806a28485dddb8dc', 'permitAll', null, '/**/favicon.ico');
+        </sql>
+    </changeSet>
+
+    <changeSet author="victor" id="add_super_admin_user_plus_roles">
+        <sql>
+            INSERT INTO user (id, account_expired, account_locked, date_created, enabled, last_updated, password, password_expired, username)
+            VALUES ('84c329741b234cfd84f43bfea7775089', 0, 0, now(), 1, now(), '$2a$10$RDsfDbzW/zuTp8PxKiHut.aa05rh2VieruEutntxNLOrcPioTyWI.', 0, 'super');
+
+            INSERT INTO role (id, authority, date_created, last_updated)
+            VALUES ('ca94fef06c1a4cc3ab249a22f91539f6', 'ROLE_SUPER_ADMIN', now(), now());
+
+            INSERT INTO user_role (id, date_created, last_updated, role_id, user_id)
+            VALUES ('6c37d80396044439bdc75b247124f5f7', now(), now(), 'ca94fef06c1a4cc3ab249a22f91539f6',
+            '84c329741b234cfd84f43bfea7775089')
+        </sql>
+
+
+    </changeSet>
+
+    <changeSet author="victor" id="add_admin_user_plus_roles">
+        <sql>
+            INSERT INTO user (id, account_expired, account_locked, date_created, enabled, last_updated, password, password_expired, username)
+            VALUES ('6f8375a6c5ca451b88afffc206a022c3', 0, 0, now(), 1, now(), '$2a$10$Hsk5WIj2/xoA.l8hlWGW2uLpsBWf5D0y38H3AMCKA4WcQurqvOO1K', 0, 'root');
+
+            INSERT INTO role (id, authority, date_created, last_updated)
+            VALUES ('4b41cb0ae25e4e08b6cab8e423fe1216', 'ROLE_ADMIN', now(), now());
+
+            INSERT INTO user_role (id, date_created, last_updated, role_id, user_id)
+            VALUES ('a2da80fe51ce4cc39975e4a5c7aced7b', now(), now(), '4b41cb0ae25e4e08b6cab8e423fe1216',
+            '6f8375a6c5ca451b88afffc206a022c3')
+        </sql>
+
+
+    </changeSet>
+
+
+
+</databaseChangeLog>
