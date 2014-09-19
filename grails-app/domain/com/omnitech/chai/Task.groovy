@@ -1,24 +1,19 @@
 package com.omnitech.chai
 
-/**
- * Customer
- * A domain class describes the data object and it's mapping to the database
- */
-class Customer {
+import com.omnitech.mis.User
+
+class Task {
 
     String id
     String name
-    String contact1
-    String contact2
-    String emailAddress
+    String status
 
-    Float lat
-    Float lng
+    User user
 
     Date dateCreated
     Date lastUpdated
 
-    static belongsTo = [territory: Territory]
+    static hasOne = [promotion: Promotion, sale: Sale]
 
     static mapping = {
         id(generator: "com.omnitech.mis.utils.MyIdGenerator", type: "string", length: 32)

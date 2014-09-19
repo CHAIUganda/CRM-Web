@@ -1,21 +1,19 @@
 package com.omnitech.chai
 
-/**
- * Sale
- * A domain class describes the data object and it's mapping to the database
- */
+import com.omnitech.mis.User
+
 class Sale {
 
     String id
     String name
 
-    /* Automatic timestamping of GORM */
     Date dateCreated
     Date lastUpdated
 
-
     Product product
-    Promotion promotion
+    Customer customer
+    User user
+
 
     static mapping = {
         id(generator: "com.omnitech.mis.utils.MyIdGenerator", type: "string", length: 32)

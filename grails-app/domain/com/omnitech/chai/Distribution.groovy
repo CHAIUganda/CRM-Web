@@ -9,7 +9,7 @@ class Distribution {
     Date dateCreated
     Date lastUpdated
 
-    static belongsTo = [ccall: CCall]
+    static belongsTo = [ccall: Task]
 
     static mapping = {
         id(generator: "com.omnitech.mis.utils.MyIdGenerator", type: "string", length: 32)

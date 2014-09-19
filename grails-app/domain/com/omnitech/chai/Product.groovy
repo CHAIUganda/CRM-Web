@@ -6,6 +6,8 @@ class Product {
     String name
     String metric
 
+    Double recommendedPrice
+
 
     Date dateCreated
     Date lastUpdated

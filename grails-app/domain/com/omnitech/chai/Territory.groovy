@@ -7,10 +7,6 @@ class Territory {
     String id
     String name
 
-
-    float lat
-    float lng
-
     Date dateCreated
     Date lastUpdated
 

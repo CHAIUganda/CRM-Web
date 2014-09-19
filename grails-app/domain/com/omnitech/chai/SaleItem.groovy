@@ -1,17 +1,19 @@
 package com.omnitech.chai
 
-import com.omnitech.mis.User
-
-class CCall {
+class SaleItem {
 
     String id
-    String name
-    User user
+
+    Product product
+    Promotion promotion
+
+    Double amountPaid
+
 
     Date dateCreated
     Date lastUpdated
 
-    static hasOne = [promotion: Promotion, sale: Sale]
+    static belongsTo = [sale: Sale]
 
     static mapping = {
         id(generator: "com.omnitech.mis.utils.MyIdGenerator", type: "string", length: 32)
@@ -23,6 +25,6 @@ class CCall {
 
     @Override
     public String toString() {
-        return "${name}";
+        return "${product.name}";
     }
 }
