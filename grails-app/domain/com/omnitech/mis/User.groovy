@@ -1,21 +1,25 @@
 package com.omnitech.mis
 
+import com.omnitech.chai.UserEnterpriseRelationShip
+
 class User {
 
-	transient springSecurityService
+    transient springSecurityService
 
     String id
-	String username
-	String password
-	boolean enabled = true
-	boolean accountExpired
-	boolean accountLocked
-	boolean passwordExpired
+    String username
+    String password
+    boolean enabled = true
+    boolean accountExpired
+    boolean accountLocked
+    boolean passwordExpired
 
     Date dateCreated
     Date lastUpdated
 
     static auditable = true
+
+    static hasMany = [enterpriseRelationShip: UserEnterpriseRelationShip]
 
 
     static transients = ['springSecurityService']
@@ -26,33 +30,33 @@ class User {
     }
 
     static constraints = {
-		username blank: false, unique: true
-		password blank: false,password:true
-	}
-
-	Set<Role> getAuthorities() {
-		UserRole.findAllByUser(this).collect { it.role } as Set
-	}
-
-    boolean hasRole(Role r){
-        if(id == null)
-            return false
-        return authorities.any {r.authority == it.authority}
+        username blank: false, unique: true
+        password blank: false, password: true
     }
 
-	def beforeInsert() {
-		encodePassword()
-	}
+    Set<Role> getAuthorities() {
+        UserRole.findAllByUser(this).collect { it.role } as Set
+    }
 
-	def beforeUpdate() {
-		if (isDirty('password')) {
-			encodePassword()
-		}
-	}
+    boolean hasRole(Role r) {
+        if (id == null)
+            return false
+        return authorities.any { r.authority == it.authority }
+    }
 
-	protected void encodePassword() {
-		password = springSecurityService.encodePassword(password)
-	}
+    def beforeInsert() {
+        encodePassword()
+    }
+
+    def beforeUpdate() {
+        if (isDirty('password')) {
+            encodePassword()
+        }
+    }
+
+    protected void encodePassword() {
+        password = springSecurityService.encodePassword(password)
+    }
 
     @Override    // Override toString for a nicer / more descriptive UI
     public String toString() {
