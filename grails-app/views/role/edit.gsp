@@ -1,4 +1,4 @@
-<%@ page import="com.omnitech.mis.Role" %>
+<%@ page import="com.omnitech.chai.model.Role" %>
 <!DOCTYPE html>
 <html>
 
@@ -20,7 +20,6 @@
 
 		<g:form method="post" class="form-horizontal" role="form" >
 			<g:hiddenField name="id" value="${roleInstance?.id}" />
-			<g:hiddenField name="version" value="${roleInstance?.version}" />
 			<g:hiddenField name="_method" value="PUT" />
 			
 			<g:render template="form"/>

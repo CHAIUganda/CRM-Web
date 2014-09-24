@@ -1,5 +1,5 @@
 
-<%@ page import="com.omnitech.mis.Role" %>
+<%@ page import="com.omnitech.chai.model.Role" %>
 <!DOCTYPE html>
 <html>
 

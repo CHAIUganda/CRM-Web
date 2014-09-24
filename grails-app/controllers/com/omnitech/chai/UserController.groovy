@@ -32,9 +32,7 @@ class UserController {
     }
 
     def create() {
-
         respond new User(params), model: [rolez: userService.listAllRoles()]
-
     }
 
     def save(User userInstance) {

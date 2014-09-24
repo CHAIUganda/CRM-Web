@@ -28,16 +28,28 @@ class UserService {
         userRepository.findOne(id)
     }
 
+    Role findRole(Long id) {
+        roleRepository.findOne(id)
+    }
+
     List<Role> listAllRoles() {
         roleRepository.findAll().collect() as List
     }
 
-    User deleteUser(Long id){
+    User deleteUser(Long id) {
         userRepository.delete(id)
     }
 
     User saveUser(User user) {
         userRepository.save(user)
+    }
+
+    Role saveRole(Role role) {
+        roleRepository.save(role)
+    }
+
+    def deleteRole(Long id){
+        roleRepository.delete(id)
     }
 
     User saveUserWithRoles(User user, List roleIds) {
