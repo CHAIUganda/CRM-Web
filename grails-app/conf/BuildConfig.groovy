@@ -52,6 +52,10 @@ grails.project.dependency.resolution = {
         compile 'org.springframework.data:spring-data-neo4j:3.1.4.RELEASE'
         compile 'org.springframework.data:spring-data-neo4j-tx:3.1.4.RELEASE'
         compile 'javax.validation:validation-api:1.1.0.Final'
+        compile ('org.neo4j.app:neo4j-server:2.1.2'){
+            excludes     'org.slf4j:slf4j-jdk14'
+            excludes     'org.slf4j:slf4j-jdk14'
+        }
     }
 
     plugins {
