@@ -1,4 +1,4 @@
-boolean useMySql = true
+boolean useMySql = false
 dataSource {
     pooled = true
     jmxExport = true
