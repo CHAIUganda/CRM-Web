@@ -7,7 +7,6 @@ class BootStrap {
 
     def springSecurityService
     def txHelperService
-    def grailsApplication
 
     def init = { servletContext ->
 

@@ -9,6 +9,6 @@ import org.springframework.data.repository.query.Param
  * Created by kay on 9/23/14.
  */
 interface RequestMapRepository extends GraphRepository<RequestMap> {
-    @Query("match (a:Role) where a.configAttribute = {self} return a")
-    RequestMap findByConfigAtrribLike(@Param('self') String attrib)
+    @Query("match (a:Role) where a.configAttribute = {attrib} return a")
+    RequestMap findByConfigAtrribLike(@Param('attrib') String attrib)
 }

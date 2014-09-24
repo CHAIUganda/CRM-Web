@@ -28,7 +28,11 @@ class UserController {
     }
 
     def show() {
-        respond userService.findUser(params.id as Long)
+        def user = userService.findUser(params.id as Long)
+        if (!user) {
+            notFound(); return
+        }
+        respond user
     }
 
     def create() {
@@ -64,7 +68,6 @@ class UserController {
 
 
     def update(User userInstance) {
-        println("Updatingng..............")
         if (userInstance == null) {
             notFound()
             return
@@ -109,7 +112,7 @@ class UserController {
         request.withFormat {
             form {
                 flash.message = message(code: 'default.deleted.message', args: [message(code: 'User.label', default: 'User'), longId])
-                redirect(action: 'show', id: longId)
+                redirect(action: 'index')
             }
             '*' { render status: NO_CONTENT }
         }

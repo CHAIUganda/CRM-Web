@@ -54,11 +54,6 @@
                             <i class="glyphicon glyphicon-tags"></i>Roles
                         </g:link>
                     </li>
-                    <li>
-                        <g:link controller="userRole" action="index">
-                            <i class="glyphicon glyphicon-user"></i>User Roles
-                        </g:link>
-                    </li>
                     <sec:ifAllGranted roles="ROLE_SUPER_ADMIN">
                         <li>
                         <g:link controller="requestMap" action="index">

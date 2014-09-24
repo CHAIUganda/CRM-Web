@@ -1,5 +1,5 @@
 
-<%@ page import="com.omnitech.mis.RequestMap" %>
+<%@ page import="com.omnitech.chai.model.RequestMap" %>
 <!DOCTYPE html>
 <html>
 

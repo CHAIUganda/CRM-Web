@@ -31,9 +31,7 @@
 		</g:each>
 		</tbody>
 	</table>
-	<div>
-		<bs:paginate total="${roleInstanceCount}" />
-	</div>
+
 </section>
 
 </body>

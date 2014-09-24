@@ -1,7 +1,9 @@
 package com.omnitech.chai
 
 import com.omnitech.chai.model.Role
+import com.omnitech.chai.util.ChaiUtils
 
+import static com.omnitech.chai.util.ChaiUtils.extractId
 import static org.springframework.http.HttpStatus.*
 
 /**
@@ -16,12 +18,12 @@ class RoleController {
 
     def index() {
         def roles = userService.listAllRoles()
-        respond roles, model: [roleInstanceCount: roles.size()]
+        respond roles
     }
 
     def list() {
         def roles = userService.listAllRoles()
-        respond roles, model: [roleInstanceCount: roles.size()]
+        respond roles
     }
 
     def show() {
@@ -32,14 +34,7 @@ class RoleController {
         respond userService.findRole(id)
     }
 
-    private static long extractId(Map params) {
-        def id = -1
-        try {
-            id = params.id as Long
-        } catch (Exception x) {
-        }
-        return id
-    }
+
 
     def create(Role role) {
         respond role

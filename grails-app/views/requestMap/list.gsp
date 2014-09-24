@@ -1,5 +1,5 @@
 
-<%@ page import="com.omnitech.mis.RequestMap" %>
+<%@ page import="com.omnitech.chai.model.RequestMap" %>
 <!DOCTYPE html>
 <html>
 
@@ -44,9 +44,6 @@
         </tbody>
     </table>
 
-    <div>
-        <bs:paginate total="${requestMapInstanceCount}"/>
-    </div>
 </section>
 
 </body>

@@ -6,6 +6,7 @@ import grails.util.Holders
 import grails.validation.Validateable
 import org.springframework.context.ApplicationContext
 import org.springframework.data.neo4j.annotation.GraphId
+import org.springframework.data.neo4j.annotation.Indexed
 import org.springframework.data.neo4j.annotation.NodeEntity
 import org.springframework.http.HttpMethod
 
@@ -16,6 +17,7 @@ class RequestMap {
     @GraphId
     Long id
 
+    @Indexed(unique = true)
     String url
     String configAttribute
     HttpMethod httpMethod
