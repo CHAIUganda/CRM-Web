@@ -1,4 +1,4 @@
-<%@ page import="com.omnitech.mis.User" %>
+<%@ page import="com.omnitech.chai.model.User" %>
 <div class="user-table">
     <div class="user-row">
         <div class="user-column">
@@ -58,9 +58,9 @@
                 <div class="user-table">
                     <div class="user-row">
 
-                        <g:each in="${roles}" var="role" status="i">
+                        <g:each in="${rolez}" var="role" status="i">
                                 <div class="user-column">
-                                    <g:checkBox name="roles" value="${role.id}"
+                                    <g:checkBox name="rolez" value="${role.id}"
                                                 checked="${userInstance.hasRole(role)}"/>
                                     <label for="roles[${i}]">${role.authority}</label>
                                 </div>

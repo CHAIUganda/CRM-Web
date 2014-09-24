@@ -1,5 +1,5 @@
 
-<%@ page import="com.omnitech.mis.User" %>
+<%@ page import="com.omnitech.chai.model.User" %>
 <!DOCTYPE html>
 <html>
 

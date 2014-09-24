@@ -33,7 +33,7 @@ class NeoUserDetailsService implements GrailsUserDetailsService {
 
         def authorities = user.roles.collect { new SimpleGrantedAuthority(it.authority) }
 
-        new GrailsUser(user.username, user.password, user.enabled, user.accountExpired, user.passwordExpired, user.accountLocked, authorities, user.id)
+        new GrailsUser(user.username, user.password, user.enabled, !user.accountExpired, !user.passwordExpired, !user.accountLocked, authorities, user.id)
     }
 
     @Override
