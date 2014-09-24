@@ -14,7 +14,7 @@ grails.project.fork = [
     // configure settings for the test-app JVM, uses the daemon by default
     test: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, daemon:true],
     // configure settings for the run-app JVM
-    run: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, forkReserve:false],
+//    run: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, forkReserve:false],
     // configure settings for the run-war JVM
     war: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, forkReserve:false],
     // configure settings for the Console UI JVM
@@ -26,7 +26,7 @@ grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
     inherits("global") {
         // specify dependency exclusions here; for example, uncomment this to disable ehcache:
-        // excludes 'ehcache'
+//        excludes 'ehcache'
     }
     log "error" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
     checksums true // Whether to verify checksums on resolve
@@ -49,8 +49,9 @@ grails.project.dependency.resolution = {
 
     dependencies {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes e.g.
-        runtime 'mysql:mysql-connector-java:5.1.27'
-        // runtime 'org.postgresql:postgresql:9.3-1100-jdbc41'
+        compile 'org.springframework.data:spring-data-neo4j:3.1.4.RELEASE'
+        compile 'org.springframework.data:spring-data-neo4j-tx:3.1.4.RELEASE'
+        compile 'javax.validation:validation-api:1.1.0.Final'
     }
 
     plugins {
@@ -59,11 +60,13 @@ grails.project.dependency.resolution = {
 
         // plugins for the compile step
         compile ":scaffolding:2.0.2"
-        compile ':cache:1.1.1'
+        compile ':cache:1.1.7'
+        compile ":cache-ehcache:1.0.3"
 
         // plugins needed at runtime but not for compilation
-        runtime ":hibernate:3.6.10.10" // or ":hibernate4:4.3.4"
-        runtime ":database-migration:1.3.8"
+//        runtime ":hibernate:3.6.10.10" // or ":hibernate4:4.3.4"
+//        runtime ":database-migration:1.3.8"
+//        runtime ":neo4j:2.0.0-M02"
         runtime ":jquery:1.11.1"
         runtime ":resources:1.2.7"
         // Uncomment these (or add new ones) to enable additional resources capabilities
@@ -81,14 +84,14 @@ grails.project.dependency.resolution = {
         //compile ":handlebars-asset-pipeline:1.3.0.1"
 
         compile ':spring-security-core:2.0-RC2'
-        compile ":audit-logging:1.0.1"
+//        compile ":audit-logging:1.0.1"
 
         runtime ":jquery-ui:1.10.3"
 
         compile ":kickstart-with-bootstrap:1.1.0"
         compile ":angularjs-resources:1.2.15"
 
-        test ":plastic-criteria:1.5"
+//        test ":plastic-criteria:1.5"
     }
 
     //gorm configs

@@ -1,4 +1,4 @@
-import grails.plugin.springsecurity.SpringSecurityUtils
+//import grails.plugin.springsecurity.SpringSecurityUtils
 
 // locations to search for config files that get merged into the main config;
 // config files can be ConfigSlurper scripts, Java properties files, or classes
@@ -10,7 +10,7 @@ grails.config.locations = ["file:${userHome}/.grails/apps-config/${appName}/conf
 //    grails.config.locations << "file:" + System.properties["${appName}.config.location"]
 // }
 
-grails.project.groupId = com.omnitech.mis // change this to alter the default package name and Maven publishing destination
+grails.project.groupId = com.omnitech.chai // change this to alter the default package name and Maven publishing destination
 
 // The ACCEPT header will not be used for content negotiation for user agents containing the following strings (defaults to the 4 major rendering engines)
 grails.mime.disable.accept.header.userAgents = ['Gecko', 'WebKit', 'Presto', 'Trident']
@@ -148,10 +148,10 @@ auditLog {
 }
 
 // Added by the Spring Security Core plugin:
-grails.plugin.springsecurity.userLookup.userDomainClassName = 'com.omnitech.mis.User'
-grails.plugin.springsecurity.userLookup.authorityJoinClassName = 'com.omnitech.mis.UserRole'
-grails.plugin.springsecurity.authority.className = 'com.omnitech.mis.Role'
-grails.plugin.springsecurity.requestMap.className = 'com.omnitech.mis.RequestMap'
+grails.plugin.springsecurity.userLookup.userDomainClassName = 'com.omnitech.chai.model.User'
+//grails.plugin.springsecurity.userLookup.authorityJoinClassName = 'com.omnitech.mis.UserRole'
+grails.plugin.springsecurity.authority.className = 'com.omnitech.chai.model.Role'
+grails.plugin.springsecurity.requestMap.className = 'com.omnitech.chai.model.RequestMap'
 grails.plugin.springsecurity.securityConfigType = 'Requestmap'
 grails.plugin.springsecurity.logout.postOnly = false
 
