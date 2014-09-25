@@ -21,13 +21,13 @@ class ${className}Controller {
 
 	def index(Integer max) {
         params.max = Math.min(max ?: 10, 100)
-        def page = m${className}Service.list${className}(params)
+        def page = m${className}Service.list${className}s(params)
         respond page.content, model: [${propertyName}Count: page.totalElements]
     }
 
 	def list(Integer max) {
         params.max = Math.min(max ?: 10, 100)
-        def page = m${className}Service.list${className}(params)
+        def page = m${className}Service.list${className}s(params)
         respond page.content, model: [${propertyName}Count: page.totalElements]
     }
 
@@ -71,7 +71,7 @@ class ${className}Controller {
         if (id == -1) {
             notFound(); return
         }
-        def ${propertyName} = m${className}Service.find${propertyName}(id)
+        def ${propertyName} = m${className}Service.find${className}(id)
         respond ${propertyName}
     }
 
@@ -111,7 +111,7 @@ class ${className}Controller {
 
         request.withFormat {
             form {
-                flash.message = message(code: 'default.deleted.message', args: [message(code: '${className}.label', default: '${className}'), ${propertyName}.id])
+                flash.message = message(code: 'default.deleted.message', args: [message(code: '${className}.label', default: '${className}'), id])
                 redirect action:"index", method:"GET"
             }
             '*'{ render status: NO_CONTENT }
