@@ -21,12 +21,12 @@ class User {
 
     @NotNull
     String password
-
-
     boolean enabled = true
     boolean accountExpired
     boolean accountLocked
     boolean passwordExpired
+    Date dateCreated
+    Date lastUpdated
 
 
     @RelatedTo(type = 'HAS_ROLE')
@@ -34,8 +34,12 @@ class User {
     Set<Role> roles
 
 
-    Date dateCreated
-    Date lastUpdated
+    @RelatedTo(type = 'HAS_INTERACTION')
+    Set<Interaction> tasks
+
+    @RelatedTo(type = 'HAS_DEVICE')
+    Device device
+
 
     User() {}
 
@@ -52,7 +56,7 @@ class User {
     @PrePersist
     public void updateTimeStamps() {
         lastUpdated = new Date();
-        if (dateCreated==null) {
+        if (dateCreated == null) {
             dateCreated = new Date();
         }
     }

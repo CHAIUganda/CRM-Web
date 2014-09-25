@@ -1,8 +1,12 @@
 package com.omnitech.chai.model
 
+import org.neo4j.graphdb.Direction
 import org.springframework.data.neo4j.annotation.GraphId
 import org.springframework.data.neo4j.annotation.Indexed
 import org.springframework.data.neo4j.annotation.NodeEntity
+import org.springframework.data.neo4j.annotation.RelatedTo
+
+import javax.validation.constraints.NotNull
 
 /**
  * Created by kay on 9/21/14.
@@ -11,9 +15,24 @@ import org.springframework.data.neo4j.annotation.NodeEntity
 public class Customer {
     @GraphId
     Long id;
-    String firstName, lastName;
+
+    @NotNull
+    String firstName
+
+    @NotNull
+    String lastName;
+
     @Indexed(unique = true)
     String emailAddress;
-//    @RelatedTo(type = "ADDRESS")
-//    Set<Address> addresses = new HashSet<Address>();
+
+    String phone1
+
+    String phone2
+
+    @RelatedTo(type = 'HAS_CUSTOMER', direction = Direction.INCOMING)
+    Interaction interaction
+
+    @RelatedTo(type = 'HAS_TERRITORY')
+    Territory territory
+
 }
