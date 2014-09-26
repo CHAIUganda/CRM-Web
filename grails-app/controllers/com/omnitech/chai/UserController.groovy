@@ -3,6 +3,7 @@ package com.omnitech.chai
 import com.omnitech.chai.model.User
 import grails.transaction.Transactional
 
+import static com.omnitech.chai.util.ChaiUtils.extractId
 import static org.springframework.http.HttpStatus.*
 
 /**
@@ -28,11 +29,11 @@ class UserController {
     }
 
     def show() {
-        def user = userService.findUser(params.id as Long)
-        if (!user) {
+        long id = extractId(params)
+        if (!id == -1) {
             notFound(); return
         }
-        respond user
+        respond userService.findUser(id)
     }
 
     def create() {
@@ -62,7 +63,12 @@ class UserController {
     }
 
     def edit() {
-        def user = userService.findUser(params.id as Long)
+        def id = extractId(params)
+
+        if (id == -1) {
+            notFound(); return
+        }
+        def user = userService.findUser(id)
         respond user, model: [rolez: userService.listAllRoles()]
     }
 

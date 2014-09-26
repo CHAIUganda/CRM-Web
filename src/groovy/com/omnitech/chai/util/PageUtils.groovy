@@ -13,9 +13,15 @@ class PageUtils {
     static int DEFAULT_PAGE_SIZE = 50
 
     static PageRequest create(Map params) {
+        params = params ?: [:]
+        int offset = (params['offset'] ?: 0) as Integer
+        int size = (params['max'] ?: DEFAULT_PAGE_SIZE) as Integer
 
-        int start = (params['start'] ?: 0) as Integer
-        int size = (params['size'] ?: DEFAULT_PAGE_SIZE) as Integer
+        offset = offset < 0 ? 0 : offset
+        size = size <= 0 ? DEFAULT_PAGE_SIZE : size
+
+
+        int pageNumber = offset / size
 
         String[] sort
         if (params['sort'] instanceof Collection)
@@ -29,8 +35,8 @@ class PageUtils {
 
 
         if (sort)
-            return new PageRequest(start, size, direction, sort)
-        return new PageRequest(start, size)
+            return new PageRequest(pageNumber, size, direction, sort)
+        return new PageRequest(pageNumber, size)
     }
 
 }
