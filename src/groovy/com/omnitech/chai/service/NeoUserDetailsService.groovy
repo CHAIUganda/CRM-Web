@@ -32,6 +32,9 @@ class NeoUserDetailsService implements GrailsUserDetailsService {
         if (!user) throw new UsernameNotFoundException("User not found [$username]")
 
         def authorities = user.roles.collect { new SimpleGrantedAuthority(it.authority) }
+        if (!authorities) authorities = [NO_ROLE]
+
+        if (!loadRoles) authorities = null
 
         new GrailsUser(user.username, user.password, user.enabled, !user.accountExpired, !user.passwordExpired, !user.accountLocked, authorities, user.id)
     }
