@@ -63,6 +63,7 @@ grails.project.dependency.resolution = {
             excludes 'org.slf4j:slf4j-jdk14'
         }
 
+        compile 'net.sf.ehcache:ehcache:2.8.3'
         compile 'org.apache.httpcomponents:httpcore:4.3'
         compile 'org.apache.httpcomponents:httpclient:4.3'
 
@@ -73,9 +74,7 @@ grails.project.dependency.resolution = {
         test "org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion"
         test "org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion"
         test "org.seleniumhq.selenium:selenium-ie-driver:$seleniumVersion"
-        test("org.seleniumhq.selenium:selenium-htmlunit-driver:$seleniumVersion") {
-//            exclude 'xml-apis'
-        }
+        test("org.seleniumhq.selenium:selenium-htmlunit-driver:$seleniumVersion")
 
 
     }
@@ -86,7 +85,6 @@ grails.project.dependency.resolution = {
         compile ":scaffolding:2.0.2"
         compile ':cache:1.1.7'
         compile ':spring-security-core:2.0-RC2'
-        compile ":cache-ehcache:1.0.3"
 
         compile ":kickstart-with-bootstrap:1.1.0"
         compile ":angularjs-resources:1.2.15"

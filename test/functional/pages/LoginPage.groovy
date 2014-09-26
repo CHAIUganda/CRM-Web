@@ -9,7 +9,7 @@ class LoginPage extends Page {
 
     static url = "login/auth"
 
-    static at = {title ==~ '(?i).*login.*'}
+    static at = { title ==~ '(?i).*login.*' }
 
     static content = {
         username { $('#username') }
@@ -22,7 +22,7 @@ class LoginPage extends Page {
 class IndexPage extends Page {
     static url = 'home/index'
 
-    static at = {title ==~ '(?i).*welcome.*'}
+    static at = { title ==~ '(?i).*welcome.*' }
 
     static content = {
 
