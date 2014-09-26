@@ -53,11 +53,10 @@
 
         </div>
 
-        <div class="user-column">
+        <div class="user-column thumbnail">
+            <div class="badge alert-info">ROLES</div>
             <div>
                 <div class="user-table">
-                    <div class="user-row">
-
                         <g:each in="${rolez}" var="role" status="i">
                                 <div class="user-column">
                                     <g:checkBox name="rolez" value="${role.id}"
@@ -66,10 +65,24 @@
                                 </div>
 
                         </g:each>
-                    </div>
                 </div>
             </div>
+        </div>
 
+        <div class="user-column thumbnail">
+            <div class="badge alert-info">DEVICES</div>
+            <div>
+                <div class="user-table">
+                    <g:each in="${rolez}" var="role" status="i">
+                        <div class="user-column thumbnail">
+                            <g:radio name="rolez" value="${role.id}"
+                                        checked="${userInstance.hasRole(role)}"/>
+                            <label for="roles[${i}]">${role.authority}</label>
+                        </div>
+
+                    </g:each>
+                </div>
+            </div>
         </div>
     </div>
 
