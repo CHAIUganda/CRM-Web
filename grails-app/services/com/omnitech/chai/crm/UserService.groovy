@@ -98,7 +98,7 @@ class UserService {
 
     User saveUserWithRoles(User user, List roleIds) {
 
-        def roles = roleIds?.collect { roleRepository.findOne(it as Long) }
+        def roles = roleIds?.collect { roleRepository.findOne(it as Long) }  ?: []
 
         def neoUser
         if (user.id) neoUser = userRepository.findOne(user.id)
