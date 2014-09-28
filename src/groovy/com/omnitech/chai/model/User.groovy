@@ -2,7 +2,10 @@ package com.omnitech.chai.model
 
 import com.omnitech.chai.util.ChaiUtils
 import grails.validation.Validateable
-import org.springframework.data.neo4j.annotation.*
+import org.springframework.data.neo4j.annotation.Fetch
+import org.springframework.data.neo4j.annotation.Indexed
+import org.springframework.data.neo4j.annotation.NodeEntity
+import org.springframework.data.neo4j.annotation.RelatedTo
 
 import javax.persistence.PrePersist
 import javax.persistence.PreUpdate

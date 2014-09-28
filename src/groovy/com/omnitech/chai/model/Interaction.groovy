@@ -1,11 +1,9 @@
 package com.omnitech.chai.model
 
-import org.springframework.data.neo4j.annotation.GraphId
 import org.springframework.data.neo4j.annotation.NodeEntity
 import org.springframework.data.neo4j.annotation.RelatedTo
 
 import javax.validation.constraints.NotNull
-
 
 /**
  * This holds any type of interaction between a Customer and a SalesRep
@@ -14,7 +12,7 @@ import javax.validation.constraints.NotNull
  *
  */
 @NodeEntity
-class Interaction extends AbstractEntity  {
+class Interaction extends AbstractEntity {
 
 
     @NotNull

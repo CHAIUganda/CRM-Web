@@ -6,8 +6,6 @@ import org.springframework.data.neo4j.annotation.Indexed
 import org.springframework.data.neo4j.annotation.NodeEntity
 import org.springframework.data.neo4j.annotation.RelatedTo
 
-import javax.validation.constraints.NotNull
-
 /**
  * Created by kay on 9/21/14.
  */

@@ -2,7 +2,6 @@ package com.omnitech.chai.model
 
 import org.neo4j.graphdb.Direction
 import org.springframework.data.neo4j.annotation.Fetch
-import org.springframework.data.neo4j.annotation.GraphId
 import org.springframework.data.neo4j.annotation.NodeEntity
 import org.springframework.data.neo4j.annotation.RelatedTo
 import org.springframework.data.neo4j.annotation.RelatedToVia
@@ -22,6 +21,6 @@ class Order extends AbstractEntity {
     @RelatedToVia
     Set<LineItem> lineItems = new HashSet()
 
-    @RelatedTo(type = 'HAS_ORDER',direction = Direction.INCOMING)
+    @RelatedTo(type = 'HAS_ORDER', direction = Direction.INCOMING)
     Interaction interaction
 }

@@ -5,7 +5,6 @@ import com.omnitech.chai.repositories.RequestMapRepository
 import grails.util.Holders
 import grails.validation.Validateable
 import org.springframework.context.ApplicationContext
-import org.springframework.data.neo4j.annotation.GraphId
 import org.springframework.data.neo4j.annotation.Indexed
 import org.springframework.data.neo4j.annotation.NodeEntity
 import org.springframework.http.HttpMethod
