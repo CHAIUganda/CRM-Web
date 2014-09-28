@@ -29,7 +29,9 @@ class PageUtilsTest extends Specification {
         [offset: 50, max: -16, sort: 'name', order: 'asc']    | 50  | 50     | Sort.DEFAULT_DIRECTION
         [offset: 50, max: -16, sort: 'name', order: 'desc']   | 50  | 50     | Sort.Direction.DESC
         [offset: 50, max: -16, sort: 'namezz', order: 'desc'] | 50  | 50     | null
-
+        [offset: 30, max: -16, sort: 'name', order: 'asc']    | 50  | 0      | Sort.DEFAULT_DIRECTION
+        [offset: 121, max: -16, sort: 'name', order: 'asc']   | 50  | 100    | Sort.DEFAULT_DIRECTION
+        [offset: 121, max: 10, sort: 'name', order: 'asc']    | 10  | 120    | Sort.DEFAULT_DIRECTION
 
     }
 

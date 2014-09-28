@@ -12,6 +12,9 @@ class PageUtils {
 
     static int DEFAULT_PAGE_SIZE = 50
 
+    /**
+     * Create a spring data page request from the grails paginate params.
+     */
     static PageRequest create(Map params) {
         params = params ?: [:]
         int offset = (params['offset'] ?: 0) as Integer
