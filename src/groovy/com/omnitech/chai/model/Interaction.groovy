@@ -14,10 +14,8 @@ import javax.validation.constraints.NotNull
  *
  */
 @NodeEntity
-class Interaction {
+class Interaction extends AbstractEntity  {
 
-    @GraphId
-    Long id
 
     @NotNull
     String initiationType = "adhoc"

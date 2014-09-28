@@ -10,10 +10,7 @@ import javax.validation.constraints.NotNull
 
 
 @RelationshipEntity(type = 'HAS_PRODUCT')
-class LineItem {
-
-    @GraphId
-    Long id
+class LineItem  extends AbstractEntity {
 
     @StartNode
     Order order

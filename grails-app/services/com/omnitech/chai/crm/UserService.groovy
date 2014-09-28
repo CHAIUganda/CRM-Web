@@ -8,8 +8,8 @@ import com.omnitech.chai.repositories.DeviceRepository
 import com.omnitech.chai.repositories.RequestMapRepository
 import com.omnitech.chai.repositories.RoleRepository
 import com.omnitech.chai.repositories.UserRepository
+import com.omnitech.chai.util.ChaiUtils
 import com.omnitech.chai.util.PageUtils
-import org.codehaus.groovy.runtime.InvokerHelper
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.neo4j.transaction.Neo4jTransactional
@@ -113,8 +113,7 @@ class UserService {
         def neoUser = user.id ? userRepository.findOne(user.id) : user
         def device = deviceId ? deviceRepository.findOne(deviceId) : null
 
-
-        InvokerHelper.setProperties(neoUser, user.properties)
+        ChaiUtils.bind(neoUser, user.properties)
         neoUser.roles = roles
         neoUser.device = device
 

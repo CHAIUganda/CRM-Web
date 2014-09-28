@@ -5,20 +5,19 @@ import org.springframework.data.neo4j.annotation.GraphId
 import org.springframework.data.neo4j.annotation.Indexed
 import org.springframework.data.neo4j.annotation.NodeEntity
 
-import javax.validation.constraints.NotNull
-
 @NodeEntity
 @Validateable
-class Device {
-    @GraphId
-    Long id
+class Device extends AbstractEntity{
+
 
     @Indexed(unique = true)
-    @NotNull
     String imei
-
-    @NotNull
     String model
+
+    static constraints = {
+        imei blank: false
+        model blank: false
+    }
 
     String toString() {
         "$model - $imei"

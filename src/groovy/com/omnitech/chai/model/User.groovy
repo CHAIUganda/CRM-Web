@@ -1,25 +1,18 @@
 package com.omnitech.chai.model
 
+import com.omnitech.chai.util.ChaiUtils
 import grails.validation.Validateable
-import org.codehaus.groovy.runtime.InvokerHelper
 import org.springframework.data.neo4j.annotation.*
 
 import javax.persistence.PrePersist
 import javax.persistence.PreUpdate
-import javax.validation.constraints.NotNull
 
 @Validateable
 @NodeEntity
-class User {
+class User extends AbstractEntity {
 
-    @GraphId
-    Long id
-
-    @NotNull
     @Indexed(unique = true)
     String username
-
-    @NotNull
     String password
     boolean enabled = true
     boolean accountExpired
@@ -27,6 +20,11 @@ class User {
     boolean passwordExpired
     Date dateCreated
     Date lastUpdated
+
+    static constraints = {
+        username blank: false
+        password blank: false
+    }
 
 
     @RelatedTo(type = 'HAS_ROLE')
@@ -44,7 +42,7 @@ class User {
     User() {}
 
     User(Map params) {
-        InvokerHelper.setProperties(this, params)
+        ChaiUtils.bind(this, params)
     }
 
 

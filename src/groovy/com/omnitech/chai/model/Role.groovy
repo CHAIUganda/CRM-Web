@@ -7,10 +7,8 @@ import org.springframework.data.neo4j.annotation.NodeEntity
 
 @NodeEntity
 @Validateable
-class Role {
+class Role extends AbstractEntity {
 
-    @GraphId
-    Long id
     @Indexed(unique = true)
     String authority
 

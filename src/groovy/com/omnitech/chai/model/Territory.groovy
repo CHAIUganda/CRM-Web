@@ -9,10 +9,9 @@ import javax.validation.constraints.NotNull
  * Created by kay on 9/24/14.
  */
 @NodeEntity
-class Territory {
+class Territory extends AbstractEntity  {
 
-    @GraphId
-    Long id
+
 
     @NotNull
     String name

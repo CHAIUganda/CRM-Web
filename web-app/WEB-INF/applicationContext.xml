@@ -39,6 +39,8 @@
 
     <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean"/>
 
+    <bean id="neoPersistentHelper" class="com.omnitech.chai.service.PersistentHelper"/>
+
     <!--NEO4J-->
     <util:map id="config">
         <entry key="enable_remote_shell" value="true"/>

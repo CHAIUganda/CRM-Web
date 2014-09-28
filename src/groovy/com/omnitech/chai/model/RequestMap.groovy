@@ -12,10 +12,7 @@ import org.springframework.http.HttpMethod
 
 @Validateable
 @NodeEntity
-class RequestMap {
-
-    @GraphId
-    Long id
+class RequestMap extends AbstractEntity {
 
     @Indexed(unique = true)
     String url

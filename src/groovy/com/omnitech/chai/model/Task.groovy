@@ -9,12 +9,11 @@ import org.springframework.data.neo4j.annotation.RelatedTo
  * Created by kay on 9/24/14.
  */
 @NodeEntity
-class Task {
+class Task extends AbstractEntity  {
 
     static String PENDING = 'new', COMPLETE = 'complete'
 
-    @GraphId
-    Long id
+
 
     String description
 

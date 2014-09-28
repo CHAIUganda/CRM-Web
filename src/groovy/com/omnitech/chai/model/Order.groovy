@@ -11,12 +11,10 @@ import org.springframework.data.neo4j.annotation.RelatedToVia
  * Created by kay on 9/25/14.
  */
 @NodeEntity
-class Order {
+class Order extends AbstractEntity {
 
     static String PENDING = 'new', COMPLETE = 'complete'
 
-    @GraphId
-    Long id
 
     String status = PENDING
 
