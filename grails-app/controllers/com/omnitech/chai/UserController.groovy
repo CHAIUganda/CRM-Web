@@ -37,7 +37,7 @@ class UserController {
     }
 
     def create() {
-        respond new User(params), model: [rolez: userService.listAllRoles(), devices: userService.listAllFreeDevices(-1)]
+        respond new User(params), model: [rolez: userService.listAllRoles(), devices: userService.listAllFreeDevices()]
     }
 
     def save(User userInstance) {

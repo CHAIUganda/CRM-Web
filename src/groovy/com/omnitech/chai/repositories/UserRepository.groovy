@@ -16,7 +16,10 @@ interface UserRepository extends GraphRepository<User> {
 
 interface DeviceRepository extends GraphRepository<Device> {
 
-    @Query('start n = node({userId}) Match n-[:HAS_DEVICE]->d return d AS model UNION MATCH (d:Device) WHERE NOT (() -[:HAS_DEVICE ]->(d)) RETURN d AS model')
+    @Query('start n = node({userId}) Match n-[:HAS_DEVICE]->d return d AS model UNION MATCH (d:Device) WHERE NOT (()-[:HAS_DEVICE ]->(d)) RETURN d AS model')
     Iterable<Device> findAllFreeDevices(@Param('userId') Long userId)
+
+    @Query('MATCH (d:Device) WHERE NOT (()-[:HAS_DEVICE ]->(d)) RETURN d AS model')
+    Iterable<Device> findAllFreeDevices()
 
 }

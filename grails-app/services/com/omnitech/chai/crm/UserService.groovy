@@ -82,9 +82,15 @@ class UserService {
         return new PageImpl<Device>(p.content, pageRequest, deviceRepository.count())
     }
 
-    List<Device> listAllFreeDevices(Long userId) {
-        def devices = deviceRepository.findAllFreeDevices(userId).collect()
-        devices
+    /**
+     * Return a list of all available devices including the one assigned to this device
+     * @param userId current user id. -1 if u do not wish to provide it
+     * @return
+     */
+    List<Device> listAllFreeDevices(Long userId = -1) {
+        if (userId < 0)
+            return deviceRepository.findAllFreeDevices().collect()
+        return deviceRepository.findAllFreeDevices(userId).collect()
     }
 
 
