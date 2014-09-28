@@ -10,4 +10,6 @@ class AbstractEntity {
     @GraphId
     Long id
     String uuid
+    Date dateCreated
+    Date lastUpdated
 }

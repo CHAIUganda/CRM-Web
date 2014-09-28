@@ -12,9 +12,6 @@ class Role extends AbstractEntity {
     @Indexed(unique = true)
     String authority
 
-    Date dateCreated
-    Date lastUpdated
-
     static constraints = {
         authority blank: false, unique: true
     }
