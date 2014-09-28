@@ -37,7 +37,7 @@ class UserController {
     }
 
     def create() {
-        respond new User(params), model: [rolez: userService.listAllRoles()]
+        respond new User(params), model: [rolez: userService.listAllRoles(), devices: userService.listAllFreeDevices(-1)]
     }
 
     def save(User userInstance) {
@@ -47,11 +47,11 @@ class UserController {
         }
 
         if (userInstance.hasErrors()) {
-            respond userInstance.errors, view: 'create', model: [rolez: userService.listAllRoles()]
+            respond userInstance.errors, view: 'create', model: [rolez: userService.listAllRoles(), devices: userService.listAllFreeDevices(userInstance.id ?: -1)]
             return
         }
 
-        userService.saveUserWithRoles userInstance, getRoleIds()
+        userService.saveUserWithRoles userInstance, getRoleIds(), ('' + params.dvc).toLongSafe()
 
         request.withFormat {
             form {
@@ -69,7 +69,7 @@ class UserController {
             notFound(); return
         }
         def user = userService.findUser(id)
-        respond user, model: [rolez: userService.listAllRoles()]
+        respond user, model: [rolez: userService.listAllRoles(), devices: userService.listAllFreeDevices(id)]
     }
 
 
@@ -80,11 +80,11 @@ class UserController {
         }
 
         if (userInstance.hasErrors()) {
-            respond userInstance.errors, view: 'edit', model: [rolez: userService.listAllRoles()]
+            respond userInstance.errors, view: 'edit', model: [rolez: userService.listAllRoles(), devices: userService.listAllFreeDevices(userInstance.id)]
             return
         }
 
-        userService.saveUserWithRoles userInstance, getRoleIds()
+        userService.saveUserWithRoles userInstance, getRoleIds(), ('' + params.dvc).toLongSafe()
 
         request.withFormat {
             form {

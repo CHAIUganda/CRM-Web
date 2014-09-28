@@ -17,9 +17,9 @@
         <thead>
         <tr>
             
-            <g:sortableColumn property="imei" title="${message(code: 'device.imei.label', default: 'Imei')}" />
-            
             <g:sortableColumn property="model" title="${message(code: 'device.model.label', default: 'Model')}" />
+
+            <g:sortableColumn property="imei" title="${message(code: 'device.imei.label', default: 'Imei')}" />
             
             <td>
                 Action
@@ -29,10 +29,10 @@
         <tbody>
         <g:each in="${deviceInstanceList}" status="i" var="deviceInstance">
             <tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
-                
-                <td><g:link action="show" id="${deviceInstance.id}">${fieldValue(bean: deviceInstance, field: "imei")}</g:link></td>
-                
-                <td>${fieldValue(bean: deviceInstance, field: "model")}</td>
+
+                <td><g:link action="show" id="${deviceInstance.id}">${fieldValue(bean: deviceInstance, field: "model")}</g:link></td>
+
+                <td>${fieldValue(bean: deviceInstance, field: "imei")}</td>
                 
                 <td>
                     <g:link action="edit" id="${deviceInstance.id}"><i

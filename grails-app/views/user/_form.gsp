@@ -1,7 +1,7 @@
 <%@ page import="com.omnitech.chai.model.User" %>
-<div class="user-table">
-    <div class="user-row">
-        <div class="user-column">
+<div>
+    <div class="row ">
+        <div class="col-md-6 thumbnail">
 
 			<div class="${hasErrors(bean: userInstance, field: 'username', 'error')} required">
 				<label for="username" class="control-label"><g:message code="user.username.label" default="Username" /><span class="required-indicator">*</span></label>
@@ -14,7 +14,7 @@
 			<div class="${hasErrors(bean: userInstance, field: 'password', 'error')} required">
 				<label for="password" class="control-label"><g:message code="user.password.label" default="Password" /><span class="required-indicator">*</span></label>
 				<div>
-                    <g:field class="form-control" style="width: 50%;" type="password" name="password" required="" value="${userInstance?.password}"/>
+                    <g:field class="form-control" type="password" name="password" required="" value="${userInstance?.password}"/>
 					<span class="help-inline">${hasErrors(bean: userInstance, field: 'password', 'error')}</span>
 				</div>
 			</div>
@@ -52,35 +52,46 @@
 			</div>
 
         </div>
+       %{--ROLEZ--}%
+        <div class="col-md-6 thumbnail">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <legend>Roles</legend>
+                </div>
+            </div>
 
-        <div class="user-column thumbnail">
-            <div class="badge alert-info">ROLES</div>
-            <div>
-                <div class="user-table">
+            <div class="row">
                         <g:each in="${rolez}" var="role" status="i">
-                                <div class="user-column">
+                                <div class="col-md-5">
                                     <g:checkBox name="rolez" value="${role.id}"
                                                 checked="${userInstance.hasRole(role)}"/>
                                     <label for="roles[${i}]">${role.authority}</label>
                                 </div>
 
                         </g:each>
-                </div>
             </div>
         </div>
+    </div>
+    %{--SELECT DEVICE--}%
+    <div class="row">
+        <div class="row">
+            <legend class="text-center">Select A Device For This User</legend>
+        </div>
 
-        <div class="user-column thumbnail">
-            <div class="badge alert-info">DEVICES</div>
-            <div>
-                <div class="user-table">
-                    <g:each in="${rolez}" var="role" status="i">
-                        <div class="user-column thumbnail">
-                            <g:radio name="rolez" value="${role.id}"
-                                        checked="${userInstance.hasRole(role)}"/>
-                            <label for="roles[${i}]">${role.authority}</label>
-                        </div>
+        <div class="row ">
+            <div class="col-md-12">
+                <g:each in="${devices}" var="device" status="i">
+                    <div class="col-md-4 thumbnail  ${userInstance?.device?.id == device.id ? 'alert-info' : ''}">
+                        <g:radio name="dvc" value="${device.id}"
+                                 checked="${userInstance?.device?.id == device.id}"/>
+                        <label for="dvc">${device}</label>
+                    </div>
 
-                    </g:each>
+                </g:each>
+
+                <div class="col-md-4 thumbnail">
+                    <g:radio name="dvc" value=""/>
+                    <label for="dvc">None</label>
                 </div>
             </div>
         </div>

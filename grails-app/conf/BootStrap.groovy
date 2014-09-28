@@ -1,14 +1,18 @@
 import com.omnitech.chai.model.RequestMap
 import com.omnitech.chai.model.Role
 import com.omnitech.chai.model.User
+import com.omnitech.chai.util.ChaiUtils
 import grails.plugin.springsecurity.ReflectionUtils
 
 class BootStrap {
 
     def springSecurityService
     def txHelperService
+    def graphDatabaseService
 
     def init = { servletContext ->
+
+        ChaiUtils.injectUtilityMethods()
 
         def numUsers = txHelperService.doInTransaction { neo.count(User.class) }
 
@@ -37,6 +41,7 @@ class BootStrap {
         ReflectionUtils.metaClass.static.getRequestMapClass = { RequestMap }
     }
     def destroy = {
+        graphDatabaseService.shutdown()
     }
 
     def initdata() {

@@ -1,5 +1,7 @@
 package com.omnitech.chai.util
 
+import org.apache.commons.logging.LogFactory
+import org.codehaus.groovy.runtime.StringGroovyMethods
 import org.grails.databinding.SimpleDataBinder
 import org.grails.databinding.SimpleMapDataBindingSource
 
@@ -7,6 +9,9 @@ import org.grails.databinding.SimpleMapDataBindingSource
  * Created by kay on 9/24/14.
  */
 class ChaiUtils {
+
+    private static def log = LogFactory.getLog(ChaiUtils.class)
+
     static Long extractId(Map params) {
         Long id = -1
         try {
@@ -21,4 +26,26 @@ class ChaiUtils {
         binder.bind(obj, new SimpleMapDataBindingSource(properties))
         return (T) obj
     }
+
+    static injectUtilityMethods() {
+        String.metaClass.toLongSafe = {
+            def _delegate = delegate
+            return execSilently { Long.valueOf(_delegate) }
+        }
+    }
+
+    static execSilently(String error, Closure code)  {
+        try {
+            return code.call()
+        } catch (Exception ex) {
+            log.error(error, ex)
+        }
+        return null
+    }
+
+    static execSilently(Closure code){
+        execSilently('Unkown Error', code)
+    }
+
+
 }

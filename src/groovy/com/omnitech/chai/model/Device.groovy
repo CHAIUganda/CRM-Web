@@ -20,4 +20,8 @@ class Device {
     @NotNull
     String model
 
+    String toString() {
+        "$model - $imei"
+    }
+
 }

@@ -82,6 +82,11 @@ class UserService {
         return new PageImpl<Device>(p.content, pageRequest, deviceRepository.count())
     }
 
+    List<Device> listAllFreeDevices(Long userId) {
+        def devices = deviceRepository.findAllFreeDevices(userId).collect()
+        devices
+    }
+
 
     Device findDevice(Long id) {
         deviceRepository.findOne(id)
@@ -96,19 +101,17 @@ class UserService {
     }
 
 
-    User saveUserWithRoles(User user, List roleIds) {
+    User saveUserWithRoles(User user, List roleIds, Long deviceId) {
 
-        def roles = roleIds?.collect { roleRepository.findOne(it as Long) }  ?: []
+        def roles = roleIds?.collect { roleRepository.findOne(it as Long) } ?: []
+        def neoUser = user.id ? userRepository.findOne(user.id) : user
+        def device = deviceId ? deviceRepository.findOne(deviceId) : null
 
-        def neoUser
-        if (user.id) neoUser = userRepository.findOne(user.id)
-        else neoUser = user
 
         InvokerHelper.setProperties(neoUser, user.properties)
         neoUser.roles = roles
+        neoUser.device = device
 
         userRepository.save(neoUser)
     }
-
-
 }
