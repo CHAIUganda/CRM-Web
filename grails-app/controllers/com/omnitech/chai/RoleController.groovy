@@ -63,7 +63,13 @@ class RoleController {
         }
     }
 
-    def edit(Role roleInstance) {
+    def edit() {
+        def id = extractId(params)
+
+        if (id == -1) {
+            notFound(); return
+        }
+        def roleInstance = userService.findRole(id)
         respond roleInstance
     }
 
