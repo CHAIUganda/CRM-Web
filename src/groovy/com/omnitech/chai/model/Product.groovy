@@ -16,6 +16,8 @@ class Product extends AbstractEntity {
 
     static constraints = {
         name blank: false
+        metric blank: false
+        unitPrice nullable: false
     }
 
 }

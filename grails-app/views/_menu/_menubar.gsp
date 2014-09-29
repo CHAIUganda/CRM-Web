@@ -13,6 +13,12 @@
         <ul class="nav navbar-nav">
             <li class="active"><a href="#">Home</a></li>
             <li><a href="#">Profile</a></li>
+
+            %{--    PRODUCTS    --}%
+            <li><g:link controller="product" action="index">Products</g:link></li>
+
+
+            %{--    SETTINGS    --}%
             <li class="dropdown">
                 <a data-toggle="dropdown" class="dropdown-toggle" href="#">Settings <b class="caret"></b></a>
                 <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
@@ -42,7 +48,8 @@
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
-                <a data-toggle="dropdown" class="dropdown-toggle glyphicon glyphicon-user" href="#">User <b class="caret"></b></a>
+                <a data-toggle="dropdown" class="dropdown-toggle glyphicon glyphicon-user" href="#">User <b
+                        class="caret"></b></a>
                 <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
                     <li>
                         <g:link controller="user" action="index">
@@ -56,14 +63,14 @@
                     </li>
                     <sec:ifAllGranted roles="ROLE_SUPER_ADMIN">
                         <li>
-                        <g:link controller="requestMap" action="index">
-                            <i class="glyphicon glyphicon-tags"></i>Access Levels
-                        </g:link>
-                    </li>
+                            <g:link controller="requestMap" action="index">
+                                <i class="glyphicon glyphicon-tags"></i>Access Levels
+                            </g:link>
+                        </li>
                     </sec:ifAllGranted>
                     <li>
                         <g:link controller="logout" action="index">
-                        <i class="glyphicon glyphicon-off"></i>Log out</g:link>
+                            <i class="glyphicon glyphicon-off"></i>Log out</g:link>
                     </li>
                 </ul>
             </li>
