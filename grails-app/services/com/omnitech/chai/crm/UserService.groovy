@@ -60,7 +60,12 @@ class UserService {
     }
 
     Role saveRole(Role role) {
-        roleRepository.save(role)
+        def neoRole = role
+        if (role.id) {
+            neoRole = roleRepository.findOne(role.id)
+            ChaiUtils.bind(neoRole, role.properties)
+        }
+        roleRepository.save(neoRole)
     }
 
     RequestMap saveRequestMap(RequestMap requestMap) {

@@ -2,6 +2,7 @@ package com.omnitech.chai.crm
 
 import com.omnitech.chai.model.Product
 import com.omnitech.chai.repositories.ProductRepository
+import com.omnitech.chai.util.ChaiUtils
 import com.omnitech.chai.util.PageUtils
 import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.transaction.Neo4jTransactional
@@ -24,7 +25,12 @@ class ProductService {
     }
 
     Product saveProduct(Product product) {
-        productRepository.save(product)
+        def neoProduct = product
+        if (product.id) {
+            neoProduct = productRepository.findOne(product.id)
+            ChaiUtils.bind(neoProduct, product.properties)
+        }
+        productRepository.save(neoProduct)
     }
 
     void deleteProduct(Long id) {
