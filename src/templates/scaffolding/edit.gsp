@@ -20,7 +20,6 @@
 
 		<g:form method="post" class="form-horizontal" role="form" <%= multiPart ? ' enctype="multipart/form-data"' : '' %>>
 			<g:hiddenField name="id" value="\${${propertyName}?.id}" />
-			<g:hiddenField name="version" value="\${${propertyName}?.version}" />
 			<g:hiddenField name="_method" value="PUT" />
 			
 			<g:render template="form"/>
