@@ -9,9 +9,7 @@ import com.omnitech.chai.repositories.RequestMapRepository
 import com.omnitech.chai.repositories.RoleRepository
 import com.omnitech.chai.repositories.UserRepository
 import com.omnitech.chai.util.ModelFunctions
-import com.omnitech.chai.util.PageUtils
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
 import org.springframework.data.neo4j.transaction.Neo4jTransactional
 
 /**
@@ -27,8 +25,7 @@ class UserService {
     RequestMapRepository requestMapRepository
 
     Page<User> list(Map params) {
-        def request = PageUtils.create(params)
-        new PageImpl<User>(userRepository.findAll(request).content, request, userRepository.count())
+        ModelFunctions.listAll(userRepository, params)
     }
 
     User findUser(Long id) {
@@ -64,7 +61,7 @@ class UserService {
     }
 
     RequestMap saveRequestMap(RequestMap requestMap) {
-        ModelFunctions.saveEntity(requestMapRepository,requestMap)
+        ModelFunctions.saveEntity(requestMapRepository, requestMap)
     }
 
 
@@ -77,9 +74,7 @@ class UserService {
     }
 
     Page<Device> listDevices(Map params) {
-        def pageRequest = PageUtils.create(params)
-        def p = deviceRepository.findAll(pageRequest)
-        return new PageImpl<Device>(p.content, pageRequest, deviceRepository.count())
+        ModelFunctions.listAll(deviceRepository, params)
     }
 
     /**
@@ -99,7 +94,7 @@ class UserService {
     }
 
     Device saveDevice(Device device) {
-        ModelFunctions.saveEntity(deviceRepository,device)
+        ModelFunctions.saveEntity(deviceRepository, device)
     }
 
     void deleteDevice(Long id) {

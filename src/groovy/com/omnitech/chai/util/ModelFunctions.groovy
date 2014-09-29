@@ -1,9 +1,12 @@
 package com.omnitech.chai.util
 
+
 import com.omnitech.chai.model.AbstractEntity
 import org.apache.commons.logging.LogFactory
 import org.grails.databinding.SimpleDataBinder
 import org.grails.databinding.SimpleMapDataBindingSource
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.neo4j.repository.GraphRepository
 
 /**
@@ -52,6 +55,11 @@ class ModelFunctions {
             bind(neoEntity, entity.properties)
         }
         repo.save(neoEntity)
+    }
+
+    static <T> Page<T> listAll(GraphRepository<T> repo, Map params) {
+        def request = PageUtils.create(params)
+        new PageImpl<T>(repo.findAll(request).content, request, repo.count())
     }
 
     static def setProperty(Object object, String propertyName, def value) {
