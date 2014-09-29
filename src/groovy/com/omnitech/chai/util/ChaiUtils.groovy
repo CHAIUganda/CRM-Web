@@ -43,6 +43,13 @@ class ChaiUtils {
         return object
     }
 
+    static def setProperty(Object object, String propertyName, def value) {
+        if (object?.hasProperty(propertyName)) {
+            object."$propertyName" = value
+        }
+        return object
+    }
+
     static injectUtilityMethods() {
         String.metaClass.toLongSafe = {
             def _delegate = delegate

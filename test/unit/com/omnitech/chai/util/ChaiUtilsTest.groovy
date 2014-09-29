@@ -42,15 +42,28 @@ class ChaiUtilsTest extends Specification {
         then:
         u.password == null
 
-        when:
+        when: 'a null property is set'
         ChaiUtils.setPropertyIfNull(u, 'password', 'pass1')
-        then:
+        then: 'then the value should be reset'
         u.password == 'pass1'
 
-        when:
+        when: 'a not null property is set'
         ChaiUtils.setPropertyIfNull(u, 'password', 'XXXXX')
-        then:
+        then: 'then the value should not change'
         u.password == 'pass1'
+
+        when: 'a not null property is sett'
+        ChaiUtils.setProperty(u, 'password', 'XXXX')
+        then: 'then the value should change'
+        u.password == 'XXXX'
+
+        when: 'a non existent property is set'
+        ChaiUtils.setPropertyIfNull(u, 'fakeProperty', 'value')
+        then: noExceptionThrown()
+
+        when: 'a non existent property is set'
+        ChaiUtils.setProperty(u, 'fakeProperty', 'value')
+        then: noExceptionThrown()
     }
 
 }

@@ -16,17 +16,9 @@ class PersistentHelper implements SmartApplicationListener {
         BeforeSaveEvent bsEvent = event as BeforeSaveEvent<AbstractEntity>
         def entity = bsEvent?.entity
 
-        if (entity?.hasProperty('uuid')) {
-            ChaiUtils.setPropertyIfNull(entity, 'uuid', UUID.randomUUID().toString())
-        }
-
-        if (entity?.hasProperty('dateCreated')) {
-            ChaiUtils.setPropertyIfNull(entity, 'dateCreated', new Date())
-        }
-
-        if (entity?.hasProperty('lastUpdated')) {
-            entity.setProperty('lastUpdated', new Date())
-        }
+        ChaiUtils.setPropertyIfNull(entity, 'uuid', UUID.randomUUID().toString())
+        ChaiUtils.setPropertyIfNull(entity, 'dateCreated', new Date())
+        ChaiUtils.setProperty(entity, 'lastUpdated', new Date())
     }
 
 
