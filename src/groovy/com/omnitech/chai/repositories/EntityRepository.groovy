@@ -9,6 +9,10 @@ interface ProductRepository extends GraphRepository<Product> {}
 
 interface RoleRepository extends GraphRepository<Role> {}
 
+interface RegionRepository extends GraphRepository<Region> {}
+
+interface DistrictRepository extends GraphRepository<District> {}
+
 interface UserRepository extends GraphRepository<User> {
 
     User findByUsername(String username)
