@@ -61,25 +61,4 @@ class ModelFunctions {
         return object
     }
 
-    static injectUtilityMethods() {
-        String.metaClass.toLongSafe = {
-            def _delegate = delegate
-            return execSilently { Long.valueOf(_delegate) }
-        }
-    }
-
-    static execSilently(String error, Closure code) {
-        try {
-            return code.call()
-        } catch (Exception ex) {
-            log.error(error, ex)
-        }
-        return null
-    }
-
-    static execSilently(Closure code) {
-        execSilently('Unkown Error', code)
-    }
-
-
 }
