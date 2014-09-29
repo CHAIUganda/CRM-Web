@@ -1,7 +1,7 @@
 import com.omnitech.chai.model.RequestMap
 import com.omnitech.chai.model.Role
 import com.omnitech.chai.model.User
-import com.omnitech.chai.util.ChaiUtils
+import com.omnitech.chai.util.ModelFunctions
 import grails.plugin.springsecurity.ReflectionUtils
 
 class BootStrap {
@@ -12,7 +12,7 @@ class BootStrap {
 
     def init = { servletContext ->
 
-        ChaiUtils.injectUtilityMethods()
+        ModelFunctions.injectUtilityMethods()
 
         def numUsers = txHelperService.doInTransaction { neo.count(User.class) }
 

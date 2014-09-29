@@ -3,7 +3,7 @@ package com.omnitech.chai
 import com.omnitech.chai.model.User
 import grails.transaction.Transactional
 
-import static com.omnitech.chai.util.ChaiUtils.extractId
+import static com.omnitech.chai.util.ModelFunctions.extractId
 import static org.springframework.http.HttpStatus.*
 
 /**

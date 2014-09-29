@@ -1,10 +1,10 @@
 package com.omnitech.chai
 
 import com.omnitech.chai.model.Product
-import com.omnitech.chai.util.ChaiUtils
+import com.omnitech.chai.util.ModelFunctions
 import grails.transaction.Transactional
 
-import static com.omnitech.chai.util.ChaiUtils.extractId
+import static ModelFunctions.extractId
 import static org.springframework.http.HttpStatus.*
 
 /**
@@ -38,7 +38,7 @@ class ProductController {
     }
 
     def create() {
-        respond ChaiUtils.bind(new Product(), params)
+        respond ModelFunctions.bind(new Product(), params)
     }
 
     def save(Product productInstance) {

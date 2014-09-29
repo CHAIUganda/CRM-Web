@@ -8,7 +8,7 @@ import com.omnitech.chai.repositories.DeviceRepository
 import com.omnitech.chai.repositories.RequestMapRepository
 import com.omnitech.chai.repositories.RoleRepository
 import com.omnitech.chai.repositories.UserRepository
-import com.omnitech.chai.util.ChaiUtils
+import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.PageUtils
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
@@ -56,20 +56,15 @@ class UserService {
     }
 
     User saveUser(User user) {
-        userRepository.save(user)
+        ModelFunctions.saveEntity(userRepository, user)
     }
 
     Role saveRole(Role role) {
-        def neoRole = role
-        if (role.id) {
-            neoRole = roleRepository.findOne(role.id)
-            ChaiUtils.bind(neoRole, role.properties)
-        }
-        roleRepository.save(neoRole)
+        ModelFunctions.saveEntity(roleRepository, role)
     }
 
     RequestMap saveRequestMap(RequestMap requestMap) {
-        requestMapRepository.save(requestMap)
+        ModelFunctions.saveEntity(requestMapRepository,requestMap)
     }
 
 
@@ -104,7 +99,7 @@ class UserService {
     }
 
     Device saveDevice(Device device) {
-        deviceRepository.save(device)
+        ModelFunctions.saveEntity(deviceRepository,device)
     }
 
     void deleteDevice(Long id) {
@@ -118,7 +113,7 @@ class UserService {
         def neoUser = user.id ? userRepository.findOne(user.id) : user
         def device = deviceId ? deviceRepository.findOne(deviceId) : null
 
-        ChaiUtils.bind(neoUser, user.properties)
+        ModelFunctions.bind(neoUser, user.properties)
         neoUser.roles = roles
         neoUser.device = device
 

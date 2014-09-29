@@ -6,10 +6,10 @@ import spock.lang.Specification
 /**
  * Created by kay on 9/29/14.
  */
-class ChaiUtilsTest extends Specification {
+class ModelFunctionsTest extends Specification {
     def "ExtractId"() {
         expect:
-        ChaiUtils.extractId(params) == rt
+        ModelFunctions.extractId(params) == rt
         where:
         params    | rt
         [id: '3'] | 3
@@ -22,14 +22,14 @@ class ChaiUtilsTest extends Specification {
         when:
         def u = new User(username: 'pass', uuid: 'ppppp')
         def copy = new User(username: 'dsdsd')
-        ChaiUtils.bind(copy, u.properties)
+        ModelFunctions.bind(copy, u.properties)
         then:
         copy.uuid == null
 
         when:
         u = new User(username: 'pass', uuid: 'ppppp')
         copy = new User(username: 'dsdsd')
-        ChaiUtils.bind(copy, u.properties, true)
+        ModelFunctions.bind(copy, u.properties, true)
 
         then:
         copy.uuid == u.uuid
@@ -43,26 +43,26 @@ class ChaiUtilsTest extends Specification {
         u.password == null
 
         when: 'a null property is set'
-        ChaiUtils.setPropertyIfNull(u, 'password', 'pass1')
+        ModelFunctions.setPropertyIfNull(u, 'password', 'pass1')
         then: 'then the value should be reset'
         u.password == 'pass1'
 
         when: 'a not null property is set'
-        ChaiUtils.setPropertyIfNull(u, 'password', 'XXXXX')
+        ModelFunctions.setPropertyIfNull(u, 'password', 'XXXXX')
         then: 'then the value should not change'
         u.password == 'pass1'
 
         when: 'a not null property is sett'
-        ChaiUtils.setProperty(u, 'password', 'XXXX')
+        ModelFunctions.setProperty(u, 'password', 'XXXX')
         then: 'then the value should change'
         u.password == 'XXXX'
 
         when: 'a non existent property is set'
-        ChaiUtils.setPropertyIfNull(u, 'fakeProperty', 'value')
+        ModelFunctions.setPropertyIfNull(u, 'fakeProperty', 'value')
         then: noExceptionThrown()
 
         when: 'a non existent property is set'
-        ChaiUtils.setProperty(u, 'fakeProperty', 'value')
+        ModelFunctions.setProperty(u, 'fakeProperty', 'value')
         then: noExceptionThrown()
     }
 

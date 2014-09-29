@@ -1,9 +1,9 @@
 package com.omnitech.chai
 
 import com.omnitech.chai.model.Role
-import com.omnitech.chai.util.ChaiUtils
+import com.omnitech.chai.util.ModelFunctions
 
-import static com.omnitech.chai.util.ChaiUtils.extractId
+import static ModelFunctions.extractId
 import static org.springframework.http.HttpStatus.*
 
 /**

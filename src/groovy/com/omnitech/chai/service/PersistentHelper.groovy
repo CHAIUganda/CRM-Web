@@ -1,7 +1,7 @@
 package com.omnitech.chai.service
 
 import com.omnitech.chai.model.AbstractEntity
-import com.omnitech.chai.util.ChaiUtils
+import com.omnitech.chai.util.ModelFunctions
 import org.springframework.context.ApplicationEvent
 import org.springframework.context.event.SmartApplicationListener
 import org.springframework.data.neo4j.lifecycle.BeforeSaveEvent
@@ -17,12 +17,12 @@ class PersistentHelper implements SmartApplicationListener {
         def entity = bsEvent?.entity
 
         if (entity.id) {
-            ChaiUtils.setPropertyIfNull(entity, 'uuid', UUID.randomUUID().toString())
+            ModelFunctions.setPropertyIfNull(entity, 'uuid', UUID.randomUUID().toString())
         } else {
-            ChaiUtils.setProperty(entity, 'uuid', UUID.randomUUID().toString())
+            ModelFunctions.setProperty(entity, 'uuid', UUID.randomUUID().toString())
         }
-        ChaiUtils.setPropertyIfNull(entity, 'dateCreated', new Date())
-        ChaiUtils.setProperty(entity, 'lastUpdated', new Date())
+        ModelFunctions.setPropertyIfNull(entity, 'dateCreated', new Date())
+        ModelFunctions.setProperty(entity, 'lastUpdated', new Date())
     }
 
 

@@ -1,10 +1,10 @@
 package com.omnitech.chai
 
 import com.omnitech.chai.model.RequestMap
-import com.omnitech.chai.util.ChaiUtils
+import com.omnitech.chai.util.ModelFunctions
 import grails.transaction.Transactional
 
-import static com.omnitech.chai.util.ChaiUtils.extractId
+import static com.omnitech.chai.util.ModelFunctions.extractId
 import static org.springframework.http.HttpStatus.*
 
 /**
@@ -35,7 +35,7 @@ class RequestMapController {
     }
 
     def create() {
-        respond ChaiUtils.bind(new RequestMap(), params)
+        respond ModelFunctions.bind(new RequestMap(), params)
     }
 
     @Transactional

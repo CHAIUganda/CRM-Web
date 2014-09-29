@@ -1,6 +1,6 @@
 package com.omnitech.chai.model
 
-import com.omnitech.chai.util.ChaiUtils
+import com.omnitech.chai.util.ModelFunctions
 import grails.validation.Validateable
 import org.springframework.data.neo4j.annotation.Fetch
 import org.springframework.data.neo4j.annotation.Indexed
@@ -44,7 +44,7 @@ class User extends AbstractEntity {
     User() {}
 
     User(Map params) {
-        ChaiUtils.bind(this, params)
+        ModelFunctions.bind(this, params)
     }
 
 

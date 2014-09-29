@@ -4,7 +4,7 @@ import com.omnitech.chai.model.District
 import com.omnitech.chai.model.Region
 import com.omnitech.chai.repositories.DistrictRepository
 import com.omnitech.chai.repositories.RegionRepository
-import com.omnitech.chai.util.ChaiUtils
+import com.omnitech.chai.util.ModelFunctions
 import org.springframework.data.neo4j.transaction.Neo4jTransactional
 
 /**
@@ -26,12 +26,7 @@ class RegionService {
     }
 
     District saveDistrict(District district) {
-        def neoObj = district
-        if (district.id) {
-            neoObj = districtRepository.findOne(district.id)
-        }
-        ChaiUtils.bind(neoObj, district.properties)
-        districtRepository.save(neoObj)
+        ModelFunctions.saveEntity(districtRepository, district)
     }
 
     void deleteDistrict(Long id) {
@@ -49,12 +44,7 @@ class RegionService {
     }
 
     Region saveRegion(Region region) {
-        def neoObj = region
-        if (region.id) {
-            neoObj = regionRepository.findOne(region.id)
-            ChaiUtils.bind(neoObj, region.properties)
-        }
-        regionRepository.save(neoObj)
+        ModelFunctions.saveEntity(regionRepository, region)
 
     }
 
