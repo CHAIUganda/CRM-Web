@@ -24,12 +24,6 @@ class DistrictController {
         respond districts, model: [districtInstanceCount: districts.size()]
     }
 
-    def list(Integer max) {
-        params.max = Math.min(max ?: 10, 100)
-        def districts = regionService.listAllDistricts()
-        respond districts, model: [districtInstanceCount: districts.size()]
-    }
-
     def show() {
         def id = extractId(params)
         if (id == -1) {
@@ -39,7 +33,11 @@ class DistrictController {
     }
 
     def create() {
-        respond ModelFunctions.bind(new District(), params), model: [regions: regionService.listAllRegions()]
+        respond ModelFunctions.bind(new District(), params), model: getPageModel()
+    }
+
+    private LinkedHashMap<String, List<Region>> getPageModel() {
+        return [regions: regionService.listAllRegions()]
     }
 
     def save(District districtInstance) {
@@ -48,8 +46,6 @@ class DistrictController {
             notFound()
             return
         }
-
-        bindRegion(districtInstance)
 
         if (districtInstance.hasErrors()) {
             respond districtInstance.errors, view: 'create'
@@ -74,7 +70,7 @@ class DistrictController {
             notFound(); return
         }
         def districtInstance = regionService.findDistrict(id)
-        respond districtInstance, model: [regions: regionService.listAllRegions()]
+        respond districtInstance, model: getPageModel()
     }
 
     @Transactional
@@ -89,12 +85,12 @@ class DistrictController {
             return
         }
 
-        regionService.saveDistrict districtInstance
+        districtInstance = regionService.saveDistrict(districtInstance)
 
         request.withFormat {
             form {
                 flash.message = message(code: 'default.updated.message', args: [message(code: 'District.label', default: 'District'), districtInstance.id])
-                redirect action: 'show', id: districtInstance.id
+                redirect action: 'show', id: districtInstance.id, model: getPageModel()
             }
             '*' { respond districtInstance, [status: OK] }
         }
@@ -120,15 +116,6 @@ class DistrictController {
         }
     }
 
-    Region bindRegion(District district) {
-        def regionId = params.'region.id' as String
-
-        def region = { if (regionId) return regionService.findRegion(regionId.toLongSafe()) }()
-
-        if (!region) district.errors.rejectValue('region', 'Region cannot be Empty')
-
-        region
-    }
 
     protected void notFound() {
         request.withFormat {
