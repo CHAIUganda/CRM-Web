@@ -16,10 +16,10 @@ class ModelFunctions {
 
     private static def log = LogFactory.getLog(ModelFunctions.class)
 
-    static Long extractId(Map params) {
+    static Long extractId(Map params,String idField = 'id') {
         Long id = -1
         try {
-            id = (params.id as Long) ?: -1
+            id = (params[idField] as Long) ?: -1
         } catch (Exception x) {
         }
         return id

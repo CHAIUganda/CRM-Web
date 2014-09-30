@@ -1,5 +1,5 @@
 
-<%@ page import="com.omnitech.mis.District" %>
+<%@ page import="com.omnitech.chai.model.District" %>
 <!DOCTYPE html>
 <html>
 
@@ -15,7 +15,16 @@
 
 	<table class="table">
 		<tbody>
-		
+
+
+            <tr class="prop">
+                <td valign="top" class="name"><g:message code="Region.label" default="Region" /></td>
+
+                <td valign="top" class="value">${fieldValue(bean: districtInstance, field: "region")}</td>
+
+            </tr>
+
+
 			<tr class="prop">
 				<td valign="top" class="name"><g:message code="district.name.label" default="Name" /></td>
 				
@@ -24,32 +33,26 @@
 			</tr>
 		
 			<tr class="prop">
-				<td valign="top" class="name"><g:message code="district.dateCreated.label" default="Date Created" /></td>
+				<td valign="top" class="name"><g:message code="district.uuid.label" default="Uuid" /></td>
 				
-				<td valign="top" class="value"><g:formatDate date="${districtInstance?.dateCreated}" /></td>
-				
-			</tr>
-		
-			<tr class="prop">
-				<td valign="top" class="name"><g:message code="district.lastUpdated.label" default="Last Updated" /></td>
-				
-				<td valign="top" class="value"><g:formatDate date="${districtInstance?.lastUpdated}" /></td>
+				<td valign="top" class="value">${fieldValue(bean: districtInstance, field: "uuid")}</td>
 				
 			</tr>
-		
-			<tr class="prop">
-				<td valign="top" class="name"><g:message code="district.subcounties.label" default="Subcounties" /></td>
-				
-				<td valign="top" style="text-align: left;" class="value">
-					<ul>
-					<g:each in="${districtInstance.subcounties}" var="s">
-						<li><g:link controller="subCounty" action="show" id="${s.id}">${s?.encodeAsHTML()}</g:link></li>
-					</g:each>
-					</ul>
-				</td>
-				
-			</tr>
-		
+
+        <tr class="prop">
+            <td valign="top" class="name"><g:message code="district.dateCreated.label" default="Date Created" /></td>
+
+            <td valign="top" class="value"><g:formatDate date="${districtInstance?.dateCreated}" /></td>
+
+        </tr>
+
+        <tr class="prop">
+            <td valign="top" class="name"><g:message code="district.lastUpdated.label" default="Last Updated" /></td>
+
+            <td valign="top" class="value"><g:formatDate date="${districtInstance?.lastUpdated}" /></td>
+
+        </tr>
+
 		</tbody>
 	</table>
 </section>

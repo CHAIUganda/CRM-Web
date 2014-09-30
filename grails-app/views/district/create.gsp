@@ -1,4 +1,4 @@
-<%@ page import="com.omnitech.mis.District" %>
+<%@ page import="com.omnitech.chai.model.District" %>
 <!DOCTYPE html>
 <html>
 

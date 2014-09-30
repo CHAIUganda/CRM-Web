@@ -1,4 +1,4 @@
-<%@ page import="com.omnitech.mis.District" %>
+<%@ page import="com.omnitech.chai.model.District" %>
 <!DOCTYPE html>
 <html>
 
@@ -20,7 +20,6 @@
 
 		<g:form method="post" class="form-horizontal" role="form" >
 			<g:hiddenField name="id" value="${districtInstance?.id}" />
-			<g:hiddenField name="version" value="${districtInstance?.version}" />
 			<g:hiddenField name="_method" value="PUT" />
 			
 			<g:render template="form"/>
