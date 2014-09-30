@@ -40,6 +40,9 @@
                                     Parishes
                                 </g:link>
                             </li>
+                            <li>
+                                <g:link controller="village" action="index">Village</g:link>
+                            </li>
                         </ul>
                     </li>
                     <li><a href="#">Access Logs</a></li>
