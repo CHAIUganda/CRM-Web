@@ -1,12 +1,6 @@
 package com.omnitech.chai.crm
 
-import com.omnitech.chai.model.District
-import com.omnitech.chai.model.Parish
-import com.omnitech.chai.model.Region
-import com.omnitech.chai.model.SubCounty
-import com.omnitech.chai.repositories.DistrictRepository
-import com.omnitech.chai.repositories.RegionRepository
-import com.omnitech.chai.repositories.SubCountyRepository
+import com.omnitech.chai.model.*
 import com.omnitech.chai.util.ModelFunctions
 import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.transaction.Neo4jTransactional
@@ -17,10 +11,11 @@ import org.springframework.data.neo4j.transaction.Neo4jTransactional
 @Neo4jTransactional
 class RegionService {
 
-    DistrictRepository districtRepository
-    RegionRepository regionRepository
-    SubCountyRepository subCountyRepository
+    def districtRepository
+    def regionRepository
+    def subCountyRepository
     def parishRepository
+    def villageRepository
 
     /* Districts */
 
@@ -66,5 +61,16 @@ class RegionService {
 
     void deleteParish(Long id) { parishRepository.delete(id) }
 
+    /* Village */
+
+    Page<Village> listVillages(Map params) { ModelFunctions.listAll(villageRepository, params) }
+
+    List<Village> listAllVillages() { villageRepository.findAll().collect() }
+
+    Village findVillage(Long id) { villageRepository.findOne(id) }
+
+    Village saveVillage(Village village) { ModelFunctions.saveEntity(villageRepository, village) }
+
+    void deleteVillage(Long id) { villageRepository.delete(id) }
 
 }

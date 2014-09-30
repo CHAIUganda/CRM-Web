@@ -17,6 +17,8 @@ interface SubCountyRepository extends GraphRepository<SubCounty> {}
 
 interface ParishRepository extends GraphRepository<Parish> {}
 
+interface VillageRepository extends GraphRepository<Village> {}
+
 interface UserRepository extends GraphRepository<User> {
 
     User findByUsername(String username)

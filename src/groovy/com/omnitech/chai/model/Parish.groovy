@@ -12,7 +12,7 @@ import org.springframework.data.neo4j.annotation.RelatedTo
  */
 @NodeEntity
 @Validateable
-class Parish extends AbstractEntity{
+class Parish extends AbstractEntity {
 
     @Indexed(unique = true)
     String name
@@ -27,4 +27,6 @@ class Parish extends AbstractEntity{
     static constraints = {
         name blank: false
     }
+
+    String toString() { name }
 }
