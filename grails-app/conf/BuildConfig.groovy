@@ -1,4 +1,4 @@
-grails.servlet.version = "3.0" // Change depending on target container compliance (2.5 or 3.0)
+grails.servlet.version = "2.5" // Change depending on target container compliance (2.5 or 3.0)
 grails.project.class.dir = "target/classes"
 grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
@@ -66,6 +66,8 @@ grails.project.dependency.resolution = {
         compile 'net.sf.ehcache:ehcache:2.8.3'
         compile 'org.apache.httpcomponents:httpcore:4.3'
         compile 'org.apache.httpcomponents:httpclient:4.3'
+//        compile 'org.hibernate:hibernate-validator:4.2.0.Final'
+
 
         test("org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion")
 
