@@ -1,5 +1,5 @@
 
-<%@ page import="com.omnitech.mis.Parish" %>
+<%@ page import="com.omnitech.chai.model.Parish" %>
 <!DOCTYPE html>
 <html>
 
@@ -17,20 +17,6 @@
 		<tbody>
 		
 			<tr class="prop">
-				<td valign="top" class="name"><g:message code="parish.dateCreated.label" default="Date Created" /></td>
-				
-				<td valign="top" class="value"><g:formatDate date="${parishInstance?.dateCreated}" /></td>
-				
-			</tr>
-		
-			<tr class="prop">
-				<td valign="top" class="name"><g:message code="parish.lastUpdated.label" default="Last Updated" /></td>
-				
-				<td valign="top" class="value"><g:formatDate date="${parishInstance?.lastUpdated}" /></td>
-				
-			</tr>
-		
-			<tr class="prop">
 				<td valign="top" class="name"><g:message code="parish.name.label" default="Name" /></td>
 				
 				<td valign="top" class="value">${fieldValue(bean: parishInstance, field: "name")}</td>
@@ -38,9 +24,9 @@
 			</tr>
 		
 			<tr class="prop">
-				<td valign="top" class="name"><g:message code="parish.subcounty.label" default="Subcounty" /></td>
+				<td valign="top" class="name"><g:message code="parish.subCounty.label" default="Sub County" /></td>
 				
-				<td valign="top" class="value"><g:link controller="subCounty" action="show" id="${parishInstance?.subcounty?.id}">${parishInstance?.subcounty?.encodeAsHTML()}</g:link></td>
+				<td valign="top" class="value"><g:link controller="subCounty" action="show" id="${parishInstance?.subCounty?.id}">${parishInstance?.subCounty?.encodeAsHTML()}</g:link></td>
 				
 			</tr>
 		

@@ -1,6 +1,7 @@
 package com.omnitech.chai.crm
 
 import com.omnitech.chai.model.District
+import com.omnitech.chai.model.Parish
 import com.omnitech.chai.model.Region
 import com.omnitech.chai.model.SubCounty
 import com.omnitech.chai.repositories.DistrictRepository
@@ -19,6 +20,7 @@ class RegionService {
     DistrictRepository districtRepository
     RegionRepository regionRepository
     SubCountyRepository subCountyRepository
+    def parishRepository
 
     /* Districts */
 
@@ -44,10 +46,25 @@ class RegionService {
 
     Page<SubCounty> listSubCountys(Map params) { ModelFunctions.listAll(subCountyRepository, params) }
 
+    List<SubCounty> listAllSubCountys() { subCountyRepository.findAll().collect() }
+
     SubCounty findSubCounty(Long id) { subCountyRepository.findOne(id) }
 
     SubCounty saveSubCounty(SubCounty subCounty) { ModelFunctions.saveEntity(subCountyRepository, subCounty) }
 
     void deleteSubCounty(Long id) { subCountyRepository.delete(id) }
+
+    /* Parish */
+
+    Page<Parish> listParishs(Map params) { ModelFunctions.listAll(parishRepository, params) }
+
+    List<Parish> listAllParishs() { parishRepository.findAll().collect() }
+
+    Parish findParish(Long id) { parishRepository.findOne(id) }
+
+    Parish saveParish(Parish parish) { ModelFunctions.saveEntity(parishRepository, parish) }
+
+    void deleteParish(Long id) { parishRepository.delete(id) }
+
 
 }

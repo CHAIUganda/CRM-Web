@@ -21,6 +21,12 @@ class SubCounty extends AbstractEntity {
     @RelatedTo(type = Relations.HAS_PARISH)
     Set<Parish> parishes
 
+    String getDescription() {
+        "$name in $district district "
+    }
+
+    String toString() { name }
+
     static constraints = {
         name blank: false
     }

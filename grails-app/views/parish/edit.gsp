@@ -1,4 +1,4 @@
-<%@ page import="com.omnitech.mis.Parish" %>
+<%@ page import="com.omnitech.chai.model.Parish" %>
 <!DOCTYPE html>
 <html>
 
@@ -20,7 +20,6 @@
 
 		<g:form method="post" class="form-horizontal" role="form" >
 			<g:hiddenField name="id" value="${parishInstance?.id}" />
-			<g:hiddenField name="version" value="${parishInstance?.version}" />
 			<g:hiddenField name="_method" value="PUT" />
 			
 			<g:render template="form"/>

@@ -1,4 +1,4 @@
-<%@ page import="com.omnitech.mis.Parish" %>
+<%@ page import="com.omnitech.chai.model.Parish" %>
 <!DOCTYPE html>
 <html>
 
