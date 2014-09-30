@@ -13,6 +13,8 @@ interface RegionRepository extends GraphRepository<Region> {}
 
 interface DistrictRepository extends GraphRepository<District> {}
 
+interface SubCountyRepository extends GraphRepository<SubCounty> {}
+
 interface UserRepository extends GraphRepository<User> {
 
     User findByUsername(String username)

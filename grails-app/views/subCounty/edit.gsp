@@ -1,4 +1,4 @@
-<%@ page import="com.omnitech.mis.SubCounty" %>
+<%@ page import="com.omnitech.chai.model.SubCounty" %>
 <!DOCTYPE html>
 <html>
 
@@ -20,7 +20,6 @@
 
 		<g:form method="post" class="form-horizontal" role="form" >
 			<g:hiddenField name="id" value="${subCountyInstance?.id}" />
-			<g:hiddenField name="version" value="${subCountyInstance?.version}" />
 			<g:hiddenField name="_method" value="PUT" />
 			
 			<g:render template="form"/>

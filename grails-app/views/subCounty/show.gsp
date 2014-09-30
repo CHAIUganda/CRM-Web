@@ -1,5 +1,5 @@
 
-<%@ page import="com.omnitech.mis.SubCounty" %>
+<%@ page import="com.omnitech.chai.model.SubCounty" %>
 <!DOCTYPE html>
 <html>
 
@@ -26,7 +26,7 @@
 			<tr class="prop">
 				<td valign="top" class="name"><g:message code="subCounty.district.label" default="District" /></td>
 				
-				<td valign="top" class="value"><g:link controller="district" action="show" id="${subCountyInstance?.district?.id}">${subCountyInstance?.district?.encodeAsHTML()}</g:link></td>
+				<td valign="top" class="value">${fieldValue(bean: subCountyInstance, field: "district")}</td>
 				
 			</tr>
 		
@@ -45,15 +45,9 @@
 			</tr>
 		
 			<tr class="prop">
-				<td valign="top" class="name"><g:message code="subCounty.parishes.label" default="Parishes" /></td>
+				<td valign="top" class="name"><g:message code="subCounty.uuid.label" default="Uuid" /></td>
 				
-				<td valign="top" style="text-align: left;" class="value">
-					<ul>
-					<g:each in="${subCountyInstance.parishes}" var="p">
-						<li><g:link controller="parish" action="show" id="${p.id}">${p?.encodeAsHTML()}</g:link></li>
-					</g:each>
-					</ul>
-				</td>
+				<td valign="top" class="value">${fieldValue(bean: subCountyInstance, field: "uuid")}</td>
 				
 			</tr>
 		
