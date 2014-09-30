@@ -22,56 +22,32 @@ class RegionService {
 
     /* Districts */
 
-    List<District> listAllDistricts() {
-        districtRepository.findAll().collect()
-    }
+    List<District> listAllDistricts() { districtRepository.findAll().collect() }
 
-    District findDistrict(Long id) {
-        districtRepository.findOne(id)
-    }
+    District findDistrict(Long id) { districtRepository.findOne(id) }
 
-    District saveDistrict(District district) {
-        ModelFunctions.saveEntity(districtRepository, district)
-    }
+    District saveDistrict(District district) { ModelFunctions.saveEntity(districtRepository, district) }
 
-    void deleteDistrict(Long id) {
-        districtRepository.delete(id)
-    }
+    void deleteDistrict(Long id) { districtRepository.delete(id) }
 
     /*  Regions */
 
-    List<Region> listAllRegions() {
-        regionRepository.findAll().collect()
-    }
+    List<Region> listAllRegions() { regionRepository.findAll().collect() }
 
-    Region findRegion(Long id) {
-        regionRepository.findOne(id)
-    }
+    Region findRegion(Long id) { regionRepository.findOne(id) }
 
-    Region saveRegion(Region region) {
-        ModelFunctions.saveEntity(regionRepository, region)
-    }
+    Region saveRegion(Region region) { ModelFunctions.saveEntity(regionRepository, region) }
 
-    void deleteRegion(Long id) {
-        regionRepository.delete(id)
-    }
+    void deleteRegion(Long id) { regionRepository.delete(id) }
 
     /* SubCounty */
 
-    Page<SubCounty> listSubCountys(Map params) {
-        ModelFunctions.listAll(subCountyRepository, params)
-    }
+    Page<SubCounty> listSubCountys(Map params) { ModelFunctions.listAll(subCountyRepository, params) }
 
-    SubCounty findSubCounty(Long id) {
-        subCountyRepository.findOne(id)
-    }
+    SubCounty findSubCounty(Long id) { subCountyRepository.findOne(id) }
 
-    SubCounty saveSubCounty(SubCounty subCounty) {
-        ModelFunctions.saveEntity(subCountyRepository, subCounty)
-    }
+    SubCounty saveSubCounty(SubCounty subCounty) { ModelFunctions.saveEntity(subCountyRepository, subCounty) }
 
-    void deleteSubCounty(Long id) {
-        subCountyRepository.delete(id)
-    }
+    void deleteSubCounty(Long id) { subCountyRepository.delete(id) }
 
 }
