@@ -17,7 +17,7 @@ public class Customer extends AbstractEntity {
     Float lng
 
     @Indexed(indexType = IndexType.POINT, indexName = 'CUSTOMER_LOCATION')
-    String latLng
+    String wkt
 
     String outletName,
            outletType,
@@ -35,7 +35,8 @@ public class Customer extends AbstractEntity {
     Integer numberOfEmployees,
             numberOfBranches,
             numberOfCustomersPerDay,
-            numberOfProducts
+            numberOfProducts,
+            restockFrequency
 
     Double turnOver
 
@@ -62,11 +63,12 @@ public class Customer extends AbstractEntity {
         tenureEndDate               nullable: false
         tenureStartDate             nullable: false
         descriptionOfOutletLocation blank: false
+        restockFrequency            nullable: false , min : 1
     }
 
 
     void generateLatLng() {
-        latLng = String.format("POINT(%.6f %.6f)", lng, lat)
+        wkt = String.format("POINT(%.6f %.6f)", lng, lat)
     }
 
     void createWkt() {
@@ -76,7 +78,10 @@ public class Customer extends AbstractEntity {
     public void setLocation(float lng, float lat) {
         this.lat = lat
         this.lng = lng
-        this.latLng = String.format("POINT( %.6f %.6f )", lng, lat);
+        this.wkt = String.format("POINT( %.6f %.6f )", lng, lat);
     }
+
+
+    def beforeSave(){generateLatLng()}
 
 }

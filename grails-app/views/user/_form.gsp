@@ -22,7 +22,9 @@
 			<div class="${hasErrors(bean: userInstance, field: 'accountExpired', 'error')} ">
 				<label for="accountExpired" class="control-label"><g:message code="user.accountExpired.label" default="Account Expired" /></label>
 				<div>
-					<bs:checkBox name="accountExpired" value="${userInstance?.accountExpired}" />
+					<bs:checkBox name="accountExpired" value="${userInstance?.accountExpired}" data-off-class="btn-warning" data-on-class="btn-primary"
+                      onLabel="Yes" offLabel="No"
+                    />
 					<span class="help-inline">${hasErrors(bean: userInstance, field: 'accountExpired', 'error')}</span>
 				</div>
 			</div>
@@ -30,7 +32,8 @@
 			<div class="${hasErrors(bean: userInstance, field: 'accountLocked', 'error')} ">
 				<label for="accountLocked" class="control-label"><g:message code="user.accountLocked.label" default="Account Locked" /></label>
 				<div>
-					<bs:checkBox name="accountLocked" value="${userInstance?.accountLocked}" />
+					<bs:checkBox name="accountLocked" value="${userInstance?.accountLocked}" data-off-class="btn-warning" data-on-class="btn-primary"
+                                 onLabel="Yes" offLabel="No"/>
 					<span class="help-inline">${hasErrors(bean: userInstance, field: 'accountLocked', 'error')}</span>
 				</div>
 			</div>
@@ -38,7 +41,8 @@
 			<div class="${hasErrors(bean: userInstance, field: 'enabled', 'error')} ">
 				<label for="enabled" class="control-label"><g:message code="user.enabled.label" default="Enabled" /></label>
 				<div>
-					<bs:checkBox name="enabled" value="${userInstance?.enabled}" />
+					<bs:checkBox name="enabled" value="${userInstance?.enabled}" data-off-class="btn-warning" data-on-class="btn-primary"
+                                 onLabel="Yes" offLabel="No"/>
 					<span class="help-inline">${hasErrors(bean: userInstance, field: 'enabled', 'error')}</span>
 				</div>
 			</div>
@@ -46,7 +50,8 @@
 			<div class="${hasErrors(bean: userInstance, field: 'passwordExpired', 'error')} ">
 				<label for="passwordExpired" class="control-label"><g:message code="user.passwordExpired.label" default="Password Expired" /></label>
 				<div>
-					<bs:checkBox name="passwordExpired" value="${userInstance?.passwordExpired}" />
+					<bs:checkBox name="passwordExpired" value="${userInstance?.passwordExpired}" data-off-class="btn-warning" data-on-class="btn-primary"
+                                 onLabel="Yes" offLabel="No"/>
 					<span class="help-inline">${hasErrors(bean: userInstance, field: 'passwordExpired', 'error')}</span>
 				</div>
 			</div>

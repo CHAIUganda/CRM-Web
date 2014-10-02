@@ -23,6 +23,9 @@ class PersistentHelper implements SmartApplicationListener {
         }
         ModelFunctions.setPropertyIfNull(entity, 'dateCreated', new Date())
         ModelFunctions.setProperty(entity, 'lastUpdated', new Date())
+
+        if (entity.respondsTo('beforeSave')) entity.'beforeSave'()
+
     }
 
 

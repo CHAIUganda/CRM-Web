@@ -75,7 +75,7 @@
 			<tr class="prop">
 				<td valign="top" class="name"><g:message code="customer.latLng.label" default="Lat Lng" /></td>
 				
-				<td valign="top" class="value">${fieldValue(bean: customerInstance, field: "latLng")}</td>
+				<td valign="top" class="value">${fieldValue(bean: customerInstance, field: "wkt")}</td>
 				
 			</tr>
 		
