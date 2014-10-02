@@ -1,5 +1,6 @@
 package com.omnitech.chai.model
 
+import org.neo4j.graphdb.Direction
 import org.springframework.data.neo4j.annotation.NodeEntity
 import org.springframework.data.neo4j.annotation.RelatedTo
 
@@ -24,6 +25,6 @@ class Interaction extends AbstractEntity {
     @RelatedTo(type = 'HAS_ORDER')
     Order order
 
-    @RelatedTo(type = 'HAS_CUSTOMER')
+    @RelatedTo(type = Relations.HAS_INTERACTION,direction = Direction.INCOMING)
     Customer customer
 }

@@ -47,6 +47,7 @@ grails.project.dependency.resolution = {
         //mavenRepo "http://download.java.net/maven/2/"
         //mavenRepo "http://repository.jboss.com/maven2/"
         mavenRepo "http://repo.spring.io/milestone/"
+        mavenRepo "https://raw.github.com/neo4j-contrib/m2/master/releases"
     }
 
     def gebVersion = "0.9.3"
@@ -57,6 +58,7 @@ grails.project.dependency.resolution = {
         compile 'org.springframework.data:spring-data-neo4j:3.1.4.RELEASE'
         compile 'org.springframework.data:spring-data-neo4j-tx:3.1.4.RELEASE'
         compile 'javax.validation:validation-api:1.1.0.Final'
+        compile 'org.neo4j:neo4j-spatial:0.13-neo4j-2.1.2'
 
         compile('org.neo4j.app:neo4j-server:2.1.2') {
             excludes 'org.slf4j:slf4j-jdk14'
