@@ -6,6 +6,10 @@
 	<meta name="layout" content="kickstart" />
 	<g:set var="entityName" value="${message(code: 'customer.label', default: 'Customer')}" />
 	<title><g:message code="default.create.label" args="[entityName]" /></title>
+    <g:javascript>
+        customerContacts = [];
+    </g:javascript>
+    <g:javascript src="controllers/CustomContactCtrl.js"/>
 </head>
 
 <body>

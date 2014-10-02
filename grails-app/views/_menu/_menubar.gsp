@@ -17,6 +17,9 @@
             %{--    PRODUCTS    --}%
             <li><g:link controller="product" action="index">Products</g:link></li>
 
+            %{--    CUSTOMERS   --}%
+            <li><g:link controller="customer" action="index">Customers</g:link></li>
+
 
             %{--    SETTINGS    --}%
             <li class="dropdown">

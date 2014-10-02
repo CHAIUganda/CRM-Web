@@ -6,6 +6,11 @@
 	<meta name="layout" content="kickstart" />
 	<g:set var="entityName" value="${message(code: 'customer.label', default: 'Customer')}" />
 	<title><g:message code="default.edit.label" args="[entityName]" /></title>
+    <g:javascript>
+        customerContacts = [];
+    </g:javascript>
+    <g:javascript src="controllers/CustomContactCtrl.js"/>
+    <r:require modules="angular"/>
 </head>
 
 <body>
@@ -18,7 +23,7 @@
 		</div>
 		</g:hasErrors>
 
-		<g:form method="post" class="form-horizontal" role="form" >
+		<g:form method="post" class="form-horizontal" role="form" ng-controller="CustomContactCtrl">
 			<g:hiddenField name="id" value="${customerInstance?.id}" />
 			<g:hiddenField name="_method" value="PUT" />
 			
