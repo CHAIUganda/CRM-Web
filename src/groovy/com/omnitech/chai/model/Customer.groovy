@@ -76,10 +76,6 @@ public class Customer extends AbstractEntity {
     }
 
 
-    void generateLatLng() {
-        wkt = String.format("POINT(%.6f %.6f)", lng, lat)
-    }
-
     void createWkt() {
         setLocation(lng, lat)
     }
@@ -90,15 +86,18 @@ public class Customer extends AbstractEntity {
         return tCustomerContacts
     }
 
-    public void setLocation(float lng, float lat) {
+    public void setLocation(Float lng, Float lat) {
         this.lat = lat
         this.lng = lng
-        this.wkt = String.format("POINT( %.6f %.6f )", lng, lat);
+        if (lat && lng)
+            this.wkt = String.format("POINT( %.6f %.6f )", lng, lat);
+        else
+            this.wkt = null
     }
 
 
     def beforeSave() {
-        generateLatLng()
+        createWkt()
         if (tCustomerContacts)
             customerContacts = new HashSet<>(tCustomerContacts)
     }
