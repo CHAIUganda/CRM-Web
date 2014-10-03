@@ -82,6 +82,9 @@ class CustomerController {
             return
         }
 
+        //reset the set just in case there are some contacts were deleted
+        customerInstance.customerContacts = new HashSet<>()
+
         customerService.saveCustomer customerInstance
 
         request.withFormat {
