@@ -188,6 +188,10 @@
 	</table>
 </section>
 
+<section>
+<g:render template="contactDetail"/>
+</section>
+
 </body>
 
 </html>
