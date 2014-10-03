@@ -18,9 +18,6 @@ class CustomerContact extends AbstractEntity {
     String networkOrAssociation
     Integer graduationYear
 
-    @RelatedTo(type = Relations.HAS_CONTACT,direction = Direction.INCOMING)
-    CustomerContact customerContact
-
     static constraints = {
         name            blank: false
         contact         blank: false

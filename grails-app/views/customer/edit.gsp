@@ -7,10 +7,8 @@
 	<g:set var="entityName" value="${message(code: 'customer.label', default: 'Customer')}" />
 	<title><g:message code="default.edit.label" args="[entityName]" /></title>
     <g:javascript>
-        customerContacts = [];
+        customerContacts = ${raw(jsonContacts)};
     </g:javascript>
-    <g:javascript src="controllers/CustomContactCtrl.js"/>
-    <r:require modules="angular"/>
 </head>
 
 <body>
@@ -36,7 +34,8 @@
 		</g:form>
 
 	</section>
-
+<g:javascript src="controllers/CustomContactCtrl.js"/>
+<r:require modules="angular"/>
 </body>
 
 </html>

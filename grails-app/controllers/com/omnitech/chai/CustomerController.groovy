@@ -1,7 +1,9 @@
 package com.omnitech.chai
 
 import com.omnitech.chai.model.Customer
+import com.omnitech.chai.model.CustomerContact
 import com.omnitech.chai.util.ModelFunctions
+import grails.converters.JSON
 import grails.transaction.Transactional
 
 import static com.omnitech.chai.util.ModelFunctions.extractId
@@ -23,11 +25,6 @@ class CustomerController {
         respond page.content, model: [customerInstanceCount: page.totalElements]
     }
 
-    def list(Integer max) {
-        params.max = Math.min(max ?: 10, 100)
-        def page = customerService.listCustomers(params)
-        respond page.content, model: [customerInstanceCount: page.totalElements]
-    }
 
     def show() {
         def id = extractId(params)
@@ -38,7 +35,8 @@ class CustomerController {
     }
 
     def create() {
-        respond ModelFunctions.bind(new Customer(), params)
+        def customer = new Customer()
+        respond ModelFunctions.bind(customer, params), model: getPageModel(customer.copyToContacts2LazyList())
     }
 
     def save(Customer customerInstance) {
@@ -48,7 +46,7 @@ class CustomerController {
         }
 
         if (customerInstance.hasErrors()) {
-            respond customerInstance.errors, view: 'create'
+            respond customerInstance.errors, view: 'create', model: getPageModel(customerInstance.copyToContacts2LazyList())
             return
         }
 
@@ -70,10 +68,9 @@ class CustomerController {
             notFound(); return
         }
         def customerInstance = customerService.findCustomer(id)
-        respond customerInstance
+        respond customerInstance, model: getPageModel(customerInstance.copyToContacts2LazyList())
     }
 
-    @Transactional
     def update(Customer customerInstance) {
         if (customerInstance == null) {
             notFound()
@@ -81,7 +78,7 @@ class CustomerController {
         }
 
         if (customerInstance.hasErrors()) {
-            respond customerInstance.errors, view: 'edit'
+            respond customerInstance.errors, view: 'edit', model: getPageModel(customerInstance.copyToContacts2LazyList())
             return
         }
 
@@ -124,5 +121,11 @@ class CustomerController {
             }
             '*' { render status: NOT_FOUND }
         }
+    }
+
+    private static Map getPageModel(List<CustomerContact> contacts) {
+        if (contacts)
+            return [jsonContacts: (contacts as JSON).toString(true) ]
+        return [jsonContacts: '[]']
     }
 }

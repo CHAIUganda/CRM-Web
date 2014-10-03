@@ -1,6 +1,10 @@
 package com.omnitech.chai.model
 
 import grails.validation.Validateable
+import org.apache.commons.collections.FactoryUtils
+import org.apache.commons.collections.list.LazyList
+import org.springframework.data.annotation.Transient
+import org.springframework.data.neo4j.annotation.Fetch
 import org.springframework.data.neo4j.annotation.Indexed
 import org.springframework.data.neo4j.annotation.NodeEntity
 import org.springframework.data.neo4j.annotation.RelatedTo
@@ -43,8 +47,13 @@ public class Customer extends AbstractEntity {
     Date tenureStartDate
     Date tenureEndDate
 
+    @Fetch
     @RelatedTo(type = Relations.HAS_CONTACT)
-    List<CustomerContact> customerContacts
+    Set<CustomerContact> customerContacts
+
+    //this is mainly used for automatic data bindingg of dynamic contacts
+    @Transient
+    List<CustomerContact> tCustomerContacts = LazyList.decorate([], FactoryUtils.constantFactory(CustomerContact))
 
 
     static constraints = {
@@ -75,6 +84,12 @@ public class Customer extends AbstractEntity {
         setLocation(lng, lat)
     }
 
+    List<CustomerContact> copyToContacts2LazyList() {
+        if (customerContacts)
+            tCustomerContacts.addAll(customerContacts)
+        return tCustomerContacts
+    }
+
     public void setLocation(float lng, float lat) {
         this.lat = lat
         this.lng = lng
@@ -82,6 +97,10 @@ public class Customer extends AbstractEntity {
     }
 
 
-    def beforeSave(){generateLatLng()}
+    def beforeSave() {
+        generateLatLng()
+        if (tCustomerContacts)
+            customerContacts = new HashSet<>(tCustomerContacts)
+    }
 
 }

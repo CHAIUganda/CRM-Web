@@ -7,9 +7,10 @@
 	<g:set var="entityName" value="${message(code: 'customer.label', default: 'Customer')}" />
 	<title><g:message code="default.create.label" args="[entityName]" /></title>
     <g:javascript>
-        customerContacts = [];
+        customerContacts = ${raw(jsonContacts)};
     </g:javascript>
     <g:javascript src="controllers/CustomContactCtrl.js"/>
+    <r:require modules="angular"/>
 </head>
 
 <body>
@@ -22,7 +23,7 @@
 		</div>
 		</g:hasErrors>
 
-		<g:form action="save" class="form-horizontal" role="form" >
+		<g:form action="save" class="form-horizontal" role="form" ng-controller="CustomContactCtrl" >
 			<g:render template="form"/>
 
 			<div class="form-actions margin-top-medium">
