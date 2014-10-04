@@ -51,7 +51,7 @@ public class Customer extends AbstractEntity {
     @RelatedTo(type = Relations.HAS_CONTACT)
     Set<CustomerContact> customerContacts
 
-    //this is mainly used for automatic data bindingg of dynamic contacts
+    //this is mainly used for automatic data binding of dynamic contacts
     @Transient
     List<CustomerContact> tCustomerContacts = LazyList.decorate([], FactoryUtils.constantFactory(CustomerContact))
 
