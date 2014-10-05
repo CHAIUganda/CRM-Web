@@ -6,9 +6,6 @@
 	<meta name="layout" content="kickstart" />
 	<g:set var="entityName" value="${message(code: 'customer.label', default: 'Customer')}" />
 	<title><g:message code="default.edit.label" args="[entityName]" /></title>
-    <g:javascript>
-        customerContacts = ${raw(jsonContacts)};
-    </g:javascript>
 </head>
 
 <body>
@@ -34,8 +31,12 @@
 		</g:form>
 
 	</section>
+<r:require modules="angular,chosen"/>
+<g:javascript>
+        $(".chzn-select").chosen({enable_split_word_search:true});
+        customerContacts = ${raw(jsonContacts)};
+</g:javascript>
 <g:javascript src="controllers/CustomContactCtrl.js"/>
-<r:require modules="angular"/>
 </body>
 
 </html>

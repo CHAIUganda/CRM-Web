@@ -18,6 +18,7 @@ class CustomerController {
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
     def customerService
+    def regionService
 
     def index(Integer max) {
         params.max = Math.min(max ?: 10, 100)
@@ -126,9 +127,11 @@ class CustomerController {
         }
     }
 
-    private static Map getPageModel(List<CustomerContact> contacts) {
+    private Map getPageModel(List<CustomerContact> contacts) {
+        def subCountys = regionService.listAllSubCountys()
+        subCountys = subCountys.sort {it.description}
         if (contacts)
-            return [jsonContacts: (contacts as JSON).toString(true) ]
-        return [jsonContacts: '[]']
+            return [jsonContacts: (contacts as JSON).toString(true), subCounties: subCountys]
+        return [jsonContacts: '[]', subCounties: subCountys]
     }
 }

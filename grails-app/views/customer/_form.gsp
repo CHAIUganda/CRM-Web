@@ -7,6 +7,21 @@
 <div class="panel-body">
 
 <div class="col-md-6">
+
+    <div class="${hasErrors(bean: customerInstance, field: 'subCounty', 'alert-danger')} ">
+        <label for="subCounty.id" class="control-label"><g:message code="SubCounty.label"
+                                                                   default="Select Subcounty In District"/></label>
+
+        <div>
+            <g:select class='form-control chzn-select' name="subCounty.id"
+                      optionKey="id"
+                      optionValue="description"
+                      from="${subCounties}"
+                      value="${customerInstance?.subCounty?.id}"/>
+            <span class="help-inline alert-danger">${hasErrors(bean: customerInstance, field: 'subCounty', 'error')}</span>
+        </div>
+    </div>
+
     <div class="${hasErrors(bean: customerInstance, field: 'outletName', 'error')} ">
         <label for="outletName" class="control-label"><g:message code="customer.outletName.label"
                                                                  default="Outlet Name"/></label>

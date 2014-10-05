@@ -22,7 +22,7 @@ class SubCounty extends AbstractEntity {
     Set<Parish> parishes
 
     String getDescription() {
-        "$name in $district district "
+        "$district:$name"
     }
 
     String toString() { name }

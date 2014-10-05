@@ -51,6 +51,10 @@ public class Customer extends AbstractEntity {
     @RelatedTo(type = Relations.HAS_CONTACT)
     Set<CustomerContact> customerContacts
 
+    @Fetch
+    @RelatedTo(type = Relations.BELONGS_TO_SC)
+    SubCounty subCounty
+
     //this is mainly used for automatic data binding of dynamic contacts
     @Transient
     List<CustomerContact> tCustomerContacts = LazyList.decorate([], FactoryUtils.constantFactory(CustomerContact))
@@ -73,6 +77,7 @@ public class Customer extends AbstractEntity {
         tenureStartDate             nullable: false
         descriptionOfOutletLocation blank: false
         restockFrequency            nullable: false , min : 1
+        subCounty                   nullable: false
     }
 
 
