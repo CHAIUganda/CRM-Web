@@ -1,6 +1,5 @@
 package com.omnitech.chai.util
 
-
 import com.omnitech.chai.model.AbstractEntity
 import org.apache.commons.logging.LogFactory
 import org.grails.databinding.SimpleDataBinder
@@ -15,6 +14,7 @@ import org.springframework.data.neo4j.repository.GraphRepository
 class ModelFunctions {
 
     private static def log = LogFactory.getLog(ModelFunctions.class)
+
 
     static Long extractId(Map params,String idField = 'id') {
         Long id = -1
@@ -49,10 +49,18 @@ class ModelFunctions {
     }
 
     static <T extends AbstractEntity> T saveEntity(GraphRepository<T> repo, T entity) {
+        saveEntity(repo, entity, null)
+    }
+
+    static <T extends AbstractEntity> T saveEntity(GraphRepository<T> repo, T entity, Closure beforeBind) {
         def neoEntity = entity
         if (entity.id) {
-            neoEntity = repo.findOne(entity.id)
-            bind(neoEntity, entity.properties)
+            def tempNeoEntity = repo.findOne(entity.id)
+            if (tempNeoEntity) {
+                beforeBind?.call(tempNeoEntity)
+                neoEntity = tempNeoEntity
+                bind(neoEntity, entity.properties)
+            }
         }
         repo.save(neoEntity)
     }

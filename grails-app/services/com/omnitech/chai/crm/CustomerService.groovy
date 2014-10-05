@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page
 class CustomerService {
 
     def customerRepository
+    def customerContactRepository
 
     /* Customers */
 
@@ -19,7 +20,11 @@ class CustomerService {
 
     Customer findCustomer(Long id) { customerRepository.findOne(id) }
 
-    Customer saveCustomer(Customer customer) { ModelFunctions.saveEntity(customerRepository, customer) }
+    Customer saveCustomer(Customer customer) {
+        ModelFunctions.saveEntity(customerRepository, customer) { Customer cust ->
+            cust.customerContacts?.each { customerContactRepository.delete(it) }
+        }
+    }
 
     void deleteCustomer(Long id) { customerRepository.delete(id) }
 }

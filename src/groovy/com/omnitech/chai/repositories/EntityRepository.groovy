@@ -21,6 +21,8 @@ interface VillageRepository extends GraphRepository<Village> {}
 
 interface CustomerRepository extends GraphRepository<Customer> {}
 
+interface CustomerContactRepository extends GraphRepository<CustomerContact> {}
+
 interface UserRepository extends GraphRepository<User> {
 
     User findByUsername(String username)
