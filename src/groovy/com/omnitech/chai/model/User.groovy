@@ -33,10 +33,7 @@ class User extends AbstractEntity {
     @Fetch
     Set<Role> roles
 
-
-    @RelatedTo(type = 'HAS_INTERACTION')
-    Set<Interaction> tasks
-
+    @Fetch
     @RelatedTo(type = 'HAS_DEVICE')
     Device device
 

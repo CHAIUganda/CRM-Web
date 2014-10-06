@@ -19,6 +19,8 @@
 			
 				<g:sortableColumn property="username" title="${message(code: 'user.username.label', default: 'Username')}" />
 
+                <th> ${message(code: 'Device.label', default: 'Device')}</th>
+
 				<g:sortableColumn property="accountExpired" title="${message(code: 'user.accountExpired.label', default: 'Account Expired')}" />
 			
 				<g:sortableColumn property="accountLocked" title="${message(code: 'user.accountLocked.label', default: 'Account Locked')}" />
@@ -34,6 +36,8 @@
 			<tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
 			
 				<td><g:link action="show" id="${userInstance.id}">${fieldValue(bean: userInstance, field: "username")}</g:link></td>
+
+                <td>${fieldValue(bean: userInstance, field: "device")}</td>
 
 				<td><g:formatBoolean boolean="${userInstance.accountExpired}" /></td>
 			

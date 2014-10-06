@@ -24,12 +24,11 @@
 			</tr>
 		
 			<tr class="prop">
-				<td valign="top" class="name"><g:message code="user.password.label" default="Password" /></td>
+				<td valign="top" class="name"><g:message code="Device.label" default="Device"/> </td>
 				
-				<td valign="top" class="value">${fieldValue(bean: userInstance, field: "password")}</td>
-				
+				<td valign="top" class="value">${fieldValue(bean: userInstance, field: "device")}</td>
 			</tr>
-		
+
 			<tr class="prop">
 				<td valign="top" class="name"><g:message code="user.accountExpired.label" default="Account Expired" /></td>
 				
@@ -71,7 +70,7 @@
 				<td valign="top" class="value"><g:formatBoolean boolean="${userInstance?.passwordExpired}" /></td>
 				
 			</tr>
-		
+
 		</tbody>
 	</table>
 </section>

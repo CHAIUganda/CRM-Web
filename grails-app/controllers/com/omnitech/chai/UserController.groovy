@@ -22,12 +22,6 @@ class UserController {
         respond page.content, model: [userInstanceCount: page.totalElements]
     }
 
-    def list(Integer max) {
-        params.max = Math.min(max ?: 10, 100)
-        def page = userService.list(params)
-        respond page.content, model: [userInstanceCount: page.totalElements]
-    }
-
     def show() {
         long id = extractId(params)
         if (!id == -1) {
