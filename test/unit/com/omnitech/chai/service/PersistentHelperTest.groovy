@@ -39,7 +39,7 @@ class PersistentHelperTest extends Specification {
         u.id = null
         u.uuid = 'xxxxx'
         pHelper.onApplicationEvent(bse)
-        then: 'uuid should be set. uuids should be set by only our sytem'
+        then: 'uuid should be set. uuids should be set by only our system'
         u.uuid.count('-') == 4
 
         when: 'id is set and uuid is null'
