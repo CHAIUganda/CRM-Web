@@ -69,31 +69,6 @@ class ModelFunctionsTest extends Specification {
     }
 
 
-    def 'test get Assoc arrow'() {
 
-        def field = ReflectFunctions.findAllFields(Customer).find { it.type == SubCounty }
-
-        when:
-        def arrow = ModelFunctions.getAssocArrow(field)
-
-        then:
-        arrow == '-->'
-
-        when:
-        field = ReflectFunctions.findAllFields(District).find { it.type == Region }
-        arrow = ModelFunctions.getAssocArrow(field)
-
-        then:
-        arrow == '<--'
-    }
-
-    def 'test generation'() {
-        when:
-        def query = ModelFunctions.getMatchStatement2(Customer)
-
-        then:
-        notThrown(Exception)
-        println query
-    }
 
 }
