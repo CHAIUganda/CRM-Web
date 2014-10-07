@@ -1,6 +1,8 @@
 package com.omnitech.chai.util
 
 import org.springframework.data.annotation.Transient
+import org.springframework.data.neo4j.annotation.NodeEntity
+import org.springframework.validation.Errors
 
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
@@ -28,7 +30,8 @@ class ReflectFunctions {
             !Modifier.isStatic(it.modifiers) &&
                     !Modifier.isTransient(it.modifiers) &&
                     !Collection.isAssignableFrom(it.type) &&
-                    !it.isAnnotationPresent(Transient)
+                    !it.isAnnotationPresent(Transient) &&
+                    !Errors.isAssignableFrom(it.type)
         }
     }
 
@@ -39,5 +42,9 @@ class ReflectFunctions {
             classes << aClass
         }
         return classes
+    }
+
+    static List<Field> findNodeFields(Class aClass) {
+        findAllPersistentFields(aClass).findAll { it.type.isAnnotationPresent(NodeEntity) }
     }
 }

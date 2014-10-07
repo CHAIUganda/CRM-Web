@@ -27,13 +27,23 @@ class ReflectFunctionsTest extends Specification {
         rs*.name == ['description', 'foo', 'name', 'id']
     }
 
-    def 'test find annotation on concrete class'() {
+    def 'test get class hierachy'() {
         when:
-        def cc = ReflectFunctions.findConcreteClassWithAnnotaion(FooBar,NodeEntity)
+        def h = ReflectFunctions.getClassHierarchy(FooBar)
 
         then:
-        cc == Foo
+        h.size() == 2
+        h*.simpleName == ['FooBar', 'Foo']
+
+        when:
+        h = ReflectFunctions.getClassHierarchy(Foo)
+
+        then:
+        h.size() == 1
+        h*.simpleName == ['Foo']
     }
+
+
 }
 
 @NodeEntity

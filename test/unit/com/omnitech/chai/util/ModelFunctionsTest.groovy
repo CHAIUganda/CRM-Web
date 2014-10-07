@@ -1,7 +1,9 @@
 package com.omnitech.chai.util
 
-import com.omnitech.chai.model.User
+import com.omnitech.chai.model.*
 import spock.lang.Specification
+
+import static com.omnitech.chai.util.ModelFunctions.getSearchQuery
 
 /**
  * Created by kay on 9/29/14.
@@ -64,6 +66,34 @@ class ModelFunctionsTest extends Specification {
         when: 'a non existent property is set'
         ModelFunctions.setProperty(u, 'fakeProperty', 'value')
         then: noExceptionThrown()
+    }
+
+
+    def 'test get Assoc arrow'() {
+
+        def field = ReflectFunctions.findAllFields(Customer).find { it.type == SubCounty }
+
+        when:
+        def arrow = ModelFunctions.getAssocArrow(field)
+
+        then:
+        arrow == '-->'
+
+        when:
+        field = ReflectFunctions.findAllFields(District).find { it.type == Region }
+        arrow = ModelFunctions.getAssocArrow(field)
+
+        then:
+        arrow == '<--'
+    }
+
+    def 'test generation'() {
+        when:
+        def query = ModelFunctions.getMatchStatement2(Customer)
+
+        then:
+        notThrown(Exception)
+        println query
     }
 
 }
