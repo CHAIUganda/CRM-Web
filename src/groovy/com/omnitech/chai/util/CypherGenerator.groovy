@@ -72,7 +72,8 @@ class CypherGenerator {
         query << ' optional match (' << left.simpleName.toLowerCase() << ')' << arrow << '(' << fieldTypeName.toLowerCase() << ':' << fieldTypeName << ')\n'
         query << 'where ' << getFilterQuery(right.type) << '\n'
 
-        def nodes = findNodeFields(right.type)
+        //for now we do not support recursive references
+        def nodes = findNodeFields(right.type).findAll {it.type != left}
 
         if (!nodes) return query
         nodes.each {

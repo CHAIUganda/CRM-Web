@@ -1,9 +1,9 @@
 package com.omnitech.chai.util
 
-import com.omnitech.chai.model.Customer
-import com.omnitech.chai.model.District
-import com.omnitech.chai.model.Region
-import com.omnitech.chai.model.SubCounty
+import com.omnitech.chai.model.*
+import org.neo4j.graphdb.Direction
+import org.springframework.data.neo4j.annotation.NodeEntity
+import org.springframework.data.neo4j.annotation.RelatedTo
 import spock.lang.Specification
 
 /**
@@ -31,18 +31,75 @@ class CypherGeneratorTest extends Specification {
 
     def 'test generation'() {
         when:
-        def query = CypherGenerator.getMatchStatement2(Customer)
+        def query = CypherGenerator.getPaginatedQuery(BarEntity, [:]).toString()
 
         then:
-        notThrown(Exception)
-        query == "MATCH (customer:Customer)\n" +
-                "where str(customer.lat) =~ '.*t.*' or str(customer.lng) =~ '.*t.*' or customer.wkt =~ '.*t.*' or customer.outletName =~ '.*t.*' or customer.outletType =~ '.*t.*' or customer.outletSize =~ '.*t.*' or customer.split =~ '.*t.*' or customer.openingHours =~ '.*t.*' or customer.majoritySourceOfSupply =~ '.*t.*' or customer.keyWholeSalerName =~ '.*t.*' or customer.keyWholeSalerContact =~ '.*t.*' or customer.buildingStructure =~ '.*t.*' or customer.equipment =~ '.*t.*' or customer.descriptionOfOutletLocation =~ '.*t.*' or str(customer.numberOfEmployees) =~ '.*t.*' or str(customer.numberOfBranches) =~ '.*t.*' or str(customer.numberOfCustomersPerDay) =~ '.*t.*' or str(customer.numberOfProducts) =~ '.*t.*' or str(customer.restockFrequency) =~ '.*t.*' or str(customer.turnOver) =~ '.*t.*' or str(customer.id) =~ '.*t.*' or customer.uuid =~ '.*t.*'\n" +
-                " optional match (customer)-->(subcounty:SubCounty)\n" +
-                "where subcounty.name =~ '.*t.*' or str(subcounty.id) =~ '.*t.*' or subcounty.uuid =~ '.*t.*'\n" +
-                " optional match (subcounty)<--(district:District)\n" +
-                "where district.name =~ '.*t.*' or str(district.id) =~ '.*t.*' or district.uuid =~ '.*t.*'\n" +
-                " optional match (district)<--(region:Region)\n" +
-                "where region.name =~ '.*t.*' or str(region.id) =~ '.*t.*' or region.uuid =~ '.*t.*'\n" +
-                "return customer"
+        query == 'MATCH (barentity:BarEntity)\n' +
+                'where barentity.name =~ {search} or str(barentity.id) =~ {search} or barentity.uuid =~ {search}\n' +
+                ' optional match (barentity)-->(foobarentity:FooBarEntity)\n' +
+                'where foobarentity.description =~ {search} or str(foobarentity.id) =~ {search} or foobarentity.uuid =~ {search}\n' +
+                ' optional match (foobarentity)<--(foobarentity:FooBarEntity)\n' +
+                'where foobarentity.description =~ {search} or str(foobarentity.id) =~ {search} or foobarentity.uuid =~ {search}\n' +
+                'return barentity\n' +
+                'order by barentity.id desc\n' +
+                'skip 0\n' +
+                'limit 50\n'
+
+        when:
+        query = CypherGenerator.getPaginatedQuery(BarEntity, [max: 20, offset: 25]).toString()
+
+        then:
+        query == 'MATCH (barentity:BarEntity)\n' +
+                'where barentity.name =~ {search} or str(barentity.id) =~ {search} or barentity.uuid =~ {search}\n' +
+                ' optional match (barentity)-->(foobarentity:FooBarEntity)\n' +
+                'where foobarentity.description =~ {search} or str(foobarentity.id) =~ {search} or foobarentity.uuid =~ {search}\n' +
+                ' optional match (foobarentity)<--(foobarentity:FooBarEntity)\n' +
+                'where foobarentity.description =~ {search} or str(foobarentity.id) =~ {search} or foobarentity.uuid =~ {search}\n' +
+                'return barentity\n' +
+                'order by barentity.id desc\n' +
+                'skip 20\n' +
+                'limit 20\n'
+
+
+        when:
+        query = CypherGenerator.getCountQuery(BarEntity).toString()
+
+        then:
+        query == 'MATCH (barentity:BarEntity)\n' +
+                'where barentity.name =~ {search} or str(barentity.id) =~ {search} or barentity.uuid =~ {search}\n' +
+                ' optional match (barentity)-->(foobarentity:FooBarEntity)\n' +
+                'where foobarentity.description =~ {search} or str(foobarentity.id) =~ {search} or foobarentity.uuid =~ {search}\n' +
+                ' optional match (foobarentity)<--(foobarentity:FooBarEntity)\n' +
+                'where foobarentity.description =~ {search} or str(foobarentity.id) =~ {search} or foobarentity.uuid =~ {search}\n' +
+                'return count(barentity)\n'
+
+        when:
+        query = CypherGenerator.getCountQuery(FooBarEntity).toString()
+
+        then:
+        query == 'MATCH (foobarentity:FooBarEntity)\n' +
+                'where foobarentity.description =~ {search} or str(foobarentity.id) =~ {search} or foobarentity.uuid =~ {search}\n' +
+                ' optional match (foobarentity)<--(foobarentity:FooBarEntity)\n' +
+                'where foobarentity.description =~ {search} or str(foobarentity.id) =~ {search} or foobarentity.uuid =~ {search}\n' +
+                'return count(foobarentity)\n'
     }
+}
+
+@NodeEntity
+class FooBarEntity extends AbstractEntity {
+    @RelatedTo
+    List<BarEntity> barEntities
+    @RelatedTo(type = 'HAS_CHILD', direction = Direction.INCOMING)
+    FooBarEntity parent
+    String description
+
+}
+
+@NodeEntity
+class BarEntity extends AbstractEntity {
+
+    @RelatedTo
+    FooBarEntity fooBarEntity
+
+    String name
 }
