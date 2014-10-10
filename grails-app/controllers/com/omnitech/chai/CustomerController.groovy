@@ -26,6 +26,12 @@ class CustomerController {
         respond page.content, model: [customerInstanceCount: page.totalElements]
     }
 
+    def search(Integer max) {
+        params.max = Math.min(max ?: 10, 100)
+        def page = customerService.searchCustomers(params.term?:params.id,params)
+        respond page.content,view: 'index', model: [customerInstanceCount: page.totalElements]
+    }
+
 
     def show() {
         def id = extractId(params)

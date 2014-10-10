@@ -25,7 +25,21 @@ This menu is used to show function that can be triggered on the content (an obje
 				<g:render template="/_common/modals/deleteTextLink"/>
 			</li>
 		</g:if>
-		
-	</ul>
+
+   %{-- The Search Box--}%
+       <g:if test="${!layout_nosearchtext && (params.action == 'index' || params.action == 'search' )}">
+           <li class="navbar-right">
+               <div class="col-lg-12">
+                   %{--<input type="hidden" name="currentPage" value="${currentPage}"/>--}%
+                   %{--<input type="hidden" name="domain" value="${clazz}"/>--}%
+                   <form action="search">
+                       <input class="form-control" name="term" value="${(params.term ?: params.id)}"
+                              placeholder="Please type search item and press enter" style="width: 300px;"/>
+                   </form>
+               </div>
+           </li>
+       </g:if>
+
+   </ul>
     </div>
 </g:if>

@@ -9,7 +9,10 @@ import static com.omnitech.chai.util.ReflectFunctions.findAllPersistentFields
 import static com.omnitech.chai.util.ReflectFunctions.findNodeFields
 
 /**
- * A very basic Search Query Generator
+ * A very basic Search Query Generator for traversing simple hierarchies.
+ * This generates a cypher query which searches on all properties of the domain object including its children.
+ * Depending on the performance of the DB this class might have to be modified in future so that in searches on only
+ * a fee selected properties provided in a white or black list
  */
 class CypherGenerator {
 
@@ -28,7 +31,7 @@ class CypherGenerator {
      return c,s,d
      */
 
-    static String getMatchStatement2(Class aClass) {
+    static StringBuilder getPlainQuery(Class aClass, boolean count) {
         def cypher = new StringBuilder()
 
         cypher << getMatchStatement(aClass) << '\n'
@@ -37,7 +40,27 @@ class CypherGenerator {
 
         findNodeFields(aClass)?.each { cypher << getMatchStatement(aClass, it) }
 
-        cypher << 'return ' << aClass.simpleName.toLowerCase()
+        if (count)
+            cypher << 'return count(' << aClass.simpleName.toLowerCase() << ')\n'
+        else
+            cypher << 'return ' << aClass.simpleName.toLowerCase() << '\n'
+    }
+
+    static StringBuilder getNonPaginatedQuery(Class aClass) {
+        getPlainQuery(aClass, false)
+    }
+
+    static StringBuilder getCountQuery(Class aClass) {
+        getPlainQuery(aClass,true)
+    }
+
+    static StringBuilder getPaginatedQuery(Class aClass, Map params) {
+        def cypher = getPlainQuery(aClass, false)
+
+        def pageRequest = PageUtils.create(params)
+        cypher << 'order by ' << (pageRequest.sort?.toString() ?: "${aClass.simpleName.toLowerCase()}.id desc") << '\n'
+        cypher << 'skip ' << pageRequest.offset << '\n'
+        cypher << 'limit ' << pageRequest.pageSize << '\n'
     }
 
 
@@ -83,7 +106,7 @@ class CypherGenerator {
             Number.isAssignableFrom(it.type) ? "str(${className}.$it.name)" : "${className}.$it.name"
         }
 
-        def condition = fieldNames.collect { "$it =~ '.*t.*'" }.join(' or ')
+        def condition = fieldNames.collect { "$it =~ {search}" }.join(' or ')
 
         return condition
 
