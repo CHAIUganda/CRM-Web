@@ -100,6 +100,40 @@ class CypherGeneratorTest extends Specification {
                 'return count(foobarentity)\n'
     }
 
+    def 'test generation wit sort ascending'() {
+        when:
+        def query = CypherGenerator.getPaginatedQuery(BarEntity, [max: 20, offset: 25,sort:'name']).toString()
+
+        then:
+        query == 'MATCH (barentity:BarEntity)\n' +
+                ' optional match (barentity)-->(BarEntity_fooBarEntity:FooBarEntity)\n' +
+                ' optional match (BarEntity_fooBarEntity)<--(FooBarEntity_parent:FooBarEntity)\n' +
+                'WITH barentity,BarEntity_fooBarEntity,FooBarEntity_parent\n' +
+                'WHERE barentity.name =~ {search} or str(barentity.id) =~ {search} or barentity.uuid =~ {search} or BarEntity_fooBarEntity.description =~ {search} or str(BarEntity_fooBarEntity.id) =~ {search} or BarEntity_fooBarEntity.uuid =~ {search} or FooBarEntity_parent.description =~ {search} or str(FooBarEntity_parent.id) =~ {search} or FooBarEntity_parent.uuid =~ {search}\n' +
+                'return barentity\n' +
+                'order by barentity.name ASC\n' +
+                'skip 20\n' +
+                'limit 20\n'
+    }
+
+
+    def 'test generation wit sort descding'() {
+        when:
+        def query = CypherGenerator.getPaginatedQuery(BarEntity, [max: 20, offset: 25,sort:'name',order:'desc']).toString()
+
+        then:
+        query == 'MATCH (barentity:BarEntity)\n' +
+                ' optional match (barentity)-->(BarEntity_fooBarEntity:FooBarEntity)\n' +
+                ' optional match (BarEntity_fooBarEntity)<--(FooBarEntity_parent:FooBarEntity)\n' +
+                'WITH barentity,BarEntity_fooBarEntity,FooBarEntity_parent\n' +
+                'WHERE barentity.name =~ {search} or str(barentity.id) =~ {search} or barentity.uuid =~ {search} or BarEntity_fooBarEntity.description =~ {search} or str(BarEntity_fooBarEntity.id) =~ {search} or BarEntity_fooBarEntity.uuid =~ {search} or FooBarEntity_parent.description =~ {search} or str(FooBarEntity_parent.id) =~ {search} or FooBarEntity_parent.uuid =~ {search}\n' +
+                'return barentity\n' +
+                'order by barentity.name DESC\n' +
+                'skip 20\n' +
+                'limit 20\n'
+    }
+
+
 }
 
 @NodeEntity

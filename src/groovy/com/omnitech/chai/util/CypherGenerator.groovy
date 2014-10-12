@@ -68,7 +68,9 @@ class CypherGenerator {
         def cypher = getPlainQuery(aClass, false)
 
         def pageRequest = PageUtils.create(params)
-        cypher << 'order by ' << (pageRequest.sort?.toString() ?: "${getEntityName(aClass)}.id desc") << '\n'
+
+        def sort = pageRequest.sort?.toString()?.replace(':', '')
+        cypher << 'order by ' << (sort ? "${getEntityName(aClass)}.$sort" : "${getEntityName(aClass)}.id desc") << '\n'
         cypher << 'skip ' << pageRequest.offset << '\n'
         cypher << 'limit ' << pageRequest.pageSize << '\n'
     }
