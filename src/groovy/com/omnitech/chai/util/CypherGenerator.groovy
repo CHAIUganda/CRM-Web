@@ -74,20 +74,32 @@ class CypherGenerator {
     }
 
     static StringBuilder getWithStatement(Class aClass) {
-        def withStatement = new StringBuilder()
-
         def entityName = getEntityName(aClass)
         def nodes = [] << entityName
-
         findNodeFields(aClass).each {
             visitNodeFields(aClass, entityName, it) { Class enclosingClass, String fieldNameForEnclosingClass, Field right ->
-                  nodes << getEntityName(enclosingClass,right)
+                nodes << getEntityName(enclosingClass, right)
             }
         }
-
+        def withStatement = new StringBuilder()
         def statement = nodes.unique().join(',')
         withStatement << 'WITH ' << statement << '\n'
         return withStatement
+    }
+
+    static String getFilterQuery(Class aClass) {
+        def entityName = getEntityName(aClass)
+        def filterFields = findAllFilterFields(aClass, entityName)
+        findNodeFields(aClass).each {
+            visitNodeFields(aClass, entityName, it) { Class enclosingClass, String fieldNameForEnclosingClass, Field right ->
+                filterFields.addAll(findAllFilterFields(right.type, getEntityName(enclosingClass, right)))
+            }
+        }
+        return filterFields.collect { "$it =~ {search}" }.join(' or ')
+    }
+
+    static List<String> findAllFilterFields(Class aClass, String nodeName) {
+        findAllPersistentFields(aClass).findAll { isProcessableField(it) }.collect { createToStringFunction(it,nodeName) }
     }
 
     static String getMatchStatement(Class enclosingClass, String leftFieldName, Field right) {
@@ -136,10 +148,6 @@ class CypherGenerator {
     }
 
 
-    static String getFilterQuery(Class aClass) {
-        findAllFilterFields(aClass).collect { "$it =~ {search}" }.join(' or ')
-    }
-
     private static String createToStringFunction(Field field, nodeName) {
         return Number.isAssignableFrom(field.type) ? "str(${nodeName}.$field.name)" : "${nodeName}.$field.name"
     }
@@ -151,27 +159,6 @@ class CypherGenerator {
     static isProcessableField(Field field) {
         CharSequence.isAssignableFrom(field.type) || Number.isAssignableFrom(field.type)
     }
-
-    static List<Class> findAllVisitedNodes(Class aClass) {
-        def transform = { Class clazz, Field field ->
-            if (field.type.isAnnotationPresent(NodeEntity)) return field.type
-        }
-        findResultsOnFields(aClass, transform).unique() as List<Class>
-    }
-
-    static List<String> findAllFilterFields(Class aClass) {
-        Field currentField = null
-        def transform = { Class concreteSubclass, Field field ->
-            if (isProcessableField(field)) {
-                String nodeName = concreteSubclass == aClass ? getEntityName(aClass) : getEntityName(currentField.type, field)
-                return createToStringFunction(field, nodeName)
-            } else if (field.type.isAnnotationPresent(NodeEntity)) {
-                currentField = field
-            }
-        }
-        findResultsOnFields(aClass, transform)
-    }
-
 
     static def findResultsOnFields(Class aClass, Closure transform) {
         def extractFields = { Class klass ->
