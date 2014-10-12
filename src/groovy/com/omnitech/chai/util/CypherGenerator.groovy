@@ -1,5 +1,6 @@
 package com.omnitech.chai.util
 
+import groovy.transform.CompileStatic
 import org.neo4j.graphdb.Direction
 import org.springframework.data.neo4j.annotation.NodeEntity
 import org.springframework.data.neo4j.annotation.RelatedTo
@@ -36,7 +37,7 @@ class CypherGenerator {
 
         cypher << getMatchStatement(aClass) << '\n'
 
-        findNodeFields(aClass)?.each { cypher << getMatchStatement(aClass,getEntityName(aClass), it) }
+        findNodeFields(aClass)?.each { cypher << getMatchStatement(aClass, getEntityName(aClass), it) }
 
         cypher << getWithStatement(aClass)
         cypher << 'WHERE ' << getFilterQuery(aClass) << '\n'
@@ -47,6 +48,7 @@ class CypherGenerator {
             cypher << 'return ' << getEntityName(aClass) << '\n'
     }
 
+    @CompileStatic
     private static String getEntityName(Class enclosingClass, Field field = null) {
         if (field) {
             return "${enclosingClass.simpleName}_${field.name}"
@@ -73,17 +75,24 @@ class CypherGenerator {
 
     static StringBuilder getWithStatement(Class aClass) {
         def withStatement = new StringBuilder()
-        def nodes = [aClass]
-        nodes.addAll(findAllVisitedNodes(aClass))
 
-        def statement = nodes.unique().collect { getEntityName(it) }.join(',')
+        def entityName = getEntityName(aClass)
+        def nodes = [] << entityName
+
+        findNodeFields(aClass).each {
+            visitNodeFields(aClass, entityName, it) { Class enclosingClass, String fieldNameForEnclosingClass, Field right ->
+                  nodes << getEntityName(enclosingClass,right)
+            }
+        }
+
+        def statement = nodes.unique().join(',')
         withStatement << 'WITH ' << statement << '\n'
         return withStatement
     }
 
-    static String getMatchStatement(Class enclosingClass,String leftFieldName, Field right) {
+    static String getMatchStatement(Class enclosingClass, String leftFieldName, Field right) {
         def arrow = getAssocArrow(right)
-        def fieldNodeName = getEntityName(enclosingClass,right)
+        def fieldNodeName = getEntityName(enclosingClass, right)
 
         def query = new StringBuilder()
         query << ' optional match (' << leftFieldName << ')' << arrow << '(' << fieldNodeName << ':' << right.type.simpleName << ')\n'
@@ -93,9 +102,22 @@ class CypherGenerator {
 
         if (!nodes) return query
         nodes.each {
-            query << getMatchStatement(right.type,fieldNodeName, it)
+            query << getMatchStatement(right.type, fieldNodeName, it)
         }
         return query
+    }
+
+    static void visitNodeFields(Class enclosingClass, String fieldNameForEnclosingClass, Field right, Closure visitor) {
+        def fieldNodeName = getEntityName(enclosingClass, right)
+
+        visitor(enclosingClass, fieldNameForEnclosingClass, right)
+
+        //todo for now we do not support recursive references hence the { it.type != left }
+        def nodes = findNodeFields(right.type).findAll { it.type != enclosingClass }
+
+        nodes?.each {
+            visitNodeFields(right.type, fieldNodeName, it, visitor)
+        }
     }
 
     static String getAssocArrow(Field field) {
@@ -138,9 +160,14 @@ class CypherGenerator {
     }
 
     static List<String> findAllFilterFields(Class aClass) {
-        def transform = { Class clazz, Field field ->
-            if (isProcessableField(field))
-                return createToStringFunction(field, getEntityName(clazz))
+        Field currentField = null
+        def transform = { Class concreteSubclass, Field field ->
+            if (isProcessableField(field)) {
+                String nodeName = concreteSubclass == aClass ? getEntityName(aClass) : getEntityName(currentField.type, field)
+                return createToStringFunction(field, nodeName)
+            } else if (field.type.isAnnotationPresent(NodeEntity)) {
+                currentField = field
+            }
         }
         findResultsOnFields(aClass, transform)
     }
