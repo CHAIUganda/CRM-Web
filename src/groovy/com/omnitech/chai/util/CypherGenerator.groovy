@@ -17,37 +17,10 @@ import static com.omnitech.chai.util.ReflectFunctions.findAllPersistentFields
  */
 class CypherGenerator {
 
-    static StringBuilder getPlainQuery(Class aClass, boolean count) {
-        def cypher = new StringBuilder()
 
-        cypher << getMatchStatement(aClass) << '\n'
+    static StringBuilder getNonPaginatedQuery(Class aClass) { getPlainQuery(aClass, false) }
 
-        findNodeFields(aClass)?.each { cypher << getMatchStatement(aClass, getEntityName(aClass), it) }
-
-        cypher << getWithStatement(aClass)
-        cypher << 'WHERE ' << getFilterQuery(aClass) << '\n'
-
-        if (count)
-            cypher << 'return count(' << getEntityName(aClass) << ')\n'
-        else
-            cypher << 'return ' << getEntityName(aClass) << '\n'
-    }
-
-    @CompileStatic
-    private static String getEntityName(Class enclosingClass, Field field = null) {
-        if (field) {
-            return "${enclosingClass.simpleName}_${field.name}"
-        }
-        return enclosingClass.simpleName.toLowerCase()
-    }
-
-    static StringBuilder getNonPaginatedQuery(Class aClass) {
-        getPlainQuery(aClass, false)
-    }
-
-    static StringBuilder getCountQuery(Class aClass) {
-        getPlainQuery(aClass, true)
-    }
+    static StringBuilder getCountQuery(Class aClass) { getPlainQuery(aClass, true) }
 
     static StringBuilder getPaginatedQuery(Class aClass, Map params) {
         def cypher = getPlainQuery(aClass, false)
@@ -60,7 +33,41 @@ class CypherGenerator {
         cypher << 'limit ' << pageRequest.pageSize << '\n'
     }
 
-    static StringBuilder getWithStatement(Class aClass) {
+    static StringBuilder getPlainQuery(Class aClass, boolean count) {
+        def cypher = new StringBuilder()
+        cypher << 'MATCH (' << getEntityName(aClass) << ':' << aClass.simpleName << ')\n'
+        cypher << getOptionalMatchStatement(aClass)
+        cypher << getWithStatement(aClass)
+        cypher << 'WHERE ' << getFilterQuery(aClass) << '\n'
+
+        if (count)
+            cypher << 'return count(' << getEntityName(aClass) << ')\n'
+        else
+            cypher << 'return ' << getEntityName(aClass) << '\n'
+    }
+
+    private static StringBuilder getOptionalMatchStatement(Class aClass) {
+        def cypher = new StringBuilder()
+        findNodeFields(aClass)?.each {
+            visitNodeFields(aClass, getEntityName(aClass), it) { Class enclosingClass, String fieldNameForEnclosingClass, Field right ->
+                cypher << ' optional match (' << fieldNameForEnclosingClass << ')'
+                cypher << getAssocArrow(right)
+                cypher << '(' << getEntityName(enclosingClass, right) << ':' << right.type.simpleName << ')\n'
+            }
+        }
+        return cypher
+    }
+
+    @CompileStatic
+    private static String getEntityName(Class enclosingClass, Field field = null) {
+        if (field) {
+            return "${enclosingClass.simpleName}_${field.name}"
+        }
+        return enclosingClass.simpleName.toLowerCase()
+    }
+
+
+    private static StringBuilder getWithStatement(Class aClass) {
         def entityName = getEntityName(aClass)
         def nodes = [] << entityName
         findNodeFields(aClass).each {
@@ -68,13 +75,10 @@ class CypherGenerator {
                 nodes << getEntityName(enclosingClass, right)
             }
         }
-        def withStatement = new StringBuilder()
-        def statement = nodes.unique().join(',')
-        withStatement << 'WITH ' << statement << '\n'
-        return withStatement
+        return new StringBuilder() << 'WITH ' << nodes.unique().join(',') << '\n'
     }
 
-    static String getFilterQuery(Class aClass) {
+    private static String getFilterQuery(Class aClass) {
         def entityName = getEntityName(aClass)
         def filterFields = findAllFilterFields(aClass, entityName)
         findNodeFields(aClass).each {
@@ -85,35 +89,18 @@ class CypherGenerator {
         return filterFields.collect { "$it =~ {search}" }.join(' or ')
     }
 
-    static List<String> findAllFilterFields(Class aClass, String nodeName) {
-        findAllPersistentFields(aClass).findAll { isProcessableField(it) }.collect { createToStringFunction(it,nodeName) }
-    }
-
-    static String getMatchStatement(Class enclosingClass, String leftFieldName, Field right) {
-        def arrow = getAssocArrow(right)
-        def fieldNodeName = getEntityName(enclosingClass, right)
-
-        def query = new StringBuilder()
-        query << ' optional match (' << leftFieldName << ')' << arrow << '(' << fieldNodeName << ':' << right.type.simpleName << ')\n'
-
-        //todo for now we do not support recursive references hence the { it.type != left }
-        def nodes = findNodeFields(right.type).findAll { it.type != enclosingClass }
-
-        if (!nodes) return query
-        nodes.each {
-            query << getMatchStatement(right.type, fieldNodeName, it)
+    private static List<String> findAllFilterFields(Class aClass, String nodeName) {
+        findAllPersistentFields(aClass).findAll { isProcessableField(it) }.collect {
+            createToStringFunction(it, nodeName)
         }
-        return query
     }
 
+    private
     static void visitNodeFields(Class enclosingClass, String fieldNameForEnclosingClass, Field right, Closure visitor) {
         def fieldNodeName = getEntityName(enclosingClass, right)
-
         visitor(enclosingClass, fieldNameForEnclosingClass, right)
-
         //todo for now we do not support recursive references hence the { it.type != left }
         def nodes = findNodeFields(right.type).findAll { it.type != enclosingClass }
-
         nodes?.each {
             visitNodeFields(right.type, fieldNodeName, it, visitor)
         }
@@ -130,10 +117,6 @@ class CypherGenerator {
         }
     }
 
-    static String getMatchStatement(Class aClass) {
-        "MATCH (${getEntityName(aClass)}:${aClass.simpleName})"
-    }
-
 
     private static String createToStringFunction(Field field, nodeName) {
         return Number.isAssignableFrom(field.type) ? "str(${nodeName}.$field.name)" : "${nodeName}.$field.name"
@@ -143,7 +126,7 @@ class CypherGenerator {
         findAllPersistentFields(aClass).findAll { it.type.isAnnotationPresent(NodeEntity) }
     }
 
-    static isProcessableField(Field field) {
+    private static isProcessableField(Field field) {
         CharSequence.isAssignableFrom(field.type) || Number.isAssignableFrom(field.type)
     }
 
