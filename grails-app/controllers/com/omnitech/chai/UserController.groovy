@@ -24,8 +24,12 @@ class UserController {
 
     def search(Integer max) {
         params.max = Math.min(max ?: 10, 100)
-        def page = userService.searchUsers(params.term?:params.id,params)
-        respond page.content,view: 'index', model: [userInstanceCount: page.totalElements]
+        if (params.term) {
+            redirect(action: 'search', id: params.term)
+            return
+        }
+        def page = userService.searchUsers(params.id, params)
+        respond page.content, view: 'index', model: [userInstanceCount: page.totalElements]
     }
 
     def show() {
