@@ -36,7 +36,7 @@ class CypherGenerator {
 
         cypher << getMatchStatement(aClass) << '\n'
 
-        findNodeFields(aClass)?.each { cypher << getMatchStatement(aClass, it) }
+        findNodeFields(aClass)?.each { cypher << getMatchStatement(aClass,getEntityName(aClass), it) }
 
         cypher << getWithStatement(aClass)
         cypher << 'WHERE ' << getFilterQuery(aClass) << '\n'
@@ -47,11 +47,11 @@ class CypherGenerator {
             cypher << 'return ' << getEntityName(aClass) << '\n'
     }
 
-    private static String getEntityName(Class aClass, Field field = null) {
+    private static String getEntityName(Class enclosingClass, Field field = null) {
         if (field) {
-            return "${aClass.simpleName.toLowerCase()}_${field.name}"
+            return "${enclosingClass.simpleName}_${field.name}"
         }
-        return aClass.simpleName.toLowerCase()
+        return enclosingClass.simpleName.toLowerCase()
     }
 
     static StringBuilder getNonPaginatedQuery(Class aClass) {
@@ -81,19 +81,19 @@ class CypherGenerator {
         return withStatement
     }
 
-    static String getMatchStatement(Class left, Field right) {
+    static String getMatchStatement(Class enclosingClass,String leftFieldName, Field right) {
         def arrow = getAssocArrow(right)
-        def fieldTypeName = getEntityName(right.type)
+        def fieldNodeName = getEntityName(enclosingClass,right)
 
         def query = new StringBuilder()
-        query << ' optional match (' << getEntityName(left) << ')' << arrow << '(' << fieldTypeName.toLowerCase() << ':' << right.type.simpleName << ')\n'
+        query << ' optional match (' << leftFieldName << ')' << arrow << '(' << fieldNodeName << ':' << right.type.simpleName << ')\n'
 
         //todo for now we do not support recursive references hence the { it.type != left }
-        def nodes = findNodeFields(right.type).findAll { it.type != left }
+        def nodes = findNodeFields(right.type).findAll { it.type != enclosingClass }
 
         if (!nodes) return query
         nodes.each {
-            query << getMatchStatement(right.type, it)
+            query << getMatchStatement(right.type,fieldNodeName, it)
         }
         return query
     }
@@ -118,8 +118,8 @@ class CypherGenerator {
         findAllFilterFields(aClass).collect { "$it =~ {search}" }.join(' or ')
     }
 
-    private static String createToStringFunction(Field field, className) {
-        return Number.isAssignableFrom(field.type) ? "str(${className}.$field.name)" : "${className}.$field.name"
+    private static String createToStringFunction(Field field, nodeName) {
+        return Number.isAssignableFrom(field.type) ? "str(${nodeName}.$field.name)" : "${nodeName}.$field.name"
     }
 
     static List<Field> findNodeFields(Class aClass) {
