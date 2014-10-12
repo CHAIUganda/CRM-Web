@@ -160,12 +160,4 @@ class CypherGenerator {
         CharSequence.isAssignableFrom(field.type) || Number.isAssignableFrom(field.type)
     }
 
-    static def findResultsOnFields(Class aClass, Closure transform) {
-        def extractFields = { Class klass ->
-            if (klass.isAnnotationPresent(NodeEntity))
-                findAllPersistentFields(klass)
-            else Collections.EMPTY_LIST
-        }
-        ReflectFunctions.findResultsOnFields(aClass, transform, extractFields, [])
-    }
 }
