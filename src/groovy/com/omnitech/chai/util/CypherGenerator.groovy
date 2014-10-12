@@ -13,24 +13,9 @@ import static com.omnitech.chai.util.ReflectFunctions.findAllPersistentFields
  * A very basic Search Query Generator for traversing simple hierarchies.
  * This generates a cypher query which searches on all properties of the domain object including its children.
  * Depending on the performance of the DB this class might have to be modified in future so that in searches on only
- * a fee selected properties provided in a white or black list
+ * a few selected properties provided in a white or black list
  */
 class CypherGenerator {
-
-    Class aClass
-
-    CypherGenerator() {}
-
-    CypherGenerator(Class aClass) {
-        this.aClass = aClass
-    }
-
-    /**
-     match (c:Customer)
-     optional match (c) --> (s:SubCounty)
-     optional match (s) <-- (d:District)
-     return c,s,d
-     */
 
     static StringBuilder getPlainQuery(Class aClass, boolean count) {
         def cypher = new StringBuilder()
