@@ -1,12 +1,12 @@
 package com.omnitech.chai.util
 
 import org.neo4j.graphdb.Direction
+import org.springframework.data.neo4j.annotation.NodeEntity
 import org.springframework.data.neo4j.annotation.RelatedTo
 
 import java.lang.reflect.Field
 
 import static com.omnitech.chai.util.ReflectFunctions.findAllPersistentFields
-import static com.omnitech.chai.util.ReflectFunctions.findNodeFields
 
 /**
  * A very basic Search Query Generator for traversing simple hierarchies.
@@ -36,14 +36,22 @@ class CypherGenerator {
 
         cypher << getMatchStatement(aClass) << '\n'
 
-        cypher << 'where ' << getFilterQuery(aClass) << '\n'
-
         findNodeFields(aClass)?.each { cypher << getMatchStatement(aClass, it) }
 
+        cypher << getWithStatement(aClass)
+        cypher << 'WHERE ' << getFilterQuery(aClass) << '\n'
+
         if (count)
-            cypher << 'return count(' << aClass.simpleName.toLowerCase() << ')\n'
+            cypher << 'return count(' << getEntityName(aClass) << ')\n'
         else
-            cypher << 'return ' << aClass.simpleName.toLowerCase() << '\n'
+            cypher << 'return ' << getEntityName(aClass) << '\n'
+    }
+
+    private static String getEntityName(Class aClass, Field field = null) {
+        if (field) {
+            return "${aClass.simpleName.toLowerCase()}_${field.name}"
+        }
+        return aClass.simpleName.toLowerCase()
     }
 
     static StringBuilder getNonPaginatedQuery(Class aClass) {
@@ -51,29 +59,37 @@ class CypherGenerator {
     }
 
     static StringBuilder getCountQuery(Class aClass) {
-        getPlainQuery(aClass,true)
+        getPlainQuery(aClass, true)
     }
 
     static StringBuilder getPaginatedQuery(Class aClass, Map params) {
         def cypher = getPlainQuery(aClass, false)
 
         def pageRequest = PageUtils.create(params)
-        cypher << 'order by ' << (pageRequest.sort?.toString() ?: "${aClass.simpleName.toLowerCase()}.id desc") << '\n'
+        cypher << 'order by ' << (pageRequest.sort?.toString() ?: "${getEntityName(aClass)}.id desc") << '\n'
         cypher << 'skip ' << pageRequest.offset << '\n'
         cypher << 'limit ' << pageRequest.pageSize << '\n'
     }
 
+    static StringBuilder getWithStatement(Class aClass) {
+        def withStatement = new StringBuilder()
+        def nodes = [aClass]
+        nodes.addAll(findAllVisitedNodes(aClass))
+
+        def statement = nodes.unique().collect { getEntityName(it) }.join(',')
+        withStatement << 'WITH ' << statement << '\n'
+        return withStatement
+    }
 
     static String getMatchStatement(Class left, Field right) {
         def arrow = getAssocArrow(right)
-        def fieldTypeName = right.type.simpleName
+        def fieldTypeName = getEntityName(right.type)
 
         def query = new StringBuilder()
-        query << ' optional match (' << left.simpleName.toLowerCase() << ')' << arrow << '(' << fieldTypeName.toLowerCase() << ':' << fieldTypeName << ')\n'
-        query << 'where ' << getFilterQuery(right.type) << '\n'
+        query << ' optional match (' << getEntityName(left) << ')' << arrow << '(' << fieldTypeName.toLowerCase() << ':' << right.type.simpleName << ')\n'
 
-        //for now we do not support recursive references
-        def nodes = findNodeFields(right.type).findAll {it.type != left}
+        //todo for now we do not support recursive references hence the { it.type != left }
+        def nodes = findNodeFields(right.type).findAll { it.type != left }
 
         if (!nodes) return query
         nodes.each {
@@ -94,22 +110,48 @@ class CypherGenerator {
     }
 
     static String getMatchStatement(Class aClass) {
-        "MATCH (${aClass.simpleName.toLowerCase()}:${aClass.simpleName})"
+        "MATCH (${getEntityName(aClass)}:${aClass.simpleName})"
     }
 
 
     static String getFilterQuery(Class aClass) {
-        def className = aClass.simpleName.toLowerCase()
+        findAllFilterFields(aClass).collect { "$it =~ {search}" }.join(' or ')
+    }
 
-        def fieldNames = findAllPersistentFields(aClass).findAll {
-            CharSequence.isAssignableFrom(it.type) || Number.isAssignableFrom(it.type)
-        }.collect {
-            Number.isAssignableFrom(it.type) ? "str(${className}.$it.name)" : "${className}.$it.name"
+    private static String createToStringFunction(Field field, className) {
+        return Number.isAssignableFrom(field.type) ? "str(${className}.$field.name)" : "${className}.$field.name"
+    }
+
+    static List<Field> findNodeFields(Class aClass) {
+        findAllPersistentFields(aClass).findAll { it.type.isAnnotationPresent(NodeEntity) }
+    }
+
+    static isProcessableField(Field field) {
+        CharSequence.isAssignableFrom(field.type) || Number.isAssignableFrom(field.type)
+    }
+
+    static List<Class> findAllVisitedNodes(Class aClass) {
+        def transform = { Class clazz, Field field ->
+            if (field.type.isAnnotationPresent(NodeEntity)) return field.type
         }
+        findResultsOnFields(aClass, transform).unique() as List<Class>
+    }
 
-        def condition = fieldNames.collect { "$it =~ {search}" }.join(' or ')
+    static List<String> findAllFilterFields(Class aClass) {
+        def transform = { Class clazz, Field field ->
+            if (isProcessableField(field))
+                return createToStringFunction(field, getEntityName(clazz))
+        }
+        findResultsOnFields(aClass, transform)
+    }
 
-        return condition
 
+    static def findResultsOnFields(Class aClass, Closure transform) {
+        def extractFields = { Class klass ->
+            if (klass.isAnnotationPresent(NodeEntity))
+                findAllPersistentFields(klass)
+            else Collections.EMPTY_LIST
+        }
+        ReflectFunctions.findResultsOnFields(aClass, transform, extractFields, [])
     }
 }

@@ -23,7 +23,7 @@ class CypherGeneratorTest extends Specification {
 
         when:
         field = ReflectFunctions.findAllFields(District).find { it.type == Region }
-        arrow = ModelFunctions.getAssocArrow(field)
+        arrow = CypherGenerator.getAssocArrow(field)
 
         then:
         arrow == '<--'
@@ -35,15 +35,14 @@ class CypherGeneratorTest extends Specification {
 
         then:
         query == 'MATCH (barentity:BarEntity)\n' +
-                'where barentity.name =~ {search} or str(barentity.id) =~ {search} or barentity.uuid =~ {search}\n' +
                 ' optional match (barentity)-->(foobarentity:FooBarEntity)\n' +
-                'where foobarentity.description =~ {search} or str(foobarentity.id) =~ {search} or foobarentity.uuid =~ {search}\n' +
                 ' optional match (foobarentity)<--(foobarentity:FooBarEntity)\n' +
-                'where foobarentity.description =~ {search} or str(foobarentity.id) =~ {search} or foobarentity.uuid =~ {search}\n' +
+                'WITH barentity,foobarentity\n' +
+                'WHERE foobarentity.description =~ {search} or str(foobarentity.id) =~ {search} or foobarentity.uuid =~ {search} or barentity.name =~ {search} or str(barentity.id) =~ {search} or barentity.uuid =~ {search}\n' +
                 'return barentity\n' +
                 'order by barentity.id desc\n' +
                 'skip 0\n' +
-                'limit 50\n'
+                'limit 50'
 
         when:
         query = CypherGenerator.getPaginatedQuery(BarEntity, [max: 20, offset: 25]).toString()
@@ -83,6 +82,22 @@ class CypherGeneratorTest extends Specification {
                 'where foobarentity.description =~ {search} or str(foobarentity.id) =~ {search} or foobarentity.uuid =~ {search}\n' +
                 'return count(foobarentity)\n'
     }
+
+    def 'test findResultsOnFields'() {
+        when:
+        def h = CypherGenerator.findResultsOnFields(Bar, { clazz,field -> field }).unique()
+
+        then:
+        h.size() == 9
+
+        when:
+        h = CypherGenerator.findAllFilterFields(Bar)
+
+        then:
+        h.size() == 9
+
+
+    }
 }
 
 @NodeEntity
@@ -103,3 +118,14 @@ class BarEntity extends AbstractEntity {
 
     String name
 }
+
+@NodeEntity
+class Bar {
+    String description
+
+    BarEntity foo
+    transient String transientName3
+
+    String getFooBar() { "" }
+}
+

@@ -1,7 +1,6 @@
 package com.omnitech.chai.util
 
 import org.springframework.data.annotation.Transient
-import org.springframework.data.neo4j.annotation.NodeEntity
 import org.springframework.validation.Errors
 
 import java.lang.reflect.Field
@@ -23,18 +22,25 @@ class ReflectFunctions {
     /**
      * Finds all fields we need to persist for spring data
      * excluding all transient,collections and static
-     * @return
      */
     static List<Field> findAllPersistentFields(Class aClass) {
-        findAllFields(aClass).findAll {
-            !Modifier.isStatic(it.modifiers) &&
-                    !Modifier.isTransient(it.modifiers) &&
-                    !Collection.isAssignableFrom(it.type) &&
-                    !it.isAnnotationPresent(Transient) &&
-                    !Errors.isAssignableFrom(it.type)
-        }
+        findAllFields(aClass).findAll { isPersistent(it) }
     }
 
+    /**
+     * Returns true is this field is neither static,transient,collection or an error.
+     */
+    static boolean isPersistent(Field field) {
+        !Modifier.isStatic(field.modifiers) &&
+                !Modifier.isTransient(field.modifiers) &&
+                !Collection.isAssignableFrom(field.type) &&
+                !field.isAnnotationPresent(Transient) &&
+                !Errors.isAssignableFrom(field.type)
+    }
+
+    /**
+     * Returns a list of all super classes for this passed class
+     */
     static List<Class> getClassHierarchy(Class aClass) {
         List<Class> classes = [aClass]
         while (aClass.superclass != Object) {
@@ -44,7 +50,28 @@ class ReflectFunctions {
         return classes
     }
 
-    static List<Field> findNodeFields(Class aClass) {
-        findAllPersistentFields(aClass).findAll { it.type.isAnnotationPresent(NodeEntity) }
+    static <T> List<T> findResultsOnFields(Class aClass,
+                                           Closure<T> transform,
+                                           Closure<List<Field>> extractFields,
+                                           List visited) {
+        if (visited.contains(aClass)) return []
+
+        def results = []
+        for (Field field in extractFields(aClass)) {
+            def result = transform(aClass, field)
+
+            //todo for now we do not support classes referencing each other
+            if (aClass == field.type) continue
+
+            if (result != null) results.add(result)
+
+            if (extractFields(field.type)) {
+                def fields = findResultsOnFields(field.type, transform, extractFields, visited)
+                results.addAll(fields)
+            }
+            visited.add(field.type)
+        }
+
+        return results
     }
 }
