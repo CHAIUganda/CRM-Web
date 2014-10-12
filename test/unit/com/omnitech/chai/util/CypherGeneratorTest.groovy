@@ -29,75 +29,77 @@ class CypherGeneratorTest extends Specification {
         arrow == '<--'
     }
 
-    def 'test generation'() {
+    def 'test generation 1'() {
         when:
         def query = CypherGenerator.getPaginatedQuery(BarEntity, [:]).toString()
 
         then:
         query == 'MATCH (barentity:BarEntity)\n' +
-                ' optional match (barentity)-->(foobarentity:FooBarEntity)\n' +
-                ' optional match (foobarentity)<--(foobarentity:FooBarEntity)\n' +
-                'WITH barentity,foobarentity\n' +
-                'WHERE foobarentity.description =~ {search} or str(foobarentity.id) =~ {search} or foobarentity.uuid =~ {search} or barentity.name =~ {search} or str(barentity.id) =~ {search} or barentity.uuid =~ {search}\n' +
+                ' optional match (barentity)-->(BarEntity_fooBarEntity:FooBarEntity)\n' +
+                ' optional match (BarEntity_fooBarEntity)<--(FooBarEntity_parent:FooBarEntity)\n' +
+                'WITH barentity,BarEntity_fooBarEntity,FooBarEntity_parent\n' +
+                'WHERE barentity.name =~ {search} or str(barentity.id) =~ {search} or barentity.uuid =~ {search} or BarEntity_fooBarEntity.description =~ {search} or str(BarEntity_fooBarEntity.id) =~ {search} or BarEntity_fooBarEntity.uuid =~ {search} or FooBarEntity_parent.description =~ {search} or str(FooBarEntity_parent.id) =~ {search} or FooBarEntity_parent.uuid =~ {search}\n' +
                 'return barentity\n' +
                 'order by barentity.id desc\n' +
                 'skip 0\n' +
-                'limit 50'
+                'limit 50\n'
+    }
 
+    def 'test generation 2'() {
         when:
-        query = CypherGenerator.getPaginatedQuery(BarEntity, [max: 20, offset: 25]).toString()
+        def query = CypherGenerator.getPaginatedQuery(BarEntity, [max: 20, offset: 25]).toString()
 
         then:
         query == 'MATCH (barentity:BarEntity)\n' +
-                'where barentity.name =~ {search} or str(barentity.id) =~ {search} or barentity.uuid =~ {search}\n' +
-                ' optional match (barentity)-->(foobarentity:FooBarEntity)\n' +
-                'where foobarentity.description =~ {search} or str(foobarentity.id) =~ {search} or foobarentity.uuid =~ {search}\n' +
-                ' optional match (foobarentity)<--(foobarentity:FooBarEntity)\n' +
-                'where foobarentity.description =~ {search} or str(foobarentity.id) =~ {search} or foobarentity.uuid =~ {search}\n' +
+                ' optional match (barentity)-->(BarEntity_fooBarEntity:FooBarEntity)\n' +
+                ' optional match (BarEntity_fooBarEntity)<--(FooBarEntity_parent:FooBarEntity)\n' +
+                'WITH barentity,BarEntity_fooBarEntity,FooBarEntity_parent\n' +
+                'WHERE barentity.name =~ {search} or str(barentity.id) =~ {search} or barentity.uuid =~ {search} or BarEntity_fooBarEntity.description =~ {search} or str(BarEntity_fooBarEntity.id) =~ {search} or BarEntity_fooBarEntity.uuid =~ {search} or FooBarEntity_parent.description =~ {search} or str(FooBarEntity_parent.id) =~ {search} or FooBarEntity_parent.uuid =~ {search}\n' +
                 'return barentity\n' +
                 'order by barentity.id desc\n' +
                 'skip 20\n' +
                 'limit 20\n'
+    }
 
-
+    def 'test generation 3'() {
         when:
-        query = CypherGenerator.getCountQuery(BarEntity).toString()
+        def query = CypherGenerator.getCountQuery(BarEntity).toString()
 
         then:
         query == 'MATCH (barentity:BarEntity)\n' +
-                'where barentity.name =~ {search} or str(barentity.id) =~ {search} or barentity.uuid =~ {search}\n' +
-                ' optional match (barentity)-->(foobarentity:FooBarEntity)\n' +
-                'where foobarentity.description =~ {search} or str(foobarentity.id) =~ {search} or foobarentity.uuid =~ {search}\n' +
-                ' optional match (foobarentity)<--(foobarentity:FooBarEntity)\n' +
-                'where foobarentity.description =~ {search} or str(foobarentity.id) =~ {search} or foobarentity.uuid =~ {search}\n' +
-                'return count(barentity)\n'
+                ' optional match (barentity)-->(BarEntity_fooBarEntity:FooBarEntity)\n' +
+                ' optional match (BarEntity_fooBarEntity)<--(FooBarEntity_parent:FooBarEntity)\n' +
+                'WITH barentity,BarEntity_fooBarEntity,FooBarEntity_parent\n' +
+                'WHERE barentity.name =~ {search} or str(barentity.id) =~ {search} or barentity.uuid =~ {search} or BarEntity_fooBarEntity.description =~ {search} or str(BarEntity_fooBarEntity.id) =~ {search} or BarEntity_fooBarEntity.uuid =~ {search} or FooBarEntity_parent.description =~ {search} or str(FooBarEntity_parent.id) =~ {search} or FooBarEntity_parent.uuid =~ {search}\n' +
+                'return count(barentity)\n' +
+                ''
+    }
 
+    def 'test generation 4'() {
         when:
-        query = CypherGenerator.getCountQuery(FooBarEntity).toString()
+        def query = CypherGenerator.getCountQuery(FooBarEntity).toString()
 
         then:
         query == 'MATCH (foobarentity:FooBarEntity)\n' +
-                'where foobarentity.description =~ {search} or str(foobarentity.id) =~ {search} or foobarentity.uuid =~ {search}\n' +
-                ' optional match (foobarentity)<--(foobarentity:FooBarEntity)\n' +
-                'where foobarentity.description =~ {search} or str(foobarentity.id) =~ {search} or foobarentity.uuid =~ {search}\n' +
+                ' optional match (foobarentity)<--(FooBarEntity_parent:FooBarEntity)\n' +
+                'WITH foobarentity,FooBarEntity_parent\n' +
+                'WHERE foobarentity.description =~ {search} or str(foobarentity.id) =~ {search} or foobarentity.uuid =~ {search} or FooBarEntity_parent.description =~ {search} or str(FooBarEntity_parent.id) =~ {search} or FooBarEntity_parent.uuid =~ {search}\n' +
+                'return count(foobarentity)\n'
+
+    }
+
+    def 'test generation 5'() {
+        when:
+        def query = CypherGenerator.getCountQuery(FooBarEntity).toString()
+
+        then:
+        query == 'MATCH (foobarentity:FooBarEntity)\n' +
+                ' optional match (foobarentity)<--(FooBarEntity_parent:FooBarEntity)\n' +
+                'WITH foobarentity,FooBarEntity_parent\n' +
+                'WHERE foobarentity.description =~ {search} or str(foobarentity.id) =~ {search} or foobarentity.uuid =~ {search} or FooBarEntity_parent.description =~ {search} or str(FooBarEntity_parent.id) =~ {search} or FooBarEntity_parent.uuid =~ {search}\n' +
                 'return count(foobarentity)\n'
     }
 
-    def 'test findResultsOnFields'() {
-        when:
-        def h = CypherGenerator.findResultsOnFields(Bar, { clazz,field -> field }).unique()
-
-        then:
-        h.size() == 9
-
-        when:
-        h = CypherGenerator.findAllFilterFields(Bar)
-
-        then:
-        h.size() == 9
-
-
-    }
 }
 
 @NodeEntity
