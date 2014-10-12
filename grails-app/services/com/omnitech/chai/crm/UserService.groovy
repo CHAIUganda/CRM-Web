@@ -9,7 +9,9 @@ import com.omnitech.chai.repositories.RequestMapRepository
 import com.omnitech.chai.repositories.RoleRepository
 import com.omnitech.chai.repositories.UserRepository
 import com.omnitech.chai.util.ModelFunctions
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
+import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.data.neo4j.transaction.Neo4jTransactional
 
 /**
@@ -23,6 +25,8 @@ class UserService {
     RoleRepository roleRepository
     DeviceRepository deviceRepository
     RequestMapRepository requestMapRepository
+    @Autowired
+    Neo4jTemplate neo
 
     Page<User> list(Map params) {
         ModelFunctions.listAll(userRepository, params)
@@ -113,5 +117,9 @@ class UserService {
         neoUser.device = device
 
         userRepository.save(neoUser)
+    }
+
+    Page<User> searchUsers(String search, Map params) {
+        ModelFunctions.searchAll(neo, User, ModelFunctions.getWildCardRegex(search), params)
     }
 }

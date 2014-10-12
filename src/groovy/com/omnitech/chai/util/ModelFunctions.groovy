@@ -1,20 +1,16 @@
 package com.omnitech.chai.util
 
 import com.omnitech.chai.model.AbstractEntity
+import com.omnitech.chai.model.Customer
 import org.apache.commons.logging.LogFactory
 import org.grails.databinding.SimpleDataBinder
 import org.grails.databinding.SimpleMapDataBindingSource
-import org.neo4j.graphdb.Direction
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
-import org.springframework.data.neo4j.annotation.NodeEntity
-import org.springframework.data.neo4j.annotation.RelatedTo
 import org.springframework.data.neo4j.repository.GraphRepository
+import org.springframework.data.neo4j.support.Neo4jTemplate
 
-import java.lang.reflect.Field
-
-import static org.neo4j.cypherdsl.CypherQuery.match
-import static org.neo4j.cypherdsl.CypherQuery.node
+import java.util.regex.Pattern
 
 /**
  * Created by kay on 9/24/14.
@@ -77,6 +73,16 @@ class ModelFunctions {
         def request = PageUtils.create(params)
         new PageImpl<T>(repo.findAll(request).content, request, repo.count())
     }
+
+    static <T> Page<T> searchAll(Neo4jTemplate neo, Class<T> aClass, String search, Map params) {
+        def query = CypherGenerator.getPaginatedQuery(aClass, params).toString()
+        def count = CypherGenerator.getCountQuery(aClass).toString()
+        def size = neo.query(count, [search: search]).to(Long).single()
+        def data = neo.query(query, [search: search]).to(aClass).as(List).collect()
+        return new PageImpl<Customer>(data, PageUtils.create(params), size) as Page<T>
+    }
+
+    static String getWildCardRegex(String search) { "(?i).*${Pattern.quote(search)}.*".toString() }
 
     static def setProperty(Object object, String propertyName, def value) {
         if (object?.hasProperty(propertyName)) {
