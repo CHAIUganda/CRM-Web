@@ -55,29 +55,33 @@ public class Customer extends AbstractEntity {
     @RelatedTo(type = Relations.BELONGS_TO_SC)
     SubCounty subCounty
 
+    @Fetch
+    @RelatedTo(type = Relations.CUST_IN_TERRITORY)
+    Territory territory
+
     //this is mainly used for automatic data binding of dynamic contacts
     @Transient
     List<CustomerContact> tCustomerContacts = LazyList.decorate([], FactoryUtils.constantFactory(CustomerContact))
 
 
     static constraints = {
-        outletName                  blank: false
-        outletType                  blank: false, inList: ['pharmacy','drug shop','clinic','health center','hospital']
-        outletSize                  blank: false, inList: ['b', 'm', 's']
-        split                       blank: false, inList: ['urban', 'rural']
-        numberOfEmployees           nullable: false, min: 1
-        openingHours                blank: false
-        turnOver                    nullable: false, min: 1 as Double
-        numberOfBranches            nullable: false, min: 1
-        numberOfCustomersPerDay     nullable: false, min: 1
-        majoritySourceOfSupply      blank: false, inList: ['district', 'trading center', 'whole saler']
-        buildingStructure           blank: false, inList: ['permananet', 'semi-parmanent', 'non-permanent']
-        equipment                   blank: false
-        tenureEndDate               nullable: false
-        tenureStartDate             nullable: false
+        outletName blank: false
+        outletType blank: false, inList: ['pharmacy', 'drug shop', 'clinic', 'health center', 'hospital']
+        outletSize blank: false, inList: ['b', 'm', 's']
+        split blank: false, inList: ['urban', 'rural']
+        numberOfEmployees nullable: false, min: 1
+        openingHours blank: false
+        turnOver nullable: false, min: 1 as Double
+        numberOfBranches nullable: false, min: 1
+        numberOfCustomersPerDay nullable: false, min: 1
+        majoritySourceOfSupply blank: false, inList: ['district', 'trading center', 'whole saler']
+        buildingStructure blank: false, inList: ['permananet', 'semi-parmanent', 'non-permanent']
+        equipment blank: false
+        tenureEndDate nullable: false
+        tenureStartDate nullable: false
         descriptionOfOutletLocation blank: false
-        restockFrequency            nullable: false , min : 1
-        subCounty                   nullable: false
+        restockFrequency nullable: false, min: 1
+        subCounty nullable: false
     }
 
 

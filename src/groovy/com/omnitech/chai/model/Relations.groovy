@@ -5,17 +5,28 @@ package com.omnitech.chai.model
  */
 interface Relations {
 
+    //District -> SubCounty
     final static String HAS_SUB_COUNTY = 'HAS_SUB_COUNTY'
+
+    //SubCount -> Parish
     final static String HAS_PARISH = 'HAS_PARISH'
+
+    //Parish -> Village
     final static String HAS_VILLAGE = 'HAS_VILLAGE'
-    final static String HAS_CUSTOMER = 'HAS_CUSTOMER'
+
+    //Customer -> Territory
+    final static String CUST_IN_TERRITORY = 'CUST_IN_TERRITORY'
+
+    //Region -> District
     final static String HAS_DISTRICT = 'HAS_DISTRICT'
-    //Customer -> Interaction
-    final static String HAS_INTERACTION = 'HAS_INTERACTION'
-    final static String HAS_TERRITORY = 'HAS_TERRITORY'
+
     //Customer -> Contact
     final static String HAS_CONTACT = 'HAS_CONTACT'
+
     //Customer -> SubCounty
     final static String BELONGS_TO_SC = 'BELONGS_TO_SC'
+
+    //Subcounty -> Territory
+    final static String SC_IN_TERRITORY = 'SC_IN_TERRITORY'
 
 }

@@ -23,6 +23,8 @@ interface CustomerRepository extends GraphRepository<Customer> {}
 
 interface CustomerContactRepository extends GraphRepository<CustomerContact> {}
 
+interface TerritoryRepository extends GraphRepository<Territory> {}
+
 interface UserRepository extends GraphRepository<User> {
 
     User findByUsername(String username)

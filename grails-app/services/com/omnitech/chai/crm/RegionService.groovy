@@ -2,7 +2,9 @@ package com.omnitech.chai.crm
 
 import com.omnitech.chai.model.*
 import com.omnitech.chai.util.ModelFunctions
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
+import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.data.neo4j.transaction.Neo4jTransactional
 
 /**
@@ -16,6 +18,9 @@ class RegionService {
     def subCountyRepository
     def parishRepository
     def villageRepository
+    def territoryRepository
+    @Autowired
+    Neo4jTemplate neo
 
     /* Districts */
 
@@ -72,5 +77,21 @@ class RegionService {
     Village saveVillage(Village village) { ModelFunctions.saveEntity(villageRepository, village) }
 
     void deleteVillage(Long id) { villageRepository.delete(id) }
+
+    /* Territory */
+
+    Page<Territory> listTerritorys(Map params) { ModelFunctions.listAll(territoryRepository, params) }
+
+    List<Territory> listAllTerritorys() { territoryRepository.findAll().collect() }
+
+    Territory findTerritory(Long id) { territoryRepository.findOne(id) }
+
+    Territory saveTerritory(Territory territory) { ModelFunctions.saveEntity(territoryRepository, territory) }
+
+    void deleteTerritory(Long id) { territoryRepository.delete(id) }
+
+    Page<Territory> searchTerritorys(String search, Map params) {
+        ModelFunctions.searchAll(neo, Territory, ModelFunctions.getWildCardRegex(search), params)
+    }
 
 }

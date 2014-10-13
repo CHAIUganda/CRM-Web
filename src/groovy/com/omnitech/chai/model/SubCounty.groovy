@@ -21,6 +21,10 @@ class SubCounty extends AbstractEntity {
     @RelatedTo(type = Relations.HAS_PARISH)
     Set<Parish> parishes
 
+    @Fetch
+    @RelatedTo(type = Relations.SC_IN_TERRITORY)
+    Territory territory
+
     String getDescription() {
         "$district:$name"
     }
