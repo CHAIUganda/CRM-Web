@@ -40,6 +40,11 @@
                 <td>
                     <g:link action="edit" id="${territoryInstance.id}"><i
                             class="glyphicon glyphicon-pencil"></i></g:link>
+                    <a href="#" id="${territoryInstance.id}" title="Map To SubCounty"
+                       data-target="#map-territory"
+                       data-toggle="modal">
+                        <i class="glyphicon glyphicon-transfer"></i>
+                    </a>
                 </td>
             </tr>
         </g:each>
@@ -49,6 +54,7 @@
         <bs:paginate total="${territoryInstanceCount}"
                      id="${params.action == 'search' ? (params.term ?: params.id) : null}"/>
     </div>
+    <g:render template="mapTerritory"/>
 </section>
 
 </body>
