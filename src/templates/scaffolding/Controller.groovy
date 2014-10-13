@@ -26,10 +26,14 @@ class ${className}Controller {
         respond page.content, model: [${propertyName}Count: page.totalElements]
     }
 
-	def list(Integer max) {
+    def search(Integer max) {
         params.max = Math.min(max ?: 10, 100)
-        def page = m${className}Service.list${className}s(params)
-        respond page.content, model: [${propertyName}Count: page.totalElements]
+        if (params.term) {
+            redirect(action: 'search', id: params.term)
+            return
+        }
+        def page = m${className}Service.search${className}(params.id,params)
+        respond page.content,view: 'index', model: [${propertyName}Count: page.totalElements]
     }
 
     def show() {
