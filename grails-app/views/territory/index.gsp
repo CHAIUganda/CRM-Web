@@ -16,15 +16,12 @@
     <table class="table table-bordered margin-top-medium">
         <thead>
         <tr>
-            
-            <g:sortableColumn property="dateCreated" title="${message(code: 'territory.dateCreated.label', default: 'Date Created')}" />
-            
-            <g:sortableColumn property="lastUpdated" title="${message(code: 'territory.lastUpdated.label', default: 'Last Updated')}" />
-            
             <g:sortableColumn property="name" title="${message(code: 'territory.name.label', default: 'Name')}" />
-            
-            <g:sortableColumn property="uuid" title="${message(code: 'territory.uuid.label', default: 'Uuid')}" />
-            
+
+            <g:sortableColumn property="dateCreated" title="${message(code: 'territory.dateCreated.label', default: 'Date Created')}" />
+
+            <g:sortableColumn property="lastUpdated" title="${message(code: 'territory.lastUpdated.label', default: 'Last Updated')}" />
+
             <td>
                 Action
             </td>
@@ -33,20 +30,16 @@
         <tbody>
         <g:each in="${territoryInstanceList}" status="i" var="territoryInstance">
             <tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
-                
-                <td><g:link action="show" id="${territoryInstance.id}">${fieldValue(bean: territoryInstance, field: "dateCreated")}</g:link></td>
-                
+
+                <td><g:link action="show" id="${territoryInstance.id}">${fieldValue(bean: territoryInstance, field: "name")}</g:link></td>
+
                 <td><g:formatDate date="${territoryInstance.lastUpdated}" format="dd-MMM-yyyy" /></td>
-                
-                <td>${fieldValue(bean: territoryInstance, field: "name")}</td>
-                
-                <td>${fieldValue(bean: territoryInstance, field: "uuid")}</td>
-                
+
+                <td>${fieldValue(bean: territoryInstance, field: "dateCreated")}</td>
+
                 <td>
                     <g:link action="edit" id="${territoryInstance.id}"><i
                             class="glyphicon glyphicon-pencil"></i></g:link>
-                    <g:link action="delete" id="${territoryInstance.id}"><i
-                            class="glyphicon glyphicon-remove"></i></g:link>
                 </td>
             </tr>
         </g:each>
