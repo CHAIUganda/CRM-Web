@@ -47,7 +47,7 @@
                                     <div class="col-md-6">SubCounties</div>
 
                                     <div class="col-md-6 text-right">
-                                        <i class="glyphicon glyphicon-check btn">CheckAll</i>
+                                        <i class="glyphicon glyphicon-check btn" ng-click="onToggleAll()">ToggleAll</i>
                                     </div>
                                 </div>
                             </div>

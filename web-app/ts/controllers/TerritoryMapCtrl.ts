@@ -9,6 +9,7 @@ module omnitech.chai {
         onDistrictSelected: string;
         subCounties : SubCounty[];
         onSave: () => void;
+        onToggleAll : () => void;
     }
 
     class TerritoryMapCtrl {
@@ -27,8 +28,23 @@ module omnitech.chai {
                 this.onSave();
             };
 
+            scope.onToggleAll = ()=> {
+                this.checkAll();
+            }
+
             scope.$watch('districtId', ()=>this.onDistrictChanged());
             scope.$watch('territory.id', ()=>this.onDistrictChanged());
+        }
+
+        private checkAll() {
+            if (!this.scope.subCounties) {
+                return;
+            }
+            if (this.scope.subCounties.some((obj)=>obj.mapped)) {
+                this.scope.subCounties.forEach((obj:SubCounty)=>obj.mapped = false)
+            } else {
+                this.scope.subCounties.forEach((obj:SubCounty)=>obj.mapped = true)
+            }
         }
 
         private onDistrictChanged() {

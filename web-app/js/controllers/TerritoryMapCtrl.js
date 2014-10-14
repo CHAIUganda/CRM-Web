@@ -16,6 +16,10 @@ var omnitech;
                     _this.onSave();
                 };
 
+                scope.onToggleAll = function () {
+                    _this.checkAll();
+                };
+
                 scope.$watch('districtId', function () {
                     return _this.onDistrictChanged();
                 });
@@ -25,6 +29,23 @@ var omnitech;
             }
             TerritoryMapCtrl.prototype.injection = function () {
                 return ['$scope', 'dataLoader', 'filterFilter', TerritoryMapCtrl];
+            };
+
+            TerritoryMapCtrl.prototype.checkAll = function () {
+                if (!this.scope.subCounties) {
+                    return;
+                }
+                if (this.scope.subCounties.some(function (obj) {
+                    return obj.mapped;
+                })) {
+                    this.scope.subCounties.forEach(function (obj) {
+                        return obj.mapped = false;
+                    });
+                } else {
+                    this.scope.subCounties.forEach(function (obj) {
+                        return obj.mapped = true;
+                    });
+                }
             };
 
             TerritoryMapCtrl.prototype.onDistrictChanged = function () {
