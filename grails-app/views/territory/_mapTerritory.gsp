@@ -62,6 +62,16 @@
                     </div>
                 </div>
 
+
+                %{-- Button--}%
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="text-center btn btn-block" ng-click="onSave()">
+                            <i class="glyphicon glyphicon-save"></i>Save
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
         </div><!-- /.modal-content -->

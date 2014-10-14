@@ -8,6 +8,8 @@ module omnitech.chai {
         districtId :number;
         onDistrictSelected: string;
         subCounties : SubCounty[];
+        error:string;
+        onSave: () => void;
     }
 
     class TerritoryMapCtrl {
@@ -19,11 +21,14 @@ module omnitech.chai {
         constructor(private scope:ITerritoryScope, private dataLoader:DataLoader, private filterFilter) {
 
             scope.onRemap = (id)=> {
-                scope.territory = dataLoader.getTerritory(id)
+                scope.territory = dataLoader.getTerritory(id);
+            };
+
+            scope.onSave = ()=> {
+                this.onSave();
             };
 
             scope.$watch('districtId', ()=>this.onDistrictChanged());
-
         }
 
         private onDistrictChanged() {
@@ -33,9 +38,24 @@ module omnitech.chai {
             this.scope.subCounties = this.dataLoader.findMappedSubCounties(this.scope.territory.id, this.scope.districtId)
         }
 
+        private onSave() {
+            if (!this.scope.subCounties) {
+                this.scope.error = 'Please first select A District';
+                return
+            }
+            var subIds = this.scope.subCounties.filter((obj)=>obj.mapped).map((obj)=>obj.id);
+            this.dataLoader.persistSubCountyMap(this.scope.territory.id, subIds)
+                .success(()=> {
+                    this.scope.error = 'Succes'
+                }).error((data)=> {
+                    this.scope.error = 'Error: ' + data
+                });
+        }
+
+
     }
 
-    var territoryApp = angular.module('omnitechApp', ['ngResource'])
+    angular.module('omnitechApp', ['ngResource'])
         .controller('TerritoryMapCtrl', TerritoryMapCtrl.prototype.injection())
         .service('dataLoader', DataLoader.prototype.injection())
 

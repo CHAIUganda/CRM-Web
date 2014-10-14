@@ -96,4 +96,30 @@ class RegionService {
         ModelFunctions.searchAll(neo, Territory, ModelFunctions.getWildCardRegex(search), params)
     }
 
+    void mapTerritoryToSubs(long id, List<Long> scIds) {
+        def territory = territoryRepository.findOne(id)
+        def subCounties = scIds.collect { subCountyRepository.findOne(it as Long) }
+
+        subCounties.each {
+            it.territory = territory
+            subCountyRepository.save(it)
+        }
+
+        /// get unique districts for the new SubCounties
+        def uniqueDistricts = subCounties.collect { it.district }.unique { it.id }
+
+        //remove all subCounties that belong to those districts
+        def subCountitesDistrict = territory.subCounties.findAll { sc ->
+            uniqueDistricts.any {
+                it.id == sc.district.id
+            }
+        }
+
+        //find all unMapped subcounties and persist them
+        subCountitesDistrict.findAll { sc -> scIds.every { sc.id != it } }.each {
+            it.territory = null
+            subCountyRepository.save(it)
+        }
+    }
+
 }

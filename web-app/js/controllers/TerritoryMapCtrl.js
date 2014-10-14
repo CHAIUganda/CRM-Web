@@ -12,6 +12,10 @@ var omnitech;
                     scope.territory = dataLoader.getTerritory(id);
                 };
 
+                scope.onSave = function () {
+                    _this.onSave();
+                };
+
                 scope.$watch('districtId', function () {
                     return _this.onDistrictChanged();
                 });
@@ -26,10 +30,28 @@ var omnitech;
                 }
                 this.scope.subCounties = this.dataLoader.findMappedSubCounties(this.scope.territory.id, this.scope.districtId);
             };
+
+            TerritoryMapCtrl.prototype.onSave = function () {
+                var _this = this;
+                if (!this.scope.subCounties) {
+                    this.scope.error = 'Please first select A District';
+                    return;
+                }
+                var subIds = this.scope.subCounties.filter(function (obj) {
+                    return obj.mapped;
+                }).map(function (obj) {
+                    return obj.id;
+                });
+                this.dataLoader.persistSubCountyMap(this.scope.territory.id, subIds).success(function () {
+                    _this.scope.error = 'Succes';
+                }).error(function (data) {
+                    _this.scope.error = 'Error: ' + data;
+                });
+            };
             return TerritoryMapCtrl;
         })();
 
-        var territoryApp = angular.module('omnitechApp', ['ngResource']).controller('TerritoryMapCtrl', TerritoryMapCtrl.prototype.injection()).service('dataLoader', chai.DataLoader.prototype.injection());
+        angular.module('omnitechApp', ['ngResource']).controller('TerritoryMapCtrl', TerritoryMapCtrl.prototype.injection()).service('dataLoader', chai.DataLoader.prototype.injection());
     })(omnitech.chai || (omnitech.chai = {}));
     var chai = omnitech.chai;
 })(omnitech || (omnitech = {}));

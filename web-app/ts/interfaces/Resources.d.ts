@@ -11,6 +11,11 @@ declare module omnitech.chai {
         mapped: boolean;
     }
 
+    interface HttPromise {
+        success(func:() => void):HttPromise ;
+        error (func:(data:string) => void):HttPromise;
+    }
+
 }
 
 declare var omnitechBase:string;

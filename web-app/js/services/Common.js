@@ -22,6 +22,11 @@ var omnitech;
                 var url = omnitechBase + '/territory/territoryAsJson/' + id;
                 return this.resouce(url).get();
             };
+
+            DataLoader.prototype.persistSubCountyMap = function (territory, subCounties) {
+                var url = omnitechBase + '/territory/mapTerritoryToSubCounties';
+                return this.http.post(url, { territory: territory, subCounties: subCounties });
+            };
             return DataLoader;
         })();
         chai.DataLoader = DataLoader;

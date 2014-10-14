@@ -17,7 +17,7 @@ import static org.springframework.http.HttpStatus.*
  */
 class TerritoryController {
 
-    static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
+    static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE", mapTerritoryToSubCounties: 'POST']
 
     def  regionService
     @Autowired
@@ -172,5 +172,18 @@ class TerritoryController {
 
         render subcouties as JSON
 
+    }
+
+    def mapTerritoryToSubCounties() {
+        try {
+            def data = request.JSON
+            def territory = data.territory as Long
+            def subCounties = data.subCounties as List
+            regionService.mapTerritoryToSubs(territory, subCounties)
+            render 'Success!'
+        } catch (Exception x) {
+            log.error('Error while processing mapping territory', x)
+            render status: BAD_REQUEST, text: x.message
+        }
     }
 }
