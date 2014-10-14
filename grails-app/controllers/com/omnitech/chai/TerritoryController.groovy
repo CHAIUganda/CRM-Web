@@ -167,7 +167,9 @@ class TerritoryController {
             neo.fetch(territory.subCounties)
         }
         def subcouties = district.subCounties.collect { sc ->
-            [id: sc.id, name: sc.name, mapped: territory.subCounties.any { sc.id == it.id }]
+            [id: sc.id, name: sc.name,
+                    mapped: territory.subCounties.any { sc.id == it.id },
+                    territory: sc.territory?.name]
         }
 
         render subcouties as JSON
@@ -178,8 +180,9 @@ class TerritoryController {
         try {
             def data = request.JSON
             def territory = data.territory as Long
+            def district = data.district as Long
             def subCounties = data.subCounties as List
-            regionService.mapTerritoryToSubs(territory, subCounties)
+            regionService.mapTerritoryToSubs(territory, district, subCounties)
             render 'Success!'
         } catch (Exception x) {
             log.error('Error while processing mapping territory', x)

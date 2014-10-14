@@ -19,6 +19,9 @@ var omnitech;
                 scope.$watch('districtId', function () {
                     return _this.onDistrictChanged();
                 });
+                scope.$watch('territory.id', function () {
+                    return _this.onDistrictChanged();
+                });
             }
             TerritoryMapCtrl.prototype.injection = function () {
                 return ['$scope', 'dataLoader', 'filterFilter', TerritoryMapCtrl];
@@ -42,8 +45,9 @@ var omnitech;
                 }).map(function (obj) {
                     return obj.id;
                 });
-                this.dataLoader.persistSubCountyMap(this.scope.territory.id, subIds).success(function () {
-                    _this.scope.error = 'Succes';
+                this.dataLoader.persistSubCountyMap(this.scope.territory.id, this.scope.districtId, subIds).success(function () {
+                    _this.onDistrictChanged();
+                    _this.scope.error = 'Success';
                 }).error(function (data) {
                     _this.scope.error = 'Error: ' + data;
                 });

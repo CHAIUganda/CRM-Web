@@ -9,6 +9,7 @@ declare module omnitech.chai {
 
     interface SubCounty extends District {
         mapped: boolean;
+        territory: string;
     }
 
     interface HttPromise {

@@ -29,6 +29,7 @@ module omnitech.chai {
             };
 
             scope.$watch('districtId', ()=>this.onDistrictChanged());
+            scope.$watch('territory.id', ()=>this.onDistrictChanged());
         }
 
         private onDistrictChanged() {
@@ -44,9 +45,10 @@ module omnitech.chai {
                 return
             }
             var subIds = this.scope.subCounties.filter((obj)=>obj.mapped).map((obj)=>obj.id);
-            this.dataLoader.persistSubCountyMap(this.scope.territory.id, subIds)
+            this.dataLoader.persistSubCountyMap(this.scope.territory.id, this.scope.districtId, subIds)
                 .success(()=> {
-                    this.scope.error = 'Succes'
+                    this.onDistrictChanged();
+                    this.scope.error = 'Success'
                 }).error((data)=> {
                     this.scope.error = 'Error: ' + data
                 });

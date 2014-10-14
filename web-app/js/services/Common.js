@@ -23,9 +23,9 @@ var omnitech;
                 return this.resouce(url).get();
             };
 
-            DataLoader.prototype.persistSubCountyMap = function (territory, subCounties) {
+            DataLoader.prototype.persistSubCountyMap = function (territory, district, subCounties) {
                 var url = omnitechBase + '/territory/mapTerritoryToSubCounties';
-                return this.http.post(url, { territory: territory, subCounties: subCounties });
+                return this.http.post(url, { territory: territory, district: district, subCounties: subCounties });
             };
             return DataLoader;
         })();

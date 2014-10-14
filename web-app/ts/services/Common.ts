@@ -22,9 +22,9 @@ module omnitech.chai {
             return this.resouce(url).get()
         }
 
-        persistSubCountyMap(territory:number, subCounties:number[]):HttPromise {
+        persistSubCountyMap(territory:number, district:number, subCounties:number[]):HttPromise {
             var url = omnitechBase + '/territory/mapTerritoryToSubCounties';
-            return <HttPromise>this.http.post(url, {territory: territory, subCounties: subCounties})
+            return <HttPromise>this.http.post(url, {territory: territory, district: district, subCounties: subCounties})
         }
 
 
