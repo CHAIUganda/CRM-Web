@@ -5,7 +5,7 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 
-                <h3 class="modal-title">Assign SubCounties To Territory</h3>
+                <h3 class="modal-title">Assign SubCounties To [{{territory.name}}]</h3>
             </div>
 
             <div id="edit-message" class="first modal-body">
@@ -24,10 +24,10 @@
                     <div class="col-md-3 text-right">District</div>
 
                     <div class="col-md-8">
-                        <select class="col-md-12 chzn-select">
-                            <option>Jinja</option>
-                            <option>Bwaise</option>
-                        </select>
+                        <g:select name="district" from="${districts}"
+                                  optionKey="id"
+                                  class="col-md-12 chzn-select"
+                                  ng-model="districtId"/>
                     </div>
                 </div>
 
@@ -53,39 +53,9 @@
                             </div>
 
                             <div class="panel-body">
-                                <div class="col-md-4">
-                                    <g:checkBox name="subCounty"/>
-                                    <label>dsd</label>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <g:checkBox name="subCounty"/>
-                                    <label>dsd</label>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <g:checkBox name="subCounty"/>
-                                    <label>dsd</label>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <g:checkBox name="subCounty"/>
-                                    <label>dsd</label>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <g:checkBox name="subCounty"/>
-                                    <label>dsd</label>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <g:checkBox name="subCounty"/>
-                                    <label>dsd</label>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <g:checkBox name="subCounty"/>
-                                    <label>dsd</label>
+                                <div class="col-md-4" ng-repeat="sc in subCounties">
+                                    <g:checkBox name="subCounty" ng-model="sc.mapped"/>
+                                    <label>{{sc.name}}</label>
                                 </div>
                             </div>
                         </div>

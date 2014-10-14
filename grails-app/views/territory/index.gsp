@@ -11,7 +11,7 @@
 
 <body>
 
-<section id="index-territory" class="first">
+<section id="index-territory" class="first" ng-controller="TerritoryMapCtrl">
 
     <table class="table table-bordered margin-top-medium">
         <thead>
@@ -40,9 +40,11 @@
                 <td>
                     <g:link action="edit" id="${territoryInstance.id}"><i
                             class="glyphicon glyphicon-pencil"></i></g:link>
+
                     <a href="#" id="${territoryInstance.id}" title="Map To SubCounty"
                        data-target="#map-territory"
-                       data-toggle="modal">
+                       data-toggle="modal" ng-click="onRemap(${territoryInstance.id})">
+
                         <i class="glyphicon glyphicon-transfer"></i>
                     </a>
                 </td>
@@ -55,6 +57,10 @@
                      id="${params.action == 'search' ? (params.term ?: params.id) : null}"/>
     </div>
     <g:render template="mapTerritory"/>
+
+    <r:require modules="angular,angular-resource"/>
+    <g:javascript src="services/Common.js"/>
+    <g:javascript src="controllers/TerritoryMapCtrl.js"/>
 </section>
 
 </body>

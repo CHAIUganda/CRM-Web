@@ -32,6 +32,8 @@ class RegionService {
 
     void deleteDistrict(Long id) { districtRepository.delete(id) }
 
+    List<District> listAllDistrictWithSubCounties(){districtRepository.listAllDistrictsWithSubCounties().collect()}
+
     /*  Regions */
 
     List<Region> listAllRegions() { regionRepository.findAll().collect() }

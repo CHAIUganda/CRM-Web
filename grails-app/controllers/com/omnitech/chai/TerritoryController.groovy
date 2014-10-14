@@ -1,14 +1,15 @@
 package com.omnitech.chai
 
+import com.omnitech.chai.crm.TxHelperService
 import com.omnitech.chai.model.Territory
 import com.omnitech.chai.util.ModelFunctions
-import com.omnitech.chai.util.ModelFunctions
+import grails.converters.JSON
+import grails.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.neo4j.support.Neo4jTemplate
+import org.springframework.data.domain.Page
 
 import static com.omnitech.chai.util.ModelFunctions.extractId
 import static org.springframework.http.HttpStatus.*
-import grails.transaction.Transactional
 
 /**
  * TerritoryController
@@ -19,11 +20,18 @@ class TerritoryController {
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
     def  regionService
+    @Autowired
+    TxHelperService tx
 
-	def index(Integer max) {
+    def index(Integer max) {
         params.max = Math.min(max ?: 10, 100)
         def page = regionService.listTerritorys(params)
-        respond page.content, model: [territoryInstanceCount: page.totalElements]
+        respond page.content, model: pageModel(page)
+    }
+
+    private Map pageModel(Page<Territory> page) {
+        def districts = regionService.listAllDistrictWithSubCounties()
+        return [territoryInstanceCount: page.totalElements, districts: districts]
     }
 
     def search(Integer max) {
@@ -131,5 +139,38 @@ class TerritoryController {
             }
             '*'{ render status: NOT_FOUND }
         }
+    }
+
+    def territoryAsJson() {
+        def id = extractId(params)
+        def territory = regionService.findTerritory(id)
+        if (territory)
+            render([id: territory.id, name: territory.name] as JSON)
+        else
+            render '{}'
+
+    }
+
+    def findMappedSubCounties() {
+        def districtId = extractId(params, 'district')
+        def territoryId = extractId(params, 'territory')
+
+        if (districtId == -1 || territoryId == -1) {
+            render '[]'
+            return
+        }
+
+        def district = regionService.findDistrict(districtId)
+        def territory = regionService.findTerritory(territoryId)
+        tx.doInTransaction {
+            neo.fetch(district.subCounties)
+            neo.fetch(territory.subCounties)
+        }
+        def subcouties = district.subCounties.collect { sc ->
+            [id: sc.id, name: sc.name, mapped: territory.subCounties.any { sc.id == it.id }]
+        }
+
+        render subcouties as JSON
+
     }
 }

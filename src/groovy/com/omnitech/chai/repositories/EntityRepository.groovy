@@ -11,8 +11,6 @@ interface RoleRepository extends GraphRepository<Role> {}
 
 interface RegionRepository extends GraphRepository<Region> {}
 
-interface DistrictRepository extends GraphRepository<District> {}
-
 interface SubCountyRepository extends GraphRepository<SubCounty> {}
 
 interface ParishRepository extends GraphRepository<Parish> {}
@@ -37,6 +35,13 @@ interface DeviceRepository extends GraphRepository<Device> {
 
     @Query('MATCH (d:Device) WHERE NOT (()-[:HAS_DEVICE ]->(d)) RETURN d AS model')
     Iterable<Device> findAllFreeDevices()
+}
+
+interface DistrictRepository extends GraphRepository<District> {
+
+    @Query('match (d:District)-[:HAS_SUB_COUNTY]->(s) return distinct d')
+    Set<District> listAllDistrictsWithSubCounties()
+
 }
 
 interface RequestMapRepository extends GraphRepository<RequestMap> {
