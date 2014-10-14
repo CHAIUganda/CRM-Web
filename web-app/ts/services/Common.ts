@@ -29,4 +29,14 @@ module omnitech.chai {
 
 
     }
+
+    export class Utils {
+
+        static postError(hasError:HasError, error:string) {
+            hasError.error = error;
+            setTimeout(()=> {
+                hasError.error = null
+            }, 2000)
+        }
+    }
 }

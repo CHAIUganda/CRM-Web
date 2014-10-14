@@ -1,4 +1,9 @@
 declare module omnitech.chai {
+
+    interface HasError {
+        error:string;
+    }
+
     interface District {
         id: number;
         name : string;

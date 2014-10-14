@@ -30,6 +30,19 @@ var omnitech;
             return DataLoader;
         })();
         chai.DataLoader = DataLoader;
+
+        var Utils = (function () {
+            function Utils() {
+            }
+            Utils.postError = function (hasError, error) {
+                hasError.error = error;
+                setTimeout(function () {
+                    hasError.error = null;
+                }, 2000);
+            };
+            return Utils;
+        })();
+        chai.Utils = Utils;
     })(omnitech.chai || (omnitech.chai = {}));
     var chai = omnitech.chai;
 })(omnitech || (omnitech = {}));

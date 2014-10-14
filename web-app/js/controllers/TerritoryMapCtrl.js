@@ -37,7 +37,7 @@ var omnitech;
             TerritoryMapCtrl.prototype.onSave = function () {
                 var _this = this;
                 if (!this.scope.subCounties) {
-                    this.scope.error = 'Please first select A District';
+                    chai.Utils.postError(this.scope, 'Please first select A District');
                     return;
                 }
                 var subIds = this.scope.subCounties.filter(function (obj) {
@@ -47,9 +47,9 @@ var omnitech;
                 });
                 this.dataLoader.persistSubCountyMap(this.scope.territory.id, this.scope.districtId, subIds).success(function () {
                     _this.onDistrictChanged();
-                    _this.scope.error = 'Success';
+                    chai.Utils.postError(_this.scope, 'Success');
                 }).error(function (data) {
-                    _this.scope.error = 'Error: ' + data;
+                    chai.Utils.postError(_this.scope, 'Error: ' + data);
                 });
             };
             return TerritoryMapCtrl;

@@ -2,13 +2,12 @@
 module omnitech.chai {
 
 
-    interface ITerritoryScope extends ng.IScope {
+    interface ITerritoryScope extends HasError,ng.IScope {
         onRemap : (id:string)=>void;
         territory : Territory;
         districtId :number;
         onDistrictSelected: string;
         subCounties : SubCounty[];
-        error:string;
         onSave: () => void;
     }
 
@@ -41,16 +40,16 @@ module omnitech.chai {
 
         private onSave() {
             if (!this.scope.subCounties) {
-                this.scope.error = 'Please first select A District';
+                Utils.postError(this.scope, 'Please first select A District');
                 return
             }
             var subIds = this.scope.subCounties.filter((obj)=>obj.mapped).map((obj)=>obj.id);
             this.dataLoader.persistSubCountyMap(this.scope.territory.id, this.scope.districtId, subIds)
                 .success(()=> {
                     this.onDistrictChanged();
-                    this.scope.error = 'Success'
+                    Utils.postError(this.scope, 'Success');
                 }).error((data)=> {
-                    this.scope.error = 'Error: ' + data
+                    Utils.postError(this.scope, 'Error: ' + data);
                 });
         }
 
