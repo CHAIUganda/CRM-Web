@@ -17,27 +17,35 @@
 		<tbody>
 		
 			<tr class="prop">
-				<td valign="top" class="name"><g:message code="product.metric.label" default="Metric" /></td>
-				
-				<td valign="top" class="value">${fieldValue(bean: productInstance, field: "metric")}</td>
-				
-			</tr>
-		
-			<tr class="prop">
 				<td valign="top" class="name"><g:message code="product.name.label" default="Name" /></td>
 				
 				<td valign="top" class="value">${fieldValue(bean: productInstance, field: "name")}</td>
 				
 			</tr>
-		
-			<tr class="prop">
+
+        <tr class="prop">
+            <td valign="top" class="name"><g:message code="product.formulation.label" default="Formulation"/></td>
+
+            <td valign="top" class="value">${fieldValue(bean: productInstance, field: "formulation")}</td>
+
+        </tr>
+
+        <tr class="prop">
+            <td valign="top" class="name"><g:message code="product.unitOfMeasure.label" default="Unit Of Measure"/></td>
+
+            <td valign="top" class="value">${fieldValue(bean: productInstance, field: "unitOfMeasure")}</td>
+
+        </tr>
+
+
+        <tr class="prop">
 				<td valign="top" class="name"><g:message code="product.unitPrice.label" default="Unit Price" /></td>
 				
 				<td valign="top" class="value">${fieldValue(bean: productInstance, field: "unitPrice")}</td>
 				
 			</tr>
-		
-		</tbody>
+
+        </tbody>
 	</table>
 </section>
 

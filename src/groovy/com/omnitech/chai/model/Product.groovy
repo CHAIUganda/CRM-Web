@@ -11,13 +11,16 @@ import org.springframework.data.neo4j.annotation.NodeEntity
 class Product extends AbstractEntity {
 
     String name
-    String metric
+    String unitOfMeasure
+    String formulation
     Double unitPrice
+
 
     static constraints = {
         name blank: false
-        metric blank: false
+        unitOfMeasure blank: false
         unitPrice nullable: false
+        formulation blank: false
     }
 
 }
