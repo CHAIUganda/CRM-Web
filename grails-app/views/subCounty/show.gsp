@@ -24,6 +24,13 @@
             </tr>
 
         <tr class="prop">
+                <td valign="top" class="name"><g:message code="subCounty.territory.label" default="Territory" /></td>
+
+                <td valign="top" class="value">${fieldValue(bean: subCountyInstance, field: "territory")}</td>
+
+            </tr>
+
+        <tr class="prop">
             <td valign="top" class="name"><g:message code="subCounty.name.label" default="SubCounty" /></td>
 
             <td valign="top" class="value">${fieldValue(bean: subCountyInstance, field: "name")}</td>
