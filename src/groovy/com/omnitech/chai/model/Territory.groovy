@@ -29,4 +29,6 @@ class Territory extends AbstractEntity {
         name blank: false
     }
 
+    String toString() { name }
+
 }

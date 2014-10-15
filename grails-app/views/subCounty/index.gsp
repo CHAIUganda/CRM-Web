@@ -21,11 +21,13 @@
 
             <g:sortableColumn property="district" title="${message(code: 'subCounty.district.label', default: 'District')}" />
 
+            <th>Territory</th>
+
             <g:sortableColumn property="dateCreated" title="${message(code: 'subCounty.dateCreated.label', default: 'Date Created')}" />
 
             <g:sortableColumn property="lastUpdated" title="${message(code: 'subCounty.lastUpdated.label', default: 'Last Updated')}" />
 
-            <td>Action </td>
+            <th>Action </th>
         </tr>
         </thead>
         <tbody>
@@ -35,6 +37,8 @@
                 <td><g:link action="show" id="${subCountyInstance.id}">${fieldValue(bean: subCountyInstance, field: "name")}</g:link></td>
 
                 <td>${fieldValue(bean: subCountyInstance, field: "district")}</td>
+
+                <td>${fieldValue(bean: subCountyInstance, field: "territory")}</td>
 
                 <td>${fieldValue(bean: subCountyInstance, field: "dateCreated")}</td>
 
