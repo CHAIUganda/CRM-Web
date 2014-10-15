@@ -55,7 +55,9 @@
                 </ul>
             </li>
         </ul>
-        <ul class="nav navbar-nav navbar-right">
+
+    %{-- User Dropdown--}%
+    <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
                 <a data-toggle="dropdown" class="dropdown-toggle glyphicon glyphicon-user" href="#">User <b
                         class="caret"></b></a>
@@ -69,6 +71,10 @@
                         <g:link controller="role" action="index">
                             <i class="glyphicon glyphicon-tags"></i>Roles
                         </g:link>
+                    </li>
+                    <li>
+                        <g:link controller="device" action="index">
+                            <i class="glyphicon glyphicon-phone"></i>Devices</g:link>
                     </li>
                     <sec:ifAllGranted roles="ROLE_SUPER_ADMIN">
                         <li>
