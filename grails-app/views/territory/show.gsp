@@ -1,5 +1,4 @@
-
-<%@ page import="com.omnitech.chai.model.Territory" %>
+<%@ page import="com.omnitech.chai.model.SubCounty; com.omnitech.chai.model.Territory" %>
 <!DOCTYPE html>
 <html>
 
@@ -36,16 +35,36 @@
 				<td valign="top" class="value">${fieldValue(bean: territoryInstance, field: "name")}</td>
 				
 			</tr>
-		
-			<tr class="prop">
-				<td valign="top" class="name"><g:message code="territory.uuid.label" default="Uuid" /></td>
-				
-				<td valign="top" class="value">${fieldValue(bean: territoryInstance, field: "uuid")}</td>
-				
-			</tr>
-		
-		</tbody>
-	</table>
+
+
+
+        <tr class="prop">
+            <td valign="top" class="name"><g:message code="territory.subcounties.label" default="SubCounties"/></td>
+
+            <td valign="top" class="value">
+
+                <g:each in="${subCounties}" var="sc">
+                    <div class="col-md-3">
+                        <g:link controller="subCounty" action="show" id="${sc.id}">
+                            <i class="glyphicon glyphicon-arrow-right"></i>
+                            ${sc}  (${sc.district})
+                        </g:link>
+                    </div>
+                </g:each>
+
+            </td>
+
+        </tr>
+
+        <tr class="prop">
+            <td valign="top" class="name"><g:message code="territory.uuid.label" default="Uuid"/></td>
+
+            <td valign="top" class="value">${fieldValue(bean: territoryInstance, field: "uuid")}</td>
+
+        </tr>
+
+        </tbody>
+    </table>
 </section>
 
 </body>

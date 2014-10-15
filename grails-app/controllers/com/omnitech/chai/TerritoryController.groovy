@@ -1,6 +1,8 @@
 package com.omnitech.chai
 
 import com.omnitech.chai.crm.TxHelperService
+import com.omnitech.chai.model.District
+import com.omnitech.chai.model.SubCounty
 import com.omnitech.chai.model.Territory
 import com.omnitech.chai.util.ModelFunctions
 import grails.converters.JSON
@@ -49,7 +51,15 @@ class TerritoryController {
         if (id == -1) {
             notFound(); return
         }
-        respond regionService.findTerritory(id)
+
+        def territory = regionService.findTerritory(id)
+
+        if(!territory) {
+            notFound();return
+        }
+
+        tx.doInTransaction { neo.fetch(territory.subCounties) }
+        respond territory, model: [subCounties:  territory.subCounties?.sort { it?.district?.id }]
     }
 
     def create() {
