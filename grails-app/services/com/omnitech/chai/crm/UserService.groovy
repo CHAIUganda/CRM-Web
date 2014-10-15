@@ -122,4 +122,8 @@ class UserService {
     Page<User> searchUsers(String search, Map params) {
         ModelFunctions.searchAll(neo, User, ModelFunctions.getWildCardRegex(search), params)
     }
+
+    Page<Device> searchDevices(String search, Map params) {
+        ModelFunctions.searchAll(neo, Device, ModelFunctions.getWildCardRegex(search), params)
+    }
 }

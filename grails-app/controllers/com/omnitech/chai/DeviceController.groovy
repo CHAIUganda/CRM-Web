@@ -23,10 +23,14 @@ class DeviceController {
         respond page.content, model: [deviceInstanceCount: page.totalElements]
     }
 
-	def list(Integer max) {
+    def search(Integer max) {
         params.max = Math.min(max ?: 10, 100)
-        def page = userService.listDevices(params)
-        respond page.content, model: [deviceInstanceCount: page.totalElements]
+        if (params.term) {
+            redirect(action: 'search', id: params.term)
+            return
+        }
+        def page = userService.searchDevices(params.id, params)
+        respond page.content, view: 'index', model: [deviceInstanceCount: page.totalElements]
     }
 
     def show() {
