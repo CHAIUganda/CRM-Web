@@ -29,8 +29,21 @@
 				<td valign="top" class="value">${fieldValue(bean: deviceInstance, field: "model")}</td>
 				
 			</tr>
-		
-		</tbody>
+
+        <tr class="prop">
+            <td valign="top" class="name"><g:message code="device.user.label" default="Assigned User"/></td>
+
+            <td valign="top" class="value">
+                <g:if test="${deviceInstance.user}">
+                    <g:link controller="user" id="">
+                        ${fieldValue(bean: deviceInstance, field: "user")}
+                    </g:link>
+                </g:if>
+            </td>
+
+        </tr>
+
+        </tbody>
 	</table>
 </section>
 

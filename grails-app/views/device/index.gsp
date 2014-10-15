@@ -20,7 +20,8 @@
             <g:sortableColumn property="model" title="${message(code: 'device.model.label', default: 'Model')}" />
 
             <g:sortableColumn property="imei" title="${message(code: 'device.imei.label', default: 'Imei')}" />
-            
+            <th>${message(code: 'device.user.label', default: 'Assigned User')}</th>
+
             <td>
                 Action
             </td>
@@ -33,7 +34,9 @@
                 <td><g:link action="show" id="${deviceInstance.id}">${fieldValue(bean: deviceInstance, field: "model")}</g:link></td>
 
                 <td>${fieldValue(bean: deviceInstance, field: "imei")}</td>
-                
+
+                <td>${fieldValue(bean: deviceInstance, field: "user")}</td>
+
                 <td>
                     <g:link action="edit" id="${deviceInstance.id}"><i
                             class="glyphicon glyphicon-pencil"></i></g:link>
