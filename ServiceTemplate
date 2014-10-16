@@ -1,13 +1,18 @@
 package com.omnitech.chai.crm
 
-import com.omnitech.chai.model.{domain}
+import com.omnitech.chai.model.Task
+import com.omnitech.chai.util.ModelFunctions
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
+import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.data.neo4j.transaction.Neo4jTransactional
 
 @Neo4jTransactional
 class {domain}Service {
 
     def {instance}Repository
+    @Autowired
+    Neo4jTemplate neo
 
     /* {domain}s */
 

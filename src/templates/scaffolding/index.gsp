@@ -58,7 +58,7 @@
     </table>
     <div>
         <bs:paginate total="\${${propertyName}Count}"
-                     id="${params.action == 'search' ? (params.term ?: params.id) : null}"/>
+                     id="\${params.action == 'search' ? (params.term ?: params.id) : null}"/>
     </div>
 </section>
 

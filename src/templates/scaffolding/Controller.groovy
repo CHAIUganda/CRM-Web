@@ -32,7 +32,7 @@ class ${className}Controller {
             redirect(action: 'search', id: params.term)
             return
         }
-        def page = m${className}Service.search${className}(params.id,params)
+        def page = m${className}Service.search${className}s(params.id,params)
         respond page.content,view: 'index', model: [${propertyName}Count: page.totalElements]
     }
 
