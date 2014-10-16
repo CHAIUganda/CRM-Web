@@ -1,0 +1,27 @@
+package com.omnitech.chai.crm
+
+import com.omnitech.chai.model.{domain}
+import org.springframework.data.domain.Page
+import org.springframework.data.neo4j.transaction.Neo4jTransactional
+
+@Neo4jTransactional
+class {domain}Service {
+
+    def {instance}Repository
+
+    /* {domain}s */
+
+    List<{domain}> listAll{domain}s() { {instance}Repository.findAll().collect() }
+
+    Page<{domain}> list{domain}s(Map params) { ModelFunctions.listAll({instance}Repository, params) }
+
+    {domain} find{domain}(Long id) { {instance}Repository.findOne(id) }
+
+    {domain} save{domain}({domain} {instance}) { ModelFunctions.saveEntity({instance}Repository, {instance}) }
+
+    void delete{domain}(Long id) { {instance}Repository.delete(id) }
+
+    Page<{domain}> search{domain}s(String search, Map params) {
+        ModelFunctions.searchAll(neo, {domain}, ModelFunctions.getWildCardRegex(search), params)
+    }
+}
