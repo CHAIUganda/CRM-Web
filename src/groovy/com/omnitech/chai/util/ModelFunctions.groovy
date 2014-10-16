@@ -29,7 +29,7 @@ class ModelFunctions {
         return id
     }
 
-    static <T> T bind(def obj, Map properties, boolean copyMetaInfo = false) {
+    static <T> T bind(T obj, Map properties, boolean copyMetaInfo = false) {
         SimpleDataBinder binder = new SimpleDataBinder();
         if (copyMetaInfo) {
             binder.bind(obj, new SimpleMapDataBindingSource(properties))
@@ -40,7 +40,7 @@ class ModelFunctions {
             whiteList.remove('dateCreated')
             binder.bind(obj, new SimpleMapDataBindingSource(properties), whiteList)
         }
-        return (T) obj
+        return obj
     }
 
     static def setPropertyIfNull(Object object, String propertyName, def value) {
