@@ -2,6 +2,7 @@ package com.omnitech.chai.model
 
 import grails.validation.Validateable
 import org.neo4j.graphdb.Direction
+import org.springframework.data.neo4j.annotation.Fetch
 import org.springframework.data.neo4j.annotation.NodeEntity
 import org.springframework.data.neo4j.annotation.RelatedTo
 
@@ -18,12 +19,15 @@ class Task extends AbstractEntity {
     protected String type = Task.simpleName
     String status = STATUS_NEW
 
+    @Fetch
     @RelatedTo(type = Relations.ASSIGNED_TASK, direction = Direction.INCOMING)
     User assignedTo
 
+    @Fetch
     @RelatedTo(type = Relations.COMPLETED_TASK, direction = Direction.INCOMING)
     private User completedBy
 
+    @Fetch
     @RelatedTo(type = Relations.CUST_TASK, direction = Direction.INCOMING)
     private Customer customer
 

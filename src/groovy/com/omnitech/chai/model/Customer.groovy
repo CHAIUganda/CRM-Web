@@ -104,6 +104,7 @@ public class Customer extends AbstractEntity {
             this.wkt = null
     }
 
+    String toString(){outletName}
 
     def beforeSave() {
         createWkt()

@@ -29,18 +29,44 @@
 				<td valign="top" class="value">${fieldValue(bean: taskInstance, field: "description")}</td>
 				
 			</tr>
-		
-			<tr class="prop">
-				<td valign="top" class="name"><g:message code="task.lastUpdated.label" default="Last Updated" /></td>
-				
-				<td valign="top" class="value"><g:formatDate date="${taskInstance?.lastUpdated}" /></td>
-				
-			</tr>
-		
-			<tr class="prop">
-				<td valign="top" class="name"><g:message code="task.status.label" default="Status" /></td>
-				
-				<td valign="top" class="value">${fieldValue(bean: taskInstance, field: "status")}</td>
+        <g:if test="${taskInstance.completedBy}">
+            <tr class="prop">
+                <td valign="top" class="name">Completed By</td>
+
+                <td valign="top" class="value">
+                    <g:link controller="user" action="index" id="${taskInstance.completedBy.id}">
+                        <i class="glyphicon glyphicon-user"></i>
+                        ${fieldValue(bean: taskInstance, field: "completedBy")}
+                    </g:link>
+                </td>
+
+            </tr>
+        </g:if>
+        <g:if test="${taskInstance.assignedTo}">
+            <tr class="prop">
+                <td valign="top" class="name">Assigned To</td>
+
+                <td valign="top" class="value">
+                    <g:link controller="user" action="index" id="${taskInstance.assignedTo.id}">
+                        <i class="glyphicon glyphicon-user"></i>  ${fieldValue(bean: taskInstance, field: "assignedTo")}
+                    </g:link>
+                </td>
+
+            </tr>
+        </g:if>
+
+
+        <tr class="prop">
+            <td valign="top" class="name"><g:message code="task.lastUpdated.label" default="Last Updated"/></td>
+
+            <td valign="top" class="value"><g:formatDate date="${taskInstance?.lastUpdated}"/></td>
+
+        </tr>
+
+        <tr class="prop">
+            <td valign="top" class="name"><g:message code="task.status.label" default="Status"/></td>
+
+            <td valign="top" class="value">${fieldValue(bean: taskInstance, field: "status")}</td>
 				
 			</tr>
 		
