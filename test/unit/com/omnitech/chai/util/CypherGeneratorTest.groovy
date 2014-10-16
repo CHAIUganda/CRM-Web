@@ -19,14 +19,14 @@ class CypherGeneratorTest extends Specification {
         def arrow = CypherGenerator.getAssocArrow(field)
 
         then:
-        arrow == '-->'
+        arrow == '-[:BELONGS_TO_SC]->'
 
         when:
         field = ReflectFunctions.findAllFields(District).find { it.type == Region }
         arrow = CypherGenerator.getAssocArrow(field)
 
         then:
-        arrow == '<--'
+        arrow == '<-[:HAS_DISTRICT]-'
     }
 
     def 'test generation 1'() {
@@ -35,14 +35,15 @@ class CypherGeneratorTest extends Specification {
 
         then:
         query == 'MATCH (barentity:BarEntity)\n' +
-                ' optional match (barentity)-->(BarEntity_fooBarEntity:FooBarEntity)\n' +
-                ' optional match (BarEntity_fooBarEntity)<--(FooBarEntity_parent:FooBarEntity)\n' +
+                ' optional match (barentity)-[:]->(BarEntity_fooBarEntity:FooBarEntity)\n' +
+                ' optional match (BarEntity_fooBarEntity)<-[:HAS_CHILD]-(FooBarEntity_parent:FooBarEntity)\n' +
                 'WITH barentity,BarEntity_fooBarEntity,FooBarEntity_parent\n' +
                 'WHERE barentity.name =~ {search} or str(barentity.id) =~ {search} or barentity.uuid =~ {search} or BarEntity_fooBarEntity.description =~ {search} or str(BarEntity_fooBarEntity.id) =~ {search} or BarEntity_fooBarEntity.uuid =~ {search} or FooBarEntity_parent.description =~ {search} or str(FooBarEntity_parent.id) =~ {search} or FooBarEntity_parent.uuid =~ {search}\n' +
                 'return barentity\n' +
                 'order by barentity.id desc\n' +
                 'skip 0\n' +
-                'limit 50\n'
+                'limit 50\n' +
+                ''
     }
 
     def 'test generation 2'() {
@@ -51,14 +52,15 @@ class CypherGeneratorTest extends Specification {
 
         then:
         query == 'MATCH (barentity:BarEntity)\n' +
-                ' optional match (barentity)-->(BarEntity_fooBarEntity:FooBarEntity)\n' +
-                ' optional match (BarEntity_fooBarEntity)<--(FooBarEntity_parent:FooBarEntity)\n' +
+                ' optional match (barentity)-[:]->(BarEntity_fooBarEntity:FooBarEntity)\n' +
+                ' optional match (BarEntity_fooBarEntity)<-[:HAS_CHILD]-(FooBarEntity_parent:FooBarEntity)\n' +
                 'WITH barentity,BarEntity_fooBarEntity,FooBarEntity_parent\n' +
                 'WHERE barentity.name =~ {search} or str(barentity.id) =~ {search} or barentity.uuid =~ {search} or BarEntity_fooBarEntity.description =~ {search} or str(BarEntity_fooBarEntity.id) =~ {search} or BarEntity_fooBarEntity.uuid =~ {search} or FooBarEntity_parent.description =~ {search} or str(FooBarEntity_parent.id) =~ {search} or FooBarEntity_parent.uuid =~ {search}\n' +
                 'return barentity\n' +
                 'order by barentity.id desc\n' +
                 'skip 20\n' +
-                'limit 20\n'
+                'limit 20\n' +
+                ''
     }
 
     def 'test generation 3'() {
@@ -67,8 +69,8 @@ class CypherGeneratorTest extends Specification {
 
         then:
         query == 'MATCH (barentity:BarEntity)\n' +
-                ' optional match (barentity)-->(BarEntity_fooBarEntity:FooBarEntity)\n' +
-                ' optional match (BarEntity_fooBarEntity)<--(FooBarEntity_parent:FooBarEntity)\n' +
+                ' optional match (barentity)-[:]->(BarEntity_fooBarEntity:FooBarEntity)\n' +
+                ' optional match (BarEntity_fooBarEntity)<-[:HAS_CHILD]-(FooBarEntity_parent:FooBarEntity)\n' +
                 'WITH barentity,BarEntity_fooBarEntity,FooBarEntity_parent\n' +
                 'WHERE barentity.name =~ {search} or str(barentity.id) =~ {search} or barentity.uuid =~ {search} or BarEntity_fooBarEntity.description =~ {search} or str(BarEntity_fooBarEntity.id) =~ {search} or BarEntity_fooBarEntity.uuid =~ {search} or FooBarEntity_parent.description =~ {search} or str(FooBarEntity_parent.id) =~ {search} or FooBarEntity_parent.uuid =~ {search}\n' +
                 'return count(barentity)\n' +
@@ -81,10 +83,11 @@ class CypherGeneratorTest extends Specification {
 
         then:
         query == 'MATCH (foobarentity:FooBarEntity)\n' +
-                ' optional match (foobarentity)<--(FooBarEntity_parent:FooBarEntity)\n' +
+                ' optional match (foobarentity)<-[:HAS_CHILD]-(FooBarEntity_parent:FooBarEntity)\n' +
                 'WITH foobarentity,FooBarEntity_parent\n' +
                 'WHERE foobarentity.description =~ {search} or str(foobarentity.id) =~ {search} or foobarentity.uuid =~ {search} or FooBarEntity_parent.description =~ {search} or str(FooBarEntity_parent.id) =~ {search} or FooBarEntity_parent.uuid =~ {search}\n' +
-                'return count(foobarentity)\n'
+                'return count(foobarentity)\n' +
+                ''
 
     }
 
@@ -94,10 +97,11 @@ class CypherGeneratorTest extends Specification {
 
         then:
         query == 'MATCH (foobarentity:FooBarEntity)\n' +
-                ' optional match (foobarentity)<--(FooBarEntity_parent:FooBarEntity)\n' +
+                ' optional match (foobarentity)<-[:HAS_CHILD]-(FooBarEntity_parent:FooBarEntity)\n' +
                 'WITH foobarentity,FooBarEntity_parent\n' +
                 'WHERE foobarentity.description =~ {search} or str(foobarentity.id) =~ {search} or foobarentity.uuid =~ {search} or FooBarEntity_parent.description =~ {search} or str(FooBarEntity_parent.id) =~ {search} or FooBarEntity_parent.uuid =~ {search}\n' +
-                'return count(foobarentity)\n'
+                'return count(foobarentity)\n' +
+                ''
     }
 
     def 'test generation wit sort ascending'() {
@@ -106,8 +110,8 @@ class CypherGeneratorTest extends Specification {
 
         then:
         query == 'MATCH (barentity:BarEntity)\n' +
-                ' optional match (barentity)-->(BarEntity_fooBarEntity:FooBarEntity)\n' +
-                ' optional match (BarEntity_fooBarEntity)<--(FooBarEntity_parent:FooBarEntity)\n' +
+                ' optional match (barentity)-[:]->(BarEntity_fooBarEntity:FooBarEntity)\n' +
+                ' optional match (BarEntity_fooBarEntity)<-[:HAS_CHILD]-(FooBarEntity_parent:FooBarEntity)\n' +
                 'WITH barentity,BarEntity_fooBarEntity,FooBarEntity_parent\n' +
                 'WHERE barentity.name =~ {search} or str(barentity.id) =~ {search} or barentity.uuid =~ {search} or BarEntity_fooBarEntity.description =~ {search} or str(BarEntity_fooBarEntity.id) =~ {search} or BarEntity_fooBarEntity.uuid =~ {search} or FooBarEntity_parent.description =~ {search} or str(FooBarEntity_parent.id) =~ {search} or FooBarEntity_parent.uuid =~ {search}\n' +
                 'return barentity\n' +
@@ -123,8 +127,8 @@ class CypherGeneratorTest extends Specification {
 
         then:
         query == 'MATCH (barentity:BarEntity)\n' +
-                ' optional match (barentity)-->(BarEntity_fooBarEntity:FooBarEntity)\n' +
-                ' optional match (BarEntity_fooBarEntity)<--(FooBarEntity_parent:FooBarEntity)\n' +
+                ' optional match (barentity)-[:]->(BarEntity_fooBarEntity:FooBarEntity)\n' +
+                ' optional match (BarEntity_fooBarEntity)<-[:HAS_CHILD]-(FooBarEntity_parent:FooBarEntity)\n' +
                 'WITH barentity,BarEntity_fooBarEntity,FooBarEntity_parent\n' +
                 'WHERE barentity.name =~ {search} or str(barentity.id) =~ {search} or barentity.uuid =~ {search} or BarEntity_fooBarEntity.description =~ {search} or str(BarEntity_fooBarEntity.id) =~ {search} or BarEntity_fooBarEntity.uuid =~ {search} or FooBarEntity_parent.description =~ {search} or str(FooBarEntity_parent.id) =~ {search} or FooBarEntity_parent.uuid =~ {search}\n' +
                 'return barentity\n' +
