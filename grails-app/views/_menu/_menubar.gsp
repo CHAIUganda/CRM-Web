@@ -21,35 +21,33 @@
             <li><g:link controller="customer" action="index">Customers</g:link></li>
 
 
+            %{-- Tasks --}%
+            <li><g:link controller="task" action="index">Tasks</g:link></li>
+
             %{--    SETTINGS    --}%
             <li class="dropdown">
                 <a data-toggle="dropdown" class="dropdown-toggle" href="#">Settings <b class="caret"></b></a>
                 <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
                     <li>
-                        <a class="trigger right-caret" href="#">Location</a>
-                        <ul class="dropdown-menu sub-menu">
-                            <li>
-                                <g:link controller="district" action="index">
-                                    Districts
-                                </g:link>
-                            </li>
-                            <li>
-                                <g:link controller="subCounty" action="index">
-                                    Subcounties
-                                </g:link>
-                            </li>
-                            <li>
-                                <g:link controller="parish" action="index">
-                                    Parishes
-                                </g:link>
-                            </li>
-                            <li>
-                                <g:link controller="village" action="index">Village</g:link>
-                            </li>
-                            <li>
-                                <g:link controller="territory" action="index">Territories</g:link>
-                            </li>
-                        </ul>
+                        <g:link controller="district" action="index">
+                            Districts
+                        </g:link>
+                    </li>
+                    <li>
+                        <g:link controller="subCounty" action="index">
+                            Subcounties
+                        </g:link>
+                    </li>
+                    <li>
+                        <g:link controller="parish" action="index">
+                            Parishes
+                        </g:link>
+                    </li>
+                    <li>
+                        <g:link controller="village" action="index">Village</g:link>
+                    </li>
+                    <li>
+                        <g:link controller="territory" action="index">Territories</g:link>
                     </li>
                     <li><a href="#">Access Logs</a></li>
                 </ul>
