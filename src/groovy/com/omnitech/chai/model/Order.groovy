@@ -1,26 +1,27 @@
 package com.omnitech.chai.model
 
-import org.neo4j.graphdb.Direction
+import grails.validation.Validateable
 import org.springframework.data.neo4j.annotation.Fetch
 import org.springframework.data.neo4j.annotation.NodeEntity
-import org.springframework.data.neo4j.annotation.RelatedTo
 import org.springframework.data.neo4j.annotation.RelatedToVia
 
 /**
  * Created by kay on 9/25/14.
  */
 @NodeEntity
-class Order extends AbstractEntity {
-
-    static String PENDING = 'new', COMPLETE = 'complete'
-
-
-    String status = PENDING
+@Validateable
+class Order extends Task {
 
     @Fetch
     @RelatedToVia
     Set<LineItem> lineItems = new HashSet()
 
-    @RelatedTo(type = 'HAS_ORDER', direction = Direction.INCOMING)
-    Interaction interaction
+    def beforeSave() {
+        this.type = Order.simpleName
+    }
+
+    static constraints = {
+        importFrom(Task)
+    }
+
 }

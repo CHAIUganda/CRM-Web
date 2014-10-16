@@ -1,5 +1,6 @@
 package com.omnitech.chai.model
 
+import grails.validation.Validateable
 import org.neo4j.graphdb.Direction
 import org.springframework.data.neo4j.annotation.NodeEntity
 import org.springframework.data.neo4j.annotation.RelatedTo
@@ -8,12 +9,13 @@ import org.springframework.data.neo4j.annotation.RelatedTo
  * Created by kay on 9/24/14.
  */
 @NodeEntity
+@Validateable
 class Task extends AbstractEntity {
 
     final static String STATUS_NEW = 'new', STATUS_COMPLETE = 'complete'
 
     String description
-    String type = Task.simpleName
+    protected String type = Task.simpleName
     String status = STATUS_NEW
 
     @RelatedTo(type = Relations.ASSIGNED_TASK, direction = Direction.INCOMING)
@@ -49,6 +51,11 @@ class Task extends AbstractEntity {
     User getCompletedBy() { completedBy }
 
     User getAssignedTo() { assignedTo }
+
+    static constraints = {
+        description blank: false
+        status blank: false
+    }
 
 
 }
