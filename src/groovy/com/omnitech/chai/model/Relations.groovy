@@ -29,4 +29,15 @@ interface Relations {
     //Subcounty -> Territory
     final static String SC_IN_TERRITORY = 'SC_IN_TERRITORY'
 
+    //User -> Task
+    final static ASSIGNED_TASK = 'ASSIGNED_TASK'
+
+    //User -> Task
+    final static COMPLETED_TASK = 'COMPLETED_TASK'
+
+    //Task -> Customer
+    final static CUST_TASK = 'CUST_TASK'
+
+
+
 }
