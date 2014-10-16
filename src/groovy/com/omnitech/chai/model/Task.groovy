@@ -13,7 +13,7 @@ class Task extends AbstractEntity {
     final static String STATUS_NEW = 'new', STATUS_COMPLETE = 'complete'
 
     String description
-    String type
+    String type = Task.simpleName
     String status = STATUS_NEW
 
     @RelatedTo(type = Relations.ASSIGNED_TASK, direction = Direction.INCOMING)
