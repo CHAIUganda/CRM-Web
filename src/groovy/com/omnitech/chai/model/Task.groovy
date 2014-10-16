@@ -10,13 +10,45 @@ import org.springframework.data.neo4j.annotation.RelatedTo
 @NodeEntity
 class Task extends AbstractEntity {
 
-    static String PENDING = 'new', COMPLETE = 'complete'
+    final static String STATUS_NEW = 'new', STATUS_COMPLETE = 'complete'
 
     String description
-
     String type
-    String status
+    String status = STATUS_NEW
 
-    @RelatedTo(type = 'HAS_TASK', direction = Direction.INCOMING)
-    Interaction task
+    @RelatedTo(type = Relations.ASSIGNED_TASK, direction = Direction.INCOMING)
+    User assignedTo
+
+    @RelatedTo(type = Relations.COMPLETED_TASK, direction = Direction.INCOMING)
+    private User completedBy
+
+    @RelatedTo(type = Relations.CUST_TASK, direction = Direction.INCOMING)
+    private Customer customer
+
+    Task completedBy(User user) {
+        setCompletedBy(user)
+        status = STATUS_COMPLETE
+        return this
+    }
+
+    Task assignedTO(User user) {
+        setAssignedTo(user)
+        return this
+    }
+
+    private void setCompletedBy(User user) {
+        this.@assignedTo == null
+        this.@completedBy = user
+    }
+
+    private void setAssignedTo(User assignedTo) {
+        this.@completedBy = null
+        this.assignedTo = assignedTo
+    }
+
+    User getCompletedBy() { completedBy }
+
+    User getAssignedTo() { assignedTo }
+
+
 }
