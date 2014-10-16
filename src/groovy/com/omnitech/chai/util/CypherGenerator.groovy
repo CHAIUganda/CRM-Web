@@ -52,16 +52,17 @@ class CypherGenerator {
             visitNodeFields(aClass, getEntityName(aClass), it) { Class enclosingClass, String fieldNameForEnclosingClass, Field right ->
                 cypher << ' optional match (' << fieldNameForEnclosingClass << ')'
                 cypher << getAssocArrow(right)
-                cypher << '(' << getEntityName(enclosingClass, right) << ':' << right.type.simpleName << ')\n'
+                cypher << '(' << getEntityName(enclosingClass, right, fieldNameForEnclosingClass) << ':' << right.type.simpleName << ')\n'
             }
         }
         return cypher
     }
 
     @CompileStatic
-    private static String getEntityName(Class enclosingClass, Field field = null) {
+    private static String getEntityName(Class enclosingClass, Field field = null, String nodeReferencing = null) {
         if (field) {
-            return "${enclosingClass.simpleName}_${field.name}"
+            def longName = "${nodeReferencing}_${enclosingClass.simpleName}_${field.name}"
+            return "${enclosingClass.simpleName}_${field.name}_${UUID.uniqueId(longName)}"
         }
         return enclosingClass.simpleName.toLowerCase()
     }
@@ -72,7 +73,7 @@ class CypherGenerator {
         def nodes = [] << entityName
         findNodeFields(aClass).each {
             visitNodeFields(aClass, entityName, it) { Class enclosingClass, String fieldNameForEnclosingClass, Field right ->
-                nodes << getEntityName(enclosingClass, right)
+                nodes << getEntityName(enclosingClass, right, fieldNameForEnclosingClass)
             }
         }
         return new StringBuilder() << 'WITH ' << nodes.unique().join(',') << '\n'
@@ -83,7 +84,7 @@ class CypherGenerator {
         def filterFields = findAllFilterFields(aClass, entityName)
         findNodeFields(aClass).each {
             visitNodeFields(aClass, entityName, it) { Class enclosingClass, String fieldNameForEnclosingClass, Field right ->
-                filterFields.addAll(findAllFilterFields(right.type, getEntityName(enclosingClass, right)))
+                filterFields.addAll(findAllFilterFields(right.type, getEntityName(enclosingClass, right, fieldNameForEnclosingClass)))
             }
         }
         return filterFields.collect { "$it =~ {search}" }.join(' or ')
@@ -97,7 +98,7 @@ class CypherGenerator {
 
     private
     static void visitNodeFields(Class enclosingClass, String fieldNameForEnclosingClass, Field right, Closure visitor) {
-        def fieldNodeName = getEntityName(enclosingClass, right)
+        def fieldNodeName = getEntityName(enclosingClass, right, fieldNameForEnclosingClass)
         visitor(enclosingClass, fieldNameForEnclosingClass, right)
         //todo for now we do not support recursive references hence the { it.type != left }
         def nodes = findNodeFields(right.type).findAll { it.type != enclosingClass }
@@ -110,10 +111,11 @@ class CypherGenerator {
         if (!field.isAnnotationPresent(RelatedTo)) return '-->'
 
         def annotation = field.getAnnotation(RelatedTo)
+        def type = annotation.type()
         switch (annotation.direction()) {
-            case Direction.INCOMING: return '<--'
-            case Direction.BOTH: return '--'
-            default: return '-->'
+            case Direction.INCOMING: return "<-[:$type]-"
+            case Direction.BOTH: return "-[:$type]-"
+            default: return "-[:$type]->"
         }
     }
 
