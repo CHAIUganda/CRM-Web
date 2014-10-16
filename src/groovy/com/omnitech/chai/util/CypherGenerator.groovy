@@ -58,13 +58,14 @@ class CypherGenerator {
         return cypher
     }
 
-    static boolean useUniqueName = false;
+    //mainly used by tests
+    static boolean inTests = false;
 
     @CompileStatic
     private static String getEntityName(Class enclosingClass, Field field = null, String nodeReferencing = null) {
         if (field) {
             def longName = "${nodeReferencing}_${enclosingClass.simpleName}_${field.name}"
-            def shortName = useUniqueName ? "_${UUID.uniqueId(longName)}" : ''
+            def shortName = inTests ? '' : "_${UUID.uniqueId(longName)}"
             return "${enclosingClass.simpleName}_${field.name}$shortName"
         }
         return enclosingClass.simpleName.toLowerCase()

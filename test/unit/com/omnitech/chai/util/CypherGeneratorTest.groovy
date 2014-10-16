@@ -11,6 +11,10 @@ import spock.lang.Specification
  */
 class CypherGeneratorTest extends Specification {
 
+    void setup(){
+        CypherGenerator.inTests = true
+    }
+
     def 'test get Assoc arrow'() {
 
         def field = ReflectFunctions.findAllFields(Customer).find { it.type == SubCounty }
