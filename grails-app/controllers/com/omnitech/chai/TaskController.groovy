@@ -16,6 +16,8 @@ class TaskController {
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
     def taskService
+    def userService
+    def customerService
 
     def index(Integer max) {
         params.max = Math.min(max ?: 10, 100)
@@ -42,7 +44,7 @@ class TaskController {
     }
 
     def create() {
-        respond ModelFunctions.bind(new Task(), params)
+        respond ModelFunctions.bind(new Task(), params), model: [users: userService.listAllUsers(), customers: customerService.listAllCustomers() ]
     }
 
     def save(Task taskInstance) {

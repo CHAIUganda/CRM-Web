@@ -32,6 +32,8 @@ class UserService {
         ModelFunctions.listAll(userRepository, params)
     }
 
+    List<User> listAllUsers(Map params) { userRepository.findAll().collect() }
+
     User findUser(Long id) {
         userRepository.findOne(id)
     }

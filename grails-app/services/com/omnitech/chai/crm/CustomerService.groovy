@@ -21,6 +21,7 @@ class CustomerService {
 
     Page<Customer> listCustomers(Map params) { ModelFunctions.listAll(customerRepository, params) }
 
+    @Neo4jTransactional
     List<Customer> listAllCustomers() { customerRepository.findAll().collect() }
 
     Customer findCustomer(Long id) { customerRepository.findOne(id) }
