@@ -14,7 +14,7 @@
     <label for="status" class="control-label"><g:message code="task.cutomer.label" default="Target Customer"/></label>
 
     <div>
-        <g:select from="${customers}" class="form-control chzn-select" style="width: 50%;" name="customer.id"  optionKey="id"/>
+        <g:select from="${customers}" class="form-control chzn-select" style="width: 50%;" name="customer.id"  optionKey="id" value="${taskInstance?.customer?.id}"/>
     </div>
 </div>
 
@@ -22,7 +22,7 @@
     <label for="status" class="control-label"><g:message code="task.assignedTo.label" default="Assigned User"/></label>
 
     <div>
-        <g:select from="${users}" class="form-control chzn-select" style="width: 50%;" name="assignedTo.id"  optionKey="id"/>
+        <g:select from="${users}" class="form-control chzn-select" style="width: 50%;" name="assignedTo.id"  optionKey="id" value="${taskInstance?.assignedTo?.id}"/>
     </div>
 </div>
 

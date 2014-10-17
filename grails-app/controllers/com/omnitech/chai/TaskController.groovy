@@ -76,7 +76,7 @@ class TaskController {
             notFound(); return
         }
         def taskInstance = taskService.findTask(id)
-        respond taskInstance
+        respond taskInstance ,model: [users: userService.listAllUsers(), customers: customerService.listAllCustomers() ]
     }
 
     @Transactional

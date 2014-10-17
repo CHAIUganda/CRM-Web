@@ -32,6 +32,11 @@
 
 	</section>
 
+<r:require modules="chosen"/>
+<g:javascript>
+    $(".chzn-select").chosen({enable_split_word_search:true});
+</g:javascript>
+</body>
 </body>
 
 </html>

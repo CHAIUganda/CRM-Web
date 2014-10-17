@@ -25,32 +25,28 @@ class Task extends AbstractEntity {
 
     @Fetch
     @RelatedTo(type = Relations.COMPLETED_TASK, direction = Direction.INCOMING)
-    private User completedBy
+    User completedBy
 
     @Fetch
     @RelatedTo(type = Relations.CUST_TASK, direction = Direction.INCOMING)
-    private Customer customer
+    Customer customer
 
     Task completedBy(User user) {
-        setCompletedBy(user)
         status = STATUS_COMPLETE
+        this.@assignedTo == null
+        this.@completedBy = user
         return this
     }
 
     Task assignedTO(User user) {
-        setAssignedTo(user)
+        this.@completedBy = null
+        this.assignedTo = user
         return this
     }
 
-    private void setCompletedBy(User user) {
-        this.@assignedTo == null
-        this.@completedBy = user
-    }
+    void setCompletedBy(User user) { completedBy(user) }
 
-    private void setAssignedTo(User assignedTo) {
-        this.@completedBy = null
-        this.assignedTo = assignedTo
-    }
+    void setAssignedTo(User assignedTo) { assignedTO(assignedTo) }
 
     User getCompletedBy() { completedBy }
 
