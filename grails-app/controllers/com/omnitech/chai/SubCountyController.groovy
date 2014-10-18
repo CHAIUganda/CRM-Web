@@ -23,10 +23,14 @@ class SubCountyController {
         respond page.content, model: [subCountyInstanceCount: page.totalElements]
     }
 
-    def list(Integer max) {
+    def search(Integer max) {
         params.max = Math.min(max ?: 10, 100)
-        def page = regionService.listSubCountys(params)
-        respond page.content, model: [subCountyInstanceCount: page.totalElements]
+        if (params.term) {
+            redirect(action: 'search', id: params.term)
+            return
+        }
+        def page = regionService.searchSubCountys(params.id, params)
+        respond page.content, view: 'index', model: [subCountyInstanceCount: page.totalElements]
     }
 
     def show() {

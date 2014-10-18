@@ -52,7 +52,10 @@
         </tbody>
     </table>
     <div>
-        <bs:paginate total="${subCountyInstanceCount}" />
+        <div>
+            <bs:paginate total="${subCountyInstanceCount}"
+                         id="${params.action == 'search' ? (params.term ?: params.id) : null}"/>
+        </div>
     </div>
 </section>
 

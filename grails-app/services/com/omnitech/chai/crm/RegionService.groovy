@@ -56,6 +56,10 @@ class RegionService {
 
     void deleteSubCounty(Long id) { subCountyRepository.delete(id) }
 
+    Page<SubCounty> searchSubCountys(String search, Map params) {
+        ModelFunctions.searchAll(neo, SubCounty, ModelFunctions.getWildCardRegex(search), params)
+    }
+
     /* Parish */
 
     Page<Parish> listParishs(Map params) { ModelFunctions.listAll(parishRepository, params) }
@@ -115,5 +119,6 @@ class RegionService {
             subCountyRepository.save(it)
         }
     }
+
 
 }
