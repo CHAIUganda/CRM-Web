@@ -6,13 +6,15 @@
     <meta name="layout" content="kickstart"/>
     <g:set var="entityName" value="${message(code: 'product.label', default: 'Product')}"/>
     <title><g:message code="default.index.label" args="[entityName]"/></title>
+    <r:require module="jqueryTreeTable"/>
+    <link rel="stylesheet" href="${resource(dir: 'css', file: 'jqtreetable/jquery.treetable.css')}" type="text/css">
 </head>
 
 <body>
 
 <section id="index-product" class="first">
 
-    <table class="table table-bordered margin-top-medium">
+    <table class="table table-bordered margin-top-medium treetable" id="reports-table">
         <thead>
         <tr>
             <g:sortableColumn property="name" title="${message(code: 'product.name.label', default: 'Name')}"/>
@@ -33,10 +35,29 @@
         </thead>
         <tbody>
         <g:each in="${productInstanceList}" status="i" var="productInstance">
-            <tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
 
-                <td><g:link action="show"
-                            id="${productInstance.id}">${fieldValue(bean: productInstance, field: "name")}</g:link></td>
+            <g:if test="${productInstance.isHead()}">
+                <tr data-tt-id="${productInstance.id}" class="${(i % 2) == 0 ? 'even' : 'odd'}">
+            </g:if>
+            <g:else>
+                <tr data-tt-id="${productInstance.id}" data-tt-parent-id="${productInstance.parentId}"  class="${(i % 2) == 0 ? 'even' : 'odd'}">
+            </g:else>
+
+            <g:if test="${productInstance.isGroup()}">
+                <td>
+                    <strong>${fieldValue(bean: productInstance, field: "name")}</strong>
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </g:if>
+            <g:else>
+
+                <td>
+                    <g:link action="show"
+                            id="${productInstance.id}">${fieldValue(bean: productInstance, field: "name")}</g:link>
+                </td>
 
                 <td>${fieldValue(bean: productInstance, field: "unitOfMeasure")}</td>
 
@@ -45,9 +66,9 @@
                 <td>${fieldValue(bean: productInstance, field: "unitPrice")}</td>
 
                 <td>
-                    <g:link action="edit" id="${productInstance.id}"><i
-                            class="glyphicon glyphicon-pencil"></i></g:link>
+                    <g:link action="edit" id="${productInstance.id}"><i class="glyphicon glyphicon-pencil"></i></g:link>
                 </td>
+            </g:else>
             </tr>
         </g:each>
         </tbody>
@@ -58,6 +79,9 @@
     </div>
 </section>
 
+<g:javascript>
+    $("#reports-table").treetable({ expandable: true, initialState: "expanded" });
+</g:javascript>
 </body>
 
 </html>
