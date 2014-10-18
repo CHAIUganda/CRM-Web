@@ -1,6 +1,7 @@
 package com.omnitech.chai
 
 import com.omnitech.chai.model.Product
+import com.omnitech.chai.util.GroupFlattener
 import com.omnitech.chai.util.ModelFunctions
 import grails.transaction.Transactional
 
@@ -38,7 +39,7 @@ class ProductController {
     }
 
     def create() {
-        respond ModelFunctions.bind(new Product(), params)
+        respond ModelFunctions.bind(new Product(), params), model: getPageModel()
     }
 
     def save(Product productInstance) {
@@ -70,7 +71,7 @@ class ProductController {
             notFound(); return
         }
         def productInstance = productService.findProduct(id)
-        respond productInstance
+        respond productInstance, model: getPageModel()
     }
 
     @Transactional
@@ -125,4 +126,6 @@ class ProductController {
             '*' { render status: NOT_FOUND }
         }
     }
+
+    private Map getPageModel() { [productGroups: productService.listAllProductGroups()] }
 }

@@ -17,10 +17,17 @@
 		<tbody>
 		
 			<tr class="prop">
+				<td valign="top" class="name"><g:message code="product.group.label" default="Product Group" /></td>
+				
+				<td valign="top" class="value">${fieldValue(bean: productInstance, field: "group")}</td>
+				
+			</tr>
+
+        <tr class="prop">
 				<td valign="top" class="name"><g:message code="product.name.label" default="Name" /></td>
-				
+
 				<td valign="top" class="value">${fieldValue(bean: productInstance, field: "name")}</td>
-				
+
 			</tr>
 
         <tr class="prop">
