@@ -27,4 +27,14 @@ class ChaiUtils {
     static execSilently(Closure code) {
         execSilently('Unkown Error', code)
     }
+
+    static String truncateString(def s,Number num){
+        if (s==null)  return ''
+
+        def temp = s.toString()
+
+        if (num >= temp.size() )
+            return  temp
+        return temp[0..num-3]+'...'
+    }
 }
