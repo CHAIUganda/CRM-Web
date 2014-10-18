@@ -38,6 +38,12 @@ interface Relations {
     //Task -> Customer
     final static CUST_TASK = 'CUST_TASK'
 
+    //ProductGroup -> Product
+    final static GRP_HAS_PRD = 'GRP_HAS_PRD'
+
+    //Group -> Group
+    final static GRP_HAS_GRP= 'GRP_HAS_GRP'
+
 
 
 }
