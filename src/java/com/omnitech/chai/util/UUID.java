@@ -88,7 +88,7 @@ public class UUID {
         return new String(uuid);
     }
 
-    //Some king of url shortener.. mainly used by cypher generator
+    //Some kind of string shortener.. mainly used by cypher generator
     private static Map<String, String> shortIds = new HashMap<String, String>();
 
     public static String uniqueId(String string) {
@@ -98,25 +98,5 @@ public class UUID {
         String id = uuid(4);
         shortIds.put(string, id);
         return id;
-    }
-
-    public static void main(String[] args) {
-        List<String> conflicte = new ArrayList();
-        Collection all = new HashSet();
-        for (int i = 0; i <= 1000000; i++) {
-            String uuid = uuid(10, 35);
-            // System.out.println("UUID Genereated: uuid()="+ uuid);
-            if (all.contains(uuid)) {
-                conflicte.add(uuid);
-                continue;
-            }
-            all.add(uuid);
-
-        }
-
-        int i = 0;
-        for (String id : conflicte) {
-            System.out.println((i++) + "-Conflicted : " + id);
-        }
     }
 }
