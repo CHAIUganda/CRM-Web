@@ -25,5 +25,7 @@ class ProductGroup extends AbstractEntity implements GroupNode {
         name blank: false
     }
 
+    String toString() { name }
+
 
 }

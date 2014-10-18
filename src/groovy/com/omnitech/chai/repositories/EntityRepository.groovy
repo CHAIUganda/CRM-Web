@@ -25,6 +25,8 @@ interface TerritoryRepository extends GraphRepository<Territory> {}
 
 interface TaskRepository extends GraphRepository<Task> {}
 
+interface ProductGroupRepository extends GraphRepository<ProductGroup> {}
+
 interface UserRepository extends GraphRepository<User> {
 
     User findByUsername(String username)
