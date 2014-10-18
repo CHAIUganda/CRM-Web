@@ -19,17 +19,10 @@ class ProductController {
     def productService
 
     def index(Integer max) {
-        params.max = Math.min(max ?: 10, 100)
+        params.max = Math.min(max ?: 100, 100)
         def page = productService.listProducts(params)
         def content = new GroupFlattener(leaves: page.content).normalize()
         [productInstanceList: content, productInstanceCount: page.totalElements]
-    }
-
-    def list(Integer max) {
-        params.max = Math.min(max ?: 10, 100)
-        def page = productService.listProducts(params)
-
-        respond page.content, model: [productInstanceCount: page.totalElements]
     }
 
     def show() {
