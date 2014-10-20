@@ -26,26 +26,27 @@ public class Customer extends AbstractEntity {
     String outletName,
            outletType,
            outletSize,
+           typeOfLicence,
            split,
            openingHours,
+
            majoritySourceOfSupply,
            keyWholeSalerName,
            keyWholeSalerContact,
            buildingStructure,
            equipment,
-           descriptionOfOutletLocation
+           descriptionOfOutletLocation,
+           numberOfProducts,
+           pictureURL
 
 
     Integer numberOfEmployees,
             numberOfBranches,
             numberOfCustomersPerDay,
-            numberOfProducts,
-            restockFrequency
+            restockFrequency,
+            tenureLength
 
-    Double turnOver
-
-    Date tenureStartDate
-    Date tenureEndDate
+    String turnOver
 
     @Fetch
     @RelatedTo(type = Relations.HAS_CONTACT)
@@ -67,21 +68,23 @@ public class Customer extends AbstractEntity {
     static constraints = {
         outletName blank: false
         outletType blank: false, inList: ['pharmacy', 'drug shop', 'clinic', 'health center', 'hospital']
-        outletSize blank: false, inList: ['b', 'm', 's']
+        outletSize blank: false, inList: ['big', 'medium', 'small']
+        typeOfLicence blank: false, inList: ['National Drug Authority', 'Pharmaceutical Society of Uganda', 'Ugandan Medical and Dental Practitioners', 'Ministry of Health', 'Unlicensed', 'Others']
         split blank: false, inList: ['urban', 'rural']
-        numberOfEmployees nullable: false, min: 1
-        openingHours blank: false
-        turnOver nullable: false, min: 1 as Double
+        numberOfEmployees nullable: false, min: 0,max: 30
+        openingHours blank: false, inList: ['early morning', 'late morning', 'noon', 'early afternoon', 'late afternoon', 'evening']
+
+        turnOver nullable: false, inList: ['less than 50,000 UGX', '50,000-150,000 UGX', '150,000 - 300,000 UGX', 'greater than 300,000 UGX']
         numberOfBranches nullable: false, min: 1
         numberOfCustomersPerDay nullable: false, min: 1
-        majoritySourceOfSupply blank: false, inList: ['district', 'trading center', 'whole saler']
-        buildingStructure blank: false, inList: ['permananet', 'semi-parmanent', 'non-permanent']
+        majoritySourceOfSupply blank: false
+        buildingStructure blank: false, inList: ['permanent', 'semi-permanent', 'non-permanent']
         equipment blank: false
-        tenureEndDate nullable: false
-        tenureStartDate nullable: false
+        tenureLength min: 0, max: 20
         descriptionOfOutletLocation blank: false
         restockFrequency nullable: false, min: 1
         subCounty nullable: false
+        numberOfProducts nullable: false, inList: ['less than 10', '10-30', 'more than 30']
     }
 
 
@@ -104,7 +107,7 @@ public class Customer extends AbstractEntity {
             this.wkt = null
     }
 
-    String toString(){outletName}
+    String toString() { outletName }
 
     def beforeSave() {
         createWkt()

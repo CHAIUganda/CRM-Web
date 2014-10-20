@@ -157,16 +157,9 @@
 			</tr>
 		
 			<tr class="prop">
-				<td valign="top" class="name"><g:message code="customer.tenureEndDate.label" default="Tenure End Date" /></td>
+				<td valign="top" class="name"><g:message code="customer.tenureEndDate.label" default="Tenure Length" /></td>
 				
-				<td valign="top" class="value"><g:formatDate date="${customerInstance?.tenureEndDate}" /></td>
-				
-			</tr>
-		
-			<tr class="prop">
-				<td valign="top" class="name"><g:message code="customer.tenureStartDate.label" default="Tenure Start Date" /></td>
-				
-				<td valign="top" class="value"><g:formatDate date="${customerInstance?.tenureStartDate}" /></td>
+				<td valign="top" class="value"><g:formatDate date="${customerInstance?.tenureLength}" /></td>
 				
 			</tr>
 		

@@ -57,6 +57,19 @@
         </div>
     </div>
 
+    %{--    Type of License     --}%
+    <div class="${hasErrors(bean: customerInstance, field: 'typeOfLicence', 'error')} ">
+        <label for="typeOfLicence" class="control-label"><g:message code="customer.typeOfLicence.label"
+                                                                    default="Type of Licence"/></label>
+
+        <div>
+            <g:select type="text" class='form-control'
+                      from="${customerInstance?.constraints?.typeOfLicence?.inList}"
+                      name="typeOfLicence" value="${customerInstance?.typeOfLicence}"/>
+            <span class="help-inline alert-danger">${hasErrors(bean: customerInstance, field: 'typeOfLicence', 'error')}</span>
+        </div>
+    </div>
+
     <div class="${hasErrors(bean: customerInstance, field: 'split', 'error')} ">
         <label for="split" class="control-label"><g:message code="customer.split.label" default="Split"/></label>
 
@@ -97,33 +110,23 @@
         </div>
     </div>
 
-    <div class="${hasErrors(bean: customerInstance, field: 'tenureStartDate', 'error')} ">
-        <label for="tenureStartDate" class="control-label"><g:message code="customer.tenureStartDate.label"
-                                                                      default="Tenure Start Date"/></label>
+    <div class="${hasErrors(bean: customerInstance, field: 'tenureLength', 'error')} ">
+        <label for="tenureLength" class="control-label"><g:message code="customer.tenureLength.label"
+                                                                      default="Tenure Length"/></label>
 
         <div>
-            <g:datePicker name="tenureStartDate" precision="day" value="${customerInstance?.tenureStartDate}"/>
-            <span class="help-inline alert-danger">${hasErrors(bean: customerInstance, field: 'tenureStartDate', 'error')}</span>
+            <g:field type="number" name="tenureLength" precision="day" value="${customerInstance?.tenureLength}"/>
+            <span class="help-inline alert-danger">${hasErrors(bean: customerInstance, field: 'tenureLength', 'error')}</span>
         </div>
     </div>
 
-    <div class="${hasErrors(bean: customerInstance, field: 'tenureEndDate', 'error')} ">
-        <label for="tenureEndDate" class="control-label">
-            <g:message code="customer.tenureEndDate.label" default="Tenure End Date"/></label>
-
-        <div>
-            <g:datePicker name="tenureEndDate" precision="day" value="${customerInstance?.tenureEndDate}"/>
-            <span class="help-inline alert-danger">${hasErrors(bean: customerInstance, field: 'tenureEndDate', 'error')}</span>
-        </div>
-    </div>
 
     <div class="${hasErrors(bean: customerInstance, field: 'numberOfEmployees', 'error')} ">
         <label for="numberOfEmployees" class="control-label"><g:message code="customer.numberOfEmployees.label"
                                                                         default="Number Of Employees"/></label>
 
         <div>
-            <g:field class='form-control' type="number" name="numberOfEmployees"
-                     value="${customerInstance.numberOfEmployees}"/>
+            <g:field class='form-control' type="number" name="numberOfEmployees" value="${customerInstance.numberOfEmployees}"/>
             <span class="help-inline alert-danger">${hasErrors(bean: customerInstance, field: 'numberOfEmployees', 'error')}</span>
         </div>
     </div>
@@ -136,7 +139,8 @@
                                                                default="Turn Over"/></label>
 
         <div>
-            <g:field class='form-control' type="number" name="turnOver"
+            <g:select class='form-control' type="number" name="turnOver"
+                from="${customerInstance.constraints.turnOver.inList}"
                      value="${customerInstance.turnOver}"/>
             <span class="help-inline alert-danger">${hasErrors(bean: customerInstance, field: 'turnOver', 'error')}</span>
         </div>
@@ -194,7 +198,8 @@
                                                                        default="Number Of Products"/></label>
 
         <div>
-            <g:field class='form-control' type="number" name="numberOfProducts"
+            <g:select class='form-control' type="number" name="numberOfProducts"
+                from="${customerInstance.constraints.numberOfProducts.inList}"
                      value="${customerInstance.numberOfProducts}"/>
             <span class="help-inline alert-danger">${hasErrors(bean: customerInstance, field: 'numberOfProducts', 'error')}</span>
         </div>
@@ -231,8 +236,7 @@
                 default="Majority Source Of Supply"/></label>
 
         <div>
-            <g:select class='form-control' name="majoritySourceOfSupply"
-                      from="${customerInstance?.constraints?.majoritySourceOfSupply?.inList}"
+            <g:textField class='form-control' name="majoritySourceOfSupply"
                       value="${customerInstance?.majoritySourceOfSupply}"/>
             <span class="help-inline alert-danger">${hasErrors(bean: customerInstance, field: 'majoritySourceOfSupply', 'error')}</span>
         </div>
@@ -255,7 +259,8 @@
                                                                    default="Opening Hours"/></label>
 
         <div>
-            <g:textField class='form-control' name="openingHours"
+            <g:select class='form-control' name="openingHours"
+                from="${customerInstance?.constraints?.openingHours?.inList}"
                          value="${customerInstance?.openingHours}"/>
             <span class="help-inline alert-danger">${hasErrors(bean: customerInstance, field: 'openingHours', 'error')}</span>
         </div>
