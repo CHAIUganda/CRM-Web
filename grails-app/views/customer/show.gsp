@@ -157,9 +157,9 @@
 			</tr>
 		
 			<tr class="prop">
-				<td valign="top" class="name"><g:message code="customer.tenureEndDate.label" default="Tenure Length" /></td>
+				<td valign="top" class="name"><g:message code="customer.tenureLength.label" default="Tenure Length" /></td>
 				
-				<td valign="top" class="value"><g:formatDate date="${customerInstance?.tenureLength}" /></td>
+				<td valign="top" class="value">${fieldValue( bean:customerInstance,field:  'tenureLength')}</td>
 				
 			</tr>
 		
