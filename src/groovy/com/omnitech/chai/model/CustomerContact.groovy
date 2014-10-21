@@ -25,7 +25,7 @@ class CustomerContact extends AbstractEntity {
         gender          blank: false, inList: ['male', 'female']
         role            blank: false
         graduationYear  min: 1950, max: 2015, nullable: true
-        qualification   blank: false, inList: []
+        qualification   blank: false
 
     }
 

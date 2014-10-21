@@ -9,6 +9,7 @@ import org.springframework.data.neo4j.annotation.Indexed
 import org.springframework.data.neo4j.annotation.NodeEntity
 import org.springframework.data.neo4j.annotation.RelatedTo
 import org.springframework.data.neo4j.support.index.IndexType
+import org.springframework.validation.FieldError
 
 /**
  * Created by kay on 9/21/14.
@@ -71,7 +72,7 @@ public class Customer extends AbstractEntity {
         outletSize blank: false, inList: ['big', 'medium', 'small']
         typeOfLicence blank: false, inList: ['National Drug Authority', 'Pharmaceutical Society of Uganda', 'Ugandan Medical and Dental Practitioners', 'Ministry of Health', 'Unlicensed', 'Others']
         split blank: false, inList: ['urban', 'rural']
-        numberOfEmployees nullable: false, min: 0,max: 30
+        numberOfEmployees nullable: false, min: 0, max: 30
         openingHours blank: false, inList: ['early morning', 'late morning', 'noon', 'early afternoon', 'late afternoon', 'evening']
 
         turnOver nullable: false, inList: ['less than 50,000 UGX', '50,000-150,000 UGX', '150,000 - 300,000 UGX', 'greater than 300,000 UGX']
@@ -85,6 +86,12 @@ public class Customer extends AbstractEntity {
         restockFrequency nullable: false, min: 1
         subCounty nullable: false
         numberOfProducts nullable: false, inList: ['less than 10', '10-30', 'more than 30']
+
+        tCustomerContacts validator: {val, obj ->
+            // 'attributes.validation.failed' is the key for the message that will
+            // be shown if validation of innerCommands fails
+            return val.every { it.validate() } ?: ['tCustomerContacts.validation.failed']
+        }
     }
 
 
@@ -105,6 +112,22 @@ public class Customer extends AbstractEntity {
             this.wkt = String.format("POINT( %.6f %.6f )", lng, lat);
         else
             this.wkt = null
+    }
+
+    void runValidation() {
+        if (!tCustomerContacts) return
+
+        tCustomerContacts?.each { customer ->
+            customer.validate()
+            if (customer.hasErrors()) {
+                customer.errors.allErrors.each { FieldError error ->
+                    final String field = error.field?.replace('profile.', '')
+                    final String code = "registrationCommand.$field.$error.code"
+                    errors.rejectValue(field, code)
+                }
+            }
+
+        }
     }
 
     String toString() { outletName }

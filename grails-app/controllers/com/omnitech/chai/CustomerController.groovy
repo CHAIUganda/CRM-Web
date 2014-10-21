@@ -32,8 +32,8 @@ class CustomerController {
             redirect(action: 'search', id: params.term)
             return
         }
-        def page = customerService.searchCustomers(params.id,params)
-        respond page.content,view: 'index', model: [customerInstanceCount: page.totalElements]
+        def page = customerService.searchCustomers(params.id, params)
+        respond page.content, view: 'index', model: [customerInstanceCount: page.totalElements]
     }
 
 
@@ -139,7 +139,7 @@ class CustomerController {
 
     private Map getPageModel(List<CustomerContact> contacts) {
         def subCountys = regionService.listAllSubCountys()
-        subCountys = subCountys.sort {it.description}
+        subCountys = subCountys.sort { it.description }
         if (contacts)
             return [jsonContacts: (contacts as JSON).toString(true), subCounties: subCountys]
         return [jsonContacts: '[]', subCounties: subCountys]

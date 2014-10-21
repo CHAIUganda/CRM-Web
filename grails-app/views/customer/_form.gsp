@@ -111,11 +111,12 @@
     </div>
 
     <div class="${hasErrors(bean: customerInstance, field: 'tenureLength', 'error')} ">
-        <label for="tenureLength" class="control-label"><g:message code="customer.tenureLength.label"
-                                                                      default="Tenure Length"/></label>
+        <label for="tenureLength" class="control-label">
+            <g:message code="customer.tenureLength.label" default="Tenure Length"/>
+        </label>
 
         <div>
-            <g:field type="number" name="tenureLength" precision="day" value="${customerInstance?.tenureLength}"/>
+            <g:field class='form-control'  type="number" name="tenureLength"  value="${customerInstance?.tenureLength}"/>
             <span class="help-inline alert-danger">${hasErrors(bean: customerInstance, field: 'tenureLength', 'error')}</span>
         </div>
     </div>
