@@ -34,7 +34,7 @@
                 <td valign="top" class="name">Completed By</td>
 
                 <td valign="top" class="value">
-                    <g:link controller="user" action="index" id="${taskInstance.completedBy.id}">
+                    <g:link controller="user" action="show" id="${taskInstance.completedBy.id}">
                         <i class="glyphicon glyphicon-user"></i>
                         ${fieldValue(bean: taskInstance, field: "completedBy")}
                     </g:link>
@@ -47,7 +47,7 @@
                 <td valign="top" class="name">Assigned To</td>
 
                 <td valign="top" class="value">
-                    <g:link controller="user" action="index" id="${taskInstance.assignedTo.id}">
+                    <g:link controller="user" action="show" id="${taskInstance.assignedTo.id}">
                         <i class="glyphicon glyphicon-user"></i>  ${fieldValue(bean: taskInstance, field: "assignedTo")}
                     </g:link>
                 </td>
