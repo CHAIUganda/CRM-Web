@@ -29,7 +29,6 @@ class ChaiUtilsTest extends Specification {
         '2 years'           | new Date() + 690
         '2 years ago'       | new Date() - 690
 
-   new Date().
     }
 
     def 'test round to nearest'() {
