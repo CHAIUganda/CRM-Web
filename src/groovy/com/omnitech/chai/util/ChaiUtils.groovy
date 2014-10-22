@@ -77,7 +77,7 @@ class ChaiUtils {
         }
 
         if (d.hours) {
-            return "${d.hours.abs()} hour${numberEnding d.minutes}"
+            return "${d.hours.abs()} hour${numberEnding d.hours}"
         }
 
         if (d.minutes) {
