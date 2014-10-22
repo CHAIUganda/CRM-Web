@@ -12,13 +12,12 @@
     <div id="navbarCollapse" class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
             <li class="active"><a href="#">Home</a></li>
-            <li><a href="#">Profile</a></li>
 
             %{--    PRODUCTS    --}%
             <li>
                 <a data-toggle="dropdown" class="dropdown-toggle" href="#">Products <b class="caret"></b></a>
                 <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
-                    <li><g:link controller="productGroup" action="index">Product Group</g:link></li>
+                    <li><g:link controller="productGroup" action="index">Product Groups</g:link></li>
                     <li><g:link controller="product" action="index">Products</g:link></li>
                 </ul>
             </li>
@@ -55,7 +54,9 @@
                     <li>
                         <g:link controller="territory" action="index">Territories</g:link>
                     </li>
-                    <li><a href="#">Access Logs</a></li>
+                    <li>
+                        <g:link controller="customerSegment" action="index">Customer Segments</g:link>
+                        </li>
                 </ul>
             </li>
         </ul>
