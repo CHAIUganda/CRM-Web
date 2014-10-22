@@ -61,6 +61,10 @@ public class Customer extends AbstractEntity {
     @RelatedTo(type = Relations.CUST_IN_TERRITORY)
     Territory territory
 
+    @Fetch
+    @RelatedTo(type = Relations.IN_SEGMENT)
+    CustomerSegment segment
+
     //this is mainly used for automatic data binding of dynamic contacts
     @Transient
     List<CustomerContact> tCustomerContacts = LazyList.decorate([], FactoryUtils.constantFactory(CustomerContact))

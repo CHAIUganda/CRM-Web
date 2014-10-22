@@ -1,6 +1,7 @@
 package com.omnitech.chai.crm
 
 import com.omnitech.chai.model.Customer
+import com.omnitech.chai.model.CustomerSegment
 import com.omnitech.chai.util.ModelFunctions
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -14,6 +15,7 @@ class CustomerService {
 
     def customerRepository
     def customerContactRepository
+    def customerSegmentRepository
     @Autowired
     Neo4jTemplate neo
 
@@ -37,6 +39,24 @@ class CustomerService {
     @Neo4jTransactional
     Page<Customer> searchCustomers(String search, Map params) {
         ModelFunctions.searchAll(neo, Customer, ModelFunctions.getWildCardRegex(search), params)
+    }
+
+
+    /* CustomerSegments */
+
+    List<CustomerSegment> listAllCustomerSegments() { customerSegmentRepository.findAll().collect() }
+
+    Page<CustomerSegment> listCustomerSegments(Map params) { ModelFunctions.listAll(customerSegmentRepository, params) }
+
+    CustomerSegment findCustomerSegment(Long id) { customerSegmentRepository.findOne(id) }
+
+    CustomerSegment saveCustomerSegment(CustomerSegment customerSegment) { ModelFunctions.saveEntity(customerSegmentRepository, customerSegment) }
+
+    void deleteCustomerSegment(Long id) { customerSegmentRepository.delete(id) }
+
+    @Neo4jTransactional
+    Page<CustomerSegment> searchCustomerSegments(String search, Map params) {
+        ModelFunctions.searchAll(neo, CustomerSegment, ModelFunctions.getWildCardRegex(search), params)
     }
 }
 

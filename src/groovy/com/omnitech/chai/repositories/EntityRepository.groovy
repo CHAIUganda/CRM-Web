@@ -24,6 +24,7 @@ interface CustomerContactRepository extends GraphRepository<CustomerContact> {}
 interface TerritoryRepository extends GraphRepository<Territory> {}
 
 interface TaskRepository extends GraphRepository<Task> {}
+interface CustomerSegmentRepository extends GraphRepository<CustomerSegment> {}
 
 interface ProductGroupRepository extends GraphRepository<ProductGroup> {}
 

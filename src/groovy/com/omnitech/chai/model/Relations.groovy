@@ -26,6 +26,9 @@ interface Relations {
     //Customer -> SubCounty
     final static String BELONGS_TO_SC = 'BELONGS_TO_SC'
 
+    //Customer -> Segment
+    final static String IN_SEGMENT = 'IN_SEGMENT'
+
     //Subcounty -> Territory
     final static String SC_IN_TERRITORY = 'SC_IN_TERRITORY'
 
@@ -42,8 +45,7 @@ interface Relations {
     final static GRP_HAS_PRD = 'GRP_HAS_PRD'
 
     //Group -> Group
-    final static GRP_HAS_GRP= 'GRP_HAS_GRP'
-
+    final static GRP_HAS_GRP = 'GRP_HAS_GRP'
 
 
 }
