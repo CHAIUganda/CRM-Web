@@ -27,7 +27,7 @@ class ChaiUtils {
     }
 
     static execSilently(Closure code) {
-        execSilently('Unkown Error', code)
+        execSilently('Unknown Error', code)
     }
 
     static String truncateString(def s, Number num) {
