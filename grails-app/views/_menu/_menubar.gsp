@@ -17,8 +17,9 @@
             <li>
                 <a data-toggle="dropdown" class="dropdown-toggle" href="#">Products <b class="caret"></b></a>
                 <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
-                    <li><g:link controller="productGroup" action="index">Product Groups</g:link></li>
                     <li><g:link controller="product" action="index">Products</g:link></li>
+                    <li><g:link controller="productGroup" action="index">Product Groups</g:link></li>
+
                 </ul>
             </li>
 
@@ -56,17 +57,17 @@
                     </li>
                     <li>
                         <g:link controller="customerSegment" action="index">Customer Segments</g:link>
-                        </li>
+                    </li>
                 </ul>
             </li>
         </ul>
 
-    %{-- User Dropdown--}%
-    <ul class="nav navbar-nav navbar-right">
-        <li class="dropdown">
-            <a data-toggle="dropdown" class="dropdown-toggle glyphicon glyphicon-user" href="#">User <b
-                    class="caret"></b></a>
-            <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+        %{-- User Dropdown--}%
+        <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+                <a data-toggle="dropdown" class="dropdown-toggle glyphicon glyphicon-user" href="#">User <b
+                        class="caret"></b></a>
+                <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
                     <li>
                         <g:link controller="user" action="index">
                             <i class="glyphicon glyphicon-user"></i>Users
