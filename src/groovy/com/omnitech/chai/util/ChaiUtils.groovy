@@ -59,15 +59,19 @@ class ChaiUtils {
                 return "${years.abs()} year${numberEnding years}"
             }
 
-            long months = Math.round(days / 30)
+            long months = (long) (days / 30)
             if (months) {
-                return "${months.abs()} month${numberEnding months}"
+                def roundMonth = Math.round(days/30)
+                return "${roundMonth.abs()} month${numberEnding roundMonth}"
             }
 
             long weeks = (long) (days / 7)
             if (weeks) {
-                days -= (weeks * 7)
-                return "${weeks.abs()} week${numberEnding weeks} and $days day${numberEnding days}"
+                if (weeks == 1) {
+                    days -= (weeks * 7)
+                    return "${weeks.abs()} week${numberEnding weeks} and $days day${numberEnding days}"
+                }
+                return "${weeks.abs()} week${numberEnding weeks}"
             }
             return "${days.abs()} day${numberEnding days}"
         }

@@ -21,7 +21,8 @@ class ChaiUtilsTest extends Specification {
         '6 days ago'        | new Date() - 6
         '6 days'            | new Date() + 7
         '1 week and 4 days' | new Date() + 12
-        '1 month'           | new Date() + 30
+        '3 weeks'           | new Date() + 28
+        '4 weeks'           | new Date() + 30
         '1 month'           | new Date() + 40
         '2 months'          | new Date() + 50
         '1 year'            | new Date() + 368
