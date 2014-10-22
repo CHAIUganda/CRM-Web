@@ -52,9 +52,9 @@
 			</tr>
 		
 			<tr class="prop">
-				<td valign="top" class="name"><g:message code="customerSegment.teskGeneratorScript.label" default="Tesk Generator Script" /></td>
+				<td valign="top" class="name"><g:message code="customerSegment.taskGeneratorScript.label" default="Tesk Generator Script" /></td>
 				
-				<td valign="top" class="value">${fieldValue(bean: customerSegmentInstance, field: "teskGeneratorScript")}</td>
+				<td valign="top" class="value">${fieldValue(bean: customerSegmentInstance, field: "taskGeneratorScript")}</td>
 				
 			</tr>
 		

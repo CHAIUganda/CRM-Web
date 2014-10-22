@@ -27,10 +27,10 @@
 			</div>
 
 			<div class="${hasErrors(bean: customerSegmentInstance, field: 'teskGeneratorScript', 'error')} ">
-				<label for="teskGeneratorScript" class="control-label"><g:message code="customerSegment.teskGeneratorScript.label" default="Tesk Generator Script" /></label>
+				<label for="taskGeneratorScript" class="control-label"><g:message code="customerSegment.taskGeneratorScript.label" default="Task Generator Script" /></label>
 				<div>
-					<g:textField class='form-control' style="width: 50%;" name="teskGeneratorScript" value="${customerSegmentInstance?.teskGeneratorScript}" />
-					<span class="help-inline">${hasErrors(bean: customerSegmentInstance, field: 'teskGeneratorScript', 'error')}</span>
+					<g:textField class='form-control' style="width: 50%;" name="taskGeneratorScript" value="${customerSegmentInstance?.taskGeneratorScript}" />
+					<span class="help-inline">${hasErrors(bean: customerSegmentInstance, field: 'taskGeneratorScript', 'error')}</span>
 				</div>
 			</div>
 

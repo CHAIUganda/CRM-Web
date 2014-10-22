@@ -27,7 +27,7 @@
             
             <g:sortableColumn property="segmentationScript" title="${message(code: 'customerSegment.segmentationScript.label', default: 'Segmentation Script')}" />
             
-            <g:sortableColumn property="teskGeneratorScript" title="${message(code: 'customerSegment.teskGeneratorScript.label', default: 'Tesk Generator Script')}" />
+            <g:sortableColumn property="teskGeneratorScript" title="${message(code: 'customerSegment.teskGeneratorScript.label', default: 'Task Generator Script')}" />
             
             <td>
                 Action
@@ -48,7 +48,7 @@
                 
                 <td>${fieldValue(bean: customerSegmentInstance, field: "segmentationScript")}</td>
                 
-                <td>${fieldValue(bean: customerSegmentInstance, field: "teskGeneratorScript")}</td>
+                <td>${fieldValue(bean: customerSegmentInstance, field: "taskGeneratorScript")}</td>
                 
                 <td>
                     <g:link action="edit" id="${customerSegmentInstance.id}"><i

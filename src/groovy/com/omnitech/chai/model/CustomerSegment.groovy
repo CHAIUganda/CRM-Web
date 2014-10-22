@@ -12,7 +12,7 @@ class CustomerSegment extends AbstractEntity {
 
     String name
     String segmentationScript
-    String teskGeneratorScript
+    String taskGeneratorScript
     Integer callFrequency
 
 
