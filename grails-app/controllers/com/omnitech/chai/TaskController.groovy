@@ -21,6 +21,9 @@ class TaskController {
 
     def index(Integer max) {
         params.max = Math.min(max ?: 10, 100)
+        if(!params.sort) {
+            params.sort = 'dueDate'
+        }
         def page = taskService.listTasks(params)
         respond page.content, model: [taskInstanceCount: page.totalElements]
     }
