@@ -26,3 +26,11 @@
     </div>
 </div>
 
+<div>
+    <label for="status" class="control-label"><g:message code="task.dueDate.label" default="Due Date"/></label>
+
+    <div>
+        <g:datePicker class="form-control" precision="day" style="width: 50%;" name="dueDate"  optionKey="id" value="${taskInstance?.dueDate}"/>
+    </div>
+</div>
+
