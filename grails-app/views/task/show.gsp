@@ -1,5 +1,5 @@
 
-<%@ page import="com.omnitech.chai.model.Task" %>
+<%@ page import="com.omnitech.chai.util.ChaiUtils; com.omnitech.chai.model.Task" %>
 <!DOCTYPE html>
 <html>
 
@@ -54,6 +54,17 @@
 
             </tr>
         </g:if>
+
+        <tr class="prop">
+            <td valign="top" class="name"><g:message code="task.dueDate.label" default="Due Date" /></td>
+
+            <td valign="top" class="value">
+                <g:if test="${taskInstance.dueDate}">
+                    <g:formatDate date="${taskInstance.dueDate}" format="dd-MMM-yyyy" /> <span class="${new Date().after(taskInstance.dueDate) ? 'alert-danger':''}">(${ChaiUtils.fromNow(taskInstance.dueDate)})</span>
+                </g:if>
+            </td>
+
+        </tr>
 
 
         <tr class="prop">
