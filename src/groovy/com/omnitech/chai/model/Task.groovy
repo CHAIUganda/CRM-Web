@@ -18,6 +18,8 @@ class Task extends AbstractEntity {
     String description
     protected String type = Task.simpleName
     String status = STATUS_NEW
+    Date dueDate
+    Date completionDate
 
     @Fetch
     @RelatedTo(type = Relations.ASSIGNED_TASK, direction = Direction.INCOMING)
@@ -35,6 +37,7 @@ class Task extends AbstractEntity {
         status = STATUS_COMPLETE
         this.@assignedTo == null
         this.@completedBy = user
+        this.completionDate = new Date()
         return this
     }
 
