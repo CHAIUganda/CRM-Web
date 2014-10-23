@@ -2,6 +2,7 @@ package com.omnitech.chai.model
 
 import com.omnitech.chai.util.GroupNode
 import grails.validation.Validateable
+import org.springframework.data.neo4j.annotation.Indexed
 import org.springframework.data.neo4j.annotation.NodeEntity
 
 /**
@@ -11,6 +12,7 @@ import org.springframework.data.neo4j.annotation.NodeEntity
 @NodeEntity
 class CustomerSegment extends AbstractEntity implements GroupNode {
 
+    @Indexed(unique = true)
     String name
     String segmentationScript
     String taskGeneratorScript
