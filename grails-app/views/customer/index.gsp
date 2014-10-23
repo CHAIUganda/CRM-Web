@@ -41,7 +41,7 @@
 
             <g:if test="${customerInstance.isGroup()}">
                 <td>
-                    <strong>Segment[${fieldValue(bean: customerInstance, field: "name")}]</strong>
+                    <strong>Segment-${fieldValue(bean: customerInstance, field: "name")}:</strong>
                 </td>
                 <td></td>
                 <td></td>
