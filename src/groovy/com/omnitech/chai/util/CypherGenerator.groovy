@@ -12,7 +12,7 @@ import static com.omnitech.chai.util.ReflectFunctions.findAllPersistentFields
 /**
  * A very basic Search Query Generator for traversing simple hierarchies.
  * This generates a cypher query which searches on all properties of the domain object including its children.
- * Depending on the performance of the DB this class might have to be modified in future so that in searches on only
+ * Depending on the performance of the DB this class might have to be modified in future so that it searches on only
  * a few selected properties provided in a white or black list
  */
 class CypherGenerator {
