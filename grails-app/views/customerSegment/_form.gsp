@@ -21,7 +21,7 @@
 			<div class="${hasErrors(bean: customerSegmentInstance, field: 'segmentationScript', 'error')} ">
 				<label for="segmentationScript" class="control-label"><g:message code="customerSegment.segmentationScript.label" default="Segmentation Script" /></label>
 				<div>
-					<g:textField class='form-control' style="width: 50%;" name="segmentationScript" value="${customerSegmentInstance?.segmentationScript}" />
+					<g:textArea class='form-control' style="width: 50%;" rows="10" name="segmentationScript" value="${customerSegmentInstance?.segmentationScript}" />
 					<span class="help-inline">${hasErrors(bean: customerSegmentInstance, field: 'segmentationScript', 'error')}</span>
 				</div>
 			</div>
@@ -29,7 +29,7 @@
 			<div class="${hasErrors(bean: customerSegmentInstance, field: 'teskGeneratorScript', 'error')} ">
 				<label for="taskGeneratorScript" class="control-label"><g:message code="customerSegment.taskGeneratorScript.label" default="Task Generator Script" /></label>
 				<div>
-					<g:textField class='form-control' style="width: 50%;" name="taskGeneratorScript" value="${customerSegmentInstance?.taskGeneratorScript}" />
+					<g:textArea class='form-control' rows="10" style="width: 50%;" name="taskGeneratorScript" value="${customerSegmentInstance?.taskGeneratorScript}" />
 					<span class="help-inline">${hasErrors(bean: customerSegmentInstance, field: 'taskGeneratorScript', 'error')}</span>
 				</div>
 			</div>
