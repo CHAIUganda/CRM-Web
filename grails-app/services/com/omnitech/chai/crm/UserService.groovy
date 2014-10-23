@@ -25,6 +25,7 @@ class UserService {
     RoleRepository roleRepository
     DeviceRepository deviceRepository
     RequestMapRepository requestMapRepository
+    def neoSecurityService
     @Autowired
     Neo4jTemplate neo
 
@@ -67,6 +68,7 @@ class UserService {
     }
 
     RequestMap saveRequestMap(RequestMap requestMap) {
+        neoSecurityService.clearCachedRequestmaps()
         ModelFunctions.saveEntity(requestMapRepository, requestMap)
     }
 
@@ -76,6 +78,7 @@ class UserService {
     }
 
     def deleteRole(Long id) {
+        neoSecurityService.clearCachedRequestmaps()
         roleRepository.delete(id)
     }
 
@@ -113,6 +116,13 @@ class UserService {
         def roles = roleIds?.collect { roleRepository.findOne(it as Long) } ?: []
         def neoUser = user.id ? userRepository.findOne(user.id) : user
         def device = deviceId ? deviceRepository.findOne(deviceId) : null
+
+
+
+        def newPass = neoSecurityService.encodePassword(user.password)
+        if (newPass != neoUser.password) {
+            user.password = newPass
+        }
 
         ModelFunctions.bind(neoUser, user.properties)
         neoUser.roles = roles
