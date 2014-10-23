@@ -44,9 +44,6 @@ class SegmentationService {
 
     }
 
-    def excuteScriptOnCutomer(Customer c, cs) {
-
-    }
 
     GroovyShell getShell(Map params = [:]) {
         if (params)
