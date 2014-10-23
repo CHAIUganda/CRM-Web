@@ -8,10 +8,10 @@ This is the standard dialog that initiates the delete action.
     <div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-				<h3 id="SegmentModalLabel">Run Automatic Customer Segmentation</h3>
+				<h3 id="SegmentModalLabel">Run Automatic Customer Segmentation?</h3>
 			</div>
 			<div class="modal-body">
-				<p><g:message code="default.button.delete.confirm.message" args="[entityName]" default="Do you really want to delete this item?"/></p>
+				<p>Are you Sure You Want To Run The Segmentation Process?</p>
 			</div>
 			<div class="modal-footer">
                 <g:form controller="customer" action="autoSegment">
