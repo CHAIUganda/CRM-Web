@@ -19,6 +19,17 @@ This menu is used to show function that can be triggered on the content (an obje
                                                                                             args="[entityName]"/></g:link>
             </li>
 
+        %{-- Rendered on Customer View --}%
+            <g:if test="${params.controller == 'customer' && ['index', '', null].contains(params.action)}">
+                <li>
+                    <a href="#SegmentModal" role="button" class="btn btn-success" data-toggle="modal"
+                       title="Run Segmentation">
+                        <i class="glyphicon glyphicon-play"></i>Auto Segment
+                    </a>
+                    <g:render template="/customer/segmentDialog"/>
+                </li>
+            </g:if>
+
             <g:if test="${params.action == 'show' || params.action == 'edit'}">
                 <!-- the item is an object (not a list) -->
                 <li class="${params.action == "edit" ? 'active' : ''}">

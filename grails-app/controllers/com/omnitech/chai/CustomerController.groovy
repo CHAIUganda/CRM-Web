@@ -15,7 +15,7 @@ import static org.springframework.http.HttpStatus.*
  */
 class CustomerController {
 
-    static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
+    static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE", autoSegment: "POST"]
 
     def customerService
     def regionService
@@ -125,6 +125,12 @@ class CustomerController {
             }
             '*' { render status: NO_CONTENT }
         }
+    }
+
+    def autoSegment() {
+        println "Auto Segmenting ............. !!!"
+        flash.message = 'Running auto Segmentation'
+        redirect action: 'index'
     }
 
     protected void notFound() {
