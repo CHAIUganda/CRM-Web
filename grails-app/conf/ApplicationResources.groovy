@@ -12,5 +12,6 @@ modules = {
     jqueryTreeTable {
         dependsOn 'jquery'
         resource url: 'js/lib/jquery.treetable.js'
+        resource url: 'css/jqtreetable/jquery.treetable.css'
     }
 }

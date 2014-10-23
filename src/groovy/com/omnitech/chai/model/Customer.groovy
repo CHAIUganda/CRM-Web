@@ -1,5 +1,7 @@
 package com.omnitech.chai.model
 
+import com.omnitech.chai.util.GroupNode
+import com.omnitech.chai.util.LeafNode
 import grails.validation.Validateable
 import org.apache.commons.collections.FactoryUtils
 import org.apache.commons.collections.list.LazyList
@@ -16,7 +18,7 @@ import org.springframework.validation.FieldError
  */
 @NodeEntity
 @Validateable
-public class Customer extends AbstractEntity {
+public class Customer extends AbstractEntity implements LeafNode {
 
     Float lat
     Float lng
@@ -142,4 +144,13 @@ public class Customer extends AbstractEntity {
             customerContacts = new HashSet<>(tCustomerContacts)
     }
 
+    @Override
+    GroupNode getParent() {
+        return segment
+    }
+
+    @Override
+    String getName() {
+        return outletName
+    }
 }

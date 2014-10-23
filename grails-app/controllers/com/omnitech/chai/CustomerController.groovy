@@ -2,6 +2,7 @@ package com.omnitech.chai
 
 import com.omnitech.chai.model.Customer
 import com.omnitech.chai.model.CustomerContact
+import com.omnitech.chai.util.GroupFlattener
 import com.omnitech.chai.util.ModelFunctions
 import grails.converters.JSON
 import grails.transaction.Transactional
@@ -19,11 +20,13 @@ class CustomerController {
 
     def customerService
     def regionService
+    def segmentationService
 
     def index(Integer max) {
         params.max = Math.min(max ?: 10, 100)
         def page = customerService.listCustomers(params)
-        respond page.content, model: [customerInstanceCount: page.totalElements]
+        def content = new GroupFlattener(leaves: page.content).normalize()
+        [customerInstanceList: content, customerInstanceCount: page.totalElements]
     }
 
     def search(Integer max) {
@@ -33,7 +36,8 @@ class CustomerController {
             return
         }
         def page = customerService.searchCustomers(params.id, params)
-        respond page.content, view: 'index', model: [customerInstanceCount: page.totalElements]
+        def content = new GroupFlattener(leaves: page.content).normalize()
+        render view: 'index', model: [customerInstanceList: content, customerInstanceCount: page.totalElements]
     }
 
 
@@ -128,7 +132,7 @@ class CustomerController {
     }
 
     def autoSegment() {
-        println "Auto Segmenting ............. !!!"
+        segmentationService.runSegmentationRoutine()
         flash.message = 'Running auto Segmentation'
         redirect action: 'index'
     }

@@ -1,5 +1,6 @@
 package com.omnitech.chai.model
 
+import com.omnitech.chai.util.GroupNode
 import grails.validation.Validateable
 import org.springframework.data.neo4j.annotation.NodeEntity
 
@@ -8,7 +9,7 @@ import org.springframework.data.neo4j.annotation.NodeEntity
  */
 @Validateable
 @NodeEntity
-class CustomerSegment extends AbstractEntity {
+class CustomerSegment extends AbstractEntity implements GroupNode {
 
     String name
     String segmentationScript
@@ -20,4 +21,7 @@ class CustomerSegment extends AbstractEntity {
         name blank: false
         callFrequency nullable: false, min: 1
     }
+
+    @Override
+    GroupNode getParent() { return null }
 }
