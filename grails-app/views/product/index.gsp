@@ -7,14 +7,13 @@
     <g:set var="entityName" value="${message(code: 'product.label', default: 'Product')}"/>
     <title><g:message code="default.index.label" args="[entityName]"/></title>
     <r:require module="jqueryTreeTable"/>
-    <link rel="stylesheet" href="${resource(dir: 'css', file: 'jqtreetable/jquery.treetable.css')}" type="text/css">
 </head>
 
 <body>
 
 <section id="index-product" class="first">
 
-    <table class="table table-bordered margin-top-medium treetable" id="reports-table">
+    <table class="table table-bordered margin-top-medium treetable" id="tree-table">
         <thead>
         <tr>
             <g:sortableColumn property="name" title="${message(code: 'product.name.label', default: 'Name')}"/>
@@ -80,7 +79,7 @@
 </section>
 
 <g:javascript>
-    $("#reports-table").treetable({ expandable: true, initialState: "expanded" });
+    $("#tree-table").treetable({ expandable: true, initialState: "expanded" });
 </g:javascript>
 </body>
 
