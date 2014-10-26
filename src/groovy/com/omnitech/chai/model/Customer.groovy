@@ -20,6 +20,12 @@ import org.springframework.validation.FieldError
 @Validateable
 public class Customer extends AbstractEntity implements LeafNode {
 
+    final static TYPE_CLINIC = 'clinic'
+    final static TYPE_PHARMACY = 'pharmacy'
+    final static TYPE_DRUG_SHOP = 'drug shop'
+    final static TYPE_HOSPITAL = 'hospital'
+    final static TYPE_HEALH_CENTER = 'health center'
+
     Float lat
     Float lng
 
@@ -74,7 +80,7 @@ public class Customer extends AbstractEntity implements LeafNode {
 
     static constraints = {
         outletName blank: false
-        outletType blank: false, inList: ['pharmacy', 'drug shop', 'clinic', 'health center', 'hospital']
+        outletType blank: false, inList: [TYPE_PHARMACY, TYPE_DRUG_SHOP, TYPE_CLINIC, TYPE_HEALH_CENTER, TYPE_HOSPITAL]
         outletSize blank: false, inList: ['big', 'medium', 'small']
         typeOfLicence blank: false, inList: ['National Drug Authority', 'Pharmaceutical Society of Uganda', 'Ugandan Medical and Dental Practitioners', 'Ministry of Health', 'Unlicensed', 'Others']
         split blank: false, inList: ['urban', 'rural']
@@ -93,7 +99,7 @@ public class Customer extends AbstractEntity implements LeafNode {
         subCounty nullable: false
         numberOfProducts nullable: false, inList: ['less than 10', '10-30', 'more than 30']
 
-        tCustomerContacts validator: {val, obj ->
+        tCustomerContacts validator: { val, obj ->
             // 'attributes.validation.failed' is the key for the message that will
             // be shown if validation of innerCommands fails
             return val.every { it.validate() } ?: ['tCustomerContacts.validation.failed']
@@ -142,6 +148,11 @@ public class Customer extends AbstractEntity implements LeafNode {
         createWkt()
         if (tCustomerContacts)
             customerContacts = new HashSet<>(tCustomerContacts)
+    }
+
+    boolean isClinic(String outLetType) {
+        ['pharmacy', 'drug shop', 'clinic', 'health center', 'hospital']
+        false
     }
 
     @Override
