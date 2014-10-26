@@ -24,7 +24,10 @@ public class Customer extends AbstractEntity implements LeafNode {
     final static TYPE_PHARMACY = 'pharmacy'
     final static TYPE_DRUG_SHOP = 'drug shop'
     final static TYPE_HOSPITAL = 'hospital'
-    final static TYPE_HEALH_CENTER = 'health center'
+    final static TYPE_HEALTH_CENTER = 'health center'
+    final static STRUCT_SEMI_PERMANENT = 'semi-permanent'
+    final static STRUCT_PERMANENT = 'permanent'
+    final static STRUCT_NON_PERMANENT = 'non-permanent'
 
     Float lat
     Float lng
@@ -80,7 +83,7 @@ public class Customer extends AbstractEntity implements LeafNode {
 
     static constraints = {
         outletName blank: false
-        outletType blank: false, inList: [TYPE_PHARMACY, TYPE_DRUG_SHOP, TYPE_CLINIC, TYPE_HEALH_CENTER, TYPE_HOSPITAL]
+        outletType blank: false, inList: [TYPE_PHARMACY, TYPE_DRUG_SHOP, TYPE_CLINIC, TYPE_HEALTH_CENTER, TYPE_HOSPITAL]
         outletSize blank: false, inList: ['big', 'medium', 'small']
         typeOfLicence blank: false, inList: ['National Drug Authority', 'Pharmaceutical Society of Uganda', 'Ugandan Medical and Dental Practitioners', 'Ministry of Health', 'Unlicensed', 'Others']
         split blank: false, inList: ['urban', 'rural']
@@ -91,7 +94,7 @@ public class Customer extends AbstractEntity implements LeafNode {
         numberOfBranches nullable: false, min: 1
         numberOfCustomersPerDay nullable: false, min: 1
         majoritySourceOfSupply blank: false
-        buildingStructure blank: false, inList: ['permanent', 'semi-permanent', 'non-permanent']
+        buildingStructure blank: false, inList: [STRUCT_PERMANENT, STRUCT_SEMI_PERMANENT, STRUCT_NON_PERMANENT]
         equipment blank: false
         tenureLength min: 0, max: 20
         descriptionOfOutletLocation blank: false
