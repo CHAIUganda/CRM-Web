@@ -1,5 +1,5 @@
 
-<%@ page import="com.omnitech.chai.model.Setting" %>
+<%@ page import="com.omnitech.chai.util.ChaiUtils; com.omnitech.chai.model.Setting" %>
 <!DOCTYPE html>
 <html>
 
@@ -16,17 +16,14 @@
     <table class="table table-bordered margin-top-medium">
         <thead>
         <tr>
-            
+            <g:sortableColumn property="name" title="${message(code: 'setting.name.label', default: 'Name')}" />
+
+            <g:sortableColumn property="value" title="${message(code: 'setting.value.label', default: 'Value')}" />
+
             <g:sortableColumn property="dateCreated" title="${message(code: 'setting.dateCreated.label', default: 'Date Created')}" />
             
             <g:sortableColumn property="lastUpdated" title="${message(code: 'setting.lastUpdated.label', default: 'Last Updated')}" />
-            
-            <g:sortableColumn property="name" title="${message(code: 'setting.name.label', default: 'Name')}" />
-            
-            <g:sortableColumn property="uuid" title="${message(code: 'setting.uuid.label', default: 'Uuid')}" />
-            
-            <g:sortableColumn property="value" title="${message(code: 'setting.value.label', default: 'Value')}" />
-            
+
             <td>
                 Action
             </td>
@@ -36,21 +33,17 @@
         <g:each in="${settingInstanceList}" status="i" var="settingInstance">
             <tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
                 
-                <td><g:link action="show" id="${settingInstance.id}">${fieldValue(bean: settingInstance, field: "dateCreated")}</g:link></td>
+                <td><g:link action="show" id="${settingInstance.id}">${fieldValue(bean: settingInstance, field: "name")}</g:link></td>
+                
+                <td>${ChaiUtils.truncateString(settingInstance.value,100)}</td>
+                
+                <td>${fieldValue(bean: settingInstance, field: "dateCreated")}</td>
                 
                 <td><g:formatDate date="${settingInstance.lastUpdated}" format="dd-MMM-yyyy" /></td>
-                
-                <td>${fieldValue(bean: settingInstance, field: "name")}</td>
-                
-                <td>${fieldValue(bean: settingInstance, field: "uuid")}</td>
-                
-                <td>${fieldValue(bean: settingInstance, field: "value")}</td>
                 
                 <td>
                     <g:link action="edit" id="${settingInstance.id}"><i
                             class="glyphicon glyphicon-pencil"></i></g:link>
-                    <g:link action="delete" id="${settingInstance.id}"><i
-                            class="glyphicon glyphicon-remove"></i></g:link>
                 </td>
             </tr>
         </g:each>

@@ -58,6 +58,11 @@
                     <li>
                         <g:link controller="customerSegment" action="index">Customer Segments</g:link>
                     </li>
+                    <sec:ifAllGranted roles="ROLE_SUPER_ADMIN">
+                        <li>
+                            <g:link controller="setting" action="index">Advanced Settings</g:link>
+                        </li>
+                    </sec:ifAllGranted>
                 </ul>
             </li>
         </ul>
