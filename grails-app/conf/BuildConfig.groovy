@@ -58,18 +58,18 @@ grails.project.dependency.resolution = {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes e.g.
         compile 'org.springframework.data:spring-data-neo4j:3.1.4.RELEASE'
         compile 'org.springframework.data:spring-data-neo4j-tx:3.1.4.RELEASE'
-        compile 'javax.validation:validation-api:1.1.0.Final'
-        compile 'org.neo4j:neo4j-spatial:0.13-neo4j-2.1.2'
+        runtime 'javax.validation:validation-api:1.1.0.Final'
+        runtime 'org.neo4j:neo4j-spatial:0.13-neo4j-2.1.2'
         compile 'org.neo4j:neo4j-cypher-dsl:2.1.4'
 
-        compile('org.neo4j.app:neo4j-server:2.1.2') {
+        runtime('org.neo4j.app:neo4j-server:2.1.2') {
             excludes 'org.slf4j:slf4j-jdk14'
             excludes 'org.slf4j:slf4j-jdk14'
         }
 
-        compile 'net.sf.ehcache:ehcache:2.8.3'
-        compile 'org.apache.httpcomponents:httpcore:4.3'
-        compile 'org.apache.httpcomponents:httpclient:4.3'
+        runtime 'net.sf.ehcache:ehcache:2.8.3'
+        runtime 'org.apache.httpcomponents:httpcore:4.3'
+        runtime 'org.apache.httpcomponents:httpclient:4.3'
 //        compile 'org.hibernate:hibernate-validator:4.2.0.Final'
 
 
