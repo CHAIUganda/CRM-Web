@@ -24,10 +24,14 @@ interface CustomerContactRepository extends GraphRepository<CustomerContact> {}
 interface TerritoryRepository extends GraphRepository<Territory> {}
 
 interface TaskRepository extends GraphRepository<Task> {}
+
 interface CustomerSegmentRepository extends GraphRepository<CustomerSegment> {}
 
 interface ProductGroupRepository extends GraphRepository<ProductGroup> {}
-interface SettingRepository extends GraphRepository<Setting> {}
+
+interface SettingRepository extends GraphRepository<Setting> {
+    Setting findByName(String name)
+}
 
 interface UserRepository extends GraphRepository<User> {
 
