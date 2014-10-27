@@ -41,6 +41,7 @@
 
     <bean id="neoPersistentHelper" class="com.omnitech.chai.service.PersistentHelper"/>
 
+    <!--<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>-->
     <!--NEO4J-->
     <util:map id="config">
         <entry key="enable_remote_shell" value="true"/>

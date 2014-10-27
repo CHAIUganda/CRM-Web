@@ -49,6 +49,7 @@ class SegmentationService {
 
             if (result == true) {
                 c.segment = cs
+                c.segmentScore = customerScore
                 customerRepository.save(c)
             }
 
