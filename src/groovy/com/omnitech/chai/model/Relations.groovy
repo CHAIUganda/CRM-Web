@@ -35,6 +35,9 @@ interface Relations {
     //User -> Task
     final static ASSIGNED_TASK = 'ASSIGNED_TASK'
 
+    // User -> Territory
+    final static USER_TERRITORY = 'USER_TERRITORY'
+
     //User -> Task
     final static COMPLETED_TASK = 'COMPLETED_TASK'
 

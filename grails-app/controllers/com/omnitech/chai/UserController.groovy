@@ -13,6 +13,7 @@ import static org.springframework.http.HttpStatus.*
 class UserController {
 
     def userService
+    def regionService
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
@@ -41,7 +42,9 @@ class UserController {
     }
 
     def create() {
-        respond new User(params), model: [rolez: userService.listAllRoles(), devices: userService.listAllFreeDevices()]
+        respond new User(params), model: [rolez: userService.listAllRoles(),
+                devices: userService.listAllFreeDevices(),
+                territories: regionService.listAllTerritorys()]
     }
 
     def save(User userInstance) {
@@ -73,7 +76,9 @@ class UserController {
             notFound(); return
         }
         def user = userService.findUser(id)
-        respond user, model: [rolez: userService.listAllRoles(), devices: userService.listAllFreeDevices(id)]
+        respond user, model: [rolez: userService.listAllRoles(),
+                devices: userService.listAllFreeDevices(id),
+                territories: regionService.listAllTerritorys()]
     }
 
 

@@ -3,6 +3,15 @@
     <div class="row ">
         <div class="col-md-6 thumbnail">
 
+            <div class="${hasErrors(bean: userInstance, field: 'territory', 'error')} required">
+                <label for="username" class="control-label"><g:message code="user.territory.label" default="Territory" /><span class="required-indicator">*</span></label>
+                <div>
+                    <g:select from="${territories}" class="form-control" name="territory.id" optionKey="id" required="" value="${userInstance?.territory?.id}"/>
+                    <span class="help-inline">${hasErrors(bean: userInstance, field: 'territory', 'error')}</span>
+                </div>
+            </div>
+
+
 			<div class="${hasErrors(bean: userInstance, field: 'username', 'error')} required">
 				<label for="username" class="control-label"><g:message code="user.username.label" default="Username" /><span class="required-indicator">*</span></label>
 				<div>

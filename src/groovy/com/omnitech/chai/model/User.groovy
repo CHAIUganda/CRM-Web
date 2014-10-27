@@ -37,6 +37,10 @@ class User extends AbstractEntity {
     @RelatedTo(type = 'HAS_DEVICE')
     Device device
 
+    @Fetch
+    @RelatedTo(type = Relations.USER_TERRITORY)
+    Territory territory
+
 
     User() {}
 
