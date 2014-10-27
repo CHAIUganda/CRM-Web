@@ -46,7 +46,7 @@ class TaskService {
         def prevTask = taskRepository.findLastTask(customer.id)
 
         def newTask = new Task(customer: customer,description: "Go Check on [$customer.outletName]",dueDate: new Date())
-        if(prevTask)  {
+        if(prevTask?.completionDate)  {
            //if we have a previous task set the date *n* days after previous task
             newTask.dueDate = prevTask.completionDate + segment.spaceBetweenVisits
         }

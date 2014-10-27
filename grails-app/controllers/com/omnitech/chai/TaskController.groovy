@@ -20,7 +20,7 @@ class TaskController {
     def customerService
 
     def index(Integer max) {
-        params.max = Math.min(max ?: 10, 100)
+        params.max = Math.min(max ?: 50, 100)
         if(!params.sort) {
             params.sort = 'dueDate'
         }
@@ -29,7 +29,7 @@ class TaskController {
     }
 
     def search(Integer max) {
-        params.max = Math.min(max ?: 10, 100)
+        params.max = Math.min(max ?: 50, 100)
         if (params.term) {
             redirect(action: 'search', id: params.term)
             return
