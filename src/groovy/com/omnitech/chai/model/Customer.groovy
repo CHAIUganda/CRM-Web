@@ -31,6 +31,7 @@ public class Customer extends AbstractEntity implements LeafNode {
 
     Float lat
     Float lng
+    Double segmentScore
 
     @Indexed(indexType = IndexType.POINT, indexName = 'CUSTOMER_LOCATION')
     String wkt
