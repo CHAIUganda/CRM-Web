@@ -11,6 +11,8 @@ import org.springframework.data.neo4j.annotation.NodeEntity
 @Validateable
 class Setting extends AbstractEntity {
 
+    final static SEGMENTATION_SCRIPT = 'segmentation.script'
+
     @Indexed(unique = true)
     String name
     String value

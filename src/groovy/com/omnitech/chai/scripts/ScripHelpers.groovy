@@ -24,7 +24,7 @@ class ScripHelpers {
         if (functions instanceof Closure) {
             return (functions(c) * weight)
         }
-        def func = functions.get(c.outletType)
+        def func = functions.get("$c.outletType")
         return (func(c) as Float) * weight
     }
 
