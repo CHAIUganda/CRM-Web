@@ -23,7 +23,12 @@ interface CustomerContactRepository extends GraphRepository<CustomerContact> {}
 
 interface TerritoryRepository extends GraphRepository<Territory> {}
 
-interface TaskRepository extends GraphRepository<Task> {}
+interface TaskRepository extends GraphRepository<Task> {
+
+    @Query('start c = node({customerId}) match c -[:CUST_TASK]-> (t) return t order by t.dateCreated desc limit 1')
+    Task findLastTask(@Param('customerId') Long customerId)
+
+}
 
 interface CustomerSegmentRepository extends GraphRepository<CustomerSegment> {}
 

@@ -21,6 +21,7 @@ class CustomerController {
     def customerService
     def regionService
     def segmentationService
+    def taskService
 
     def index(Integer max) {
         params.max = Math.min(max ?: 10, 100)
@@ -133,6 +134,7 @@ class CustomerController {
 
     def autoSegment() {
         segmentationService.runSegmentationRoutine()
+        taskService.autoGenerateTasks()
         flash.message = 'Running auto Segmentation'
         redirect action: 'index'
     }

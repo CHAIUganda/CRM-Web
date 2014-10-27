@@ -1,5 +1,6 @@
 package com.omnitech.chai.crm
 
+import com.omnitech.chai.model.Customer
 import com.omnitech.chai.model.Task
 import com.omnitech.chai.util.ModelFunctions
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,6 +14,7 @@ class TaskService {
     def taskRepository
     @Autowired
     Neo4jTemplate neo
+    def customerRepository
 
     /* Tasks */
 
@@ -28,5 +30,34 @@ class TaskService {
 
     Page<Task> searchTasks(String search, Map params) {
         ModelFunctions.searchAll(neo, Task, ModelFunctions.getWildCardRegex(search), params)
+    }
+
+    def autoGenerateTasks() {
+        customerRepository.findAll().each {
+            def task = generateCustomerTask(it)
+            if (task) taskRepository.save(task)
+        }
+    }
+
+    private Task generateCustomerTask(Customer customer) {
+        def segment = customer.segment
+        if(!segment) return null
+
+        def prevTask = taskRepository.findLastTask(customer.id)
+
+        def newTask = new Task(customer: customer,description: "Go Check on [$customer.outletName]",dueDate: new Date())
+        if(prevTask)  {
+           //if we have a previous task set the date *n* days after previous task
+            newTask.dueDate = prevTask.completionDate + segment.spaceBetweenVisits
+        }
+
+       return newTask
+
+    }
+
+
+
+    Date getDateSinceLastVisit(Customer c) {
+
     }
 }

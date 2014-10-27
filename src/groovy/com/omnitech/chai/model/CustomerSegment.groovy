@@ -21,9 +21,11 @@ class CustomerSegment extends AbstractEntity implements GroupNode {
 
     static constraints = {
         name blank: false
-        callFrequency nullable: false, min: 1
+        callFrequency nullable: false, min: 0
     }
 
     @Override
     GroupNode getParent() { return null }
+
+    int getSpaceBetweenVisits() { callFrequency == 0 ? 0 : 60 / callFrequency }
 }
