@@ -18,13 +18,13 @@ class UserController {
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
     def index(Integer max) {
-        params.max = Math.min(max ?: 10, 100)
+        params.max = Math.min(max ?: 50, 100)
         def page = userService.list(params)
         respond page.content, model: [userInstanceCount: page.totalElements]
     }
 
     def search(Integer max) {
-        params.max = Math.min(max ?: 10, 100)
+        params.max = Math.min(max ?: 50, 100)
         if (params.term) {
             redirect(action: 'search', id: params.term)
             return

@@ -21,11 +21,11 @@
 
                 <th> ${message(code: 'Device.label', default: 'Device')}</th>
 
+                <g:sortableColumn property="dateCreated" title="${message(code: 'user.territory.label', default: 'Territory')}" />
+
 				<g:sortableColumn property="accountExpired" title="${message(code: 'user.accountExpired.label', default: 'Account Expired')}" />
 			
 				<g:sortableColumn property="accountLocked" title="${message(code: 'user.accountLocked.label', default: 'Account Locked')}" />
-			
-				<g:sortableColumn property="dateCreated" title="${message(code: 'user.dateCreated.label', default: 'Date Created')}" />
 			
 				<g:sortableColumn property="enabled" title="${message(code: 'user.enabled.label', default: 'Enabled')}" />
 			
@@ -39,14 +39,14 @@
 
                 <td>${fieldValue(bean: userInstance, field: "device")}</td>
 
+                <td>${fieldValue(bean: userInstance, field: "territory")}</td>
+
 				<td><g:formatBoolean boolean="${userInstance.accountExpired}" /></td>
 			
 				<td><g:formatBoolean boolean="${userInstance.accountLocked}" /></td>
 			
-				<td><g:formatDate date="${userInstance.dateCreated}" format="dd-MMM-yyyy" /></td>
-			
 				<td><g:formatBoolean boolean="${userInstance.enabled}" /></td>
-			
+
 			</tr>
 		</g:each>
 		</tbody>
