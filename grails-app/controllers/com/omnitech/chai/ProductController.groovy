@@ -22,7 +22,7 @@ class ProductController {
         params.max = Math.min(max ?: 100, 100)
         def page = productService.listProducts(params)
         def content = new GroupFlattener(leaves: page.content).normalize()
-        [productInstanceList: content, productInstanceCount: page.totalElements]
+        [productInstanceList: content, productInstanceCount: page.totalElements,layout_nosearchtext:true]
     }
 
     def show() {
