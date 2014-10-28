@@ -39,25 +39,24 @@ class TaskService {
         }
     }
 
-    private Task generateCustomerTask(Customer customer) {
+    Task generateCustomerTask(Customer customer) {
         def segment = customer.segment
-        if(!segment) return null
+        if (!segment) return null
 
         def prevTask = taskRepository.findLastTask(customer.id)
 
-        def newTask = new Task(customer: customer,description: "Go Check on [$customer.outletName]",dueDate: new Date())
-        if(prevTask?.completionDate)  {
-           //if we have a previous task set the date *n* days after previous task
-            newTask.dueDate = prevTask.completionDate + segment.spaceBetweenVisits
+        def spaceBtnVisits = segment.spaceBetweenVisits
+        def newTask = new Task(customer: customer, description: "Go Check on [$customer.outletName]", dueDate: new Date())
+        if (prevTask?.completionDate) {
+            //if we have a previous task set the date *n* days after previous task
+            def daysBtnDates = new Date() - prevTask.completionDate
+            if (daysBtnDates < spaceBtnVisits)
+                newTask.dueDate = prevTask.completionDate + segment.spaceBetweenVisits
         }
 
-       return newTask
+        return newTask
 
     }
 
 
-
-    Date getDateSinceLastVisit(Customer c) {
-
-    }
 }
