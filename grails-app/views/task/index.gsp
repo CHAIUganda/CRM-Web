@@ -46,7 +46,7 @@
                 <td>${taskInstance.assignedTo ?: taskInstance.completedBy}</td>
 
                 <td>
-                    <g:link action="edit" id="${taskInstance.id}"><i
+                    <g:link action="edit" id="${taskInstance.id}" title="Edit/Schedule"><i
                             class="glyphicon glyphicon-calendar"></i></g:link>
                 </td>
             </tr>
