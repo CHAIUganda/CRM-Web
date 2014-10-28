@@ -32,7 +32,7 @@ class TaskServiceTest extends Specification {
         (newTask.dueDate - new Date()) == 0
     }
 
-    def "if the previous task was completed recently then the next task can have a date for behind"() {
+    def "if the previous task was completed recently then the next task can have a date that is based on the previous completion date"() {
         def c = new Customer(segment: new CustomerSegment(callFrequency: 3))
         TaskRepository repo = Mock(TaskRepository)
         service.taskRepository = repo
