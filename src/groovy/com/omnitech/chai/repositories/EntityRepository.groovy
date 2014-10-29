@@ -2,6 +2,7 @@ package com.omnitech.chai.repositories
 
 import com.omnitech.chai.model.*
 import org.springframework.data.neo4j.annotation.Query
+import org.springframework.data.neo4j.repository.CypherDslRepository
 import org.springframework.data.neo4j.repository.GraphRepository
 import org.springframework.data.repository.query.Param
 
@@ -17,7 +18,7 @@ interface ParishRepository extends GraphRepository<Parish> {}
 
 interface VillageRepository extends GraphRepository<Village> {}
 
-interface CustomerRepository extends GraphRepository<Customer> {}
+interface CustomerRepository extends GraphRepository<Customer>,CypherDslRepository<Customer> {}
 
 interface CustomerContactRepository extends GraphRepository<CustomerContact> {}
 
