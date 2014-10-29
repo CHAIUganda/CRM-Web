@@ -13,7 +13,7 @@ import org.springframework.data.neo4j.annotation.RelatedTo
 @Validateable
 class Task extends AbstractEntity {
 
-    final static String STATUS_NEW = 'new', STATUS_COMPLETE = 'complete'
+    final static String STATUS_NEW = 'new', STATUS_COMPLETE = 'complete',STATUS_CANCELLED = 'cancelled'
 
     String description
     protected String type = Task.simpleName

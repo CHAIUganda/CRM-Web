@@ -49,9 +49,19 @@ class PageUtils {
 
     static ReturnNext addPagination(ReturnNext next, Map param, Class returnClass) {
         def entityName = returnClass.simpleName.toLowerCase()
+
         def pageParams = create(param)
-        def sort = pageParams.sort?.toString()?.replace(':', '')
-        next.orderBy(order(identifier(entityName).property(sort ? sort : 'id'), Order.ASCENDING))
+        def sortIt = pageParams.sort?.iterator()
+
+        String sort
+        Order direction = Order.ASCENDING
+
+        if (sortIt?.hasNext()) {
+            def order = sortIt.next()
+            sort = order.property
+            direction = order.direction == Sort.Direction.ASC ? Order.ASCENDING : Order.DESCENDING
+        }
+        next.orderBy(order(identifier(entityName).property(sort ? sort : 'id'), direction))
                 .skip(pageParams.offset)
                 .limit(pageParams.pageSize)
         return next

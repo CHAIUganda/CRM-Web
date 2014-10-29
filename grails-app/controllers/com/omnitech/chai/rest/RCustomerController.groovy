@@ -17,11 +17,9 @@ class RCustomerController {
     def index(Integer max) {
         params.max = Math.min(max ?: 10, 100)
         def user = neoSecurityService.currentUser as User
-        def page = customerService.findCustomersByUser(user.id, params)
-        def customers = page.content.collect {
-          ReflectFunctions.extractProperties(it)
-        }
-        respond customers
+        def customers = customerService.findCustomersByUser(user.id, params)
+        def customerMaps = customers.collect { ReflectFunctions.extractProperties(it) }
+        respond customerMaps
     }
 
 }

@@ -3,15 +3,12 @@ package com.omnitech.chai.crm
 import com.omnitech.chai.model.Customer
 import com.omnitech.chai.model.CustomerSegment
 import com.omnitech.chai.util.ModelFunctions
-import com.omnitech.chai.util.PageUtils
-import org.codehaus.groovy.runtime.DefaultGroovyMethods
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.data.neo4j.transaction.Neo4jTransactional
 
 import static com.omnitech.chai.model.Relations.*
-import static java.util.Collections.EMPTY_MAP
 import static org.neo4j.cypherdsl.CypherQuery.*
 
 /**
@@ -47,12 +44,13 @@ class CustomerService {
         ModelFunctions.searchAll(neo, Customer, ModelFunctions.getWildCardRegex(search), params)
     }
 
-    Page<Customer> findCustomersByUser(long userId, Map params) {
+    @Neo4jTransactional
+    List<Customer> findCustomersByUser(long userId, Map params) {
+        def name = Customer.simpleName.toLowerCase()
         def exec = start(nodesById('u', userId))
-                .match(node('u').out(USER_TERRITORY).node('t').in(SC_IN_TERRITORY).node('sc').in(BELONGS_TO_SC).node('c')
-        ).returns(identifier('c'))
-        println exec.toString()
-        customerRepository.query(exec, EMPTY_MAP, PageUtils.create(params))
+                .match(node('u').out(USER_TERRITORY).node('t').in(SC_IN_TERRITORY).node('sc').in(BELONGS_TO_SC).node(name)
+        ).returns(identifier(name))
+        ModelFunctions.query(customerRepository, exec, params, Customer).collect()
     }
 
     /* CustomerSegments */
