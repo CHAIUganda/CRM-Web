@@ -8,6 +8,7 @@ import static org.springframework.http.HttpStatus.OK
 class PlaceController {
 
 
+    static namespace = 'rest'
     static responseFormats = ['json', 'xml']
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
     def regionService
