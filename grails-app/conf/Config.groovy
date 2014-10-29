@@ -154,6 +154,12 @@ grails.plugin.springsecurity.authority.className = 'com.omnitech.chai.model.Role
 grails.plugin.springsecurity.requestMap.className = 'com.omnitech.chai.model.RequestMap'
 grails.plugin.springsecurity.securityConfigType = 'Requestmap'
 grails.plugin.springsecurity.logout.postOnly = false
+grails.plugin.springsecurity.useBasicAuth = true
+grails.plugin.springsecurity.basic.realmName = "CHAI CRM"
+grails.plugin.springsecurity.filterChain.chainMap = [
+        '/rest/**': 'JOINED_FILTERS,-exceptionTranslationFilter',
+        '/**': 'JOINED_FILTERS,-basicAuthenticationFilter,-basicExceptionTranslationFilter'
+]
 
 /*grails.plugin.springsecurity.controllerAnnotations.staticRules = [
 	'/':                              ['permitAll'],
