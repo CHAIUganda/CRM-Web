@@ -1,5 +1,6 @@
 package com.omnitech.chai.util
 
+import com.omnitech.chai.model.AbstractEntity
 import org.springframework.data.annotation.Transient
 import org.springframework.validation.Errors
 
@@ -73,5 +74,11 @@ class ReflectFunctions {
         }
 
         return results
+    }
+
+    static Map extractProperties(Object object) {
+        def fields = findAllPersistentFields(object.class).findAll {isPersistent(it) && !AbstractEntity.isAssignableFrom(it.type)}
+        def values = fields.collectEntries { [it.name, object."$it.name"] }
+        return values
     }
 }

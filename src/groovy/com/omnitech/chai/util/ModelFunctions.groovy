@@ -5,8 +5,11 @@ import com.omnitech.chai.model.Customer
 import org.apache.commons.logging.LogFactory
 import org.grails.databinding.SimpleDataBinder
 import org.grails.databinding.SimpleMapDataBindingSource
+import org.neo4j.cypherdsl.grammar.ReturnNext
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
+import org.springframework.data.neo4j.conversion.Result
+import org.springframework.data.neo4j.repository.CypherDslRepository
 import org.springframework.data.neo4j.repository.GraphRepository
 import org.springframework.data.neo4j.support.Neo4jTemplate
 
@@ -20,7 +23,7 @@ class ModelFunctions {
     private static def log = LogFactory.getLog(ModelFunctions.class)
 
 
-    static Long extractId(Map params,String idField = 'id') {
+    static Long extractId(Map params, String idField = 'id') {
         Long id = -1
         try {
             id = (params[idField] as Long) ?: -1
@@ -81,6 +84,12 @@ class ModelFunctions {
         def data = neo.query(query, [search: search]).to(aClass).as(List).collect()
         return new PageImpl<Customer>(data, PageUtils.create(params), size) as Page<T>
     }
+
+    static <T> Result<T> query(CypherDslRepository<T> repo, ReturnNext execute, Map params, Class container) {
+        PageUtils.addPagination(execute, params, container)
+        return repo.query(execute, Collections.EMPTY_MAP)
+    }
+
 
     static String getWildCardRegex(String search) { "(?i).*${Pattern.quote(search)}.*".toString() }
 
