@@ -100,7 +100,7 @@ class ReflectFunctions {
             return field.get(object)
 
         } finally {
-            if (!accessible) field.setAccessible(false)
+            if (!accessible) field.setAccessible(accessible)
         }
 
     }
