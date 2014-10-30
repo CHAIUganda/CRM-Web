@@ -15,10 +15,10 @@ class RCustomerController {
     def customerService
     def neoSecurityService
 
-    def index(Integer max) {
+    def list(Integer max) {
         params.max = Math.min(max ?: 10, 100)
         def user = neoSecurityService.currentUser as User
-        def customers = customerService.findCustomersByUser(user.id, params)
+        def customers = customerService.findAllCustomersByUser(user.id, params)
         def customerMaps = customers.collect { customerToMap(it) }
         respond customerMaps
     }

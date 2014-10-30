@@ -45,7 +45,7 @@ class CustomerService {
     }
 
     @Neo4jTransactional
-    List<Customer> findCustomersByUser(long userId, Map params) {
+    List<Customer> findAllCustomersByUser(long userId, Map params) {
         def name = Customer.simpleName.toLowerCase()
         def exec = start(nodesById('u', userId))
                 .match(node('u').out(USER_TERRITORY).node('t').in(SC_IN_TERRITORY).node('sc').in(BELONGS_TO_SC).node(name)
