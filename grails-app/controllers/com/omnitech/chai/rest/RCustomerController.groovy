@@ -1,5 +1,6 @@
 package com.omnitech.chai.rest
 
+import com.omnitech.chai.model.Customer
 import com.omnitech.chai.model.User
 import com.omnitech.chai.util.ReflectFunctions
 
@@ -18,8 +19,17 @@ class RCustomerController {
         params.max = Math.min(max ?: 10, 100)
         def user = neoSecurityService.currentUser as User
         def customers = customerService.findCustomersByUser(user.id, params)
-        def customerMaps = customers.collect { ReflectFunctions.extractProperties(it) }
+        def customerMaps = customers.collect { customerToMap(it) }
         respond customerMaps
+    }
+
+    Map customerToMap(Customer customer) {
+        def cMap = ReflectFunctions.extractProperties(customer)
+        def contacts = customer?.customerContacts?.collect { ReflectFunctions.extractProperties(it) }
+        if (contacts) {
+            cMap['customerContacts'] = contacts
+        }
+        return cMap
     }
 
 }
