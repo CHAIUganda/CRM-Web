@@ -1,6 +1,7 @@
 package com.omnitech.chai.util
 
 import com.omnitech.chai.model.AbstractEntity
+import groovy.transform.CompileStatic
 import org.springframework.data.annotation.Transient
 import org.springframework.validation.Errors
 
@@ -24,13 +25,15 @@ class ReflectFunctions {
      * Finds all fields we need to persist for spring data
      * excluding all transient,collections and static
      */
+    @CompileStatic
     static List<Field> findAllPersistentFields(Class aClass) {
-        findAllFields(aClass).findAll { isPersistent(it) }
+        findAllFields(aClass).findAll {Field it -> isPersistent(it) } as List
     }
 
     /**
      * Returns true is this field is neither static,transient,collection or an error.
      */
+    @CompileStatic
     static boolean isPersistent(Field field) {
         !Modifier.isStatic(field.modifiers) &&
                 !Modifier.isTransient(field.modifiers) &&
@@ -42,6 +45,7 @@ class ReflectFunctions {
     /**
      * Returns a list of all super classes for this passed class
      */
+    @CompileStatic
     static List<Class> getClassHierarchy(Class aClass) {
         List<Class> classes = [aClass]
         while (aClass.superclass != Object) {
@@ -51,6 +55,7 @@ class ReflectFunctions {
         return classes
     }
 
+    @CompileStatic
     static <T> List<T> findResultsOnFields(Class aClass,
                                            Closure<T> transform,
                                            Closure<List<Field>> extractFields,
@@ -76,9 +81,27 @@ class ReflectFunctions {
         return results
     }
 
+    @CompileStatic
     static Map extractProperties(Object object) {
-        def fields = findAllPersistentFields(object.class).findAll {isPersistent(it) && !AbstractEntity.isAssignableFrom(it.type)}
-        def values = fields.collectEntries { [it.name, object."$it.name"] }
+        def fields = findAllPersistentFields(object.class).findAll { Field it ->
+            isPersistent(it) && !AbstractEntity.isAssignableFrom(it.type)
+        }
+        def values = fields.collectEntries { Field it -> [it.name, getValue(it, object)] }
         return values
+    }
+
+    @CompileStatic
+    static Object getValue(Field field, def object) {
+        def accessible = field.isAccessible()
+        try {
+            if (!accessible) field.setAccessible(true)
+            if (Date.isAssignableFrom(field.type))
+                return ChaiUtils.formatDate(field.get(object) as Date)
+            return field.get(object)
+
+        } finally {
+            if (!accessible) field.setAccessible(false)
+        }
+
     }
 }

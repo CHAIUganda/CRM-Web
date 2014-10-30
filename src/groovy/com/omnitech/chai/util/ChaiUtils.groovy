@@ -4,11 +4,21 @@ import groovy.time.TimeCategory
 import groovy.transform.CompileStatic
 import org.slf4j.LoggerFactory
 
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+
 /**
  * Created by kay on 9/29/14.
  */
 class ChaiUtils {
     static log = LoggerFactory.getLogger(ChaiUtils)
+
+    private static DateFormat format = new SimpleDateFormat('yyyy-MM-dd')
+
+    static String formatDate(Date date) {
+        if (date) return format.format(date)
+        return 'UNKNOWN'
+    }
 
     static injectUtilityMethods() {
         String.metaClass.toLongSafe = {
