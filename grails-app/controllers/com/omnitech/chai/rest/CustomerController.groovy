@@ -7,7 +7,7 @@ import com.omnitech.chai.util.ReflectFunctions
 /**
  * Created by kay on 10/29/14.
  */
-class RCustomerController {
+class CustomerController {
 
     static namespace = 'rest'
     static responseFormats = ['json', 'xml']
