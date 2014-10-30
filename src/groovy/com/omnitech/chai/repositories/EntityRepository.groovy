@@ -29,6 +29,9 @@ interface TaskRepository extends GraphRepository<Task> {
     @Query('start c = node({customerId}) match c -[:CUST_TASK]-> (t) return t order by t.dateCreated desc limit 1')
     Task findLastTask(@Param('customerId') Long customerId)
 
+    @Query('START u=node({userId}) MATCH (u)-[:USER_TERRITORY]->(t)<-[:SC_IN_TERRITORY]-(sc)<-[:BELONGS_TO_SC]-(customer)-[:CUST_TASK]-(tsk) WHERE u-[:ASSIGNED_TASK]->(tsk) or NOT(tsk<-[:ASSIGNED_TASK]-()) RETURN distinct tsk')
+    Iterable<Task> findAllTaskForUser(@Param("userId") Long userId)
+
 }
 
 interface CustomerSegmentRepository extends GraphRepository<CustomerSegment> {}

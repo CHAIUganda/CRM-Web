@@ -32,6 +32,10 @@ class TaskService {
         ModelFunctions.searchAll(neo, Task, ModelFunctions.getWildCardRegex(search), params)
     }
 
+    List<Task> findAllTaskForUser(Long userId) {
+        taskRepository.findAllTaskForUser(userId).collect()
+    }
+
     def autoGenerateTasks() {
         customerRepository.findAll().each {
             def task = generateCustomerTask(it)
