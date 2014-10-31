@@ -6,6 +6,7 @@ import com.omnitech.chai.util.GroupFlattener
 import com.omnitech.chai.util.ModelFunctions
 import grails.converters.JSON
 import grails.transaction.Transactional
+import org.springframework.web.multipart.commons.CommonsMultipartFile
 
 import static com.omnitech.chai.util.ModelFunctions.extractId
 import static org.springframework.http.HttpStatus.*
@@ -110,6 +111,26 @@ class CustomerController {
             }
             '*' { respond customerInstance, [status: OK] }
         }
+    }
+
+    @Transactional
+    def importCustomers() {
+        CommonsMultipartFile f = request.getFile('myFile')
+        if (!f || f.empty) {
+            flash.message = 'file cannot be empty'
+            redirect action: 'index'
+            return
+        }
+
+        try {
+            customerService.processCustomers(f.inputStream.text)
+            flash.message = 'file uploaded successfully'
+        } catch (Throwable ex) {
+            flash.message = "$ex.message"
+            log.error("Error while importing questions", ex)
+        }
+
+        redirect action: 'index'
     }
 
     @Transactional

@@ -71,5 +71,9 @@ class CustomerService {
     Page<CustomerSegment> searchCustomerSegments(String search, Map params) {
         ModelFunctions.searchAll(neo, CustomerSegment, ModelFunctions.getWildCardRegex(search), params)
     }
+
+    def processCustomers(String s) {
+        println(s)
+    }
 }
 

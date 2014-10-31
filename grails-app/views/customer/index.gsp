@@ -77,6 +77,34 @@
                      id="${params.action == 'search' ? (params.term ?: params.id) : null}"/>
     </div>
 </section>
+
+<div class="modal fade" id="importCustomers" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Import Customers</h4>
+            </div>
+
+            <div class="modal-body">
+                <g:uploadForm action="importCustomers">
+                    <div class="row">
+                        <div class="col-md-7"><input type="file"  name="myFile"/></div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="glyphicon glyphicon-upload"></i> Upload
+                            </button>
+                        </div>
+                    </div>
+                </g:uploadForm>
+            %{--<g:link action="downloadSample" class="btn btn-primary">Download Sample</g:link>--}%
+            </div>
+        </div>
+    </div>
+</div>
+
 <r:require module="jqueryTreeTable"/>
 <g:javascript>
     $("#tree-table").treetable({ expandable: true, initialState: "expanded" });
