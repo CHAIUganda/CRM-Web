@@ -113,7 +113,6 @@ class CustomerController {
         }
     }
 
-    @Transactional
     def importCustomers() {
         CommonsMultipartFile f = request.getFile('myFile')
         if (!f || f.empty) {
@@ -124,10 +123,10 @@ class CustomerController {
 
         try {
             customerService.processCustomers(f.inputStream.text)
-            flash.message = 'file uploaded successfully'
+            flash.message = 'Customer uploaded Successfully'
         } catch (Throwable ex) {
             flash.message = "$ex.message"
-            log.error("Error while importing questions", ex)
+            log.error("Error while importing Customers", ex)
         }
 
         redirect action: 'index'
