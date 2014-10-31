@@ -21,9 +21,9 @@ class ProductService {
     Neo4jTemplate neo
 
 
-    Page<Product> listProducts(Map params) {
-        ModelFunctions.listAll(productRepository, params)
-    }
+    Page<Product> listProducts(Map params) { ModelFunctions.listAll(productRepository, params) }
+
+    List<Product> listAllProducts() { productRepository.findAll().collect() }
 
     Product findProduct(Long id) {
         productRepository.findOne(id)

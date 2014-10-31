@@ -32,16 +32,18 @@ class ModelFunctions {
         return id
     }
 
-    static <T> T bind(T obj, Map properties, boolean copyMetaInfo = false) {
+    static <T> T bind(T obj, Map properties, List whiteList, List blackList) {
         SimpleDataBinder binder = new SimpleDataBinder();
+        binder.bind(obj, new SimpleMapDataBindingSource(properties), whiteList, blackList)
+        return obj
+    }
+
+    static <T> T bind(T obj, Map properties, boolean copyMetaInfo = false) {
         if (copyMetaInfo) {
+            SimpleDataBinder binder = new SimpleDataBinder();
             binder.bind(obj, new SimpleMapDataBindingSource(properties))
         } else {
-            def whiteList = properties.keySet() as List
-            whiteList.remove('uuid')
-            whiteList.remove('lastUpdated')
-            whiteList.remove('dateCreated')
-            binder.bind(obj, new SimpleMapDataBindingSource(properties), whiteList)
+            bind(obj, properties, null, ['uuid','lastUpdated','dateCreated'])
         }
         return obj
     }
