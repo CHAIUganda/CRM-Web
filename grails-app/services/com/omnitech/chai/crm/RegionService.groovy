@@ -32,7 +32,7 @@ class RegionService {
 
     void deleteDistrict(Long id) { districtRepository.delete(id) }
 
-    List<District> listAllDistrictWithSubCounties(){districtRepository.listAllDistrictsWithSubCounties().collect()}
+    List<District> listAllDistrictWithSubCounties() { districtRepository.listAllDistrictsWithSubCounties().collect() }
 
     /*  Regions */
 
@@ -46,15 +46,20 @@ class RegionService {
 
     Region getOrCreateRegion(String regionName) {
         def region = regionRepository.findByName(regionName)
-        if(region){
+        if (region) {
             region = new Region(name: regionName)
             regionRepository.save(region)
         }
         return region
     }
 
-    District getOrCreateDistrict(Region region, String dName){
-
+    District getOrCreateDistrict(Region region, String dName) {
+        def district = districtRepository.findByRegionAndName(region.id, dName)
+        if (!district) {
+            district = new District(name: dName, region: region)
+            districtRepository.save(district)
+        }
+        return district
     }
 
     /* SubCounty */

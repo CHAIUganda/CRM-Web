@@ -68,7 +68,8 @@ interface DistrictRepository extends GraphRepository<District> {
     @Query('match (d:District)-[:HAS_SUB_COUNTY]->(s) return distinct d')
     Set<District> listAllDistrictsWithSubCounties()
 
-    Region findByName(String name)
+    @Query('start r=node({regionId}) match r-[:HAS_DISTRICT]->(d) where d.name =~ {name} return r,d')
+    District findByRegionAndName(Long regionId, String name)
 
 }
 

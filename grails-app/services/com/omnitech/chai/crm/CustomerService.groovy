@@ -94,6 +94,11 @@ class CustomerService {
         String regionName = prop(mapper, idx, 'Region name')
         def region = regionService.getOrCreateRegion(regionName)
 
+        String districtName = prop(mapper,idx,'District name')
+        def district = regionService.getOrCreateDistrict(region,districtName)
+
+
+
 
     }
 
