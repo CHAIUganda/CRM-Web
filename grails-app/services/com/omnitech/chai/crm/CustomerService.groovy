@@ -97,12 +97,15 @@ class CustomerService {
         String districtName = prop(mapper,idx,'District name')
         def district = regionService.getOrCreateDistrict(region,districtName)
 
+        String subCountyName = prop(mapper,idx,'Sub-county Name')
+        def subCounty = regionService.getOrCreateSubCounty(district,subCountyName)
+
 
 
 
     }
 
-    private prop(PropertyMapper mapper, int idx, String name, boolean required = true) {
+    private static String prop(PropertyMapper mapper, int idx, String name, boolean required = true) {
         assert mapper.columns.containsKey(name), "Record $idx should have a [$name]"
         def value = mapper.propertyMissing(name)?.toString()?.trim()
         if (required && !value) {

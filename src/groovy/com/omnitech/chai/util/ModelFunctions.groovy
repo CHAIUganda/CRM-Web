@@ -43,7 +43,7 @@ class ModelFunctions {
             SimpleDataBinder binder = new SimpleDataBinder();
             binder.bind(obj, new SimpleMapDataBindingSource(properties))
         } else {
-            bind(obj, properties, null, ['uuid','lastUpdated','dateCreated'])
+            bind(obj, properties, null, ['uuid', 'lastUpdated', 'dateCreated'])
         }
         return obj
     }
@@ -100,6 +100,14 @@ class ModelFunctions {
             object."$propertyName" = value
         }
         return object
+    }
+
+    static <T> T getOrCreate(Closure<T> getItem, Closure<T> createItem) {
+        def item = getItem()
+        if (!item) {
+            item = createItem()
+        }
+        return item
     }
 
 

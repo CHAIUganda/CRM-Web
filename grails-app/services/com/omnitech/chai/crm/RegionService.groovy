@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.data.neo4j.transaction.Neo4jTransactional
 
+import static com.omnitech.chai.util.ModelFunctions.getOrCreate
+
 /**
  * Created by kay on 9/29/14.
  */
@@ -54,12 +56,17 @@ class RegionService {
     }
 
     District getOrCreateDistrict(Region region, String dName) {
-        def district = districtRepository.findByRegionAndName(region.id, dName)
-        if (!district) {
-            district = new District(name: dName, region: region)
-            districtRepository.save(district)
-        }
-        return district
+        getOrCreate(
+                { districtRepository.findByRegionAndName(region.id, dName) },
+                { districtRepository.save(new District(name: dName, region: region)) }
+        )
+    }
+
+    SubCounty getOrCreateSubCounty(District district, String name) {
+        getOrCreate(
+                { subCountyRepository.findByDistrictAndName(district.id, name) },
+                { subCountyRepository.save(new SubCounty(district: district, name: name)) }
+        )
     }
 
     /* SubCounty */
