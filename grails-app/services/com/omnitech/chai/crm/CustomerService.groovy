@@ -79,7 +79,7 @@ class CustomerService {
     }
 
     def processCustomers(String s) {
-        def csv = CsvParser.parseCsv(text)
+        def csv = CsvParser.parseCsv(s)
 
         csv.eachWithIndex { PropertyMapper record, idx ->
             try {

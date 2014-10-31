@@ -19,19 +19,19 @@ interface RegionRepository extends GraphRepository<Region> {
 interface SubCountyRepository extends GraphRepository<SubCounty> {
 
     @Query('start r=node({districtId}) match r-[:HAS_SUB_COUNTY]->(s) where s.name =~ {name} return s')
-    SubCounty findByDistrictAndName(@Param('districtId') Long districtId, String name)
+    SubCounty findByDistrictAndName(@Param('districtId') Long districtId, @Param('name') String name)
 }
 
 interface ParishRepository extends GraphRepository<Parish> {
 
     @Query('start r=node({subCountyId}) match r-[:HAS_PARISH]->(s) where s.name =~ {name} return s')
-    Parish findBySubCountyAndName(@Param('subCountyId') Long subCountyId, String name)
+    Parish findBySubCountyAndName(@Param('subCountyId') Long subCountyId, @Param('name') String name)
 }
 
 interface VillageRepository extends GraphRepository<Village> {
 
     @Query('start r=node({parishId}) match r-[:HAS_VILLAGE]->(v) where v.name =~ {name} return v')
-    Village findByParishAndName(@Param('parishId') Long subCountyId, String name)
+    Village findByParishAndName(@Param('parishId') Long parishId, @Param('name') String name)
 
 }
 
@@ -79,7 +79,7 @@ interface DistrictRepository extends GraphRepository<District> {
     Set<District> listAllDistrictsWithSubCounties()
 
     @Query('start r=node({regionId}) match r-[:HAS_DISTRICT]->(d) where d.name =~ {name} return d')
-    District findByRegionAndName(Long regionId, String name)
+    District findByRegionAndName(@Param('regionId') Long regionId, @Param('name') String name)
 
 }
 

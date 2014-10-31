@@ -47,12 +47,10 @@ class RegionService {
     void deleteRegion(Long id) { regionRepository.delete(id) }
 
     Region getOrCreateRegion(String regionName) {
-        def region = regionRepository.findByName(regionName)
-        if (region) {
-            region = new Region(name: regionName)
-            regionRepository.save(region)
-        }
-        return region
+        getOrCreate(
+                { regionRepository.findByName(regionName) },
+                { regionRepository.save(new Region(name: regionName)) }
+        )
     }
 
     District getOrCreateDistrict(Region region, String dName) {
