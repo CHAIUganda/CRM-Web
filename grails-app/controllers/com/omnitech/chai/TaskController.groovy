@@ -17,6 +17,7 @@ class TaskController {
 
     def taskService
     def userService
+    def regionService
     def customerService
 
     def index(Integer max) {

@@ -10,15 +10,22 @@ interface ProductRepository extends GraphRepository<Product> {}
 
 interface RoleRepository extends GraphRepository<Role> {}
 
-interface RegionRepository extends GraphRepository<Region> {}
+interface RegionRepository extends GraphRepository<Region> {
 
-interface SubCountyRepository extends GraphRepository<SubCounty> {}
+    Region findByName(String name)
+
+}
+
+interface SubCountyRepository extends GraphRepository<SubCounty> {
+
+    Region findByName(String name)
+}
 
 interface ParishRepository extends GraphRepository<Parish> {}
 
 interface VillageRepository extends GraphRepository<Village> {}
 
-interface CustomerRepository extends GraphRepository<Customer>,CypherDslRepository<Customer> {}
+interface CustomerRepository extends GraphRepository<Customer>, CypherDslRepository<Customer> {}
 
 interface CustomerContactRepository extends GraphRepository<CustomerContact> {}
 
@@ -60,6 +67,8 @@ interface DistrictRepository extends GraphRepository<District> {
 
     @Query('match (d:District)-[:HAS_SUB_COUNTY]->(s) return distinct d')
     Set<District> listAllDistrictsWithSubCounties()
+
+    Region findByName(String name)
 
 }
 

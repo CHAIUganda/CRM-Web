@@ -44,6 +44,19 @@ class RegionService {
 
     void deleteRegion(Long id) { regionRepository.delete(id) }
 
+    Region getOrCreateRegion(String regionName) {
+        def region = regionRepository.findByName(regionName)
+        if(region){
+            region = new Region(name: regionName)
+            regionRepository.save(region)
+        }
+        return region
+    }
+
+    District getOrCreateDistrict(Region region, String dName){
+
+    }
+
     /* SubCounty */
 
     Page<SubCounty> listSubCountys(Map params) { ModelFunctions.listAll(subCountyRepository, params) }

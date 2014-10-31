@@ -1,8 +1,11 @@
 package com.omnitech.chai.crm
 
+import com.omnitech.chai.exception.ImportException
 import com.omnitech.chai.model.Customer
 import com.omnitech.chai.model.CustomerSegment
 import com.omnitech.chai.util.ModelFunctions
+import com.xlson.groovycsv.CsvParser
+import com.xlson.groovycsv.PropertyMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
@@ -17,6 +20,7 @@ import static org.neo4j.cypherdsl.CypherQuery.*
 class CustomerService {
 
     def customerRepository
+    def regionService
     def customerContactRepository
     def customerSegmentRepository
     @Autowired
@@ -73,7 +77,35 @@ class CustomerService {
     }
 
     def processCustomers(String s) {
-        println(s)
+        def csv = CsvParser.parseCsv(text)
+
+        csv.eachWithIndex { PropertyMapper record, idx ->
+            try {
+                processRecord(record, idx)
+            } catch (Throwable ex) {
+                def e = new ImportException("Error while processing Record[${idx + 1}]: $ex.message: (${ex.getClass()})".toString())
+                e.stackTrace = ex.stackTrace
+                throw e
+            }
+        }
     }
+
+    private processRecord(PropertyMapper mapper, int idx) {
+        String regionName = prop(mapper, idx, 'Region name')
+        def region = regionService.getOrCreateRegion(regionName)
+
+
+    }
+
+    private prop(PropertyMapper mapper, int idx, String name, boolean required = true) {
+        assert mapper.columns.containsKey(name), "Record $idx should have a [$name]"
+        def value = mapper.propertyMissing(name)?.toString()?.trim()
+        if (required && !value) {
+            throw new ImportException("Record [$idx] is an Empty Cell[$name] that is Required  at Record")
+        }
+        return value
+    }
+
+
 }
 
