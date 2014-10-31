@@ -70,6 +70,11 @@ public class Customer extends AbstractEntity implements LeafNode {
     SubCounty subCounty
 
     @Fetch
+    @RelatedTo(type = Relations.CUST_IN_VILLAGE)
+    Village village
+
+
+    @Fetch
     @RelatedTo(type = Relations.CUST_IN_TERRITORY)
     Territory territory
 

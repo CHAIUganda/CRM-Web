@@ -26,8 +26,12 @@ interface Relations {
     //Customer -> SubCounty
     final static String BELONGS_TO_SC = 'BELONGS_TO_SC'
 
+    //Customer -> Village
+    final static String CUST_IN_VILLAGE = 'CUST_IN_VILLAGE'
+
     //Customer -> Segment
     final static String IN_SEGMENT = 'IN_SEGMENT'
+
 
     //Subcounty -> Territory
     final static String SC_IN_TERRITORY = 'SC_IN_TERRITORY'

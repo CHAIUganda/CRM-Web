@@ -2,6 +2,7 @@ package com.omnitech.chai.crm
 
 import com.omnitech.chai.exception.ImportException
 import com.omnitech.chai.model.Customer
+import com.omnitech.chai.model.CustomerContact
 import com.omnitech.chai.model.CustomerSegment
 import com.omnitech.chai.util.ModelFunctions
 import com.xlson.groovycsv.CsvParser
@@ -12,6 +13,7 @@ import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.data.neo4j.transaction.Neo4jTransactional
 
 import static com.omnitech.chai.model.Relations.*
+import static com.omnitech.chai.util.ChaiUtils.execSilently
 import static org.neo4j.cypherdsl.CypherQuery.*
 
 /**
@@ -94,18 +96,43 @@ class CustomerService {
         String regionName = prop(mapper, idx, 'Region name')
         def region = regionService.getOrCreateRegion(regionName)
 
-        String districtName = prop(mapper,idx,'District name')
-        def district = regionService.getOrCreateDistrict(region,districtName)
+        String districtName = prop(mapper, idx, 'District name')
+        def district = regionService.getOrCreateDistrict(region, districtName)
 
-        String subCountyName = prop(mapper,idx,'Sub-county Name')
-        def subCounty = regionService.getOrCreateSubCounty(district,subCountyName)
+        String subCountyName = prop(mapper, idx, 'Sub-county Name')
+        def subCounty = regionService.getOrCreateSubCounty(district, subCountyName)
 
-        String parishName = prop(mapper,idx,'Parish Name')
+        String parishName = prop(mapper, idx, 'Parish Name')
         def parish = regionService.getOrCreateParish(subCounty, parishName)
 
+        String villageName = prop(mapper, idx, 'Village name')
+        def village = regionService.getOrCreateVillage(parish, villageName)
 
+        def customer = new Customer(
+                descriptionOfOutletLocation: prop(mapper, idx, 'EA name'),
+                outletName: prop(mapper, idx, 'Name of the outlet / facility'),
+        )
 
+        customer.outletType = prop(mapper, idx, 'Outlet type').replaceFirst(/\d\s*\-\*/, '')//1 - DrugShop
+        def lat = prop(mapper, idx, 'GPS Latitude', false)
+        def lng = prop(mapper, idx, 'GPS Longitude', false)
 
+        execSilently("Converting Lat GPS") {
+            customer.lat = lat?.replace('S', '')?.toDouble()
+        }
+        execSilently("Converting Lng GPS") {
+            customer.lng = lng?.replace('E', '')?.toDouble()
+        }
+
+        def customerContact = new CustomerContact(
+                contact: prop(mapper, idx, 'Provider/Owner Contact Number', false),
+                name: prop(mapper, idx, 'Provider/Owner Name', false),
+        )
+
+        customer.village = village
+        customer.customerContacts = [customerContact] as Set
+
+        customerRepository.save(customer)
     }
 
     private static String prop(PropertyMapper mapper, int idx, String name, boolean required = true) {

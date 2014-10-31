@@ -76,6 +76,13 @@ class RegionService {
         )
     }
 
+    Village getOrCreateVillage(Parish parish, String name) {
+        getOrCreate(
+                { villageRepository.findByParishAndName(parish.id, name) },
+                { villageRepository.save(new Village(parish: parish, name: name)) }
+        )
+    }
+
     /* SubCounty */
 
     Page<SubCounty> listSubCountys(Map params) { ModelFunctions.listAll(subCountyRepository, params) }
