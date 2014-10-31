@@ -100,6 +100,9 @@ class CustomerService {
         String subCountyName = prop(mapper,idx,'Sub-county Name')
         def subCounty = regionService.getOrCreateSubCounty(district,subCountyName)
 
+        String parishName = prop(mapper,idx,'Parish Name')
+        def parish = regionService.getOrCreateParish(subCounty, parishName)
+
 
 
 

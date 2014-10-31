@@ -25,13 +25,13 @@ interface SubCountyRepository extends GraphRepository<SubCounty> {
 interface ParishRepository extends GraphRepository<Parish> {
 
     @Query('start r=node({subCountyId}) match r-[:HAS_PARISH]->(s) where s.name =~ {name} return s')
-    SubCounty findBySubCountyAndName(@Param('subCountyId') Long subCountyId, String name)
+    Parish findBySubCountyAndName(@Param('subCountyId') Long subCountyId, String name)
 }
 
 interface VillageRepository extends GraphRepository<Village> {
 
     @Query('start r=node({parishId}) match r-[:HAS_VILLAGE]->(v) where v.name =~ {name} return v')
-    Parish findByParishAndName(@Param('parishId') Long subCountyId, String name)
+    Village findByParishAndName(@Param('parishId') Long subCountyId, String name)
 
 }
 
