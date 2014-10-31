@@ -96,7 +96,7 @@
         <label for="lat" class="control-label"><g:message code="customer.lat.label" default="Lat"/></label>
 
         <div>
-            <g:field class='form-control' type="decimal" name="lat" value="${customerInstance?.lat}"/>
+            <g:field class='form-control' type="decimal" step="any" name="lat" value="${customerInstance?.lat}"/>
             <span class="help-inline alert-danger">${hasErrors(bean: customerInstance, field: 'lat', 'error')}</span>
         </div>
     </div>
@@ -105,7 +105,7 @@
         <label for="lng" class="control-label"><g:message code="customer.lng.label" default="Lng"/></label>
 
         <div>
-            <g:field class='form-control' type="number" name="lng" value="${customerInstance?.lng}"/>
+            <g:field class='form-control' type="number" name="lng"  step="any"  value="${customerInstance?.lng}"/>
             <span class="help-inline alert-danger">${hasErrors(bean: customerInstance, field: 'lng', 'error')}</span>
         </div>
     </div>
