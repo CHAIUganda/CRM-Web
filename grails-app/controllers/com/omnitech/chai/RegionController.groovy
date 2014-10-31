@@ -31,7 +31,6 @@ class RegionController {
         if (id == -1) {
             notFound(); return
         }
-        DataBindingUtils.bindObjectToDomainInstance()
         respond regionService.findRegion(id)
     }
 
