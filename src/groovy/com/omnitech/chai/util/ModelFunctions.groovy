@@ -40,8 +40,7 @@ class ModelFunctions {
 
     static <T> T bind(T obj, Map properties, boolean copyMetaInfo = false) {
         if (copyMetaInfo) {
-            SimpleDataBinder binder = new SimpleDataBinder();
-            binder.bind(obj, new SimpleMapDataBindingSource(properties))
+            bind(obj,properties,null,null)
         } else {
             bind(obj, properties, null, ['uuid', 'lastUpdated', 'dateCreated'])
         }
