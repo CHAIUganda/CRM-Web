@@ -25,7 +25,7 @@ class CustomerController {
     def taskService
 
     def index(Integer max) {
-        params.max = Math.min(max ?: 10, 100)
+        params.max = Math.min(max ?: 50, 100)
         def page = customerService.listCustomers(params)
         def content = new GroupFlattener(leaves: page.content).normalize()
         [customerInstanceList: content, customerInstanceCount: page.totalElements]
