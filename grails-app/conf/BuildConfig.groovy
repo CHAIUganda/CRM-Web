@@ -81,6 +81,7 @@ grails.project.dependency.resolution = {
         test "org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion"
         test "org.seleniumhq.selenium:selenium-ie-driver:$seleniumVersion"
         test("org.seleniumhq.selenium:selenium-htmlunit-driver:$seleniumVersion")
+        compile 'com.xlson.groovycsv:groovycsv:1.0'
 
 
     }

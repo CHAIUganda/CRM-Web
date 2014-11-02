@@ -36,6 +36,10 @@ class RegionService {
 
     List<District> listAllDistrictWithSubCounties() { districtRepository.listAllDistrictsWithSubCounties().collect() }
 
+    Page<District> searchDistricts(String search, Map params) {
+        ModelFunctions.searchAll(neo, District, ModelFunctions.getWildCardRegex(search), params)
+    }
+
     /*  Regions */
 
     List<Region> listAllRegions() { regionRepository.findAll().collect() }

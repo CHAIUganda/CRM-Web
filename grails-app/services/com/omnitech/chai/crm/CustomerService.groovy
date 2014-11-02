@@ -86,7 +86,7 @@ class CustomerService {
             try {
                 processRecord(record, idx)
             } catch (Throwable ex) {
-                def e = new ImportException("Error while processing Record[${idx + 1}]: $ex.message: (${ex.getClass()})".toString())
+                def e = new ImportException("Error on Record[${idx + 2}]: $ex.message".toString())
                 e.stackTrace = ex.stackTrace
                 throw e
             }
@@ -111,18 +111,18 @@ class CustomerService {
 
         def customer = new Customer(
                 descriptionOfOutletLocation: prop(mapper, idx, 'EA name'),
-                outletName: prop(mapper, idx, 'Name of the outlet / facility'),
+                outletName: prop(mapper, idx, 'Name of the outlet / facility',true, '(NO NAME) OUTLET'),
         )
 
         customer.outletType = prop(mapper, idx, 'Outlet type', false).replaceFirst(/\d\s*\-\s*/, '')//1 - DrugShop
         def lat = prop(mapper, idx, 'GPS Latitude', false)
         def lng = prop(mapper, idx, 'GPS Longitude', false)
 
-        execSilently("Converting Lat GPS") {
-            customer.lat = lat?.replace('S', '')?.toDouble()
+        execSilently("Converting Lat[$lat] to GPS") {
+            customer.lat = lat?.replace('S', '-')?.replace('N','')?.toDouble()
         }
-        execSilently("Converting Lng GPS") {
-            customer.lng = lng?.replace('E', '')?.toDouble()
+        execSilently("Converting Lng[$lng] GPS") {
+            customer.lng = lng?.replace('E', '')?.replace('W','-')?.toDouble()
         }
 
         def customerContact = new CustomerContact(
@@ -136,11 +136,13 @@ class CustomerService {
         customerRepository.save(customer)
     }
 
-    private static String prop(PropertyMapper mapper, int idx, String name, boolean required = true) {
-        assert mapper.columns.containsKey(name), "Record $idx should have a [$name]"
+    private
+    static String prop(PropertyMapper mapper, int idx, String name, boolean required = true, String defaultValue = null) {
+        assert mapper.columns.containsKey(name), "Record ${idx + 2} should have a [$name]"
         def value = mapper.propertyMissing(name)?.toString()?.trim()
         if (required && !value) {
-            throw new ImportException("Record [$idx] is an Empty Cell[$name] that is Required  at Record")
+            if (defaultValue) return defaultValue
+            throw new ImportException("Record [${idx + 2}] has an Empty Cell[$name] that is Required")
         }
         return value
     }
