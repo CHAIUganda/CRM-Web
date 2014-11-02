@@ -34,11 +34,8 @@
             <li class="dropdown">
                 <a data-toggle="dropdown" class="dropdown-toggle" href="#">Settings <b class="caret"></b></a>
                 <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
-                    <li>
-                        <g:link controller="district" action="index">
-                            Districts
-                        </g:link>
-                    </li>
+                    <li><g:link controller="region" action="index">Regions</g:link></li>
+                    <li><g:link controller="district" action="index">Districts</g:link></li>
                     <li>
                         <g:link controller="subCounty" action="index">
                             Subcounties
