@@ -19,10 +19,21 @@ class DistrictController {
     def regionService
 
     def index(Integer max) {
-        params.max = Math.min(max ?: 10, 100)
         def districts = regionService.listAllDistricts()
+        params.max = districts?.size() ?: 10
         respond districts, model: [districtInstanceCount: districts.size()]
     }
+
+    def search(Integer max) {
+        params.max = Math.min(max ?: 50, 100)
+        if (params.term) {
+            redirect(action: 'search', id: params.term)
+            return
+        }
+        def page = regionService.searchSubCountys(params.id, params)
+        respond page.content, view: 'index', model: [userInstanceCount: page.totalElements]
+    }
+
 
     def show() {
         def id = extractId(params)
