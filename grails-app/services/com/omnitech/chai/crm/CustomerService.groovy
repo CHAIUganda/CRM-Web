@@ -78,6 +78,7 @@ class CustomerService {
         ModelFunctions.searchAll(neo, CustomerSegment, ModelFunctions.getWildCardRegex(search), params)
     }
 
+    @Neo4jTransactional
     def processCustomers(String s) {
         def csv = CsvParser.parseCsv(s)
 
@@ -113,7 +114,7 @@ class CustomerService {
                 outletName: prop(mapper, idx, 'Name of the outlet / facility'),
         )
 
-        customer.outletType = prop(mapper, idx, 'Outlet type').replaceFirst(/\d\s*\-\s*/, '')//1 - DrugShop
+        customer.outletType = prop(mapper, idx, 'Outlet type', false).replaceFirst(/\d\s*\-\s*/, '')//1 - DrugShop
         def lat = prop(mapper, idx, 'GPS Latitude', false)
         def lng = prop(mapper, idx, 'GPS Longitude', false)
 
