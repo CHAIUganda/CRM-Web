@@ -113,7 +113,7 @@ class CustomerService {
                 outletName: prop(mapper, idx, 'Name of the outlet / facility'),
         )
 
-        customer.outletType = prop(mapper, idx, 'Outlet type').replaceFirst(/\d\s*\-\*/, '')//1 - DrugShop
+        customer.outletType = prop(mapper, idx, 'Outlet type').replaceFirst(/\d\s*\-\s*/, '')//1 - DrugShop
         def lat = prop(mapper, idx, 'GPS Latitude', false)
         def lng = prop(mapper, idx, 'GPS Longitude', false)
 
