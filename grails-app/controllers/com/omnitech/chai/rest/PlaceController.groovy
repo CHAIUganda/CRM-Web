@@ -18,7 +18,7 @@ class PlaceController {
     def regions() {
         def userId = neoSecurityService.currentUser.id
         def regions = regionService.findAllRegionsForUser(userId).collect { [id: it.id, name: it.name, uuid: it.uuid] }
-        respond regions, [status: OK]
+        respond regions
     }
 
     //id,name,uuid,regionId
@@ -26,7 +26,7 @@ class PlaceController {
         def districts = regionService.findAllDistrictsForUser(neoSecurityService.currentUser.id).collect {
             [id: it.id, name: it.name, uuid: it.uuid, 'regionId': it.region.id]
         }
-        respond districts, [status: OK]
+        respond districts
     }
 
     //id,name,uuid,districtId
@@ -34,7 +34,7 @@ class PlaceController {
         def subCounties = regionService.findAllSubCountiesForUser(neoSecurityService.currentUser.id).collect {
             [id: it.id, name: it.name, uuid: it.uuid, 'districtId': it.district.id]
         }
-        respond subCounties, [status: OK]
+        respond subCounties
     }
 
     //id,name,uuid,subCountyId
@@ -42,7 +42,7 @@ class PlaceController {
         def subCounties = regionService.findAllParishesForUser(neoSecurityService.currentUser.id).collect {
             [id: it.id, name: it.name, uuid: it.uuid, 'subCountyId': it.subCounty.id]
         }
-        respond subCounties, [status: OK]
+        respond subCounties
     }
 
 
