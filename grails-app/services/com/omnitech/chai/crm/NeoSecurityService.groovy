@@ -61,7 +61,7 @@ class NeoSecurityService {
      * Get the domain class instance associated with the current authentication.
      * @return the user
      */
-    Object getCurrentUser() {
+    def getCurrentUser() {
         if (!isLoggedIn()) {
             return null
         }
