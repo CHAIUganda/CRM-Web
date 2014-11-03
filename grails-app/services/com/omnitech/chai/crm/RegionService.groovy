@@ -40,6 +40,8 @@ class RegionService {
         ModelFunctions.searchAll(neo, District, ModelFunctions.getWildCardRegex(search), params)
     }
 
+    List<District> findAllDistrictsForUser(Long userId) { districtRepository.findAllForUser(userId).collect() }
+
     /*  Regions */
 
     List<Region> listAllRegions() { regionRepository.findAll().collect() }

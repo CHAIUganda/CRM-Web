@@ -23,7 +23,7 @@ class PlaceController {
 
     //id,name,uuid,regionId
     def districts() {
-        def districts = regionService.listAllDistricts().collect {
+        def districts = regionService.findAllDistrictsForUser(neoSecurityService.currentUser.id).collect {
             [id: it.id, name: it.name, uuid: it.uuid, 'region.id': it.region.id]
         }
         respond districts, [status: OK]
