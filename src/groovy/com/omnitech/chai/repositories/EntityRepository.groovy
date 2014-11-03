@@ -42,6 +42,9 @@ interface VillageRepository extends GraphRepository<Village> {
     @Query('start r=node({parishId}) match r-[:HAS_VILLAGE]->(v) where v.name =~ {name} return v')
     Village findByParishAndName(@Param('parishId') Long parishId, @Param('name') String name)
 
+    @Query('start u = node({userId}) match u-[:USER_TERRITORY]->(t)<-[:SC_IN_TERRITORY]-(sc)-[:HAS_PARISH]->(p)-[:HAS_VILLAGE]->(v) return distinct v')
+    Iterable<Village> findAllForUser(@Param('userId') Long userId)
+
 }
 
 interface CustomerRepository extends GraphRepository<Customer>, CypherDslRepository<Customer> {}

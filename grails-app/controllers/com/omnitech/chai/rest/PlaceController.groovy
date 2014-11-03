@@ -39,10 +39,18 @@ class PlaceController {
 
     //id,name,uuid,subCountyId
     def parishes() {
-        def subCounties = regionService.findAllParishesForUser(neoSecurityService.currentUser.id).collect {
+        def parishes = regionService.findAllParishesForUser(neoSecurityService.currentUser.id).collect {
             [id: it.id, name: it.name, uuid: it.uuid, 'subCountyId': it.subCounty.id]
         }
-        respond subCounties
+        respond parishes
+    }
+
+    //id,name,uuid,parishId
+    def villages() {
+        def villages = regionService.findAllVillagesForUser(neoSecurityService.currentUser.id).collect {
+            [id: it.id, name: it.name, uuid: it.uuid, 'parishId': it.parish.id]
+        }
+        respond villages
     }
 
 
