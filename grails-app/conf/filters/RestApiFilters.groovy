@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus
  */
 class RestApiFilters {
 
-    def userService
     def neoSecurityService
 
     def filters = {
