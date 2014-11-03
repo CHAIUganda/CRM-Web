@@ -31,7 +31,7 @@ class PlaceController {
 
     //id,name,uuid,districtId
     def subCounties() {
-        def subCounties = regionService.listAllSubCountys().collect {
+        def subCounties = regionService.findAllSubCountiesForUser(neoSecurityService.currentUser.id).collect {
             [id: it.id, name: it.name, uuid: it.uuid, 'district.id': it.district.id]
         }
         respond subCounties, [status: OK]

@@ -23,6 +23,9 @@ interface SubCountyRepository extends GraphRepository<SubCounty> {
 
     @Query('start r=node({districtId}) match r-[:HAS_SUB_COUNTY]->(s) where s.name =~ {name} return s')
     SubCounty findByDistrictAndName(@Param('districtId') Long districtId, @Param('name') String name)
+
+    @Query('start u = node({userId}) match u-[:USER_TERRITORY]->(t)<-[:SC_IN_TERRITORY]-(sc) return distinct sc')
+    Iterable<SubCounty> findAllForUser(@Param('userId') Long userId)
 }
 
 interface ParishRepository extends GraphRepository<Parish> {

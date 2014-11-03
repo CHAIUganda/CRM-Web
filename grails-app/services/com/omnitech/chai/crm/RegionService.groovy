@@ -105,6 +105,8 @@ class RegionService {
         ModelFunctions.searchAll(neo, SubCounty, ModelFunctions.getWildCardRegex(search), params)
     }
 
+    List<SubCounty> findAllSubCountiesForUser(Long userId){subCountyRepository.findAllForUser(userId).collect()}
+
     /* Parish */
 
     Page<Parish> listParishs(Map params) { ModelFunctions.listAll(parishRepository, params) }
