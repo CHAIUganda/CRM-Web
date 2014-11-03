@@ -119,6 +119,8 @@ class RegionService {
 
     void deleteParish(Long id) { parishRepository.delete(id) }
 
+    List<Parish> findAllParishesForUser(Long userId){parishRepository.findAllForUser(userId).collect()}
+
     /* Village */
 
     Page<Village> listVillages(Map params) { ModelFunctions.listAll(villageRepository, params) }
