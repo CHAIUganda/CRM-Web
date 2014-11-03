@@ -44,6 +44,8 @@ class RegionService {
 
     List<Region> listAllRegions() { regionRepository.findAll().collect() }
 
+    List<Region> findAllRegionsForUser(Long id) { regionRepository.findAllRegionsForUser(id).collect() }
+
     Region findRegion(Long id) { regionRepository.findOne(id) }
 
     Region saveRegion(Region region) { ModelFunctions.saveEntity(regionRepository, region) }

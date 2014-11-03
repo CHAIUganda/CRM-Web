@@ -14,6 +14,9 @@ interface RegionRepository extends GraphRepository<Region> {
 
     Region findByName(String name)
 
+    @Query('start u = node({userId}) match u-[:USER_TERRITORY]->(t)<-[:SC_IN_TERRITORY]-(sc)<-[:HAS_SUB_COUNTY]-(d)<-[:HAS_DISTRICT]-(r) return distinct r')
+    Iterable<Region> findAllRegionsForUser(@Param('userId') Long userId)
+
 }
 
 interface SubCountyRepository extends GraphRepository<SubCounty> {

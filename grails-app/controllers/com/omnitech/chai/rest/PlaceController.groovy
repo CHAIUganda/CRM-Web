@@ -12,10 +12,12 @@ class PlaceController {
     static responseFormats = ['json', 'xml']
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
     def regionService
+    def neoSecurityService
 
     //id,name,uuid
     def regions() {
-        def regions = regionService.listAllRegions().collect { [id: it.id, name: it.name, uuid: it.uuid] }
+        def userId = neoSecurityService.currentUser.id
+        def regions = regionService.findAllRegionsForUser(userId).collect { [id: it.id, name: it.name, uuid: it.uuid] }
         respond regions, [status: OK]
     }
 
