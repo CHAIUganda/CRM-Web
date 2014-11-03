@@ -19,15 +19,21 @@ class PlaceController {
         respond regions, [status: OK]
     }
 
-    //id,name,uuid
+    //id,name,uuid,regionId
     def districts() {
-        def districts = regionService.listAllDistricts().collect { [id: it.id, name: it.name, uuid: it.uuid] }
+        def districts = regionService.listAllDistricts().collect {
+            [id: it.id, name: it.name, uuid: it.uuid, 'region.id': it.region.id]
+        }
         respond districts, [status: OK]
     }
 
-    //id,name,uuid
+    //id,name,uuid,districtId
     def subCounties() {
-        def subCounties = regionService.listAllSubCountys().collect { [id: it.id, name: it.name, uuid: it.uuid] }
+        def subCounties = regionService.listAllSubCountys().collect {
+            [id: it.id, name: it.name, uuid: it.uuid, 'district.id': it.district.id]
+        }
         respond subCounties, [status: OK]
     }
+
+
 }
