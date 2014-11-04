@@ -17,7 +17,7 @@ class ChaiUtils {
 
     static String formatDate(Date date) {
         if (date) return format.format(date)
-        return 'UNKNOWN'
+        return null
     }
 
     static injectUtilityMethods() {
