@@ -26,6 +26,7 @@ class CustomerController {
     Map customerToMap(Customer customer) {
         def cMap = ReflectFunctions.extractProperties(customer)
         def contacts = customer?.customerContacts?.collect { ReflectFunctions.extractProperties(it) }
+        cMap['villageId'] = customer?.village?.id
         if (contacts) {
             cMap['customerContacts'] = contacts
         }
