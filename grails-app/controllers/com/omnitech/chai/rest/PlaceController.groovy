@@ -1,6 +1,9 @@
 package com.omnitech.chai.rest
 
-import static org.springframework.http.HttpStatus.OK
+import com.omnitech.chai.model.SubCounty
+import com.omnitech.chai.util.ModelFunctions
+import grails.converters.JSON
+import org.springframework.http.HttpStatus
 
 /**
  * Created by kay on 10/29/14.
@@ -10,7 +13,7 @@ class PlaceController {
 
     static namespace = 'rest'
     static responseFormats = ['json', 'xml']
-    static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
+    static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE", updateSubCounty: 'POST']
     def regionService
     def neoSecurityService
 
@@ -35,6 +38,21 @@ class PlaceController {
             [id: it.id, name: it.name, uuid: it.uuid, 'districtId': it.district.id]
         }
         respond subCounties
+    }
+
+    def updateSubCounty() {
+        def json = request.JSON as Map
+        def id = ModelFunctions.extractId(json, 'districtId')
+        def district = id != -1 ? regionService.findDistrict(id) : null
+        if (id == -1) {
+            response.status = HttpStatus.BAD_REQUEST.value()
+            render([status: 'error', message: 'You Did Not Specify a Valid District'] as JSON)
+        }
+
+        def subCounty = ModelFunctions.bind(new SubCounty(), json)
+        subCounty.district = district
+        regionService.saveSubCounty(subCounty)
+        respond status: HttpStatus.OK
     }
 
     //id,name,uuid,subCountyId
