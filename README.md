@@ -12,6 +12,10 @@ All the url below return a map of [id,name,uuid]
 - http://23.239.27.196:8080/web-crm/rest/place/parishes
 - http://23.239.27.196:8080/web-crm/rest/place/villages
 
+#### To Places 
+- http://23.239.27.196:8080/web-crm/rest/place/subCounties/update
+- http://23.239.27.196:8080/web-crm/rest/place/parishes/update
+- http://23.239.27.196:8080/web-crm/rest/place/villages/update
 
 #### Customers
 
