@@ -38,5 +38,9 @@ class UrlMappings {
         // Products
         '/rest/product/list'(controller: 'product', namespace: 'rest', action: 'listProducts')
         '/rest/productGroup/list'(controller: 'product', namespace: 'rest', action: 'listProductGroups')
+
+        //Pace
+        '/rest/place/parishes/update'(controller: 'place',namespace : 'rest',action: 'updateParish')
+        '/rest/place/villages/update'(controller: 'place',namespace : 'rest',action: 'updateSubCounty')
     }
 }

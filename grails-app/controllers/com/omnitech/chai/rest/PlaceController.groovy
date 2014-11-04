@@ -1,6 +1,5 @@
 package com.omnitech.chai.rest
 
-import com.omnitech.chai.model.Parish
 import com.omnitech.chai.model.SubCounty
 import com.omnitech.chai.util.ModelFunctions
 import grails.converters.JSON
@@ -63,12 +62,15 @@ class PlaceController {
         def json = request.JSON as Map
         def subCounty = extractAndLoadParent('subCountyId', json) { Long id -> regionService.findSubCounty(id) }
         if (!subCounty) {
-            renderError('You Did Not Specify a Valid Parish')
+            renderError('You Did Not Specify a Valid SubCounty')
             return
         }
-        Parish parish = ModelFunctions.bind(Parish, json)
-        parish.subCounty =  subCounty
-        regionService.saveParish(parish)
+
+        if (!json.name) {
+            renderError('You Did Not Specify A Parish Name')
+            return
+        }
+        regionService.getOrCreateParish(subCounty, json.name as String)
         respond status: HttpStatus.OK
     }
 
