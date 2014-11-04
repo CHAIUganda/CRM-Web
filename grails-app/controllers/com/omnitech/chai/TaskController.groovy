@@ -26,7 +26,7 @@ class TaskController {
             params.sort = 'dueDate'
         }
         def page = taskService.listTasks(params)
-        respond page.content, model: [taskInstanceCount: page.totalElements]
+        respond page.content, model: [taskInstanceCount: page.totalElements,users: userService.listAllUsers([:])]
     }
 
     def search(Integer max) {
@@ -36,7 +36,7 @@ class TaskController {
             return
         }
         def page = taskService.searchTasks(params.id, params)
-        respond page.content, view: 'index', model: [taskInstanceCount: page.totalElements]
+        respond page.content, view: 'index', model: [taskInstanceCount: page.totalElements,users: userService.listAllUsers([:])]
     }
 
     def show() {
