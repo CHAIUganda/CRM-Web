@@ -41,6 +41,6 @@ class UrlMappings {
 
         //Pace
         '/rest/place/parishes/update'(controller: 'place',namespace : 'rest',action: 'updateParish')
-        '/rest/place/villages/update'(controller: 'place',namespace : 'rest',action: 'updateSubCounty')
+        '/rest/place/villages/update'(controller: 'place',namespace : 'rest',action: 'updateVillage')
     }
 }

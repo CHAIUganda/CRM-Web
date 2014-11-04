@@ -74,6 +74,22 @@ class PlaceController {
         respond status: HttpStatus.OK
     }
 
+    def updateVillage() {
+        def json = request.JSON as Map
+        def parish = extractAndLoadParent('parishId', json) { Long id -> regionService.findParish(id) }
+        if (!parish) {
+            renderError('You Did Not Specify a Valid Parish')
+            return
+        }
+
+        if (!json.name) {
+            renderError('You Did Not Specify A Village Name')
+            return
+        }
+        regionService.getOrCreateVillage(parish, json.name as String)
+        respond status: HttpStatus.OK
+    }
+
     //id,name,uuid,subCountyId
     def parishes() {
         def parishes = regionService.findAllParishesForUser(neoSecurityService.currentUser.id).collect {
