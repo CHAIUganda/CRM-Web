@@ -3,6 +3,8 @@ package com.omnitech.chai
 import com.omnitech.chai.model.Task
 import com.omnitech.chai.util.ModelFunctions
 import grails.transaction.Transactional
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 
 import static com.omnitech.chai.util.ModelFunctions.extractId
 import static org.springframework.http.HttpStatus.*
@@ -25,7 +27,17 @@ class TaskController {
         if(!params.sort) {
             params.sort = 'dueDate'
         }
-        def page = taskService.listTasks(params)
+
+        Page<Task> page = null
+
+        def user = params.user ? userService.findUserByName(params.user) : null
+        if (user) {
+            def tasks = taskService.findAllTaskForUser(user.id)
+            page = new PageImpl<Task>(tasks)
+        } else {
+            page = taskService.listTasks(params)
+        }
+
         respond page.content, model: [taskInstanceCount: page.totalElements,users: userService.listAllUsers([:])]
     }
 

@@ -12,6 +12,7 @@ import org.springframework.data.neo4j.transaction.Neo4jTransactional
 class TaskService {
 
     def taskRepository
+    def userRepository
     @Autowired
     Neo4jTemplate neo
     def customerRepository

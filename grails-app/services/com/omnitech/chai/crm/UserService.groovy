@@ -39,6 +39,8 @@ class UserService {
         userRepository.findOne(id)
     }
 
+    User findUserByName(String name){userRepository.findByUsername(name)}
+
     Role findRole(Long id) {
         roleRepository.findOne(id)
     }
