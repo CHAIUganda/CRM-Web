@@ -15,16 +15,16 @@ All the url below return a map of [id,name,uuid]
 
 #### Customers
 
-http://localhost:8080/chai-crm/rest/customer/list
+- http://localhost:8080/chai-crm/rest/customer/list
 
 
 #### Products
-http://localhost:8080/chai-crm/rest/product/list
-http://localhost:8080/chai-crm/rest/productGroup/list
+- http://localhost:8080/chai-crm/rest/product/list
+- http://localhost:8080/chai-crm/rest/productGroup/list
 
 
 #### Tasks
-http://localhost:8080/chai-crm/rest/task/list
+- http://localhost:8080/chai-crm/rest/task/list
 
 
 
