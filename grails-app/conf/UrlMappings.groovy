@@ -34,5 +34,9 @@ class UrlMappings {
 		"503"	(view:'/_errors/503')
 
         "/$namespace/$controller/$action?/$id?"()
-	}
+
+        // Products
+        '/rest/product/list'(controller: 'product', namespace: 'rest', action: 'listProducts')
+        '/rest/productGroup/list'(controller: 'product', namespace: 'rest', action: 'listProductGroups')
+    }
 }

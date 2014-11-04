@@ -99,7 +99,7 @@ grails.project.dependency.resolution = {
         runtime ":jquery:1.11.1"
         runtime ":resources:1.2.7"
         runtime ":jquery-ui:1.10.3"
-
+        compile ':quartz:1.0.2'
         test ":geb:$gebVersion"
         test (":functional-test-development:0.9.4"){
             excludes 'hibernate'
