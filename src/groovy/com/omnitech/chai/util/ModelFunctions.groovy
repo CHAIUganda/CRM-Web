@@ -32,6 +32,11 @@ class ModelFunctions {
         return id
     }
 
+    static <T> T bind(Class obj, Map properties) {
+        def instance = obj.newInstance()
+        bind(instance,properties)
+    }
+
     static <T> T bind(T obj, Map properties, List whiteList, List blackList) {
         SimpleDataBinder binder = new SimpleDataBinder();
         binder.bind(obj, new SimpleMapDataBindingSource(properties), whiteList, blackList)
@@ -107,6 +112,14 @@ class ModelFunctions {
             item = createItem()
         }
         return item
+    }
+
+    static <T> T extractAndLoadParent(String parentAttr, Map params, Closure<T> getParent) {
+        def id = extractId(params, parentAttr)
+        if (id == -1) {
+            return null
+        }
+        return getParent(id)
     }
 
 

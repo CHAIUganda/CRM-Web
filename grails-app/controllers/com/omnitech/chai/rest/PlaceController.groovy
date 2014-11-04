@@ -1,9 +1,12 @@
 package com.omnitech.chai.rest
 
+import com.omnitech.chai.model.Parish
 import com.omnitech.chai.model.SubCounty
 import com.omnitech.chai.util.ModelFunctions
 import grails.converters.JSON
 import org.springframework.http.HttpStatus
+
+import static com.omnitech.chai.util.ModelFunctions.extractAndLoadParent
 
 /**
  * Created by kay on 10/29/14.
@@ -47,11 +50,25 @@ class PlaceController {
         if (id == -1) {
             response.status = HttpStatus.BAD_REQUEST.value()
             render([status: 'error', message: 'You Did Not Specify a Valid District'] as JSON)
+            return
         }
 
         def subCounty = ModelFunctions.bind(new SubCounty(), json)
         subCounty.district = district
         regionService.saveSubCounty(subCounty)
+        respond status: HttpStatus.OK
+    }
+
+    def updateParish() {
+        def json = request.JSON as Map
+        def subCounty = extractAndLoadParent('subCountyId', json) { Long id -> regionService.findSubCounty(id) }
+        if (!subCounty) {
+            renderError('You Did Not Specify a Valid Parish')
+            return
+        }
+        Parish parish = ModelFunctions.bind(Parish, json)
+        parish.subCounty =  subCounty
+        regionService.saveParish(parish)
         respond status: HttpStatus.OK
     }
 
@@ -69,6 +86,11 @@ class PlaceController {
             [id: it.id, name: it.name, uuid: it.uuid, 'parishId': it.parish.id]
         }
         respond villages
+    }
+
+    def renderError(String error) {
+        response.status = HttpStatus.INTERNAL_SERVER_ERROR.value()
+        render([status: 'error', message: error] as JSON)
     }
 
 
