@@ -1,7 +1,5 @@
 package com.omnitech.chai.rest
 
-import com.omnitech.chai.model.SubCounty
-import com.omnitech.chai.util.ModelFunctions
 import grails.converters.JSON
 import org.springframework.http.HttpStatus
 
@@ -44,17 +42,15 @@ class PlaceController {
 
     def updateSubCounty() {
         def json = request.JSON as Map
-        def id = ModelFunctions.extractId(json, 'districtId')
-        def district = id != -1 ? regionService.findDistrict(id) : null
-        if (id == -1) {
-            response.status = HttpStatus.BAD_REQUEST.value()
-            render([status: 'error', message: 'You Did Not Specify a Valid District'] as JSON)
+        def district = extractAndLoadParent('districtId', json) { Long id -> regionService.findDistrict(id) }
+        if (!district) {
+            renderError 'You Did Not Specify a Valid District'
             return
         }
-
-        def subCounty = ModelFunctions.bind(new SubCounty(), json)
-        subCounty.district = district
-        regionService.saveSubCounty(subCounty)
+        if (!json.name) {
+            renderError 'You Did Not Specify A District Name'
+        }
+        regionService.getOrCreateSubCounty(district, json.name as String)
         respond status: HttpStatus.OK
     }
 
