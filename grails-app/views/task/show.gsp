@@ -37,6 +37,17 @@
         </tr>
 
         <tr class="prop">
+            <td valign="top" class="name">Customer</td>
+
+            <td valign="top" class="value">
+                    <g:link controller="customer" action="show" id="${taskInstance.customer?.id}">
+                        <i class="glyphicon glyphicon-home"></i>  ${taskInstance.customer}
+                    </g:link>
+            </td>
+
+        </tr>
+
+        <tr class="prop">
             <td valign="top" class="name"><g:message code="task.dateCreated.label" default="Date Created"/></td>
 
             <td valign="top" class="value"><g:formatDate date="${taskInstance?.dateCreated}"/></td>
