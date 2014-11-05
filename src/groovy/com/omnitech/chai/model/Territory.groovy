@@ -25,6 +25,9 @@ class Territory extends AbstractEntity {
     @RelatedTo(type = Relations.SC_IN_TERRITORY, direction = Direction.INCOMING)
     Set<SubCounty> subCounties
 
+    @RelatedTo(type = Relations.USER_TERRITORY, direction = Direction.INCOMING)
+    Set<User> territoryUsers
+
     static constraints = {
         name blank: false
     }

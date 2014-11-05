@@ -55,6 +55,10 @@ class Task extends AbstractEntity {
 
     User getAssignedTo() { assignedTo }
 
+    Set<User> territoryUser(){
+        this.customer?.village?.parish?.subCounty?.territory?.territoryUsers
+    }
+
     static constraints = {
         description blank: false
         status blank: false
