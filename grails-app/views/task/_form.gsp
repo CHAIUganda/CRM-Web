@@ -1,6 +1,20 @@
 <%@ page import="com.omnitech.chai.model.Task" %>
 
 
+<div class="row">
+    <div class="col-md-2">
+        <strong><g:message code="task.assignedTo.label" default="Assigned User"/>:</strong>
+    </div>
+
+    <div class="col-md-8">
+
+        <g:each in="${taskInstance.territoryUser()}" var="user">
+            <g:link controller="user" action="show" id="${user.id}">
+                <i class="glyphicon glyphicon-user"></i>  ${user}
+            </g:link>
+        </g:each>
+    </div>
+</div>
 
 <div class="${hasErrors(bean: taskInstance, field: 'description', 'error')} ">
     <label for="description" class="control-label"><g:message code="task.description.label"
@@ -18,15 +32,6 @@
     <div>
         <g:select from="${customers}" class="form-control chzn-select" style="width: 50%;" name="customer.id"
                   optionKey="id" value="${taskInstance?.customer?.id}"/>
-    </div>
-</div>
-
-<div>
-    <label for="status" class="control-label"><g:message code="task.assignedTo.label" default="Assigned User"/></label>
-
-    <div>
-        <g:select from="${users}" class="form-control chzn-select" style="width: 50%;" name="assignedTo.id"
-                  optionKey="id" value="${taskInstance?.assignedTo?.id}"/>
     </div>
 </div>
 

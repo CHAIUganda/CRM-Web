@@ -3,8 +3,10 @@ package com.omnitech.chai
 import com.omnitech.chai.model.Task
 import com.omnitech.chai.util.ModelFunctions
 import grails.transaction.Transactional
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
+import org.springframework.data.neo4j.support.Neo4jTemplate
 
 import static com.omnitech.chai.util.ModelFunctions.extractId
 import static org.springframework.http.HttpStatus.*
@@ -21,6 +23,9 @@ class TaskController {
     def userService
     def regionService
     def customerService
+    def txHelperService
+    @Autowired
+    Neo4jTemplate neo
 
     def index(Integer max) {
         params.max = Math.min(max ?: 50, 100)
@@ -38,6 +43,9 @@ class TaskController {
             page = taskService.listTasks(params)
         }
 
+        txHelperService.doInTransaction {
+            page.content.each {neo.fetch(it.territoryUser())}
+        }
         respond page.content, model: [taskInstanceCount: page.totalElements,users: userService.listAllUsers([:])]
     }
 
@@ -48,6 +56,9 @@ class TaskController {
             return
         }
         def page = taskService.searchTasks(params.id, params)
+        txHelperService.doInTransaction {
+            page.content.each {neo.fetch(it.territoryUser())}
+        }
         respond page.content, view: 'index', model: [taskInstanceCount: page.totalElements,users: userService.listAllUsers([:])]
     }
 
@@ -56,7 +67,12 @@ class TaskController {
         if (id == -1) {
             notFound(); return
         }
-        respond taskService.findTask(id)
+
+        def task = taskService.findTask(id)
+        txHelperService.doInTransaction {
+            neo.fetch(task.territoryUser())
+        }
+        respond task
     }
 
     def create() {
@@ -92,6 +108,9 @@ class TaskController {
             notFound(); return
         }
         def taskInstance = taskService.findTask(id)
+        txHelperService.doInTransaction {
+            neo.fetch(taskInstance.territoryUser())
+        }
         respond taskInstance ,model: [users: userService.listAllUsers(), customers: customerService.listAllCustomers() ]
     }
 

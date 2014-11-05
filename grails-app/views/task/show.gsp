@@ -17,18 +17,31 @@
 		<tbody>
 		
 			<tr class="prop">
-				<td valign="top" class="name"><g:message code="task.dateCreated.label" default="Date Created" /></td>
-				
-				<td valign="top" class="value"><g:formatDate date="${taskInstance?.dateCreated}" /></td>
-				
-			</tr>
-		
-			<tr class="prop">
 				<td valign="top" class="name"><g:message code="task.description.label" default="Description" /></td>
 				
 				<td valign="top" class="value">${fieldValue(bean: taskInstance, field: "description")}</td>
-				
-			</tr>
+
+            </tr>
+
+        <tr class="prop">
+            <td valign="top" class="name">Assigned User</td>
+
+            <td valign="top" class="value">
+                <g:each in="${taskInstance.territoryUser()}" var="user">
+                    <g:link controller="user" action="show" id="${user.id}">
+                        <i class="glyphicon glyphicon-user"></i>  ${user}
+                    </g:link>
+                </g:each>
+            </td>
+
+        </tr>
+
+        <tr class="prop">
+            <td valign="top" class="name"><g:message code="task.dateCreated.label" default="Date Created"/></td>
+
+            <td valign="top" class="value"><g:formatDate date="${taskInstance?.dateCreated}"/></td>
+
+        </tr>
         <g:if test="${taskInstance.completedBy}">
             <tr class="prop">
                 <td valign="top" class="name">Completed By</td>

@@ -44,7 +44,7 @@
                 <td>${taskInstance.customer}</td>
 
                 %{--<td>${taskInstance.assignedTo ?: taskInstance.completedBy}</td>--}%
-                <td>${taskInstance.territoryUser() ?: taskInstance.completedBy}</td>
+                <td>${taskInstance.territoryUser()}</td>
 
                 <td>
                     <g:link action="edit" id="${taskInstance.id}" title="Edit/Schedule"><i
