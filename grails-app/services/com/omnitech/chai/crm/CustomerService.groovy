@@ -52,10 +52,10 @@ class CustomerService {
 
     @Neo4jTransactional
     List<Customer> findAllCustomersByUser(long userId, Map params) {
-        def name = Customer.simpleName.toLowerCase()
+        def customer = Customer.simpleName.toLowerCase()
         def exec = start(nodesById('u', userId))
-                .match(node('u').out(USER_TERRITORY).node('t').in(SC_IN_TERRITORY).node('sc').in(BELONGS_TO_SC).node(name)
-        ).returns(identifier(name))
+                .match(node('u').out(USER_TERRITORY).node('t').in(SC_IN_TERRITORY).node('sc').out(HAS_PARISH).node('p').out(HAS_VILLAGE).node('v').in(CUST_IN_VILLAGE).node(customer)
+        ).returns(identifier(customer))
         ModelFunctions.query(customerRepository, exec, params, Customer).collect()
     }
 
