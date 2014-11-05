@@ -121,8 +121,9 @@ class UserService {
 
 
 
-        def newPass = neoSecurityService.encodePassword(user.password)
-        if (newPass != neoUser.password) {
+
+        if (user.password != neoUser.password) {
+            def newPass = neoSecurityService.encodePassword(user.password)
             user.password = newPass
         }
 

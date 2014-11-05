@@ -19,8 +19,7 @@ class BootStrap {
 
         if (!numUsers) {
             txHelperService.doInTransaction {
-                //pass salt start u = node(1)
-                //set u.password = "$2a$10$.J1svR3w6dQTJqsspc2.0.GJuNdZcB5Xuz892wgMCAHNPT0KpQnmu"
+                //pass salt start u = node(1) set u.password = "$2a$10$.J1svR3w6dQTJqsspc2.0.GJuNdZcB5Xuz892wgMCAHNPT0KpQnmu"
                 neo.save new User(username: 'root',
                         password: springSecurityService.encodePassword('pass'),
                         dateCreated: new Date(),
