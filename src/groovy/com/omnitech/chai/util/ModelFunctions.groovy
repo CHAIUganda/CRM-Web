@@ -6,8 +6,10 @@ import org.apache.commons.logging.LogFactory
 import org.grails.databinding.SimpleDataBinder
 import org.grails.databinding.SimpleMapDataBindingSource
 import org.neo4j.cypherdsl.grammar.ReturnNext
+import org.neo4j.graphdb.DynamicLabel
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
+import org.springframework.data.neo4j.annotation.NodeEntity
 import org.springframework.data.neo4j.conversion.Result
 import org.springframework.data.neo4j.repository.CypherDslRepository
 import org.springframework.data.neo4j.repository.GraphRepository
@@ -120,6 +122,37 @@ class ModelFunctions {
             return null
         }
         return getParent(id)
+    }
+
+
+    /**
+     * Add a label to a node incase its absent
+     * @param neo
+     * @param entity
+     * @return
+     */
+    static <T extends AbstractEntity> T addInheritanceLabelToNode(Neo4jTemplate neo, T entity) {
+
+        if (!entity.id) return entity
+
+        def concreteEntities = ReflectFunctions.findAllClassesWithAnnotation(entity.getClass(), NodeEntity)
+
+        if (concreteEntities.size() <= 1) {
+            return entity
+        }
+
+
+        def node = neo.getNode(entity.id)
+
+        List<String> labels = node.getLabels().collect().collect { it.name() }
+        def classNames = concreteEntities.collect { it.simpleName }
+
+        classNames.each { className ->
+            if (!labels.contains(className)) {
+                node.addLabel(DynamicLabel.label(className))
+            }
+        }
+        return entity
     }
 
 
