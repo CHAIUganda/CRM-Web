@@ -55,6 +55,8 @@ class Task extends AbstractEntity {
 
     User getAssignedTo() { assignedTo }
 
+    boolean isComplete(){status == STATUS_COMPLETE}
+
     Set<User> territoryUser(){
         this.customer?.village?.parish?.subCounty?.territory?.territoryUsers
     }

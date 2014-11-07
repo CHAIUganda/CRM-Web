@@ -91,7 +91,7 @@ class ReflectFunctions {
         return values
     }
 
-    static List<Class> findAllClassesWithAnnotation(Class klass, Class annotation) {
+    static List<Class> findAllClassesWithAnnotation(Class klass, Class<? extends Annotation> annotation) {
         getClassHierarchy(klass).findAll {
             it.getDeclaredAnnotations().any{it.annotationType() == annotation}
         }

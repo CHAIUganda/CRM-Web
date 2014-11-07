@@ -68,6 +68,8 @@ interface CustomerSegmentRepository extends GraphRepository<CustomerSegment> {}
 
 interface ProductGroupRepository extends GraphRepository<ProductGroup> {}
 
+interface DetailerTaskRepository extends GraphRepository<DetailerTask> {}
+
 interface SettingRepository extends GraphRepository<Setting> {
     Setting findByName(String name)
 }

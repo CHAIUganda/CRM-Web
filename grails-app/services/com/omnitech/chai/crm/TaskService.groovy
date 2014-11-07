@@ -1,6 +1,7 @@
 package com.omnitech.chai.crm
 
 import com.omnitech.chai.model.Customer
+import com.omnitech.chai.model.DetailerTask
 import com.omnitech.chai.model.Task
 import com.omnitech.chai.util.ModelFunctions
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,6 +17,8 @@ class TaskService {
     @Autowired
     Neo4jTemplate neo
     def customerRepository
+    def detailerTaskRepository
+    def neoSecurityService
 
     /* Tasks */
 
@@ -63,5 +66,16 @@ class TaskService {
 
     }
 
+    DetailerTask completeTask(DetailerTask detailerTask) {
+        def neoTask = taskRepository.findOne(detailerTask.id)
+        //task could have been deleted
+        if (!neoTask) return null
+
+        ModelFunctions.bind(neoTask, detailerTask.properties)
+        neoTask.completedBy(neoSecurityService.currentUser)
+
+        ModelFunctions.addInheritanceLabelToNode(neo, detailerTask)
+        return ModelFunctions.saveEntity(detailerTaskRepository, detailerTask)
+    }
 
 }
