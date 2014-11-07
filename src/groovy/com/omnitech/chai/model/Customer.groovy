@@ -36,28 +36,32 @@ public class Customer extends AbstractEntity implements LeafNode {
     @Indexed(indexType = IndexType.POINT, indexName = 'CUSTOMER_LOCATION')
     String wkt
 
+    //todo remove tenureLength,Equipment, remove numberOfBranches
+
     String outletName,
            outletType,
            outletSize,
            typeOfLicence,
            split,
            openingHours,
-
            majoritySourceOfSupply,
            keyWholeSalerName,
            keyWholeSalerContact,
            buildingStructure,
-           equipment,
            descriptionOfOutletLocation,
            numberOfProducts,
            pictureURL
 
 
     Integer numberOfEmployees,
-            numberOfBranches,
             numberOfCustomersPerDay,
-            restockFrequency,
-            tenureLength
+            restockFrequency
+
+    //todo add hasSisterBranch
+    Boolean hasSisterBranch
+    //todo add dateOutletOpened
+    Date  dateOutletOpened
+
 
     String turnOver
 
@@ -97,12 +101,9 @@ public class Customer extends AbstractEntity implements LeafNode {
         openingHours blank: false, inList: ['early morning', 'late morning', 'noon', 'early afternoon', 'late afternoon', 'evening']
 
         turnOver nullable: false, inList: ['less than 50,000 UGX', '50,000-150,000 UGX', '150,000 - 300,000 UGX', 'greater than 300,000 UGX']
-        numberOfBranches nullable: false, min: 1
         numberOfCustomersPerDay nullable: false, min: 1
         majoritySourceOfSupply blank: false
         buildingStructure blank: false, inList: [STRUCT_PERMANENT, STRUCT_SEMI_PERMANENT, STRUCT_NON_PERMANENT]
-        equipment blank: false
-        tenureLength min: 0, max: 20
         descriptionOfOutletLocation blank: false
         restockFrequency nullable: false, min: 1
         subCounty nullable: false
