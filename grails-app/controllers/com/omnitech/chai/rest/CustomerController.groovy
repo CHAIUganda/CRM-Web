@@ -34,18 +34,12 @@ class CustomerController {
         //todo to fix on upload
         cMap['longitude'] = customer.lng
         cMap['latitude'] = customer.lat
-        cMap['tenureLengthYears'] = customer.tenureLength
-        cMap['tenureLengthMonths'] = 0
         cMap.with {
             remove('lat')
             remove('lng')
             remove('segmentScore')
             remove('wkt')
             remove('pictureURL')
-
-            //toDo fix on upload
-            remove('tenureLength')
-
         }
         if (contacts) {
             cMap['customerContacts'] = contacts
