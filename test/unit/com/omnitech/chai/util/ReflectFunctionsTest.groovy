@@ -1,5 +1,7 @@
 package com.omnitech.chai.util
 
+import com.omnitech.chai.model.DetailerTask
+import com.omnitech.chai.model.Task
 import org.springframework.data.annotation.Transient
 import org.springframework.data.neo4j.annotation.NodeEntity
 import spock.lang.Specification
@@ -41,6 +43,14 @@ class ReflectFunctionsTest extends Specification {
         then:
         h.size() == 1
         h*.simpleName == ['Foo']
+    }
+
+    def 'test get concrete annotation class'() {
+        when:
+        def results = ReflectFunctions.findAllClassesWithAnnotation(DetailerTask, NodeEntity)
+
+        then:
+        [DetailerTask, Task].every { results.contains(it) }
     }
 
 

@@ -5,6 +5,7 @@ import groovy.transform.CompileStatic
 import org.springframework.data.annotation.Transient
 import org.springframework.validation.Errors
 
+import java.lang.annotation.Annotation
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 
@@ -88,6 +89,12 @@ class ReflectFunctions {
         }
         def values = fields.collectEntries { Field it -> [it.name, getValue(it, object)] }
         return values
+    }
+
+    static List<Class> findAllClassesWithAnnotation(Class klass, Class annotation) {
+        getClassHierarchy(klass).findAll {
+            it.getDeclaredAnnotations().any{it.annotationType() == annotation}
+        }
     }
 
     @CompileStatic
