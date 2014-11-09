@@ -29,7 +29,7 @@ class TaskService {
 
     Task findTask(Long id) { taskRepository.findOne(id) }
 
-    Task saveTask(Task task) { ModelFunctions.saveGenericEntity(neo, task) }
+    def <T extends Task> T saveTask(T task) { ModelFunctions.saveGenericEntity(neo, task) }
 
     void deleteTask(Long id) { taskRepository.delete(id) }
 
@@ -68,9 +68,8 @@ class TaskService {
     }
 
     /**
-     * This updates a given
-     * @param detailerTask
-     * @return
+     * This updates a given task and if its a basic task it projects it to the required Type.
+     * This method also makes sure that other relationships are not modified
      */
     DetailerTask completeDetailTask(DetailerTask detailerTask) {
         def neoTask = taskRepository.findOne(detailerTask.id)
@@ -83,8 +82,7 @@ class TaskService {
         ModelFunctions.bind(neoTask, detailerTask.properties, ReflectFunctions.findAllBasicFields(DetailerTask))
         neoTask.completedBy(neoSecurityService.currentUser)
 
-
-        saveTask(neoTask) as DetailerTask
+        saveTask(neoTask)
     }
 
 }
