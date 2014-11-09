@@ -28,7 +28,7 @@ class TaskService {
 
     Task findTask(Long id) { taskRepository.findOne(id) }
 
-    Task saveTask(Task task) { ModelFunctions.saveEntity(taskRepository, task) }
+    Task saveTask(Task task) { ModelFunctions.saveGenericEntity(neo, task) }
 
     void deleteTask(Long id) { taskRepository.delete(id) }
 
@@ -68,14 +68,17 @@ class TaskService {
 
     DetailerTask completeTask(DetailerTask detailerTask) {
         def neoTask = taskRepository.findOne(detailerTask.id)
+
         //task could have been deleted
         if (!neoTask) return null
+
+        neoTask = neo.projectTo(neoTask, DetailerTask)
 
         ModelFunctions.bind(neoTask, detailerTask.properties)
         neoTask.completedBy(neoSecurityService.currentUser)
 
-        ModelFunctions.addInheritanceLabelToNode(neo, detailerTask)
-        return ModelFunctions.saveEntity(detailerTaskRepository, detailerTask)
+
+        saveTask(neoTask) as DetailerTask
     }
 
 }

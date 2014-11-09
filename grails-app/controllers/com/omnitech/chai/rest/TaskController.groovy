@@ -1,7 +1,10 @@
 package com.omnitech.chai.rest
 
+import com.omnitech.chai.model.DetailerTask
 import com.omnitech.chai.model.User
+import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.ReflectFunctions
+import org.springframework.http.HttpStatus
 
 /**
  * Created by kay on 10/29/14.
@@ -27,6 +30,13 @@ class TaskController {
         }
 
         respond taskMaps
+    }
+
+    def update() {
+        def json = request.JSON as Map
+        def task = ModelFunctions.createObj(DetailerTask, json)
+        taskService.completeTask(task)
+        respond status: HttpStatus.OK
     }
 
 }
