@@ -53,6 +53,14 @@ class ReflectFunctionsTest extends Specification {
         [DetailerTask, Task].every { results.contains(it) }
     }
 
+    def 'test find all basic types'() {
+        when:
+        def result = ReflectFunctions.findAllBasicFields(FooBar)
+
+        then:
+        result == ['description', 'name', 'id']
+    }
+
 
 }
 

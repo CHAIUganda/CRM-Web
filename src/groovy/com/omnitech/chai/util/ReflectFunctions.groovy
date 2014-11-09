@@ -127,8 +127,13 @@ class ReflectFunctions {
 
     }
 
+    /**
+     * Returns all persistent basic fields that can be directly persisted in a node
+     * @param klass Class to inspect
+     * @return List of all persistent fields
+     */
     static List<String> findAllBasicFields(Class klass) {
-        findAllFields(klass).findResults { Field field ->
+        findAllPersistentFields(klass).findResults { Field field ->
             if (BASIC_TYPES.contains(field.type)) return field.name
             return null
         } as List<String>
