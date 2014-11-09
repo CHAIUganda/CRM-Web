@@ -34,7 +34,7 @@ class ModelFunctions {
         return id
     }
 
-    static <T> T bind(Class obj, Map properties) {
+    static <T> T createObj(Class<T> obj, Map properties) {
         def instance = obj.newInstance()
         bind(instance,properties)
     }
@@ -78,6 +78,25 @@ class ModelFunctions {
             }
         }
         repo.save(neoEntity)
+    }
+
+    static <T extends AbstractEntity> T saveGenericEntity(Neo4jTemplate repo, T entity) {
+        saveGenericEntity(repo, entity, null)
+    }
+
+    static <T extends AbstractEntity> T saveGenericEntity(Neo4jTemplate repo, T entity, Closure beforeBind) {
+        def neoEntity = entity
+        if (entity.id) {
+            def tempNeoEntity = repo.findOne(entity.id, entity.getClass())
+            if (tempNeoEntity) {
+                beforeBind?.call(tempNeoEntity)
+                neoEntity = tempNeoEntity
+                addInheritanceLabelToNode(repo, entity)
+                bind(neoEntity, entity.properties)
+            }
+        }
+        repo.save(neoEntity)
+        return entity
     }
 
     static <T> Page<T> listAll(GraphRepository<T> repo, Map params) {
@@ -143,6 +162,8 @@ class ModelFunctions {
 
 
         def node = neo.getNode(entity.id)
+
+        if (!node) return entity
 
         List<String> labels = node.getLabels().collect().collect { it.name() }
         def classNames = concreteEntities.collect { it.simpleName }
