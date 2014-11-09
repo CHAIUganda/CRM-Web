@@ -1,6 +1,9 @@
 package com.omnitech.chai.util
 
-import com.omnitech.chai.model.*
+import com.omnitech.chai.model.DetailerTask
+import com.omnitech.chai.model.User
+import org.neo4j.graphdb.DynamicLabel
+import org.springframework.data.neo4j.support.Neo4jTemplate
 import spock.lang.Specification
 
 import static com.omnitech.chai.util.ModelFunctions.getSearchQuery
@@ -68,7 +71,54 @@ class ModelFunctionsTest extends Specification {
         then: noExceptionThrown()
     }
 
+    def 'test addDynamicLabels() adds Labels when a node exists in the DB'() {
+        Neo4jTemplate neo = Mock()
+        org.neo4j.graphdb.Node node = Mock()
 
+        DetailerTask task = new DetailerTask(id: 787)
+
+        when:
+        def rt = ModelFunctions.addInheritanceLabelToNode(neo, task)
+
+        then:
+        1 * neo.getNode(787) >> node
+        1 * node.getLabels() >> [DynamicLabel.label('Task')]
+        1 * node.addLabel(DynamicLabel.label(DetailerTask.simpleName))
+        task.is(rt)
+    }
+
+
+    def 'test addDynamicLabels() doest not add Labels if node does not exist in DB'() {
+        Neo4jTemplate neo = Mock()
+        org.neo4j.graphdb.Node node = Mock()
+
+        DetailerTask task = new DetailerTask(id: 787)
+
+        when:
+        def rt = ModelFunctions.addInheritanceLabelToNode(neo, task)
+
+        then:
+        neo.getNode(787) >> null
+        0 * node.getLabels() >> [DynamicLabel.label('Task')]
+        0 * node.addLabel(DynamicLabel.label(DetailerTask.simpleName))
+        task.is(rt)
+    }
+
+    def 'test addDynamicLabels() doest not add Labels if there are no Multiple Node Entities'() {
+        Neo4jTemplate neo = Mock()
+        org.neo4j.graphdb.Node node = Mock()
+
+        User user = new User(id: 787)
+
+        when:
+        def rt = ModelFunctions.addInheritanceLabelToNode(neo, user)
+
+        then:
+        0 * neo.getNode(787)
+        0 * node.getLabels() >> [DynamicLabel.label('Task')]
+        0 * node.addLabel(DynamicLabel.label(DetailerTask.simpleName))
+        user.is(rt)
+    }
 
 
 }
