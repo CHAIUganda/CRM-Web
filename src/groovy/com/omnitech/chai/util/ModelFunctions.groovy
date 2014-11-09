@@ -2,11 +2,14 @@ package com.omnitech.chai.util
 
 import com.omnitech.chai.model.AbstractEntity
 import com.omnitech.chai.model.Customer
+import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import org.apache.commons.logging.LogFactory
 import org.grails.databinding.SimpleDataBinder
 import org.grails.databinding.SimpleMapDataBindingSource
 import org.neo4j.cypherdsl.grammar.ReturnNext
 import org.neo4j.graphdb.DynamicLabel
+import org.neo4j.graphdb.Label
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.neo4j.annotation.NodeEntity
@@ -20,12 +23,17 @@ import java.util.regex.Pattern
 /**
  * Created by kay on 9/24/14.
  */
+@CompileStatic
 class ModelFunctions {
 
     private static def log = LogFactory.getLog(ModelFunctions.class)
 
 
-    static Long extractId(Map params, String idField = 'id') {
+    static Long extractId(Map params) {
+        extractId(params, 'id')
+    }
+
+    static Long extractId(Map params, String idField) {
         Long id = -1
         try {
             id = (params[idField] as Long) ?: -1
@@ -58,6 +66,7 @@ class ModelFunctions {
         return obj
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     static def setPropertyIfNull(Object object, String propertyName, def value) {
         if (object?.hasProperty(propertyName)) {
             if (!object.getAt(propertyName)) {
@@ -67,12 +76,12 @@ class ModelFunctions {
         return object
     }
 
-    static <T extends AbstractEntity> T saveEntity(GraphRepository<T> repo, T entity) {
+    static <S extends AbstractEntity> S saveEntity(GraphRepository<S> repo, S entity) {
         saveEntity(repo, entity, null)
     }
 
-    static <T extends AbstractEntity> T saveEntity(GraphRepository<T> repo, T entity, Closure beforeBind) {
-        def neoEntity = entity
+    static <S extends AbstractEntity> S saveEntity(GraphRepository<S> repo, S entity, Closure beforeBind) {
+        S neoEntity = entity
         if (entity.id) {
             def tempNeoEntity = repo.findOne(entity.id)
             if (tempNeoEntity) {
@@ -111,8 +120,9 @@ class ModelFunctions {
     static <T> Page<T> searchAll(Neo4jTemplate neo, Class<T> aClass, String search, Map params) {
         def query = CypherGenerator.getPaginatedQuery(aClass, params).toString()
         def count = CypherGenerator.getCountQuery(aClass).toString()
-        def size = neo.query(count, [search: search]).to(Long).single()
-        def data = neo.query(query, [search: search]).to(aClass).as(List).collect()
+        def searchParams = [search: search] as Map
+        def size = neo.query(count, searchParams).to(Long).single()
+        def data = neo.query(query, searchParams).to(aClass).as(List).collect()
         return new PageImpl<Customer>(data, PageUtils.create(params), size) as Page<T>
     }
 
@@ -124,6 +134,7 @@ class ModelFunctions {
 
     static String getWildCardRegex(String search) { "(?i).*${Pattern.quote(search)}.*".toString() }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     static def setProperty(Object object, String propertyName, def value) {
         if (object?.hasProperty(propertyName)) {
             object."$propertyName" = value
@@ -160,19 +171,16 @@ class ModelFunctions {
 
         def concreteEntities = ReflectFunctions.findAllClassesWithAnnotation(entity.getClass(), NodeEntity)
 
-        if (concreteEntities.size() <= 1) {
-            return entity
-        }
-
+        if (concreteEntities.size() <= 1) return entity
 
         def node = neo.getNode(entity.id)
 
         if (!node) return entity
 
-        List<String> labels = node.getLabels().collect().collect { it.name() }
-        def classNames = concreteEntities.collect { it.simpleName }
+        List<String> labels = node.getLabels().collect().collect { Label lbl -> lbl.name() }
+        def classNames = concreteEntities.collect { Class klass -> klass.simpleName }
 
-        classNames.each { className ->
+        classNames.each { String className ->
             if (!labels.contains(className)) {
                 node.addLabel(DynamicLabel.label(className))
             }
