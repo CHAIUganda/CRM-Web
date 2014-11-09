@@ -35,7 +35,7 @@ class TaskController {
     def update() {
         def json = request.JSON as Map
         def task = ModelFunctions.createObj(DetailerTask, json)
-        taskService.completeTask(task)
+        taskService.completeDetailTask(task)
         respond status: HttpStatus.OK
     }
 

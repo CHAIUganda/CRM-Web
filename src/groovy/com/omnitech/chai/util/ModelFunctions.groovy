@@ -39,6 +39,10 @@ class ModelFunctions {
         bind(instance,properties)
     }
 
+    static <T> T bind(T obj, Map properties, List whiteList) {
+        bind(obj, properties, whiteList, null)
+    }
+
     static <T> T bind(T obj, Map properties, List whiteList, List blackList) {
         SimpleDataBinder binder = new SimpleDataBinder();
         binder.bind(obj, new SimpleMapDataBindingSource(properties), whiteList, blackList)

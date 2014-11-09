@@ -4,6 +4,7 @@ import com.omnitech.chai.model.Customer
 import com.omnitech.chai.model.DetailerTask
 import com.omnitech.chai.model.Task
 import com.omnitech.chai.util.ModelFunctions
+import com.omnitech.chai.util.ReflectFunctions
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
@@ -66,7 +67,12 @@ class TaskService {
 
     }
 
-    DetailerTask completeTask(DetailerTask detailerTask) {
+    /**
+     * This updates a given
+     * @param detailerTask
+     * @return
+     */
+    DetailerTask completeDetailTask(DetailerTask detailerTask) {
         def neoTask = taskRepository.findOne(detailerTask.id)
 
         //task could have been deleted
@@ -74,7 +80,7 @@ class TaskService {
 
         neoTask = neo.projectTo(neoTask, DetailerTask)
 
-        ModelFunctions.bind(neoTask, detailerTask.properties)
+        ModelFunctions.bind(neoTask, detailerTask.properties, ReflectFunctions.findAllBasicFields(DetailerTask))
         neoTask.completedBy(neoSecurityService.currentUser)
 
 

@@ -14,6 +14,21 @@ import java.lang.reflect.Modifier
  */
 class ReflectFunctions {
 
+
+    static List<Class> BASIC_TYPES = [
+            String,
+            Boolean,
+            Byte,
+            Short,
+            Integer,
+            Long,
+            Float,
+            Double,
+            Character,
+            Date
+    ]
+
+
     static List<Field> findAllFields(Class aClass) { return findAllFieldsImpl(aClass) }
 
     private static findAllFieldsImpl = { Class aClass ->
@@ -110,5 +125,12 @@ class ReflectFunctions {
             if (!accessible) field.setAccessible(accessible)
         }
 
+    }
+
+    static List<String> findAllBasicFields(Class klass) {
+        findAllFields(klass).findResults { Field field ->
+            if (BASIC_TYPES.contains(field.type)) return field.name
+            return null
+        } as List<String>
     }
 }
