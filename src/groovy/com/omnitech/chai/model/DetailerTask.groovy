@@ -32,6 +32,6 @@ class DetailerTask extends Task {
     String recommendationLevel
 
     def beforeSave() {
-        this.type = Order.simpleName
+        this.type = getClass().simpleName
     }
 }
