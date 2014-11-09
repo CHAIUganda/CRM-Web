@@ -23,7 +23,7 @@ class TaskController {
         def taskMaps = tasks.collect {
             def map = ReflectFunctions.extractProperties(it)
             map['customerId'] = it.customer.id
-            map
+            return map
         }
 
         respond taskMaps
