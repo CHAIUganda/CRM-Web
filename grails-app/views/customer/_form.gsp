@@ -231,6 +231,26 @@
             <span class="help-inline alert-danger">${hasErrors(bean: customerInstance, field: 'openingHours', 'error')}</span>
         </div>
     </div>
+
+    <div class="${hasErrors(bean: customerInstance, field: 'hasSisterBranch', 'error')} ">
+        <label for="hasSisterBranch" class="control-label"><g:message code="customer.hasSisterBranch.label"
+                                                                   default="Has Sister Branch?"/></label>
+
+        <div>
+            <bs:checkBox class='form-control' name="hasSisterBranch" value="${customerInstance?.hasSisterBranch}"
+                         onLabel="Yes" offLabel="No"/>
+            <span class="help-inline alert-danger">${hasErrors(bean: customerInstance, field: 'hasSisterBranch', 'error')}</span>
+        </div>
+    </div>
+    <div class="${hasErrors(bean: customerInstance, field: 'dateOutletOpened', 'error')} ">
+        <label for="dateOutletOpened" class="control-label"><g:message code="customer.dateOutletOpened.label"
+                                                                   default="Date Outlet Opened?"/></label>
+
+        <div>
+            <g:datePicker name="dateOutletOpened" precision="day" value="${customerInstance?.dateOutletOpened}"/>
+            <span class="help-inline alert-danger">${hasErrors(bean: customerInstance, field: 'dateOutletOpened', 'error')}</span>
+        </div>
+    </div>
 </div>
 </div>
 </div>

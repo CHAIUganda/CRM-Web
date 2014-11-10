@@ -36,13 +36,7 @@
 				<td valign="top" class="value">${fieldValue(bean: customerInstance, field: "descriptionOfOutletLocation")}</td>
 				
 			</tr>
-		
-			<tr class="prop">
-				<td valign="top" class="name"><g:message code="customer.equipment.label" default="Equipment" /></td>
-				
-				<td valign="top" class="value">${fieldValue(bean: customerInstance, field: "equipment")}</td>
-				
-			</tr>
+
 		
 			<tr class="prop">
 				<td valign="top" class="name"><g:message code="customer.keyWholeSalerContact.label" default="Key Whole Saler Contact" /></td>
@@ -93,13 +87,7 @@
 				
 			</tr>
 		
-			<tr class="prop">
-				<td valign="top" class="name"><g:message code="customer.numberOfBranches.label" default="Number Of Branches" /></td>
-				
-				<td valign="top" class="value">${fieldValue(bean: customerInstance, field: "numberOfBranches")}</td>
-				
-			</tr>
-		
+
 			<tr class="prop">
 				<td valign="top" class="name"><g:message code="customer.numberOfCustomersPerDay.label" default="Number Of Customers Per Day" /></td>
 				
@@ -155,14 +143,21 @@
 				<td valign="top" class="value">${fieldValue(bean: customerInstance, field: "split")}</td>
 				
 			</tr>
-		
-			<tr class="prop">
-				<td valign="top" class="name"><g:message code="customer.tenureLength.label" default="Tenure Length" /></td>
-				
-				<td valign="top" class="value">${fieldValue( bean:customerInstance,field:  'tenureLength')}</td>
-				
+
+        <tr class="prop">
+				<td valign="top" class="name"><g:message code="customer.hasSisterBranch.label" default="Has Sister Branches" /></td>
+
+				<td valign="top" class="value">${fieldValue(bean: customerInstance, field: "hasSisterBranch")}</td>
+
 			</tr>
-		
+
+        <tr class="prop">
+				<td valign="top" class="name"><g:message code="customer.dateOutletOpened.label" default="Date Outlet Opened" /></td>
+
+				<td valign="top" class="value">${fieldValue(bean: customerInstance, field: "dateOutletOpened")}</td>
+
+			</tr>
+
 			<tr class="prop">
 				<td valign="top" class="name"><g:message code="customer.turnOver.label" default="Turn Over" /></td>
 				
