@@ -12,55 +12,57 @@
         <div class="col-md-6">
             <div>
                 <label for="contact" class="control-label">
-                    <g:message code="customerContact.contact.label" default="Contact"/>
+                    <g:message code="customerContact.title.label" default="Contact Title"/>
                 </label>
 
-                <div><g:textField class='form-control' name="tCustomerContacts[{{\$index}}].contact"
-                                  ng-model="c.contact"/></div>
+                <div><g:textField class='form-control' name="tCustomerContacts[{{\$index}}].title"
+                                  ng-model="c.title"/></div>
             </div>
 
+
+            <div>
+                <label for="contact" class="control-label">
+                    <g:message code="customerContact.firstName.label" default="Contact First Name"/>
+                </label>
+
+                <div><g:textField class='form-control' name="tCustomerContacts[{{\$index}}].firstName"
+                                  ng-model="c.firstName"/></div>
+            </div>
+
+
+            <div>
+                <label for="contact" class="control-label">
+                    <g:message code="customerContact.surname.label" default="Contact Surname"/>
+                </label>
+
+                <div><g:textField class='form-control' name="tCustomerContacts[{{\$index}}].surname"
+                                  ng-model="c.surname"/></div>
+            </div>
+
+
+
+        </div>
+
+        <div class="col-md-6">
             <div>
                 <label for="gender" class="control-label">
                     <g:message code="customerContact.gender.label" default="Gender"/>
                 </label>
 
                 <div><g:select class='form-control' name="tCustomerContacts[{{\$index}}].gender"
-                                from="${['male','female']}"
-                                  ng-model="c.gender"/></div>
+                               from="${['male', 'female']}"
+                               ng-model="c.gender"/></div>
             </div>
-
-            <div>
-                <label for="graduationYear" class="control-label">
-                    <g:message code="customerContact.graduationYear.label" default="Graduation Year"/>
-                </label>
-
-                <div>
-                    <g:field class='form-control' type="number" name="tCustomerContacts[{{\$index}}].graduationYear"
-                                 ng-model="c.graduationYear"/>
-                </div>
-            </div>
-
-            <div>
-                <label for="name" class="control-label">
-                    <g:message code="customerContact.name.label" default="Name"/>
-                </label>
-
-                <div><g:textField class='form-control' name="tCustomerContacts[{{\$index}}].name"
-                                  ng-model="c.name"/></div>
-            </div>
-        </div>
-
-        <div class="col-md-6">
 
             <div>
                 <label for="networkOrAssociation" class="control-label">
-                    <g:message code="customerContact.networkOrAssociation.label" default="Network Or Association"/>
+                    <g:message code="customerContact.networkOrAssociation.label" default="Does this person belong to a network or association?"/>
                 </label>
 
-                <div>
-                    <g:textField class='form-control' name="tCustomerContacts[{{\$index}}].networkOrAssociation"
-                                 ng-model="c.networkOrAssociation"/>
-                </div>
+
+                <g:checkBox id="networkOrAssociation" name="tCustomerContacts[{{\$index}}].networkOrAssociation"
+                            ng-model="c.networkOrAssociation">KKsks</g:checkBox>
+
             </div>
 
             <div>
@@ -68,7 +70,7 @@
                     <g:message code="customerContact.qualification.label" default="Qualification"/>
                 </label>
 
-                <div><g:textField class='form-control' name="tCustomerContacts[{{\$index}}].qualification"
+                <div><g:textField class='form-control qualification' name="tCustomerContacts[{{\$index}}].qualification"
                                   ng-model="c.qualification"/></div>
             </div>
 
@@ -77,20 +79,11 @@
                     <g:message code="customerContact.role.label" default="Role"/>
                 </label>
 
-                <div><g:textField class='form-control' name="tCustomerContacts[{{\$index}}].role"
+                <div><g:textField class='form-control retailer-role' name="tCustomerContacts[{{\$index}}].role"
                                   ng-model="c.role"/></div>
             </div>
 
-            <div>
-                <label for="typeOfContact" class="control-label">
-                    <g:message code="customerContact.typeOfContact.label" default="Type Of Contact"/>
-                </label>
 
-                <div><g:select class='form-control' name="tCustomerContacts[{{\$index}}].typeOfContact"
-                               from="${['key', 'ordinary']}"
-                               value="ordinary"
-                               ng-model="c.typeOfContact"/></div>
-            </div>
         </div>
     </div>
 </div>
@@ -98,3 +91,16 @@
 <div>
     <button type="button" ng-click="addContact()" class="btn btn-default">Add Contact</button>
 </div>
+
+<r:require module="jqueryUI"/>
+<g:javascript>
+    $(function () {
+        var availableTags = ['Pharmacist', 'Doctor', 'Owner',
+            'Purchasing Officer', 'Shop Attendant',
+            'Relative', 'Dispenser', 'lab technician',
+            'Nurse', 'Midwife', 'Medical assistant'];
+        $(".retailer-role").autocomplete({
+            source: availableTags, delay: 0
+        });
+    });
+</g:javascript>

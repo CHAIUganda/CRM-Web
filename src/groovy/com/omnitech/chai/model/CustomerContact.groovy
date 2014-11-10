@@ -9,23 +9,29 @@ import org.springframework.data.neo4j.annotation.RelatedTo
 @Validateable
 class CustomerContact extends AbstractEntity {
 
-    String name
-    String contact
-    String typeOfContact
+    //todo remove from form [name,graduationYear,contact,typeOfContact]
+
+    String title
+    String firstName
+    String surname
+
+
     String gender
     String role
     String qualification
-    String networkOrAssociation
-    Integer graduationYear
+    Boolean networkOrAssociation
+
+    //todo add to form
+
+
 
     static constraints = {
-        name            blank: false
-        contact         blank: false
-        typeOfContact   blank: false, inList: ['key', 'ordinary']
         gender          blank: false, inList: ['male', 'female']
         role            blank: false
-        graduationYear  min: 1950, max: 2015, nullable: true
         qualification   blank: false
+        firstName       blank: false
+        surname         blank: false
+        title           blank: false
 
     }
 

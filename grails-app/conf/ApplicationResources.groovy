@@ -14,4 +14,10 @@ modules = {
         resource url: 'js/lib/jquery.treetable.js'
         resource url: 'css/jqtreetable/jquery.treetable.css'
     }
+
+    jqueryUI {
+        dependsOn 'jquery'
+        resource url: 'js/lib/jquery-ui-1.11.2.custom/jquery-ui.min.js'
+        resource url: 'js/lib/jquery-ui-1.11.2.custom/jquery-ui.min.css'
+    }
 }
