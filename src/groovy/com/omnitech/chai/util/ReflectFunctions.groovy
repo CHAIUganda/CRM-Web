@@ -112,8 +112,8 @@ class ReflectFunctions {
         def accessible = field.isAccessible()
         try {
             if (!accessible) field.setAccessible(true)
-            if (Date.isAssignableFrom(field.type))
-                return ChaiUtils.formatDate(field.get(object) as Date)
+//            if (Date.isAssignableFrom(field.type))
+//                return ChaiUtils.formatDate(field.get(object) as Date)
             return field.get(object)
 
         } finally {
