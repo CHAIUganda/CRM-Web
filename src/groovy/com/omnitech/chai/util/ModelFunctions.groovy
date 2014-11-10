@@ -27,7 +27,7 @@ import java.util.regex.Pattern
 class ModelFunctions {
 
     private static def log = LogFactory.getLog(ModelFunctions.class)
-    final public static def META_FIELDS = Collections.unmodifiableList(['uuid', 'lastUpdated', 'dateCreated'])
+    final public static List META_FIELDS = Collections.unmodifiableList(['uuid', 'lastUpdated', 'dateCreated'])
 
 
     static Long extractId(Map params) {
