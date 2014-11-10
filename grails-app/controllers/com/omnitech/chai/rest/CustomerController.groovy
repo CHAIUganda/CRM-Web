@@ -50,11 +50,16 @@ class CustomerController {
     def update() {
         def json = request.JSON as Map
 
+        println(json.inspect())
+
         def customer = ModelFunctions.createObj(Customer, json) as Customer
+
+
 
         if (!customer.validate()) {
             response.status = HttpStatus.BAD_REQUEST.value()
             render(customer.errors as JSON)
+            return
         }
 
         customerService.saveCustomer(customer)
