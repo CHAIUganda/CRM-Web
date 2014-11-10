@@ -110,17 +110,6 @@
         </div>
     </div>
 
-    <div class="${hasErrors(bean: customerInstance, field: 'tenureLength', 'error')} ">
-        <label for="tenureLength" class="control-label">
-            <g:message code="customer.tenureLength.label" default="Tenure Length"/>
-        </label>
-
-        <div>
-            <g:field class='form-control'  type="number" name="tenureLength"  value="${customerInstance?.tenureLength}"/>
-            <span class="help-inline alert-danger">${hasErrors(bean: customerInstance, field: 'tenureLength', 'error')}</span>
-        </div>
-    </div>
-
 
     <div class="${hasErrors(bean: customerInstance, field: 'numberOfEmployees', 'error')} ">
         <label for="numberOfEmployees" class="control-label"><g:message code="customer.numberOfEmployees.label"
@@ -219,18 +208,6 @@
     </div>
 
 
-    <div class="${hasErrors(bean: customerInstance, field: 'equipment', 'error')} ">
-        <label for="equipment" class="control-label"><g:message code="customer.equipment.label"
-                                                                default="Equipment"/></label>
-
-        <div>
-            <g:textField class='form-control' name="equipment"
-                         value="${customerInstance?.equipment}"/>
-            <span class="help-inline alert-danger">${hasErrors(bean: customerInstance, field: 'equipment', 'error')}</span>
-        </div>
-    </div>
-
-
     <div class="${hasErrors(bean: customerInstance, field: 'majoritySourceOfSupply', 'error')} ">
         <label for="majoritySourceOfSupply" class="control-label"><g:message
                 code="customer.majoritySourceOfSupply.label"
@@ -242,18 +219,6 @@
             <span class="help-inline alert-danger">${hasErrors(bean: customerInstance, field: 'majoritySourceOfSupply', 'error')}</span>
         </div>
     </div>
-
-    <div class="${hasErrors(bean: customerInstance, field: 'numberOfBranches', 'error')} ">
-        <label for="numberOfBranches" class="control-label"><g:message code="customer.numberOfBranches.label"
-                                                                       default="Number Of Branches"/></label>
-
-        <div>
-            <g:field class='form-control' type="number" name="numberOfBranches"
-                     value="${customerInstance.numberOfBranches}"/>
-            <span class="help-inline alert-danger">${hasErrors(bean: customerInstance, field: 'numberOfBranches', 'error')}</span>
-        </div>
-    </div>
-
 
     <div class="${hasErrors(bean: customerInstance, field: 'openingHours', 'error')} ">
         <label for="openingHours" class="control-label"><g:message code="customer.openingHours.label"

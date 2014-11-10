@@ -36,8 +36,6 @@ public class Customer extends AbstractEntity implements LeafNode {
     @Indexed(indexType = IndexType.POINT, indexName = 'CUSTOMER_LOCATION')
     String wkt
 
-    //todo remove tenureLength,Equipment, remove numberOfBranches
-
     String outletName,
            outletType,
            outletSize,
