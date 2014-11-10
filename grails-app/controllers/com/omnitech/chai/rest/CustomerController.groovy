@@ -2,6 +2,7 @@ package com.omnitech.chai.rest
 
 import com.omnitech.chai.model.Customer
 import com.omnitech.chai.model.User
+import com.omnitech.chai.model.Village
 import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.ReflectFunctions
 import grails.converters.JSON
@@ -17,6 +18,7 @@ class CustomerController {
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
     def customerService
     def neoSecurityService
+    def regionService
 
     def list(Integer max) {
         params.max = Math.min(max ?: 10, 100)
@@ -62,9 +64,28 @@ class CustomerController {
             return
         }
 
+        def village = ModelFunctions.extractAndLoadParent('villageId', json) { Long it -> regionService.findVillage(it) }
+
+        if (!village) {
+            renderError("The Village ID You Supplied Does Not Exist In The DB")
+            return
+        }
+
+        customer = _updateVillage(customer, village)
         customerService.saveCustomer(customer)
 
         respond([status: HttpStatus.OK])
+    }
+
+    private Customer _updateVillage(Customer customer, Village village) {
+        def neoCustomer = customerService.findCustomer(customer.id)
+        if (!neoCustomer) {
+            customer.village = village
+            return customer
+        }
+        def whiteList = ReflectFunctions.findAllBasicFields(Customer)
+        whiteList.addAll(ModelFunctions.META_FIELDS)
+        ModelFunctions.bind(neoCustomer, customer.properties, whiteList)
     }
 
     def renderError(String error) {
