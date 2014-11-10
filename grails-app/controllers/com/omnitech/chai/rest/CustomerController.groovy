@@ -84,7 +84,7 @@ class CustomerController {
             return customer
         }
         def whiteList = ReflectFunctions.findAllBasicFields(Customer)
-        whiteList.addAll(ModelFunctions.META_FIELDS)
+        whiteList.removeAll(ModelFunctions.META_FIELDS)
         ModelFunctions.bind(neoCustomer, customer.properties, whiteList)
     }
 
