@@ -104,7 +104,6 @@ public class Customer extends AbstractEntity implements LeafNode {
         buildingStructure blank: false, inList: [STRUCT_PERMANENT, STRUCT_SEMI_PERMANENT, STRUCT_NON_PERMANENT]
         descriptionOfOutletLocation blank: false
         restockFrequency nullable: false, min: 1
-        subCounty nullable: false
         numberOfProducts nullable: false, inList: ['less than 10', '10-30', 'more than 30']
 
         tCustomerContacts validator: { val, obj ->
