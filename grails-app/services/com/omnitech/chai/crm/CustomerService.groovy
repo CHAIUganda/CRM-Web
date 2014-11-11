@@ -100,21 +100,21 @@ class CustomerService {
         String districtName = prop(mapper, idx, 'District name')
         def district = regionService.getOrCreateDistrict(region, districtName)
 
-        String subCountyName = prop(mapper, idx, 'Sub-county Name')
+        String subCountyName = prop(mapper, idx, 'Sub-county Name',true,"$districtName-DummySubCounty")
         def subCounty = regionService.getOrCreateSubCounty(district, subCountyName)
 
-        String parishName = prop(mapper, idx, 'Parish Name')
+        String parishName = prop(mapper, idx, 'Parish Name', true, "$subCountyName-DummyParish")
         def parish = regionService.getOrCreateParish(subCounty, parishName)
 
-        String villageName = prop(mapper, idx, 'Village name')
+        String villageName = prop(mapper, idx, 'Village name', true, "$parishName-DummyVillage")
         def village = regionService.getOrCreateVillage(parish, villageName)
 
         def customer = new Customer(
-                descriptionOfOutletLocation: prop(mapper, idx, 'EA name'),
+                descriptionOfOutletLocation: prop(mapper, idx, 'EA name', false),
                 outletName: prop(mapper, idx, 'Name of the outlet / facility',true, '(NO NAME) OUTLET'),
         )
 
-        customer.outletType = prop(mapper, idx, 'Outlet type', false).replaceFirst(/\d\s*\-\s*/, '')//1 - DrugShop
+        customer.outletType = prop(mapper, idx, 'Outlet type', false)?.replaceFirst(/\d\s*\-\s*/, '')//1 - DrugShop
         def lat = prop(mapper, idx, 'GPS Latitude', false)
         def lng = prop(mapper, idx, 'GPS Longitude', false)
 
@@ -126,8 +126,8 @@ class CustomerService {
         }
 
         def customerContact = new CustomerContact(
-                contact: prop(mapper, idx, 'Provider/Owner Contact Number', false),
-                name: prop(mapper, idx, 'Provider/Owner Name', false),
+                firstName: prop(mapper, idx, 'Provider/Owner Contact Number', false),
+                title: prop(mapper, idx, 'Provider/Owner Name', false),
         )
 
         customer.village = village
@@ -138,7 +138,13 @@ class CustomerService {
 
     private
     static String prop(PropertyMapper mapper, int idx, String name, boolean required = true, String defaultValue = null) {
-        assert mapper.columns.containsKey(name), "Record ${idx + 2} should have a [$name]"
+
+        if (required) {
+            assert mapper.columns.containsKey(name), "Record ${idx + 2} should have a [$name]"
+        } else if (!mapper.columns.containsKey(name)) {
+            return null
+        }
+
         def value = mapper.propertyMissing(name)?.toString()?.trim()
         if (required && !value) {
             if (defaultValue) return defaultValue
