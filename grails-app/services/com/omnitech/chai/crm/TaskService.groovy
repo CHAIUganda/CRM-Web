@@ -37,6 +37,9 @@ class TaskService {
         ModelFunctions.searchAll(neo, Task, ModelFunctions.getWildCardRegex(search), params)
     }
 
+    /* Detailer Tasks*/
+    DetailerTask findDetailerTask(Long id) { neo.findOne(id,DetailerTask) }
+
     List<Task> findAllTaskForUser(Long userId) {
         taskRepository.findAllTaskForUser(userId).collect()
     }

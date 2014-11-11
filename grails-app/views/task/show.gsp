@@ -1,5 +1,5 @@
 
-<%@ page import="com.omnitech.chai.util.ChaiUtils; com.omnitech.chai.model.Task" %>
+<%@ page import="com.omnitech.chai.model.DetailerTask; com.omnitech.chai.util.ChaiUtils; com.omnitech.chai.model.Task" %>
 <!DOCTYPE html>
 <html>
 
@@ -103,7 +103,7 @@
 
             <td valign="top" class="value">${fieldValue(bean: taskInstance, field: "status")}</td>
 				
-			</tr>
+	    </tr>
 		
 			<tr class="prop">
 				<td valign="top" class="name"><g:message code="task.uuid.label" default="Uuid" /></td>
@@ -111,6 +111,10 @@
 				<td valign="top" class="value">${fieldValue(bean: taskInstance, field: "uuid")}</td>
 				
 			</tr>
+
+        <g:if test="${taskInstance.getClass() == DetailerTask}">
+            <g:render template="showDetailerTask"/>
+        </g:if>
 		
 		</tbody>
 	</table>

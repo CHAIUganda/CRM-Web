@@ -1,5 +1,6 @@
 package com.omnitech.chai
 
+import com.omnitech.chai.model.DetailerTask
 import com.omnitech.chai.model.Task
 import com.omnitech.chai.util.ModelFunctions
 import grails.transaction.Transactional
@@ -69,10 +70,15 @@ class TaskController {
         }
 
         def task = taskService.findTask(id)
+
+        if (task.type == DetailerTask.simpleName) {
+            task = taskService.findDetailerTask(task.id)
+        }
+
         txHelperService.doInTransaction {
             neo.fetch(task.territoryUser())
         }
-        respond task
+        [taskInstance: task]
     }
 
     def create() {

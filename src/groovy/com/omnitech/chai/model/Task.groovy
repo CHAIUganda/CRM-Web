@@ -55,6 +55,8 @@ class Task extends AbstractEntity {
 
     User getAssignedTo() { assignedTo }
 
+    String getType(){type}
+
     boolean isComplete(){status == STATUS_COMPLETE}
 
     Set<User> territoryUser(){
