@@ -32,7 +32,7 @@ class TerritoryController {
     }
 
     private Map pageModel(Page<Territory> page) {
-        def districts = regionService.listAllDistrictWithSubCounties()
+        def districts = regionService.listAllDistrictWithSubCounties()?.sort{it.name}
         return [territoryInstanceCount: page.totalElements, districts: districts]
     }
 
