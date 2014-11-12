@@ -1,3 +1,6 @@
+import org.apache.log4j.PatternLayout
+import org.apache.log4j.RollingFileAppender
+
 //import grails.plugin.springsecurity.SpringSecurityUtils
 
 // locations to search for config files that get merged into the main config;
@@ -103,9 +106,25 @@ environments {
 log4j = {
     // Example of changing the log pattern for the default console appender:
     //
-    //appenders {
-    //    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
-    //}
+    def logLayoutPattern = new PatternLayout("%d [%t] %-5p %c %x - %m%n")
+    def myAppName = "chai-crm"
+    appenders {
+        console name: 'stdout', layout: pattern(conversionPattern: '%c{2} %m%n')
+
+        appender new RollingFileAppender(
+                name: "logFile",
+                maxFileSize: '20MB',
+                file: "/tmp/logs/${myAppName}/${myAppName}.log",
+                layout: logLayoutPattern)
+
+        appender new RollingFileAppender(
+                name: "smsRollingFile",
+                maxFileSize: '10MB',
+                file: "/tmp/logs/${myAppName}/smstrace.log",
+                layout: logLayoutPattern)
+    }
+
+    debug logFile: ["grails.app.services", "grails.app.controllers", "com.omnitech", "groovy.sql.Sql", "org.omnitech.sms"]
 
     error  'org.codehaus.groovy.grails.web.servlet',        // controllers
            'org.codehaus.groovy.grails.web.pages',          // GSP
