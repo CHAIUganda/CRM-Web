@@ -38,7 +38,9 @@ class TaskController {
 
         def user = params.user ? userService.findUserByName(params.user) : null
         if (user) {
-            def tasks = taskService.findAllTaskForUser(user.id, params.status ?: Task.STATUS_COMPLETE, params)
+            def status = params.status ?: Task.STATUS_NEW
+            params.status = status
+            def tasks = taskService.findAllTaskForUser(user.id, status, params)
             page = new PageImpl<Task>(tasks)
         } else {
             page = taskService.listTasks(params)
