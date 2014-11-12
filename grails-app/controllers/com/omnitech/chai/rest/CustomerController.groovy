@@ -72,9 +72,10 @@ class CustomerController {
         }
 
         customer = _updateVillage(customer, village)
+        customer.customerContacts?.each {it.id = null}
         customerService.saveCustomer(customer)
 
-        respond([status: HttpStatus.OK])
+        render  ([status: HttpStatus.OK.reasonPhrase, message: "Success"] as JSON )
     }
 
     private Customer _updateVillage(Customer customer, Village village) {
