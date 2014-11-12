@@ -81,8 +81,12 @@ class TaskService {
         if (!neoTask) return null
 
         neoTask = neo.projectTo(neoTask, DetailerTask)
-
-        ModelFunctions.bind(neoTask, detailerTask.properties, ReflectFunctions.findAllBasicFields(DetailerTask))
+        def detailFields = ReflectFunctions.findAllBasicFields(DetailerTask)
+        //Do not change original task data
+        detailFields.with {
+            removeAll(ReflectFunctions.findAllBasicFields(Task))
+        }
+        ModelFunctions.bind(neoTask, detailerTask.properties, detailFields)
         neoTask.completedBy(neoSecurityService.currentUser)
 
         saveTask(neoTask)
