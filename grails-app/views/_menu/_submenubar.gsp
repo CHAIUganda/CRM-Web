@@ -37,17 +37,7 @@ This menu is used to show function that can be triggered on the content (an obje
 
         %{--Rendered On Task View--}%
             <g:if test="${params.controller == 'task' && ['index', '', null].contains(params.action)}">
-                <li>
-                    <a data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-user"></i>${params.user ? params.user: 'Select User'}<b
-                            class="caret"></b></a>
-                    <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
-                        <g:each in="${users}" var="u">
-                            <li><g:link controller="task" action="index" params="${[user:u]}">
-                                <i class="glyphicon glyphicon-user"></i>${u}
-                            </g:link></li>
-                        </g:each>
-                    </ul>
-                </li>
+
             </g:if>
 
         %{--End Customer--}%

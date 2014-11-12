@@ -5,10 +5,61 @@
 <head>
     <meta name="layout" content="kickstart"/>
     <g:set var="entityName" value="${message(code: 'task.label', default: 'Task')}"/>
+    <g:set var="layout_nosecondarymenu" value="${true}" scope="request"/>
     <title><g:message code="default.index.label" args="[entityName]"/></title>
 </head>
 
 <body>
+
+%{-- THE SUBMENU BAR --}%
+
+<div class="container" style="background: #eeeeee; padding: 5px; border-radius: 0px; border: 1px solid #ddd;">
+    <ul id="Menu" class="nav nav-pills margin-top-small">
+
+        <li class="${params.action == "index" ? 'active' : ''}">
+            <g:link action="index"><i class="glyphicon glyphicon-th-list"></i> <g:message code="default.list.label"
+                                                                                          args="[entityName]"/></g:link>
+        </li>
+        <li class="${params.action == "create" ? 'active' : ''}">
+            <g:link action="create"><i class="glyphicon glyphicon-plus"></i> <g:message code="default.new.label"
+                                                                                        args="[entityName]"/></g:link>
+        </li>
+
+        %{-- SELECT USERS MENU--}%
+        <li>
+            <a data-toggle="dropdown" href="#"><i
+                    class="glyphicon glyphicon-user"></i>${params.user ? params.user : 'Select User'}<b
+                    class="caret"></b></a>
+            <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+                <g:each in="${users}" var="u">
+                    <li><g:link controller="task" action="index" params="${[user: u]}">
+                        <i class="glyphicon glyphicon-user"></i>${u}
+                    </g:link></li>
+                </g:each>
+            </ul>
+        </li>
+
+        %{-- ACTIVE OR INACTIVE STATUS --}%
+        <li>
+            <a data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-filter"></i>All Tasks<b
+                    class="caret"></b></a>
+            <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+                <li>
+                    <g:link controller="task" action="index" params="${[status: 'active']}">
+                        <i class="glyphicon glyphicon-list"></i>Active
+                    </g:link></li>
+                <li>
+                    <g:link controller="task" action="index" params="${[status: 'active']}">
+                        <i class="glyphicon glyphicon-list"></i>Complete
+                    </g:link>
+                </li>
+            </ul>
+        </li>
+
+    </ul>
+</div>
+
+%{-- END SUBMENU BAR --}%
 
 <section id="index-task" class="first">
 
