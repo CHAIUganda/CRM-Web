@@ -4,6 +4,7 @@ import com.omnitech.chai.model.Customer
 import com.omnitech.chai.model.DetailerTask
 import com.omnitech.chai.model.Task
 import com.omnitech.chai.util.ModelFunctions
+import com.omnitech.chai.util.PageUtils
 import com.omnitech.chai.util.ReflectFunctions
 import org.neo4j.cypherdsl.grammar.Match
 import org.springframework.beans.factory.annotation.Autowired
@@ -44,17 +45,21 @@ class TaskService {
     /* Detailer Tasks*/
     DetailerTask findDetailerTask(Long id) { neo.findOne(id,DetailerTask) }
 
-    List<Task> findAllTaskForUser(Long userId) {
+    List<Task> findAllTaskForUser(Long userId, String status, Map params) {
+        def task = 'task'
         def query = mathQueryForUserTasks(userId)
                 .where(
-                identifier('tsk').property('status').ne(Task.STATUS_COMPLETE)
-                        .and(node('u').out(ASSIGNED_TASK).node('tsk')
-                        .or(not(node('tsk').in(ASSIGNED_TASK).node())
-                ))).returns(identifier('tsk'))
+                identifier(task).property('status').eq(status)
+                        .and(node('u').out(ASSIGNED_TASK).node(task)
+                        .or(not(node(task).in(ASSIGNED_TASK).node())
+                ))).returns(distinct(identifier(task)))
+
+        query = PageUtils.addPagination(query, params, Task)
 
         log.trace("Tasks for user: [$query]")
         taskRepository.query(query, [:]).collect()
     }
+
 
     Match mathQueryForUserTasks(Long userId) {
         start(nodesById('u', userId))
@@ -63,7 +68,7 @@ class TaskService {
                 .out(HAS_PARISH).node('p')
                 .out(HAS_VILLAGE).node('v')
                 .in(CUST_IN_VILLAGE).node('c')
-                .out(CUST_TASK).node('tsk'))
+                .out(CUST_TASK).node('task'))
 
     }
 
