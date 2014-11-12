@@ -56,9 +56,6 @@ class TaskService {
         taskRepository.query(query, [:]).collect()
     }
 
-    //START u=node({userId})
-    // MATCH (u)-[:USER_TERRITORY]->(t)<-[:SC_IN_TERRITORY]-(sc)-[:HAS_PARISH]->(p)-[:HAS_VILLAGE]->(v)<-[:CUST_IN_VILLAGE]-(customer)-[:CUST_TASK]-(tsk)
-    // WHERE (u-[:ASSIGNED_TASK]->(tsk) or NOT(tsk<-[:ASSIGNED_TASK]-())) and not(tsk.status = 'complete') RETURN distinct tsk
     Match mathQueryForUserTasks(Long userId) {
         start(nodesById('u', userId))
                 .match(node('u').out(USER_TERRITORY).node('ut')
