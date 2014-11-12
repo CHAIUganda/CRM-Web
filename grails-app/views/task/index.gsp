@@ -12,9 +12,9 @@
 <body>
 
 %{-- THE SUBMENU BAR --}%
-
-<div class="container" style="background: #eeeeee; padding: 5px; border-radius: 0px; border: 1px solid #ddd;">
-    <ul id="Menu" class="nav nav-pills margin-top-small">
+<div class="container" style="max-width: 100%; padding: 0; margin-bottom: 3px;">
+    <div class="container" style="background: #eeeeee; padding: 5px; border-radius: 0px; border: 1px solid #ddd; max-width: 100%;">
+        <ul id="Menu" class="nav nav-pills margin-top-small">
 
         <li class="${params.action == "index" ? 'active' : ''}">
             <g:link action="index"><i class="glyphicon glyphicon-th-list"></i> <g:message code="default.list.label"
@@ -32,7 +32,7 @@
                     class="caret"></b></a>
             <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
                 <g:each in="${users}" var="u">
-                    <li><g:link controller="task" action="index" params="${[user: u]}">
+                    <li><g:link controller="task" action="index" params="${[user: u, status: params.status]}">
                         <i class="glyphicon glyphicon-user"></i>${u}
                     </g:link></li>
                 </g:each>
@@ -40,25 +40,43 @@
         </li>
 
         %{-- ACTIVE OR INACTIVE STATUS --}%
+            %{--Show if a user is selected--}%
+            <g:if test="${params.user != null}">
         <li>
-            <a data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-filter"></i>All Tasks<b
+            <a data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-filter"></i>${params.status?.toUpperCase() ?: 'New'} Tasks<b
                     class="caret"></b></a>
             <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
                 <li>
-                    <g:link controller="task" action="index" params="${[status: 'active']}">
+                    <g:link controller="task" action="index" params="${[status: Task.STATUS_NEW, user: params.user]}">
                         <i class="glyphicon glyphicon-list"></i>Active
                     </g:link></li>
                 <li>
-                    <g:link controller="task" action="index" params="${[status: 'active']}">
+                    <g:link controller="task" action="index"
+                            params="${[status: Task.STATUS_COMPLETE, user: params.user]}">
                         <i class="glyphicon glyphicon-list"></i>Complete
                     </g:link>
                 </li>
             </ul>
         </li>
+            </g:if>
+
+            %{--The Search Box--}%
+            <g:if test="${!layout_nosearchtext && (params.action == 'index' || params.action == 'search')}">
+                <li class="navbar-right">
+                    <div class="col-lg-12">
+                        %{--<input type="hidden" name="currentPage" value="${currentPage}"/>--}%
+                        %{--<input type="hidden" name="domain" value="${clazz}"/>--}%
+                        <form action="search">
+                            <input class="form-control" name="term" value="${(params.term ?: params.id)}"
+                                   placeholder="Please type search item and press enter" style="width: 300px;"/>
+                        </form>
+                    </div>
+                </li>
+            </g:if>
 
     </ul>
 </div>
-
+</div>
 %{-- END SUBMENU BAR --}%
 
 <section id="index-task" class="first">
@@ -66,12 +84,14 @@
     <table class="table table-bordered margin-top-medium">
         <thead>
         <tr>
-            <g:sortableColumn property="description"
+            <g:sortableColumn property="description" params="${params}"
                               title="${message(code: 'task.description.label', default: 'Description')}"/>
 
-            <g:sortableColumn property="status" title="${message(code: 'task.status.label', default: 'Status')}"/>
+            <g:sortableColumn property="status" params="${params}"
+                              title="${message(code: 'task.status.label', default: 'Status')}"/>
 
-            <g:sortableColumn property="dueDate" title="${message(code: 'task.dueDate.label', default: 'Due Date')}"/>
+            <g:sortableColumn property="dueDate" params="${params}"
+                              title="${message(code: 'task.dueDate.label', default: 'Due Date')}"/>
 
             <th>Customer</th>
             <th>Assigned User</th>

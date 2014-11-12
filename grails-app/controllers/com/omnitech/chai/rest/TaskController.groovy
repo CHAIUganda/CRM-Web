@@ -1,6 +1,7 @@
 package com.omnitech.chai.rest
 
 import com.omnitech.chai.model.DetailerTask
+import com.omnitech.chai.model.Task
 import com.omnitech.chai.model.User
 import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.ReflectFunctions
@@ -24,7 +25,7 @@ class TaskController {
         params.max = Math.min(max ?: 10, 2000)
         def user = neoSecurityService.currentUser as User
         log.debug("Req:${user}  - TaskList: $params")
-        def tasks = taskService.findAllTaskForUser(user.id)
+        def tasks = taskService.findAllTaskForUser(user.id,Task.STATUS_COMPLETE,params)
         def taskMaps = tasks.collect {
             def map = ReflectFunctions.extractProperties(it)
             map['customerId'] = it.customer.id

@@ -38,7 +38,7 @@ class TaskController {
 
         def user = params.user ? userService.findUserByName(params.user) : null
         if (user) {
-            def tasks = taskService.findAllTaskForUser(user.id)
+            def tasks = taskService.findAllTaskForUser(user.id, params.status ?: Task.STATUS_COMPLETE, params)
             page = new PageImpl<Task>(tasks)
         } else {
             page = taskService.listTasks(params)
@@ -47,6 +47,8 @@ class TaskController {
         txHelperService.doInTransaction {
             page.content.each {neo.fetch(it.territoryUser())}
         }
+
+
         respond page.content, model: [taskInstanceCount: page.totalElements,users: userService.listAllUsers([:])]
     }
 
