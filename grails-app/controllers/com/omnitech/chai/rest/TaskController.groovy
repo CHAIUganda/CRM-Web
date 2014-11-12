@@ -22,19 +22,21 @@ class TaskController {
 
     def list(Integer max) {
         params.max = Math.min(max ?: 10, 2000)
-        println(params)
         def user = neoSecurityService.currentUser as User
+        log.debug("Req:${user}  - TaskList: $params")
         def tasks = taskService.findAllTaskForUser(user.id)
         def taskMaps = tasks.collect {
             def map = ReflectFunctions.extractProperties(it)
             map['customerId'] = it.customer.id
             return map
         }
-
+        log.debug("Resp:${user} - ${taskMaps?.size()} Tasks...")
         respond taskMaps
     }
 
     def update() {
+        def user = neoSecurityService.currentUser
+        log.debug("Req:${user}   - Update Task")
         def json = request.JSON as Map
         def detailerInfo = (json.get('detailers') as List)?.get(0) as Map
         println(json.inspect())
@@ -44,6 +46,7 @@ class TaskController {
             ModelFunctions.bind(task, detailerInfo)
         }
         taskService.completeDetailTask(task)
+        log.debug("Resp:${user}   - OK")
         render([status: HttpStatus.OK.reasonPhrase, message: 'Success'] as JSON)
     }
 
