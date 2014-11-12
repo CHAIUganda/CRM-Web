@@ -25,7 +25,7 @@ class TaskController {
         params.max = Math.min(max ?: 10, 2000)
         def user = neoSecurityService.currentUser as User
         log.debug("Req:${user}  - TaskList: $params")
-        def tasks = taskService.findAllTaskForUser(user.id,Task.STATUS_COMPLETE,params)
+        def tasks = taskService.findAllTaskForUser(user.id,Task.STATUS_NEW,params)
         def taskMaps = tasks.collect {
             def map = ReflectFunctions.extractProperties(it)
             map['customerId'] = it.customer.id
