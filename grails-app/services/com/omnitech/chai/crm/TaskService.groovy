@@ -5,10 +5,14 @@ import com.omnitech.chai.model.DetailerTask
 import com.omnitech.chai.model.Task
 import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.ReflectFunctions
+import org.neo4j.cypherdsl.grammar.Match
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.data.neo4j.transaction.Neo4jTransactional
+
+import static com.omnitech.chai.model.Relations.*
+import static org.neo4j.cypherdsl.CypherQuery.*
 
 @Neo4jTransactional
 class TaskService {
@@ -41,7 +45,29 @@ class TaskService {
     DetailerTask findDetailerTask(Long id) { neo.findOne(id,DetailerTask) }
 
     List<Task> findAllTaskForUser(Long userId) {
-        taskRepository.findAllTaskForUser(userId).collect()
+        def query = mathQueryForUserTasks(userId)
+                .where(
+                identifier('tsk').property('status').ne(Task.STATUS_COMPLETE)
+                        .and(node('u').out(ASSIGNED_TASK).node('tsk')
+                        .or(not(node('tsk').in(ASSIGNED_TASK).node())
+                ))).returns(identifier('tsk'))
+
+        log.trace("Tasks for user: [$query]")
+        taskRepository.query(query, [:]).collect()
+    }
+
+    //START u=node({userId})
+    // MATCH (u)-[:USER_TERRITORY]->(t)<-[:SC_IN_TERRITORY]-(sc)-[:HAS_PARISH]->(p)-[:HAS_VILLAGE]->(v)<-[:CUST_IN_VILLAGE]-(customer)-[:CUST_TASK]-(tsk)
+    // WHERE (u-[:ASSIGNED_TASK]->(tsk) or NOT(tsk<-[:ASSIGNED_TASK]-())) and not(tsk.status = 'complete') RETURN distinct tsk
+    Match mathQueryForUserTasks(Long userId) {
+        start(nodesById('u', userId))
+                .match(node('u').out(USER_TERRITORY).node('ut')
+                .in(SC_IN_TERRITORY).node('sc')
+                .out(HAS_PARISH).node('p')
+                .out(HAS_VILLAGE).node('v')
+                .in(CUST_IN_VILLAGE).node('c')
+                .out(CUST_TASK).node('tsk'))
+
     }
 
     def autoGenerateTasks() {
