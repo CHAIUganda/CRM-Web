@@ -21,7 +21,8 @@ class CustomerController {
     def regionService
 
     def list(Integer max) {
-        params.max = Math.min(max ?: 10, 100)
+        params.max = Math.min(max ?: 10, 2000)
+        println(params)
         def user = neoSecurityService.currentUser as User
         def customers = customerService.findAllCustomersByUser(user.id, params)
         def customerMaps = customers.collect { customerToMap(it) }
@@ -80,10 +81,10 @@ class CustomerController {
 
     private Customer _updateVillage(Customer customer, Village village) {
 //        def neoCustomer = customerService.findCustomer(customer.id)
-        def neoCustomer = customerService.findCustomer(277)
+        def neoCustomer = customerService.findCustomer(customer.uuid)
         if (!neoCustomer) {
             customer.village = village
-            neoCustomer.id = null
+            customer.id = null
             return customer
         }
         def whiteList = ReflectFunctions.findAllBasicFields(Customer)

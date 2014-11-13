@@ -43,6 +43,8 @@ class CustomerService {
         }
     }
 
+    Customer findCustomer(String uuid) { uuid ? customerRepository.findByUuid(uuid) : null }
+
     void deleteCustomer(Long id) { customerRepository.delete(id) }
 
     @Neo4jTransactional
