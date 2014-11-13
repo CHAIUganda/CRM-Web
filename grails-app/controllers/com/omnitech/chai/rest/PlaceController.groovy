@@ -19,24 +19,30 @@ class PlaceController {
 
     //id,name,uuid
     def regions() {
+        log.debug("Req:${neoSecurityService.currentUser}-RegionsList")
         def userId = neoSecurityService.currentUser.id
         def regions = regionService.findAllRegionsForUser(userId).collect { [id: it.id, name: it.name, uuid: it.uuid] }
+        log.debug("Resp:${neoSecurityService.currentUser}-${regions?.size()} Regions")
         respond regions
     }
 
     //id,name,uuid,regionId
     def districts() {
+        log.debug("Req:${neoSecurityService.currentUser}-DistrictList")
         def districts = regionService.findAllDistrictsForUser(neoSecurityService.currentUser.id).collect {
             [id: it.id, name: it.name, uuid: it.uuid, 'regionId': it.region.id]
         }
+        log.debug("Resp:${neoSecurityService.currentUser}-${districts?.size()} Districts")
         respond districts
     }
 
     //id,name,uuid,districtId
     def subCounties() {
+        log.debug("Req:${neoSecurityService.currentUser}-SubCountyList")
         def subCounties = regionService.findAllSubCountiesForUser(neoSecurityService.currentUser.id).collect {
             [id: it.id, name: it.name, uuid: it.uuid, 'districtId': it.district.id]
         }
+        log.debug("Resp:${neoSecurityService.currentUser}-${subCounties?.size()} SubCounties")
         respond subCounties
     }
 
@@ -88,17 +94,21 @@ class PlaceController {
 
     //id,name,uuid,subCountyId
     def parishes() {
+        log.debug("Req:${neoSecurityService.currentUser}-ParishList")
         def parishes = regionService.findAllParishesForUser(neoSecurityService.currentUser.id).collect {
             [id: it.id, name: it.name, uuid: it.uuid, 'subCountyId': it.subCounty.id]
         }
+        log.debug("Resp:${neoSecurityService.currentUser}-${parishes?.size()} Parishes")
         respond parishes
     }
 
     //id,name,uuid,parishId
     def villages() {
+        log.debug("Req:${neoSecurityService.currentUser}-VillageList")
         def villages = regionService.findAllVillagesForUser(neoSecurityService.currentUser.id).collect {
             [id: it.id, name: it.name, uuid: it.uuid, 'parishId': it.parish.id]
         }
+        log.debug("Resp:${neoSecurityService.currentUser}-${villages?.size()} Villages")
         respond villages
     }
 
