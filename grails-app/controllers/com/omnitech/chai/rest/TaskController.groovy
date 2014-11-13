@@ -46,6 +46,12 @@ class TaskController {
             detailerInfo.remove('id')
             ModelFunctions.bind(task, detailerInfo)
         }
+        task.uuid = json.uuid
+        if(task.uuid){
+            response.status = HttpStatus.BAD_REQUEST.value()
+            render {[status: HttpStatus.BAD_REQUEST.reasonPhrase,message: "You Did Not Provide The Task ID"]}
+            return
+        }
         taskService.completeDetailTask(task)
         log.debug("Resp:${user}   - OK")
         render([status: HttpStatus.OK.reasonPhrase, message: 'Success'] as JSON)

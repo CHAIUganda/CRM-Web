@@ -22,10 +22,11 @@ class CustomerController {
 
     def list(Integer max) {
         params.max = Math.min(max ?: 10, 2000)
-        println(params)
         def user = neoSecurityService.currentUser as User
+        log.debug("Req:${user}  - CustomerList: $params")
         def customers = customerService.findAllCustomersByUser(user.id, params)
         def customerMaps = customers.collect { customerToMap(it) }
+        log.debug("Resp:${user}  - ${customerMaps.size()} Customers")
         respond customerMaps
     }
 

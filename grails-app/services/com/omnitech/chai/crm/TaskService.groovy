@@ -34,6 +34,8 @@ class TaskService {
 
     Task findTask(Long id) { taskRepository.findOne(id) }
 
+    Task findTask(String uuid) { taskRepository.findByUuid(uuid) }
+
     def <T extends Task> T saveTask(T task) { ModelFunctions.saveGenericEntity(neo, task) }
 
     void deleteTask(Long id) { taskRepository.delete(id) }
@@ -103,7 +105,7 @@ class TaskService {
      * This method also makes sure that other relationships are not modified
      */
     DetailerTask completeDetailTask(DetailerTask detailerTask) {
-        def neoTask = taskRepository.findOne(detailerTask.id)
+        def neoTask = taskRepository.findByUuid(detailerTask.uuid)
 
         //task could have been deleted
         if (!neoTask) return null
