@@ -41,24 +41,39 @@
 
         %{-- ACTIVE OR INACTIVE STATUS --}%
             %{--Show if a user is selected--}%
-            <g:if test="${params.user != null}">
         <li>
             <a data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-filter"></i>${params.status?.toUpperCase() ?: 'New'} Tasks<b
                     class="caret"></b></a>
             <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
-                <li>
-                    <g:link controller="task" action="index" params="${[status: Task.STATUS_NEW, user: params.user]}">
-                        <i class="glyphicon glyphicon-list"></i>Active
-                    </g:link></li>
-                <li>
+                <g:if test="${params.user != null}">
+                    <li>
+
+                        <g:link controller="task" action="index"
+                                params="${[status: Task.STATUS_NEW, user: params.user]}">
+                            <i class="glyphicon glyphicon-list"></i>Active
+                        </g:link></li>
+                    <li>
                     <g:link controller="task" action="index"
                             params="${[status: Task.STATUS_COMPLETE, user: params.user]}">
                         <i class="glyphicon glyphicon-list"></i>Complete
                     </g:link>
                 </li>
+                </g:if>
+                <g:else>
+                    <li>
+
+                        <g:link controller="task" action="index"
+                                params="${[status: Task.STATUS_NEW]}">
+                            <i class="glyphicon glyphicon-list"></i>Active</g:link></li>
+                    <li>
+                        <g:link controller="task" action="index"
+                                params="${[status: Task.STATUS_COMPLETE]}">
+                            <i class="glyphicon glyphicon-list"></i>Complete
+                        </g:link>
+                    </li>
+                </g:else>
             </ul>
         </li>
-            </g:if>
 
             %{--The Search Box--}%
             <g:if test="${!layout_nosearchtext && (params.action == 'index' || params.action == 'search')}">
