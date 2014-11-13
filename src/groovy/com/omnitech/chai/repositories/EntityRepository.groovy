@@ -6,11 +6,22 @@ import org.springframework.data.neo4j.repository.CypherDslRepository
 import org.springframework.data.neo4j.repository.GraphRepository
 import org.springframework.data.repository.query.Param
 
-interface ProductRepository extends GraphRepository<Product> {}
+interface UuidRepository<T> {
 
-interface RoleRepository extends GraphRepository<Role> {}
+
+}
+
+interface ProductRepository extends GraphRepository<Product> {
+    Product findByUuid(String uuid)
+}
+
+interface RoleRepository extends GraphRepository<Role> {
+    Role findByUuid(String uuid)
+}
 
 interface RegionRepository extends GraphRepository<Region> {
+
+    Region findByUuid(String uuid)
 
     Region findByName(String name)
 
@@ -21,6 +32,8 @@ interface RegionRepository extends GraphRepository<Region> {
 
 interface SubCountyRepository extends GraphRepository<SubCounty> {
 
+    SubCounty findByUuid(String uuid)
+
     @Query('start r=node({districtId}) match r-[:HAS_SUB_COUNTY]->(s) where s.name =~ {name} return s')
     SubCounty findByDistrictAndName(@Param('districtId') Long districtId, @Param('name') String name)
 
@@ -29,6 +42,8 @@ interface SubCountyRepository extends GraphRepository<SubCounty> {
 }
 
 interface ParishRepository extends GraphRepository<Parish> {
+
+    Parish findByUuid(String uuid)
 
     @Query('start r=node({subCountyId}) match r-[:HAS_PARISH]->(s) where s.name =~ {name} return s')
     Parish findBySubCountyAndName(@Param('subCountyId') Long subCountyId, @Param('name') String name)
@@ -39,6 +54,8 @@ interface ParishRepository extends GraphRepository<Parish> {
 
 interface VillageRepository extends GraphRepository<Village> {
 
+    Village findByUuid(String uuid)
+
     @Query('start r=node({parishId}) match r-[:HAS_VILLAGE]->(v) where v.name =~ {name} return v')
     Village findByParishAndName(@Param('parishId') Long parishId, @Param('name') String name)
 
@@ -47,13 +64,23 @@ interface VillageRepository extends GraphRepository<Village> {
 
 }
 
-interface CustomerRepository extends GraphRepository<Customer>, CypherDslRepository<Customer> {}
+interface CustomerRepository extends GraphRepository<Customer>, CypherDslRepository<Customer> {
 
-interface CustomerContactRepository extends GraphRepository<CustomerContact> {}
+    Customer findByUuid(String uuid)
 
-interface TerritoryRepository extends GraphRepository<Territory> {}
+}
+
+interface CustomerContactRepository extends GraphRepository<CustomerContact> {
+    CustomerContact findByUuid(String uuid)
+}
+
+interface TerritoryRepository extends GraphRepository<Territory> {
+    Territory findByUuid(String uuid)
+}
 
 interface TaskRepository extends GraphRepository<Task>,CypherDslRepository<Task> {
+
+    Task findByUuid(String uuid)
 
     @Query('start c = node({customerId}) match c -[:CUST_TASK]-> (t) return t order by t.dateCreated desc limit 1')
     Task findLastTask(@Param('customerId') Long customerId)
@@ -64,22 +91,35 @@ interface TaskRepository extends GraphRepository<Task>,CypherDslRepository<Task>
 
 }
 
-interface CustomerSegmentRepository extends GraphRepository<CustomerSegment> {}
+interface CustomerSegmentRepository extends GraphRepository<CustomerSegment> {
 
-interface ProductGroupRepository extends GraphRepository<ProductGroup> {}
+    CustomerSegment findByUuid(String uuid)
+}
 
-interface DetailerTaskRepository extends GraphRepository<DetailerTask> {}
+interface ProductGroupRepository extends GraphRepository<ProductGroup> {
+
+    ProductGroup findByUuid(String uuid)
+}
+
+interface DetailerTaskRepository extends GraphRepository<DetailerTask> {
+    DetailerTask findByUuid(String uuid)
+}
 
 interface SettingRepository extends GraphRepository<Setting> {
+    Setting findByUuid(String uuid)
     Setting findByName(String name)
 }
 
 interface UserRepository extends GraphRepository<User> {
 
+    User findByUuid(String uuid)
+
     User findByUsername(String username)
 }
 
 interface DeviceRepository extends GraphRepository<Device> {
+
+    Device findByUuid(String uuid)
 
     @Query('start n = node({userId}) Match n-[:HAS_DEVICE]->d return d AS model UNION MATCH (d:Device) WHERE NOT (()-[:HAS_DEVICE ]->(d)) RETURN d AS model')
     Iterable<Device> findAllFreeDevices(@Param('userId') Long userId)
@@ -89,6 +129,8 @@ interface DeviceRepository extends GraphRepository<Device> {
 }
 
 interface DistrictRepository extends GraphRepository<District> {
+
+    District findByUuid(String uuid)
 
     @Query('match (d:District)-[:HAS_SUB_COUNTY]->(s) return distinct d')
     Set<District> listAllDistrictsWithSubCounties()
