@@ -56,13 +56,11 @@ class CustomerController {
 
         def customer = ModelFunctions.createObj(Customer, json) as Customer
 
-
-
-        if (!customer.validate()) {
-            response.status = HttpStatus.BAD_REQUEST.value()
-            render(customer.errors as JSON)
-            return
-        }
+//        if (!customer.validate()) {
+//            response.status = HttpStatus.BAD_REQUEST.value()
+//            render(customer.errors as JSON)
+//            return
+//        }
 
         def village = ModelFunctions.extractAndLoadParent('villageId', json) { Long it -> regionService.findVillage(it) }
 
@@ -72,6 +70,8 @@ class CustomerController {
         }
 
         customer = _updateVillage(customer, village)
+        customer.lng = (Float) json['longitude']
+        customer.lat = (Float) json['latitude']
         customer.customerContacts?.each {it.id = null}
         customerService.saveCustomer(customer)
 
@@ -79,9 +79,11 @@ class CustomerController {
     }
 
     private Customer _updateVillage(Customer customer, Village village) {
-        def neoCustomer = customerService.findCustomer(customer.id)
+//        def neoCustomer = customerService.findCustomer(customer.id)
+        def neoCustomer = customerService.findCustomer(277)
         if (!neoCustomer) {
             customer.village = village
+            neoCustomer.id = null
             return customer
         }
         def whiteList = ReflectFunctions.findAllBasicFields(Customer)
