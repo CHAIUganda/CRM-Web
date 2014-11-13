@@ -1,12 +1,12 @@
 package com.omnitech.chai.util
 
 import com.omnitech.chai.model.AbstractEntity
-import com.omnitech.chai.model.Customer
 import groovy.transform.CompileStatic
 import groovy.transform.TypeCheckingMode
 import org.apache.commons.logging.LogFactory
 import org.grails.databinding.SimpleDataBinder
 import org.grails.databinding.SimpleMapDataBindingSource
+import org.neo4j.cypherdsl.grammar.Execute
 import org.neo4j.cypherdsl.grammar.ReturnNext
 import org.neo4j.graphdb.DynamicLabel
 import org.neo4j.graphdb.Label
@@ -19,6 +19,8 @@ import org.springframework.data.neo4j.repository.GraphRepository
 import org.springframework.data.neo4j.support.Neo4jTemplate
 
 import java.util.regex.Pattern
+
+import static java.util.Collections.EMPTY_MAP
 
 /**
  * Created by kay on 9/24/14.
@@ -124,12 +126,19 @@ class ModelFunctions {
         def searchParams = [search: search] as Map
         def size = neo.query(count, searchParams).to(Long).single()
         def data = neo.query(query, searchParams).to(aClass).as(List).collect()
-        return new PageImpl<Customer>(data, PageUtils.create(params), size) as Page<T>
+        return new PageImpl<T>(data, PageUtils.create(params), size)
     }
 
     static <T> Result<T> query(CypherDslRepository<T> repo, ReturnNext execute, Map params, Class container) {
         PageUtils.addPagination(execute, params, container)
-        return repo.query(execute, Collections.EMPTY_MAP)
+        return repo.query(execute, EMPTY_MAP)
+    }
+
+    static <T> Page<T> query(Neo4jTemplate neo, Execute query, Execute countQuery, Map params,Class<T> container) {
+        def data = neo.query(query.toString(), EMPTY_MAP).to(container).as(List)
+        def size = neo.query(countQuery.toString(), EMPTY_MAP).to(Long).single()
+
+        return new PageImpl<T>(data, PageUtils.create(params), size)
     }
 
 

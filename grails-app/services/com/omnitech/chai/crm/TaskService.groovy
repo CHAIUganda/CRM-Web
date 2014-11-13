@@ -32,6 +32,24 @@ class TaskService {
 
     Page<Task> listTasks(Map params) { ModelFunctions.listAll(taskRepository, params) }
 
+    Page<Task> listTasksByStatus(String status, Map params) {
+
+        def resultQuery = getTaskQuery(status).returns(identifier('task'))
+        PageUtils.addPagination(resultQuery, params, Task)
+
+        def countyQuery = getTaskQuery(status).returns(count(identifier('task')))
+        log.debug("listTasksByStatus: countQuery: $countyQuery")
+        log.debug("listTasksByStatus: dataQuery: $resultQuery")
+
+        ModelFunctions.query(neo, resultQuery, countyQuery, params,Task)
+    }
+
+    private static getTaskQuery(String status) {
+        def query = match(node('task').label(Task.simpleName))
+                .where(identifier('task').string('status').eq(status))
+        return query
+    }
+
     Task findTask(Long id) { taskRepository.findOne(id) }
 
     Task findTask(String uuid) { taskRepository.findByUuid(uuid) }

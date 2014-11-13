@@ -43,7 +43,11 @@ class TaskController {
             def tasks = taskService.findAllTaskForUser(user.id, status, params)
             page = new PageImpl<Task>(tasks)
         } else {
-            page = taskService.listTasks(params)
+            if (params.status) {
+                page = taskService.listTasksByStatus(params.status, params)
+            } else {
+                page = taskService.listTasks(params)
+            }
         }
 
         txHelperService.doInTransaction {

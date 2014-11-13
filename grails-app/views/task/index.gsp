@@ -142,7 +142,7 @@
     </table>
 
     <div>
-        <bs:paginate total="${taskInstanceCount}"
+        <bs:paginate total="${taskInstanceCount}" params="${params}"
                      id="${params.action == 'search' ? (params.term ?: params.id) : null}"/>
     </div>
 </section>
