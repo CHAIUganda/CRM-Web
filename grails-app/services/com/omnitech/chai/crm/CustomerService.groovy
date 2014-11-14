@@ -83,7 +83,7 @@ class CustomerService {
 
     @Neo4jTransactional
     def processCustomers(String s) {
-        def csv = CsvParser.parseCsv(s)
+        def csv = CsvParser.parseCsv(s.toUpperCase())
 
         csv.eachWithIndex { PropertyMapper record, idx ->
             try {
@@ -97,29 +97,29 @@ class CustomerService {
     }
 
     private processRecord(PropertyMapper mapper, int idx) {
-        String regionName = prop(mapper, idx, 'Region name')
+        String regionName = prop(mapper, idx, 'REGION NAME')
         def region = regionService.getOrCreateRegion(regionName)
 
-        String districtName = prop(mapper, idx, 'District name')
+        String districtName = prop(mapper, idx, 'DISTRICT NAME')
         def district = regionService.getOrCreateDistrict(region, districtName)
 
-        String subCountyName = prop(mapper, idx, 'Sub-county Name',true,"$districtName-DummySubCounty")
+        String subCountyName = prop(mapper, idx, 'SUB-COUNTY NAME', true, "$districtName-DummySubCounty")
         def subCounty = regionService.getOrCreateSubCounty(district, subCountyName)
 
-        String parishName = prop(mapper, idx, 'Parish Name', true, "$subCountyName-DummyParish")
+        String parishName = prop(mapper, idx, 'PARISH NAME', true, "$subCountyName-DummyParish")
         def parish = regionService.getOrCreateParish(subCounty, parishName)
 
-        String villageName = prop(mapper, idx, 'Village name', true, "$parishName-DummyVillage")
+        String villageName = prop(mapper, idx, 'VILLAGE NAME', true, "$parishName-DummyVillage")
         def village = regionService.getOrCreateVillage(parish, villageName)
 
         def customer = new Customer(
-                descriptionOfOutletLocation: prop(mapper, idx, 'EA name', false),
-                outletName: prop(mapper, idx, 'Name of the outlet / facility',true, '(NO NAME) OUTLET'),
+                descriptionOfOutletLocation: prop(mapper, idx, 'EA NAME', false),
+                outletName: prop(mapper, idx, 'NAME OF THE OUTLET / FACILITY', true, '(NO NAME) OUTLET'),
         )
 
-        customer.outletType = prop(mapper, idx, 'Outlet type', false)?.replaceFirst(/\d\s*\-\s*/, '')//1 - DrugShop
-        def lat = prop(mapper, idx, 'GPS Latitude', false)
-        def lng = prop(mapper, idx, 'GPS Longitude', false)
+        customer.outletType = prop(mapper, idx, 'OUTLET TYPE', false)?.replaceFirst(/\d\s*\-\s*/, '')//1 - DrugShop
+        def lat = prop(mapper, idx, 'GPS LATITUDE', false)
+        def lng = prop(mapper, idx, 'GPS LONGITUDE', false)
 
         execSilently("Converting Lat[$lat] to GPS") {
             customer.lat = lat?.replace('S', '-')?.replace('N','')?.toDouble()
@@ -129,8 +129,8 @@ class CustomerService {
         }
 
         def customerContact = new CustomerContact(
-                firstName: prop(mapper, idx, 'Provider/Owner Contact Number', false),
-                title: prop(mapper, idx, 'Provider/Owner Name', false),
+                firstName: prop(mapper, idx, 'PROVIDER/OWNER CONTACT NUMBER', false),
+                title: prop(mapper, idx, 'PROVIDER/OWNER NAME', false),
         )
 
         customer.village = village

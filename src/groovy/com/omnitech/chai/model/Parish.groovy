@@ -14,6 +14,7 @@ import org.springframework.data.neo4j.annotation.RelatedTo
 @Validateable
 class Parish extends AbstractEntity {
 
+    @Indexed
     String name
 
     @Fetch

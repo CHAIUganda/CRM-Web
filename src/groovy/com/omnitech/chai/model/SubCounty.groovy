@@ -11,7 +11,7 @@ import org.springframework.data.neo4j.annotation.RelatedTo
 @NodeEntity
 class SubCounty extends AbstractEntity {
 
-    @Indexed(unique = true)
+    @Indexed
     String name
 
     @Fetch
