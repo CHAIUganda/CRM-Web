@@ -38,8 +38,8 @@ class TaskService {
         PageUtils.addPagination(resultQuery, params, Task)
 
         def countyQuery = getTaskQuery(status).returns(count(identifier('task')))
-        log.debug("listTasksByStatus: countQuery: $countyQuery")
-        log.debug("listTasksByStatus: dataQuery: $resultQuery")
+        log.trace("listTasksByStatus: countQuery: $countyQuery")
+        log.trace("listTasksByStatus: dataQuery: $resultQuery")
 
         ModelFunctions.query(neo, resultQuery, countyQuery, params,Task)
     }

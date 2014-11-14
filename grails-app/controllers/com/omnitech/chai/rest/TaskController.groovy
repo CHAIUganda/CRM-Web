@@ -47,7 +47,7 @@ class TaskController {
             ModelFunctions.bind(task, detailerInfo)
         }
         task.uuid = json.uuid
-        if(task.uuid){
+        if(!task.uuid){
             response.status = HttpStatus.BAD_REQUEST.value()
             render {[status: HttpStatus.BAD_REQUEST.reasonPhrase,message: "You Did Not Provide The Task ID"]}
             return
