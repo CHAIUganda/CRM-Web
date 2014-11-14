@@ -48,7 +48,7 @@ class CustomerController {
         if (id == -1) {
             notFound(); return
         }
-        respond customerService.findCustomer(id)
+        [customerInstance: customerService.findCustomer(id)]
     }
 
     def create() {

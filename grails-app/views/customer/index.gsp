@@ -23,7 +23,7 @@
 
             <g:sortableColumn property="openingHours" title="${message(code: 'customer.openingHours.label', default: 'Opening Hours')}" />
 
-            <th>${message(code: 'customer.subCounty.label', default: 'SubCounty')}</th>
+            <th>${message(code: 'district.label', default: 'District')}</th>
 
             <g:sortableColumn property="dateCreated" title="${message(code: 'customer.dateCreated.label', default: 'Date Created')}" />
 
@@ -59,7 +59,7 @@
 
                 <td>${fieldValue(bean: customerInstance, field: "openingHours")}</td>
 
-                <td>${fieldValue(bean: customerInstance, field: "subCounty")}</td>
+                <td>${customerInstance?.element?.village?.parish?.subCounty?.district}</td>
 
                 <td><g:formatDate date="${customerInstance.dateCreated}" format="dd-MMM-yyyy" /></td>
 

@@ -17,10 +17,44 @@
 		<tbody>
 		
 			<tr class="prop">
+				<td valign="top" class="name">District</td>
+				
+				<td valign="top" class="value">${customerInstance?.village?.parish?.subCounty?.district}</td>
+				
+			</tr>
+
+        <tr class="prop">
+				<td valign="top" class="name">SubCounty</td>
+
+				<td valign="top" class="value">${customerInstance?.village?.parish?.subCounty}</td>
+
+			</tr>
+
+        <tr class="prop">
+				<td valign="top" class="name">Parish</td>
+
+				<td valign="top" class="value">${customerInstance?.village?.parish}</td>
+
+			</tr>
+        <tr class="prop">
+				<td valign="top" class="name">Village</td>
+
+				<td valign="top" class="value">${customerInstance?.village}</td>
+
+			</tr>
+
+        <tr class="prop">
+            <td valign="top" class="name"><g:message code="customer.outletName.label" default="Outlet Name" /></td>
+
+            <td valign="top" class="value">${fieldValue(bean: customerInstance, field: "outletName")}</td>
+
+        </tr>
+
+        <tr class="prop">
 				<td valign="top" class="name"><g:message code="customer.buildingStructure.label" default="Building Structure" /></td>
-				
+
 				<td valign="top" class="value">${fieldValue(bean: customerInstance, field: "buildingStructure")}</td>
-				
+
 			</tr>
 		
 			<tr class="prop">
@@ -130,12 +164,7 @@
 				
 			</tr>
 		
-			<tr class="prop">
-				<td valign="top" class="name"><g:message code="customer.outletName.label" default="Outlet Name" /></td>
-				
-				<td valign="top" class="value">${fieldValue(bean: customerInstance, field: "outletName")}</td>
-				
-			</tr>
+
 		
 			<tr class="prop">
 				<td valign="top" class="name"><g:message code="customer.split.label" default="Split" /></td>
