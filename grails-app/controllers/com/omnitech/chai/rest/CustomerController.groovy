@@ -3,6 +3,7 @@ package com.omnitech.chai.rest
 import com.omnitech.chai.model.Customer
 import com.omnitech.chai.model.User
 import com.omnitech.chai.model.Village
+import com.omnitech.chai.util.ChaiUtils
 import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.ReflectFunctions
 import grails.converters.JSON
@@ -71,18 +72,19 @@ class CustomerController {
             return
         }
 
-        customer = _updateVillage(customer, village)
-        customer.lng = (Float) json['longitude']
-        customer.lat = (Float) json['latitude']
+        customer.uuid = json.uuid
+        customer = _updateVillage(json.uuid, customer, village)
+        customer.lng = ChaiUtils.execSilently('Converting long to float') { json['longitude'] as Float }
+        customer.lat = ChaiUtils.execSilently('Converting lat to float') { json['latitude'] as Float }
         customer.customerContacts?.each {it.id = null}
         customerService.saveCustomer(customer)
 
         render  ([status: HttpStatus.OK.reasonPhrase, message: "Success"] as JSON )
     }
 
-    private Customer _updateVillage(Customer customer, Village village) {
+    private Customer _updateVillage(String customerId, Customer customer, Village village) {
 //        def neoCustomer = customerService.findCustomer(customer.id)
-        def neoCustomer = customerService.findCustomer(customer.uuid)
+        def neoCustomer = customerService.findCustomer(customerId)
         if (!neoCustomer) {
             customer.village = village
             customer.id = null
