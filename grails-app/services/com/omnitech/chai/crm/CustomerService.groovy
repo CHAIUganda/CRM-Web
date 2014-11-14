@@ -57,7 +57,7 @@ class CustomerService {
         def customer = Customer.simpleName.toLowerCase()
         def exec = start(nodesById('u', userId))
                 .match(node('u').out(USER_TERRITORY).node('t').in(SC_IN_TERRITORY).node('sc').out(HAS_PARISH).node('p').out(HAS_VILLAGE).node('v').in(CUST_IN_VILLAGE).node(customer)
-        ).returns(identifier(customer))
+        ).returns(distinct(identifier(customer)))
         log.trace("findAllCustomersByUser $exec")
         ModelFunctions.query(customerRepository, exec, params, Customer).collect()
     }
