@@ -3,7 +3,11 @@ package com.omnitech.chai
 import com.omnitech.chai.model.DetailerTask
 import com.omnitech.chai.model.Task
 import com.omnitech.chai.util.ModelFunctions
+import com.omnitech.chai.util.ReflectFunctions
+import com.omnitech.chai.util.ServletUtil
+import fuzzycsv.FuzzyCSV
 import grails.transaction.Transactional
+import grails.util.GrailsNameUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
@@ -56,6 +60,21 @@ class TaskController {
 
 
         respond page.content, model: [taskInstanceCount: page.totalElements,users: userService.listAllUsers([:])]
+    }
+
+    def export() {
+        def user = params.user ? userService.findUserByName(params.user) : null
+        def exportFields = ['DISTRICT', 'SUBCOUNTY', 'VILLAGE', 'OUTLET NAME', 'OUTLET TYPE']
+        def fields = ReflectFunctions.findAllBasicFields(DetailerTask).reverse()
+        fields.removeAll('_dateLastUpdated', '_dateCreated')
+        exportFields.addAll(fields.collect { GrailsNameUtils.getNaturalName(it).toUpperCase() })
+        if (user) {
+            def data = taskService.findAllTasksForUser(user.id)
+            def csvData = FuzzyCSV.toCSV(data, * exportFields)
+            ServletUtil.exportCSV(response, "Tasks-${params.user}.csv", csvData)
+        }
+
+
     }
 
     def search(Integer max) {

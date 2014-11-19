@@ -1,5 +1,6 @@
 package com.omnitech.chai.util
 
+import grails.util.GrailsNameUtils
 import groovy.time.TimeCategory
 import groovy.transform.CompileStatic
 import org.slf4j.LoggerFactory
@@ -102,6 +103,17 @@ class ChaiUtils {
     static long roundToNearest(double value, long nearest) {
         double newValue = value + (nearest / 2)
         return ((long) (newValue) / nearest) * nearest
+    }
+
+    static String splitCamelCase(String s) {
+        return s.replaceAll(
+                String.format("%s|%s|%s",
+                        "(?<=[A-Z])(?=[A-Z][a-z])",
+                        "(?<=[^A-Z])(?=[A-Z])",
+                        "(?<=[A-Za-z])(?=[^A-Za-z])"
+                ),
+                " "
+        );
     }
 
 }
