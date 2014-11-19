@@ -69,9 +69,13 @@ class TaskController {
         fields.removeAll('_dateLastUpdated', '_dateCreated')
         exportFields.addAll(fields.collect { GrailsNameUtils.getNaturalName(it).toUpperCase() })
         if (user) {
-            def data = taskService.findAllTasksForUser(user.id)
+            def data = taskService.exportTasksForUser(user.id)
             def csvData = FuzzyCSV.toCSV(data, * exportFields)
             ServletUtil.exportCSV(response, "Tasks-${params.user}.csv", csvData)
+        }   else{
+            def data = taskService.exportAllTasks()
+            def csvData = FuzzyCSV.toCSV(data, * exportFields)
+            ServletUtil.exportCSV(response, "Tasks-All.csv", csvData)
         }
 
 

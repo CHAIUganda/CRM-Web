@@ -6,7 +6,6 @@ import com.omnitech.chai.model.Task
 import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.PageUtils
 import com.omnitech.chai.util.ReflectFunctions
-import fuzzycsv.FuzzyCSV
 import org.neo4j.cypherdsl.grammar.Match
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -44,7 +43,7 @@ class TaskService {
         log.trace("listTasksByStatus: countQuery: $countyQuery")
         log.trace("listTasksByStatus: dataQuery: $resultQuery")
 
-        ModelFunctions.query(neo, resultQuery, countyQuery, params,Task)
+        ModelFunctions.query(neo, resultQuery, countyQuery, params, Task)
     }
 
     private static getTaskQuery(String status) {
@@ -66,7 +65,8 @@ class TaskService {
     }
 
     /* Detailer Tasks*/
-    DetailerTask findDetailerTask(Long id) { neo.findOne(id,DetailerTask) }
+
+    DetailerTask findDetailerTask(Long id) { neo.findOne(id, DetailerTask) }
 
     List<Task> findAllTaskForUser(Long userId, String status, Map params) {
         def task = 'task'
@@ -83,7 +83,7 @@ class TaskService {
         taskRepository.query(query, [:]).collect()
     }
 
-    List<Map> findAllTasksForUser(Long userId) {
+    List<Map> exportTasksForUser(Long userId) {
         def task = 'task'
         def query = mathQueryForUserTasks(userId)
                 .match(node('sc').in(HAS_SUB_COUNTY).node('d')).optional()
@@ -104,6 +104,34 @@ class TaskService {
         //District,Subcounty,Village,Customer Name, outletType,
         // All other fields
         log.trace("findAllTasksForUser(): [$query]")
+
+        neo.query(query.toString(), [:]).collect()
+    }
+
+    List<Map> exportAllTasks() {
+        def query = match(
+                node('task').label(Task.simpleName)
+                        .in(CUST_TASK).node('c')
+                        .out(CUST_IN_VILLAGE).node('v')
+                        .in(HAS_VILLAGE).node('p')
+                        .in(HAS_PARISH).node('sc')
+                        .in(HAS_SUB_COUNTY).node('d'))
+
+
+        def fields = [az(identifier('d').property('name'), 'DISTRICT'),
+                az(identifier('sc').property('name'), 'SUBCOUNTY'),
+                az(identifier('v').property('name'), 'VILLAGE'),
+                az(identifier('c').property('outletName'), 'OUTLET NAME'),
+                az(identifier('c').property('outletType'), 'OUTLET TYPE')]
+
+        ReflectFunctions.findAllBasicFields(DetailerTask).each {
+            if ('_dateLastUpdated' == it || it == '_dateCreated') return
+            fields << az(identifier('task').property(it), getNaturalName(it).toUpperCase())
+        }
+        query.returns(* fields)
+        //District,Subcounty,Village,Customer Name, outletType,
+        // All other fields
+        log.trace("exportAllTasks(): [$query]")
 
         neo.query(query.toString(), [:]).collect()
     }

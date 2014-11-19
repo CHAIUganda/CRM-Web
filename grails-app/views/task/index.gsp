@@ -92,7 +92,7 @@
             <g:else>
                 <li>
                     <g:link controller="task" action="export" params="${[user: params.user]}">
-                        <i class="glyphicon glyphicon-export"></i>Export
+                        <i class="glyphicon glyphicon-export"></i>Export All
                     </g:link>
                 </li>
             </g:else>
