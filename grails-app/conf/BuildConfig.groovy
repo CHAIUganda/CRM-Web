@@ -61,6 +61,7 @@ grails.project.dependency.resolution = {
         runtime 'javax.validation:validation-api:1.1.0.Final'
         runtime 'org.neo4j:neo4j-spatial:0.13-neo4j-2.1.2'
         compile 'org.neo4j:neo4j-cypher-dsl:2.1.4'
+        compile 'fuzzy-csv:fuzzycsv:1.0-SNAPSHOT'
 
         runtime('org.neo4j.app:neo4j-server:2.1.2') {
             excludes 'org.slf4j:slf4j-jdk14'

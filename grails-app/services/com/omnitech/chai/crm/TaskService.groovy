@@ -6,6 +6,7 @@ import com.omnitech.chai.model.Task
 import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.PageUtils
 import com.omnitech.chai.util.ReflectFunctions
+import fuzzycsv.FuzzyCSV
 import org.neo4j.cypherdsl.grammar.Match
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -13,7 +14,9 @@ import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.data.neo4j.transaction.Neo4jTransactional
 
 import static com.omnitech.chai.model.Relations.*
+import static grails.util.GrailsNameUtils.getNaturalName
 import static org.neo4j.cypherdsl.CypherQuery.*
+import static org.neo4j.cypherdsl.CypherQuery.as as az
 
 @Neo4jTransactional
 class TaskService {
@@ -78,6 +81,31 @@ class TaskService {
 
         log.trace("Tasks for user: [$query]")
         taskRepository.query(query, [:]).collect()
+    }
+
+    List<Map> findAllTasksForUser(Long userId) {
+        def task = 'task'
+        def query = mathQueryForUserTasks(userId)
+                .match(node('sc').in(HAS_SUB_COUNTY).node('d')).optional()
+
+
+        def fields = [az(identifier('d').property('name'), 'DISTRICT'),
+                az(identifier('sc').property('name'), 'SUBCOUNTY'),
+                az(identifier('v').property('name'), 'VILLAGE'),
+                az(identifier('c').property('outletName'), 'OUTLET NAME'),
+                az(identifier('c').property('outletType'), 'OUTLET TYPE')]
+
+        ReflectFunctions.findAllBasicFields(DetailerTask).each {
+            if ('_dateLastUpdated' == it || it == '_dateCreated') return
+            fields << az(identifier(task).property(it), getNaturalName(it).toUpperCase())
+        }
+        query.returns(* fields)
+
+        //District,Subcounty,Village,Customer Name, outletType,
+        // All other fields
+        log.trace("findAllTasksForUser(): [$query]")
+
+        neo.query(query.toString(), [:]).collect()
     }
 
 
