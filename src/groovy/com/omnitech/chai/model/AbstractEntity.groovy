@@ -25,7 +25,8 @@ class AbstractEntity {
 
     void setDateCreated(Date dateCreated) {
         this.dateCreated = dateCreated
-        this._dateCreated = format.format(dateCreated)
+        if (dateCreated)
+            this._dateCreated = format.format(dateCreated)
     }
 
     Date getLastUpdated() {
@@ -34,6 +35,7 @@ class AbstractEntity {
 
     void setLastUpdated(Date lastUpdated) {
         this.lastUpdated = lastUpdated
-        this._dateLastUpdated = format.format(lastUpdated)
+        if (lastUpdated)
+            this._dateLastUpdated = format.format(lastUpdated)
     }
 }
