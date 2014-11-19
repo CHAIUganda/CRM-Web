@@ -13,84 +13,102 @@
 
 %{-- THE SUBMENU BAR --}%
 <div class="container" style="max-width: 100%; padding: 0; margin-bottom: 3px;">
-    <div class="container" style="background: #eeeeee; padding: 5px; border-radius: 0px; border: 1px solid #ddd; max-width: 100%;">
+    <div class="container"
+         style="background: #eeeeee; padding: 5px; border-radius: 0px; border: 1px solid #ddd; max-width: 100%;">
         <ul id="Menu" class="nav nav-pills margin-top-small">
 
-        <li class="${params.action == "index" ? 'active' : ''}">
-            <g:link action="index"><i class="glyphicon glyphicon-th-list"></i> <g:message code="default.list.label"
-                                                                                          args="[entityName]"/></g:link>
-        </li>
-        <li class="${params.action == "create" ? 'active' : ''}">
-            <g:link action="create"><i class="glyphicon glyphicon-plus"></i> <g:message code="default.new.label"
-                                                                                        args="[entityName]"/></g:link>
-        </li>
+            %{-- TASK LIST--}%
+            <li class="${params.action == "index" ? 'active' : ''}">
+                <g:link action="index"><i class="glyphicon glyphicon-th-list"></i> All <g:message code="default.list.label"
+                                                                                              args="[entityName]"/></g:link>
+            </li>
 
-        %{-- SELECT USERS MENU--}%
-        <li>
-            <a data-toggle="dropdown" href="#"><i
-                    class="glyphicon glyphicon-user"></i>${params.user ? params.user : 'Select User'}<b
-                    class="caret"></b></a>
-            <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
-                <g:each in="${users}" var="u">
-                    <li><g:link controller="task" action="index" params="${[user: u, status: params.status]}">
-                        <i class="glyphicon glyphicon-user"></i>${u}
-                    </g:link></li>
-                </g:each>
-            </ul>
-        </li>
+            %{-- CREATE MENU --}%
+            <li class="${params.action == "create" ? 'active' : ''}">
+                <g:link action="create"><i class="glyphicon glyphicon-plus"></i> <g:message code="default.new.label"
+                                                                                            args="[entityName]"/></g:link>
+            </li>
 
-        %{-- ACTIVE OR INACTIVE STATUS --}%
-            %{--Show if a user is selected--}%
-        <li>
-            <a data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-filter"></i>${params.status?.toUpperCase() ?: 'New'} Tasks<b
-                    class="caret"></b></a>
-            <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
-                <g:if test="${params.user != null}">
-                    <li>
-
-                        <g:link controller="task" action="index"
-                                params="${[status: Task.STATUS_NEW, user: params.user]}">
-                            <i class="glyphicon glyphicon-list"></i>Active
+            %{-- SELECT USERS MENU--}%
+            <li>
+                <a data-toggle="dropdown" href="#"><i
+                        class="glyphicon glyphicon-user"></i>${params.user ? params.user : 'Select User'}<b
+                        class="caret"></b></a>
+                <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+                    <g:each in="${users}" var="u">
+                        <li><g:link controller="task" action="index" params="${[user: u, status: params.status]}">
+                            <i class="glyphicon glyphicon-user"></i>${u}
                         </g:link></li>
-                    <li>
-                    <g:link controller="task" action="index"
-                            params="${[status: Task.STATUS_COMPLETE, user: params.user]}">
-                        <i class="glyphicon glyphicon-list"></i>Complete
+                    </g:each>
+                </ul>
+            </li>
+
+            %{-- COMPLETE OR NEW MENUS --}%
+            <li>
+                <a data-toggle="dropdown" href="#"><i
+                        class="glyphicon glyphicon-filter"></i>${params.status?.toUpperCase() ?: 'New'} Tasks<b
+                        class="caret"></b></a>
+                <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+                    <g:if test="${params.user != null}">
+                        <li>
+
+                            <g:link controller="task" action="index"
+                                    params="${[status: Task.STATUS_NEW, user: params.user]}">
+                                <i class="glyphicon glyphicon-list"></i>Active
+                            </g:link></li>
+                        <li>
+                            <g:link controller="task" action="index"
+                                    params="${[status: Task.STATUS_COMPLETE, user: params.user]}">
+                                <i class="glyphicon glyphicon-list"></i>Complete
+                            </g:link>
+                        </li>
+
+                    </g:if>
+                    <g:else>
+                        <li>
+
+                            <g:link controller="task" action="index"
+                                    params="${[status: Task.STATUS_NEW]}">
+                                <i class="glyphicon glyphicon-list"></i>Active</g:link></li>
+                        <li>
+                            <g:link controller="task" action="index"
+                                    params="${[status: Task.STATUS_COMPLETE]}">
+                                <i class="glyphicon glyphicon-list"></i>Complete
+                            </g:link>
+                        </li>
+                    </g:else>
+                </ul>
+            </li>
+
+
+        %{--The Export Button--}%
+            <g:if test="${params.user != null}">
+                <li>
+                    <g:link controller="task" action="export" params="${[user: params.user]}">
+                        <i class="glyphicon glyphicon-export"></i>Export ${params.user}'s  Tasks
                     </g:link>
                 </li>
-                </g:if>
-                <g:else>
-                    <li>
+            </g:if>
+            <g:else>
+                <li>
+                    <g:link controller="task" action="export" params="${[user: params.user]}">
+                        <i class="glyphicon glyphicon-export"></i>Export
+                    </g:link>
+                </li>
+            </g:else>
 
-                        <g:link controller="task" action="index"
-                                params="${[status: Task.STATUS_NEW]}">
-                            <i class="glyphicon glyphicon-list"></i>Active</g:link></li>
-                    <li>
-                        <g:link controller="task" action="index"
-                                params="${[status: Task.STATUS_COMPLETE]}">
-                            <i class="glyphicon glyphicon-list"></i>Complete
-                        </g:link>
-                    </li>
-                </g:else>
-            </ul>
-        </li>
-
-            %{--The Search Box--}%
-            <g:if test="${!layout_nosearchtext && (params.action == 'index' || params.action == 'search')}">
+        %{--The Search Box--}%
                 <li class="navbar-right">
                     <div class="col-lg-12">
-                        %{--<input type="hidden" name="currentPage" value="${currentPage}"/>--}%
-                        %{--<input type="hidden" name="domain" value="${clazz}"/>--}%
                         <form action="search">
                             <input class="form-control" name="term" value="${(params.term ?: params.id)}"
                                    placeholder="Please type search item and press enter" style="width: 300px;"/>
                         </form>
                     </div>
                 </li>
-            </g:if>
 
-    </ul>
-</div>
+        </ul>
+    </div>
 </div>
 %{-- END SUBMENU BAR --}%
 
@@ -124,7 +142,8 @@
                 <td>${fieldValue(bean: taskInstance, field: "status")}</td>
 
                 <td><g:if test="${taskInstance.dueDate}">
-                    <g:formatDate date="${taskInstance.dueDate}" format="dd-MMM-yyyy" /> <span class="${new Date().after(taskInstance.dueDate) ? 'alert-danger':''}">(${ChaiUtils.fromNow(taskInstance.dueDate)})</span>
+                    <g:formatDate date="${taskInstance.dueDate}" format="dd-MMM-yyyy"/> <span
+                            class="${new Date().after(taskInstance.dueDate) ? 'alert-danger' : ''}">(${ChaiUtils.fromNow(taskInstance.dueDate)})</span>
                 </g:if></td>
 
                 <td>${taskInstance.customer}</td>
