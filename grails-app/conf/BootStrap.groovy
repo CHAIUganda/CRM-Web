@@ -29,6 +29,7 @@ class BootStrap {
 
 
     def destroy = {
+        println("*****SHUTTING DOWN GRAPH DB****")
         graphDatabaseService.shutdown()
     }
 
