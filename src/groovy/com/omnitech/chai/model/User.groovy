@@ -53,6 +53,10 @@ class User extends AbstractEntity {
         return roles?.any { r.authority == it.authority }
     }
 
+    boolean hasRole(String authority) {
+        return roles?.any { authority == it.authority }
+    }
+
     @PreUpdate
     @PrePersist
     public void updateTimeStamps() {
