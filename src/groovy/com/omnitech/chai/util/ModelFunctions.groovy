@@ -83,6 +83,7 @@ class ModelFunctions {
         saveEntity(repo, entity, null)
     }
 
+    //todo since spring data does not use session bound objects like hibernate we should remove or modify this useless method
     static <S extends AbstractEntity> S saveEntity(GraphRepository<S> repo, S entity, Closure beforeBind) {
         S neoEntity = entity
         if (entity.id) {
