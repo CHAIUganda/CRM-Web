@@ -43,12 +43,12 @@ class TaskController {
         def detailerInfo = (json.get('detailers') as List)?.get(0) as Map
         println(json.inspect())
         def task = ModelFunctions.createObj(DetailerTask, json)
-        task.lng = ChaiUtils.execSilently('Converting long to float') { json['longitude'] as Float }
-        task.lat = ChaiUtils.execSilently('Converting lat to float') { json['latitude'] as Float }
         if (detailerInfo) {
             detailerInfo.remove('id')
             ModelFunctions.bind(task, detailerInfo)
         }
+        task.lng = ChaiUtils.execSilently('Converting long to float') { detailerInfo['longitude'] as Float }
+        task.lat = ChaiUtils.execSilently('Converting lat to float') { detailerInfo['latitude'] as Float }
         task.uuid = json.uuid
         if(!task.uuid){
             response.status = HttpStatus.BAD_REQUEST.value()
