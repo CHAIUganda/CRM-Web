@@ -8,6 +8,9 @@ import org.springframework.data.neo4j.annotation.NodeEntity
 @Validateable
 class Role extends AbstractEntity {
 
+    final static String DETAILER_ROLE_NAME = 'ROLE_DETAILER'
+    final static String SALES_ROLE_NAME = 'ROLE_SALES'
+
     @Indexed(unique = true)
     String authority
 

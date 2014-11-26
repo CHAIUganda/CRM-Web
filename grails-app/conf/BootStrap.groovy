@@ -8,11 +8,15 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.type.filter.AnnotationTypeFilter
 import org.springframework.data.neo4j.annotation.NodeEntity
 
+import static com.omnitech.chai.model.Role.DETAILER_ROLE_NAME
+import static com.omnitech.chai.model.Role.getSALES_ROLE_NAME
+
 class BootStrap {
 
     def springSecurityService
     def txHelperService
     def graphDatabaseService
+    def userService
 
     def init = { servletContext ->
 
@@ -43,9 +47,26 @@ class BootStrap {
         }
 
         createUuidConstraints()
+        insertEssentialRoles()
 
         //override this so that a proper request map is loaded by spring security
         ReflectionUtils.metaClass.static.getRequestMapClass = { RequestMap }
+    }
+
+    private insertEssentialRoles() {
+        txHelperService.doInTransaction {
+            def salesRole = userService.findRoleByAuthority(SALES_ROLE_NAME)
+            if (!salesRole) {
+                println("Inserting essential role [$SALES_ROLE_NAME]...")
+                userService.saveRole(new Role(authority: SALES_ROLE_NAME))
+            }
+
+            def detailerRole = userService.findRoleByAuthority(DETAILER_ROLE_NAME)
+            if (!detailerRole) {
+                println("Inserting essential role [$DETAILER_ROLE_NAME]...")
+                userService.saveRole(new Role(authority: DETAILER_ROLE_NAME))
+            }
+        }
     }
     def destroy = {
         graphDatabaseService.shutdown()

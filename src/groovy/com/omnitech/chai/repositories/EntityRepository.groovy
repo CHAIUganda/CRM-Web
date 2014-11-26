@@ -17,6 +17,8 @@ interface ProductRepository extends GraphRepository<Product> {
 
 interface RoleRepository extends GraphRepository<Role> {
     Role findByUuid(String uuid)
+
+    Role findByAuthority(String name)
 }
 
 interface RegionRepository extends GraphRepository<Region> {
@@ -49,7 +51,7 @@ interface ParishRepository extends GraphRepository<Parish> {
     Parish findBySubCountyAndName(@Param('subCountyId') Long subCountyId, @Param('name') String name)
 
     @Query('start u = node({userId}) match u-[:USER_TERRITORY]->(t)<-[:SC_IN_TERRITORY]-(sc)-[:HAS_PARISH]->(p) return distinct p')
-    Iterable<Parish> findAllForUser(@Param('userId')Long userId)
+    Iterable<Parish> findAllForUser(@Param('userId') Long userId)
 }
 
 interface VillageRepository extends GraphRepository<Village> {
@@ -78,7 +80,7 @@ interface TerritoryRepository extends GraphRepository<Territory> {
     Territory findByUuid(String uuid)
 }
 
-interface TaskRepository extends GraphRepository<Task>,CypherDslRepository<Task> {
+interface TaskRepository extends GraphRepository<Task>, CypherDslRepository<Task> {
 
     Task findByUuid(String uuid)
 
@@ -107,6 +109,7 @@ interface DetailerTaskRepository extends GraphRepository<DetailerTask> {
 
 interface SettingRepository extends GraphRepository<Setting> {
     Setting findByUuid(String uuid)
+
     Setting findByName(String name)
 }
 
@@ -139,7 +142,7 @@ interface DistrictRepository extends GraphRepository<District> {
     District findByRegionAndName(@Param('regionId') Long regionId, @Param('name') String name)
 
     @Query('start u = node({userId}) match u-[:USER_TERRITORY]->(t)<-[:SC_IN_TERRITORY]-(sc)<-[:HAS_SUB_COUNTY]-(d) return distinct d')
-    Iterable<District> findAllForUser(@Param('userId')Long userId)
+    Iterable<District> findAllForUser(@Param('userId') Long userId)
 
 }
 

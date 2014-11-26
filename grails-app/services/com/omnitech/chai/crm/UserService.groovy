@@ -39,7 +39,7 @@ class UserService {
         userRepository.findOne(id)
     }
 
-    User findUserByName(String name){userRepository.findByUsername(name)}
+    User findUserByName(String name) { userRepository.findByUsername(name) }
 
     Role findRole(Long id) {
         roleRepository.findOne(id)
@@ -67,6 +67,10 @@ class UserService {
 
     Role saveRole(Role role) {
         ModelFunctions.saveEntity(roleRepository, role)
+    }
+
+    Role findRoleByAuthority(String authority) {
+        roleRepository.findByAuthority(authority)
     }
 
     RequestMap saveRequestMap(RequestMap requestMap) {
