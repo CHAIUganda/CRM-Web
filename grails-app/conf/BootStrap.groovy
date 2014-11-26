@@ -19,9 +19,20 @@ class BootStrap {
     def userService
 
     def init = { servletContext ->
-
         ChaiUtils.injectUtilityMethods()
+        insertBootStrapData()
+        createUuidConstraints()
+        insertEssentialRoles()
+        //override this so that a proper request map is loaded by spring security
+        ReflectionUtils.metaClass.static.getRequestMapClass = { RequestMap }
+    }
 
+
+    def destroy = {
+        graphDatabaseService.shutdown()
+    }
+
+    private void insertBootStrapData() {
         def numUsers = txHelperService.doInTransaction { neo.count(User.class) }
 
         if (!numUsers) {
@@ -45,12 +56,6 @@ class BootStrap {
                 }
             }
         }
-
-        createUuidConstraints()
-        insertEssentialRoles()
-
-        //override this so that a proper request map is loaded by spring security
-        ReflectionUtils.metaClass.static.getRequestMapClass = { RequestMap }
     }
 
     private insertEssentialRoles() {
@@ -67,9 +72,6 @@ class BootStrap {
                 userService.saveRole(new Role(authority: DETAILER_ROLE_NAME))
             }
         }
-    }
-    def destroy = {
-        graphDatabaseService.shutdown()
     }
 
     def createUuidConstraints() {
