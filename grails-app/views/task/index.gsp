@@ -150,7 +150,6 @@
 
                 <td>${taskInstance.customer}</td>
 
-                %{--<td>${taskInstance.assignedTo ?: taskInstance.completedBy}</td>--}%
                 <td>${taskInstance.territoryUser()}</td>
 
                 <td>
