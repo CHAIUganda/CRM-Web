@@ -39,7 +39,7 @@ grails.mime.types = [ // the first one is the default format
 // What URL patterns should be processed by the resources plugin
 grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*']
 //edit: add bootstrap and kickstart to allow the loading of glyph-icons
-grails.resources.adhoc.includes = ['/images/**', '/css/**', '/js/**', '/plugins/**', '/kickstart/**', '/bootstrap/**']
+grails.resources.adhoc.includes = ['/images/**', '/css/**', '/js/**', '/plugins/**', '/kickstart/**', '/bootstrap/**','/ts/**']
 
 // Legacy setting for codec used to encode data with ${}
 grails.views.default.codec = "html"
@@ -124,7 +124,7 @@ log4j = {
                 layout: logLayoutPattern)
     }
 
-    debug logFile: ["grails.app.services", "grails.app.controllers", "com.omnitech", "groovy.sql.Sql", "org.omnitech.sms"]
+    trace logFile: ["grails.app.services", "grails.app.controllers", "com.omnitech", "groovy.sql.Sql", "org.omnitech.sms"]
 
     error  'org.codehaus.groovy.grails.web.servlet',        // controllers
            'org.codehaus.groovy.grails.web.pages',          // GSP
