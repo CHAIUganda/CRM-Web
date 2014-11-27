@@ -1,5 +1,6 @@
 package com.omnitech.chai.model
 
+import com.omnitech.chai.util.ChaiUtils
 import grails.validation.Validateable
 import org.neo4j.graphdb.Direction
 import org.springframework.data.neo4j.annotation.Fetch
@@ -13,7 +14,7 @@ import org.springframework.data.neo4j.annotation.RelatedTo
 @Validateable
 class Task extends AbstractEntity {
 
-    final static String STATUS_NEW = 'new', STATUS_COMPLETE = 'complete',STATUS_CANCELLED = 'cancelled'
+    final static String STATUS_NEW = 'new', STATUS_COMPLETE = 'complete', STATUS_CANCELLED = 'cancelled'
 
     String description
     protected String type = Task.simpleName
@@ -55,11 +56,23 @@ class Task extends AbstractEntity {
 
     User getAssignedTo() { assignedTo }
 
-    String getType(){type}
+    String getType() { type }
 
-    boolean isComplete(){status == STATUS_COMPLETE}
+    boolean isComplete() { status == STATUS_COMPLETE }
 
-    Set<User> territoryUser(){
+    String getStatusMessage() {
+        if (isComplete()) {
+            return "Completed: ${ChaiUtils.fromNow(completionDate)}"
+        }
+        return "Due: ${ChaiUtils.fromNow(dueDate)}"
+    }
+
+    boolean isOverDue() {
+        if (!dueDate || isComplete()) return false
+        return new Date().after(dueDate)
+    }
+
+    Set<User> territoryUser() {
         this.customer?.village?.parish?.subCounty?.territory?.territoryUsers
     }
 

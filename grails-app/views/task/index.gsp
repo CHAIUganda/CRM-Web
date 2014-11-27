@@ -19,8 +19,9 @@
 
             %{-- TASK LIST--}%
             <li class="${params.action == "index" ? 'active' : ''}">
-                <g:link action="index"><i class="glyphicon glyphicon-th-list"></i> All <g:message code="default.list.label"
-                                                                                              args="[entityName]"/></g:link>
+                <g:link action="index"><i class="glyphicon glyphicon-th-list"></i> All <g:message
+                        code="default.list.label"
+                        args="[entityName]"/></g:link>
             </li>
 
             %{-- CREATE MENU --}%
@@ -98,14 +99,14 @@
             </g:else>
 
         %{--The Search Box--}%
-                <li class="navbar-right">
-                    <div class="col-lg-12">
-                        <form action="search">
-                            <input class="form-control" name="term" value="${(params.term ?: params.id)}"
-                                   placeholder="Please type search item and press enter" style="width: 300px;"/>
-                        </form>
-                    </div>
-                </li>
+            <li class="navbar-right">
+                <div class="col-lg-12">
+                    <form action="search">
+                        <input class="form-control" name="term" value="${(params.term ?: params.id)}"
+                               placeholder="Please type search item and press enter" style="width: 300px;"/>
+                    </form>
+                </div>
+            </li>
 
         </ul>
     </div>
@@ -120,11 +121,11 @@
             <g:sortableColumn property="description" params="${params}"
                               title="${message(code: 'task.description.label', default: 'Description')}"/>
 
-            <g:sortableColumn property="status" params="${params}"
-                              title="${message(code: 'task.status.label', default: 'Status')}"/>
-
             <g:sortableColumn property="dueDate" params="${params}"
                               title="${message(code: 'task.dueDate.label', default: 'Due Date')}"/>
+
+            <g:sortableColumn property="status" params="${params}"
+                              title="${message(code: 'task.status.label', default: 'Status')}"/>
 
             <th>Customer</th>
             <th>Assigned User</th>
@@ -139,12 +140,13 @@
                 <td><g:link action="show"
                             id="${taskInstance.id}">${fieldValue(bean: taskInstance, field: "description")}</g:link></td>
 
-                <td>${fieldValue(bean: taskInstance, field: "status")}</td>
-
                 <td><g:if test="${taskInstance.dueDate}">
-                    <g:formatDate date="${taskInstance.dueDate}" format="dd-MMM-yyyy"/> <span
-                            class="${new Date().after(taskInstance.dueDate) ? 'alert-danger' : ''}">(${ChaiUtils.fromNow(taskInstance.dueDate)})</span>
+                    <span class="${taskInstance.isOverDue() ? 'alert-danger' : ''}">
+                        <g:formatDate date="${taskInstance.dueDate}" format="dd-MMM-yyyy"/>
+                    </span>
                 </g:if></td>
+
+                <td>${taskInstance.getStatusMessage()}</td>
 
                 <td>${taskInstance.customer}</td>
 
