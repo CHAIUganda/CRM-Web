@@ -22,6 +22,27 @@ declare module omnitech.chai {
         error (func:(data:string) => void):HttPromise;
     }
 
+    interface HasCoords {
+        lat: string
+        lng:string
+    }
+
 }
+
+
+interface MarkerWithLabelOptions extends google.maps.MarkerOptions {
+    labelContent ?: string;
+    labelAnchor ?: google.maps.Point;
+    labelClass ?:  string;
+    labelStyle ?: any;
+}
+
+
+declare class MarkerWithLabel extends google.maps.Marker {
+    constructor(option:MarkerWithLabelOptions);
+}
+
+declare var krcBase:string;
+declare var krcConfigs:any;
 
 declare var omnitechBase:string;
