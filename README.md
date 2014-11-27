@@ -17,6 +17,9 @@ All the url below return a map of [id,name,uuid]
 - http://23.239.27.196:8080/web-crm/rest/place/parishes/update
 - http://23.239.27.196:8080/web-crm/rest/place/villages/update
 
+### User Info
+- http://localhost:8080/chai-crm/rest/info
+
 #### Customers
 
 - http://localhost:8080/chai-crm/rest/customer/list
