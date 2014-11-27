@@ -1,5 +1,6 @@
 package com.omnitech.chai.rest
 
+import com.omnitech.chai.model.Role
 import grails.converters.JSON
 import org.springframework.http.HttpStatus
 
@@ -110,6 +111,17 @@ class PlaceController {
         }
         log.debug("Resp:${neoSecurityService.currentUser}-${villages?.size()} Villages")
         respond villages
+    }
+
+    def info() {
+        def user = neoSecurityService.currentUser
+        def role = 'NONE'
+        if (user.hasRole(Role.DETAILER_ROLE_NAME)) {
+            role = Role.DETAILER_ROLE_NAME
+        } else if (user.hasRole(Role.SALES_ROLE_NAME)) {
+            role = Role.SALES_ROLE_NAME
+        }
+        respond([userName: user.username, role: role])
     }
 
     def renderError(String error) {
