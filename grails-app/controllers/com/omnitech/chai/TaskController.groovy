@@ -33,8 +33,18 @@ class TaskController {
     Neo4jTemplate neo
 
     def index(Integer max) {
+        Page<Task> page = loadPageData(max)
+        respond page.content, model: [taskInstanceCount: page.totalElements, users: userService.listAllUsers([:])]
+    }
+
+    def map(Integer max) {
+        def page = loadPageData(max)
+        respond page.content, model: [taskInstanceCount: page.totalElements, users: userService.listAllUsers([:])]
+    }
+
+    private Page<Task> loadPageData(Integer max) {
         params.max = Math.min(max ?: 50, 100)
-        if(!params.sort) {
+        if (!params.sort) {
             params.sort = 'dueDate'
         }
 
@@ -55,12 +65,11 @@ class TaskController {
         }
 
         txHelperService.doInTransaction {
-            page.content.each {neo.fetch(it.territoryUser())}
+            page.content.each { neo.fetch(it.territoryUser()) }
         }
-
-
-        respond page.content, model: [taskInstanceCount: page.totalElements,users: userService.listAllUsers([:])]
+        return page
     }
+
 
     def export() {
         def user = params.user ? userService.findUserByName(params.user) : null
@@ -72,7 +81,7 @@ class TaskController {
             def data = taskService.exportTasksForUser(user.id)
             def csvData = FuzzyCSV.toCSV(data, * exportFields)
             ServletUtil.exportCSV(response, "Tasks-${params.user}.csv", csvData)
-        }   else{
+        } else {
             def data = taskService.exportAllTasks()
             def csvData = FuzzyCSV.toCSV(data, * exportFields)
             ServletUtil.exportCSV(response, "Tasks-All.csv", csvData)
@@ -89,9 +98,9 @@ class TaskController {
         }
         def page = taskService.searchTasks(params.id, params)
         txHelperService.doInTransaction {
-            page.content.each {neo.fetch(it.territoryUser())}
+            page.content.each { neo.fetch(it.territoryUser()) }
         }
-        respond page.content, view: 'index', model: [taskInstanceCount: page.totalElements,users: userService.listAllUsers([:])]
+        respond page.content, view: 'index', model: [taskInstanceCount: page.totalElements, users: userService.listAllUsers([:])]
     }
 
     def show() {
@@ -113,7 +122,7 @@ class TaskController {
     }
 
     def create() {
-        respond ModelFunctions.bind(new Task(), params), model: [users: userService.listAllUsers(), customers: customerService.listAllCustomers() ]
+        respond ModelFunctions.bind(new Task(), params), model: [users: userService.listAllUsers(), customers: customerService.listAllCustomers()]
     }
 
     def save(Task taskInstance) {
@@ -148,7 +157,7 @@ class TaskController {
         txHelperService.doInTransaction {
             neo.fetch(taskInstance.territoryUser())
         }
-        respond taskInstance ,model: [users: userService.listAllUsers(), customers: customerService.listAllCustomers() ]
+        respond taskInstance, model: [users: userService.listAllUsers(), customers: customerService.listAllCustomers()]
     }
 
     @Transactional

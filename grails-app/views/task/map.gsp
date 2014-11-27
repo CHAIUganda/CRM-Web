@@ -100,9 +100,11 @@
             </g:else>
 
             <li>
-                <g:link controller="task" action="map" params="${params}">
+                <a href="#"
+                   data-target="#map-view"
+                   data-toggle="modal">
                     <i class="glyphicon glyphicon-map-marker"></i>Show Map
-                </g:link>
+                </a>
             </li>
 
             %{--The Search Box--}%
@@ -122,58 +124,27 @@
 
 <section id="index-task" class="first">
 
-    <table class="table table-bordered margin-top-medium">
-        <thead>
-        <tr>
-            <g:sortableColumn property="description" params="${params}"
-                              title="${message(code: 'task.description.label', default: 'Description')}"/>
+    <div class="row">
+        <div class="col-lg-12">
+            <div id="map" style="height: 550px;
+            position: relative;
+            overflow: hidden;
+            transform: translateZ(0px);
+            background-color: rgb(229, 227, 223);"></div>
+            %{--<div id="map" class="col-lg-12"--}%
+            %{--style=" margin: 5px 10px 10px 10px;  height: 300px; width: 300px; border: 1px solid #ccc;">dsddsd</div>--}%
+        </div>
+    </div>
 
-            <g:sortableColumn property="dueDate" params="${params}"
-                              title="${message(code: 'task.dueDate.label', default: 'Due Date')}"/>
-
-            <g:sortableColumn property="status" params="${params}"
-                              title="${message(code: 'task.status.label', default: 'Status')}"/>
-
-            <th>Customer</th>
-            <th>Assigned User</th>
-
-            <th>Action</th>
-        </tr>
-        </thead>
-        <tbody>
-        <g:each in="${taskInstanceList}" status="i" var="taskInstance">
-            <tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
-
-                <td><g:link action="show"
-                            id="${taskInstance.id}">${fieldValue(bean: taskInstance, field: "description")}</g:link></td>
-
-                <td><g:if test="${taskInstance.dueDate}">
-                    <span class="${taskInstance.isOverDue() ? 'alert-danger' : ''}">
-                        <g:formatDate date="${taskInstance.dueDate}" format="dd-MMM-yyyy"/>
-                    </span>
-                </g:if></td>
-
-                <td>${taskInstance.getStatusMessage()}</td>
-
-                <td>${taskInstance.customer}</td>
-
-                <td>${taskInstance.territoryUser()}</td>
-
-                <td>
-                    <g:link action="edit" id="${taskInstance.id}" title="Edit/Schedule"><i
-                            class="glyphicon glyphicon-calendar"></i></g:link>
-                </td>
-            </tr>
-        </g:each>
-        </tbody>
-    </table>
 
     <div>
         <bs:paginate total="${taskInstanceCount}" params="${params}"
                      id="${params.action == 'search' ? (params.term ?: params.id) : null}"/>
     </div>
-
 </section>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+<g:javascript src="lib/gmaps.js"/>
+<g:javascript src="maps/ListMap.js"/>
 
 </body>
 
