@@ -32,24 +32,5 @@ class DetailerTask extends Task {
     String pointOfsaleMaterial
     String recommendationNextStep
     String recommendationLevel
-    Float lat
-    Float lng
-    @Indexed(indexType = IndexType.POINT, indexName = 'CUSTOMER_LOCATION')
-    String wkt
-
-
-    def beforeSave() {
-        setLocation(lng, lat)
-        this.type = getClass().simpleName
-    }
-
-    public void setLocation(Float lng, Float lat) {
-        this.lat = lat
-        this.lng = lng
-        if (lat && lng)
-            this.wkt = String.format("POINT( %.6f %.6f )", lng, lat);
-        else
-            this.wkt = null
-    }
 
 }
