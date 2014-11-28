@@ -18,6 +18,6 @@ interface GMarkerOptions {
     lat:number
     lng:number
     title: string
-    click: (event:google.maps.MouseEvent)=>void
+    click?: (event:google.maps.MouseEvent)=>void
 }
 

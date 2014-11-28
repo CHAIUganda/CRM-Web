@@ -1,6 +1,7 @@
 ///<reference path='../_all.ts'/>
 var omnitech;
 (function (omnitech) {
+    var chai;
     (function (chai) {
         var MapContainer = (function () {
             function MapContainer(data) {
@@ -8,13 +9,15 @@ var omnitech;
                 this.createMap();
             }
             MapContainer.prototype.createMap = function () {
-                this.gmap = new GMaps({ lat: 0.639978, lng: 30.2308269, div: "#map", zoom: 7 });
+                var _this = this;
+                this.gmap = new GMaps({ lat: 1.354255, lng: 32.314228, div: "#map", zoom: 7 });
+                this.data.forEach(function (item) {
+                    if (item.lat && item.lng)
+                        _this.gmap.addMarker({ lat: item.lat, lng: item.lng, title: item.title });
+                });
             };
             return MapContainer;
         })();
-
-        var cont = new MapContainer();
-    })(omnitech.chai || (omnitech.chai = {}));
-    var chai = omnitech.chai;
+        var cont = new MapContainer(chaiMapData);
+    })(chai = omnitech.chai || (omnitech.chai = {}));
 })(omnitech || (omnitech = {}));
-//# sourceMappingURL=ListMap.js.map

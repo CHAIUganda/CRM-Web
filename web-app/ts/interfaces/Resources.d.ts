@@ -23,8 +23,9 @@ declare module omnitech.chai {
     }
 
     interface HasCoords {
-        lat: string
-        lng:string
+        lat: number
+        lng: number
+        title: string
     }
 
 }
@@ -42,7 +43,5 @@ declare class MarkerWithLabel extends google.maps.Marker {
     constructor(option:MarkerWithLabelOptions);
 }
 
-declare var krcBase:string;
-declare var krcConfigs:any;
-
 declare var omnitechBase:string;
+declare var chaiMapData:omnitech.chai.HasCoords[];

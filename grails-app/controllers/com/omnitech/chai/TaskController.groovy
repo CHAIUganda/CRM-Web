@@ -6,6 +6,7 @@ import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.ReflectFunctions
 import com.omnitech.chai.util.ServletUtil
 import fuzzycsv.FuzzyCSV
+import grails.converters.JSON
 import grails.transaction.Transactional
 import grails.util.GrailsNameUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -39,7 +40,9 @@ class TaskController {
 
     def map(Integer max) {
         def page = loadPageData(max)
-        respond page.content, model: [taskInstanceCount: page.totalElements, users: userService.listAllUsers([:])]
+        def mapData = page.content.collect { ReflectFunctions.extractProperties(it) } as JSON
+        def jsonString = mapData.toString(true)
+        respond page.content, model: [taskInstanceCount: page.totalElements, users: userService.listAllUsers([:]), mapData: jsonString]
     }
 
     private Page<Task> loadPageData(Integer max) {

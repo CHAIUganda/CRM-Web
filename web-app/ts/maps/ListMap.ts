@@ -12,11 +12,14 @@ module omnitech.chai {
         }
 
         private createMap() {
-            this.gmap = new GMaps({lat: 0.639978, lng: 30.2308269, div: "#map",zoom: 7});
-
+            this.gmap = new GMaps({lat: 1.354255, lng: 32.314228, div: "#map", zoom: 7});
+            this.data.forEach((item)=> {
+                if (item.lat && item.lng)
+                    this.gmap.addMarker({lat: item.lat, lng: item.lng, title: item.title});
+            });
         }
 
     }
 
-    var cont = new MapContainer();
+    var cont = new MapContainer(chaiMapData);
 }
