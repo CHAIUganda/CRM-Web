@@ -1,9 +1,9 @@
+///<reference path='../_all.ts'/>
 var omnitech;
 (function (omnitech) {
-    ///<reference path='../_all.ts'/>
+    var chai;
     (function (chai) {
         'use strict';
-
         var DataLoader = (function () {
             function DataLoader(http, resouce) {
                 this.http = http;
@@ -12,17 +12,14 @@ var omnitech;
             DataLoader.prototype.injection = function () {
                 return ['$http', '$resource', DataLoader];
             };
-
             DataLoader.prototype.findMappedSubCounties = function (territory, district) {
                 var url = omnitechBase + '/territory/findMappedSubCounties';
                 return this.resouce(url).query({ district: district, territory: territory });
             };
-
             DataLoader.prototype.getTerritory = function (id) {
                 var url = omnitechBase + '/territory/territoryAsJson/' + id;
                 return this.resouce(url).get();
             };
-
             DataLoader.prototype.persistSubCountyMap = function (territory, district, subCounties) {
                 var url = omnitechBase + '/territory/mapTerritoryToSubCounties';
                 return this.http.post(url, { territory: territory, district: district, subCounties: subCounties });
@@ -30,7 +27,6 @@ var omnitech;
             return DataLoader;
         })();
         chai.DataLoader = DataLoader;
-
         var Utils = (function () {
             function Utils() {
             }
@@ -43,7 +39,5 @@ var omnitech;
             return Utils;
         })();
         chai.Utils = Utils;
-    })(omnitech.chai || (omnitech.chai = {}));
-    var chai = omnitech.chai;
+    })(chai = omnitech.chai || (omnitech.chai = {}));
 })(omnitech || (omnitech = {}));
-//# sourceMappingURL=Common.js.map
