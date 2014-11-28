@@ -7,9 +7,12 @@
     <g:set var="entityName" value="${message(code: 'task.label', default: 'Task')}"/>
     <g:set var="layout_nosecondarymenu" value="${true}" scope="request"/>
     <title><g:message code="default.index.label" args="[entityName]"/></title>
+    <script type="application/javascript">
+        chaiMapData = ${raw(mapData)}
+    </script>
 </head>
-
 <body>
+
 
 %{-- THE SUBMENU BAR --}%
 <div class="container" style="max-width: 100%; padding: 0; margin-bottom: 3px;">
@@ -125,22 +128,64 @@
 <section id="index-task" class="first">
 
     <div class="row">
-        <div class="col-lg-12">
+        <div class="col-lg-6">
             <div id="map" style="height: 550px;
             position: relative;
             overflow: hidden;
             transform: translateZ(0px);
             background-color: rgb(229, 227, 223);"></div>
+            <div>
+                <bs:paginate total="${taskInstanceCount}" params="${params}"
+                             id="${params.action == 'search' ? (params.term ?: params.id) : null}"/>
+            </div>
             %{--<div id="map" class="col-lg-12"--}%
             %{--style=" margin: 5px 10px 10px 10px;  height: 300px; width: 300px; border: 1px solid #ccc;">dsddsd</div>--}%
         </div>
+        <div class="col-lg-6">
+
+            <table class="table table-bordered margin-top-medium">
+                <thead>
+                <tr>
+                    <g:sortableColumn property="description" params="${params}"
+                                      title="${message(code: 'task.description.label', default: 'Description')}"/>
+
+
+                    <g:sortableColumn property="status" params="${params}"
+                                      title="${message(code: 'task.status.label', default: 'Status')}"/>
+
+                    <th>Customer</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                <g:each in="${taskInstanceList}" status="i" var="taskInstance">
+                    <tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
+
+                        <td><span class="${taskInstance.isOverDue() ? 'alert-danger' : ''}">
+                            <g:link action="show"
+                                    id="${taskInstance.id}">${fieldValue(bean: taskInstance, field: "description")}
+                            </span></g:link>
+                        </td>
+
+
+                        <td>${taskInstance.getStatusMessage()}</td>
+
+                        <td>${taskInstance.customer}</td>
+
+                    </tr>
+                </g:each>
+                </tbody>
+            </table>
+            <div>
+                <bs:paginate total="${taskInstanceCount}" params="${params}"
+                             id="${params.action == 'search' ? (params.term ?: params.id) : null}"/>
+            </div>
+        </div>
+
     </div>
 
 
-    <div>
-        <bs:paginate total="${taskInstanceCount}" params="${params}"
-                     id="${params.action == 'search' ? (params.term ?: params.id) : null}"/>
-    </div>
+
 </section>
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
 <g:javascript src="lib/gmaps.js"/>
