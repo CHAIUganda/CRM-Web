@@ -188,6 +188,7 @@
 
 </section>
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+<script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/tags/markerwithlabel/1.1.5/src/markerwithlabel_packed.js"></script>
 <g:javascript src="lib/gmaps.js"/>
 <g:javascript src="maps/ListMap.js"/>
 

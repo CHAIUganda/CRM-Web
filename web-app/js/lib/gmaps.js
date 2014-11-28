@@ -572,6 +572,12 @@ GMaps.prototype.createMarker = function(options) {
       outside = options.outside,
       base_options = {
         position: new google.maps.LatLng(options.lat, options.lng),
+          //edit: Kayr
+        labelContent : options.title,
+        labelAnchor: new google.maps.Point(0, 0),
+        labelClass: "labels", // the CSS class for the label
+        labelStyle: {opacity: 1.0},
+
         map: null
       },
       marker_options = extend_object(base_options, options);
@@ -581,7 +587,8 @@ GMaps.prototype.createMarker = function(options) {
   delete marker_options.fences;
   delete marker_options.outside;
 
-  var marker = new google.maps.Marker(marker_options);
+    //edit: Kayr
+  var marker = new MarkerWithLabel(marker_options);
 
   marker.fences = fences;
 
