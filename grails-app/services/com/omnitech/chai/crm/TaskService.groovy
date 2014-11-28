@@ -191,6 +191,10 @@ class TaskService {
             removeAll(ReflectFunctions.findAllBasicFields(Task))
         }
         ModelFunctions.bind(neoTask, detailerTask.properties, detailFields)
+        //copy longitude and latitude
+        neoTask.lat = detailerTask.lat
+        neoTask.lng = detailerTask.lng
+
         neoTask.completedBy(neoSecurityService.currentUser)
 
         saveTask(neoTask)
