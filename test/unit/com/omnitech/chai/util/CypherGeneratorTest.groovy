@@ -148,6 +148,60 @@ class CypherGeneratorTest extends Specification {
                 'limit 20\n'
     }
 
+    def 'test generation with levels'() {
+        when:
+        def query = CypherGenerator.getNonPaginatedQuery(MCustomer, 2).toString()
+
+        then:
+        query == 'MATCH (mcustomer:MCustomer)\n' +
+                ' optional match (mcustomer)-[:VILL]->(MCustomer_village:MVillage)\n' +
+                ' optional match (MCustomer_village)-[:PAR]->(MVillage_parish:MParish)\n' +
+                'WITH mcustomer,MCustomer_village,MVillage_parish\n' +
+                'WHERE mcustomer.name =~ {search} or mcustomer.address =~ {search} or MCustomer_village.name =~ {search} or MVillage_parish.name =~ {search}\n' +
+                'return mcustomer\n'
+
+    }
+
+    def 'test generation with levels 0'() {
+        when:
+        def query = CypherGenerator.getNonPaginatedQuery(MCustomer, 0).toString()
+
+        then:
+        query == 'MATCH (mcustomer:MCustomer)\n' +
+                'WITH mcustomer\n' +
+                'WHERE mcustomer.name =~ {search} or mcustomer.address =~ {search}\n' +
+                'return mcustomer\n'
+
+    }
+
+    def 'test generation with levels 1'() {
+        when:
+        def query = CypherGenerator.getNonPaginatedQuery(MCustomer, 1).toString()
+
+        then:
+        query == 'MATCH (mcustomer:MCustomer)\n' +
+                ' optional match (mcustomer)-[:VILL]->(MCustomer_village:MVillage)\n' +
+                'WITH mcustomer,MCustomer_village\n' +
+                'WHERE mcustomer.name =~ {search} or mcustomer.address =~ {search} or MCustomer_village.name =~ {search}\n' +
+                'return mcustomer\n'
+
+    }
+
+    def 'test generation with high level'() {
+        when:
+        def query = CypherGenerator.getNonPaginatedQuery(MCustomer, 10).toString()
+
+        then:
+        query == 'MATCH (mcustomer:MCustomer)\n' +
+                ' optional match (mcustomer)-[:VILL]->(MCustomer_village:MVillage)\n' +
+                ' optional match (MCustomer_village)-[:PAR]->(MVillage_parish:MParish)\n' +
+                ' optional match (MVillage_parish)-[:SUB]->(MParish_subCounty:MSubCounty)\n' +
+                ' optional match (MParish_subCounty)-[:DIS]->(MSubCounty_district:MDistrict)\n' +
+                'WITH mcustomer,MCustomer_village,MVillage_parish,MParish_subCounty,MSubCounty_district\n' +
+                'WHERE mcustomer.name =~ {search} or mcustomer.address =~ {search} or MCustomer_village.name =~ {search} or MVillage_parish.name =~ {search} or MParish_subCounty.name =~ {search} or MSubCounty_district.name =~ {search}\n' +
+                'return mcustomer\n'
+    }
+
 
 }
 
@@ -160,6 +214,7 @@ class AbstractEntity {
     Date dateCreated
     Date lastUpdated
 }
+
 
 @NodeEntity
 class FooBarEntity extends AbstractEntity {
@@ -188,5 +243,39 @@ class Bar {
     transient String transientName3
 
     String getFooBar() { "" }
+}
+
+@NodeEntity
+class MDistrict {
+    String name
+}
+
+@NodeEntity
+class MSubCounty {
+    String name
+    @RelatedTo(type = 'DIS')
+    MDistrict district
+}
+
+@NodeEntity
+class MParish {
+    String name
+    @RelatedTo(type = 'SUB')
+    MSubCounty subCounty
+}
+
+@NodeEntity
+class MVillage {
+    String name
+    @RelatedTo(type = 'PAR')
+    MParish parish
+}
+
+@NodeEntity
+class MCustomer {
+    String name
+    String address
+    @RelatedTo(type = 'VILL')
+    MVillage village
 }
 

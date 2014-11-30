@@ -1,14 +1,4 @@
 package com.omnitech.chai.util
-
-import groovy.transform.CompileStatic
-import org.neo4j.graphdb.Direction
-import org.springframework.data.neo4j.annotation.NodeEntity
-import org.springframework.data.neo4j.annotation.RelatedTo
-
-import java.lang.reflect.Field
-
-import static com.omnitech.chai.util.ReflectFunctions.findAllPersistentFields
-
 /**
  * A very basic Search Query Generator for traversing simple hierarchies.
  * This generates a cypher query which searches on all properties of the domain object including its children.
@@ -28,6 +18,18 @@ class CypherGenerator {
 
     static StringBuilder getPaginatedQuery(Class aClass, Map params) {
         new CypherGenImpl(aClass).getPaginatedQuery(params)
+    }
+
+    static StringBuilder getNonPaginatedQuery(Class aClass, int pageLevel) {
+        new CypherGenImpl(aClass, pageLevel, []).getPlainQuery(false)
+    }
+
+    static StringBuilder getCountQuery(Class aClass, int pageLevel) {
+        new CypherGenImpl(aClass, pageLevel, Collections.EMPTY_LIST).getPlainQuery(true)
+    }
+
+    static StringBuilder getPaginatedQuery(Class aClass, Map params, int pageLevel) {
+        new CypherGenImpl(aClass, pageLevel, Collections.EMPTY_LIST).getPaginatedQuery(params)
     }
 
 }

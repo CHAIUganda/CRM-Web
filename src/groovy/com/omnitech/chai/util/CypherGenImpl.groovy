@@ -25,7 +25,7 @@ class CypherGenImpl {
         this.aClass = aClass
     }
 
-    CypherGenImpl(int nestLevel, List<String> filters, Class aClass) {
+    CypherGenImpl(Class aClass,int nestLevel, List<String> filters ) {
         this.nestLevel = nestLevel
         this.filters = filters
         this.aClass = aClass
@@ -115,11 +115,13 @@ class CypherGenImpl {
 
 
     private void visitNodeFields(Class enclosingClass, String fieldNameForEnclosingClass, Field right, int visitedGrannies, Closure visitor) {
+
+        if (visitedGrannies >= this.nestLevel) return
+
         def fieldNodeName = getEntityName(enclosingClass, right, fieldNameForEnclosingClass)
         visitor(enclosingClass, fieldNameForEnclosingClass, right)
 
         //todo for now we do not support recursive references hence the { it.type != left }
-        if (visitedGrannies > this.nestLevel) return
 
         def nodes = findNodeFields(right.type).findAll { it.type != enclosingClass }
         nodes?.each {
