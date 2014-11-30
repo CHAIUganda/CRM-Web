@@ -1,18 +1,25 @@
 package com.omnitech.chai.util
 
-import com.omnitech.chai.model.*
+import com.omnitech.chai.model.Customer
+import com.omnitech.chai.model.District
+import com.omnitech.chai.model.Region
+import com.omnitech.chai.model.SubCounty
 import org.neo4j.graphdb.Direction
+import org.springframework.data.neo4j.annotation.GraphId
 import org.springframework.data.neo4j.annotation.NodeEntity
 import org.springframework.data.neo4j.annotation.RelatedTo
 import spock.lang.Specification
+
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 
 /**
  * Created by kay on 10/7/14.
  */
 class CypherGeneratorTest extends Specification {
 
-    void setup(){
-        CypherGenerator.inTests = true
+    void setup() {
+        CypherGenImpl.inTests = true
     }
 
     def 'test get Assoc arrow'() {
@@ -20,14 +27,14 @@ class CypherGeneratorTest extends Specification {
         def field = ReflectFunctions.findAllFields(Customer).find { it.type == SubCounty }
 
         when:
-        def arrow = CypherGenerator.getAssocArrow(field)
+        def arrow = CypherGenImpl.getAssocArrow(field)
 
         then:
         arrow == '-[:BELONGS_TO_SC]->'
 
         when:
         field = ReflectFunctions.findAllFields(District).find { it.type == Region }
-        arrow = CypherGenerator.getAssocArrow(field)
+        arrow = CypherGenImpl.getAssocArrow(field)
 
         then:
         arrow == '<-[:HAS_DISTRICT]-'
@@ -110,7 +117,7 @@ class CypherGeneratorTest extends Specification {
 
     def 'test generation wit sort ascending'() {
         when:
-        def query = CypherGenerator.getPaginatedQuery(BarEntity, [max: 20, offset: 25,sort:'name']).toString()
+        def query = CypherGenerator.getPaginatedQuery(BarEntity, [max: 20, offset: 25, sort: 'name']).toString()
 
         then:
         query == 'MATCH (barentity:BarEntity)\n' +
@@ -127,7 +134,7 @@ class CypherGeneratorTest extends Specification {
 
     def 'test generation wit sort descding'() {
         when:
-        def query = CypherGenerator.getPaginatedQuery(BarEntity, [max: 20, offset: 25,sort:'name',order:'desc']).toString()
+        def query = CypherGenerator.getPaginatedQuery(BarEntity, [max: 20, offset: 25, sort: 'name', order: 'desc']).toString()
 
         then:
         query == 'MATCH (barentity:BarEntity)\n' +
@@ -142,6 +149,16 @@ class CypherGeneratorTest extends Specification {
     }
 
 
+}
+
+
+class AbstractEntity {
+    private static DateFormat format = new SimpleDateFormat('yyyy-MM-dd hh:mm:ss')
+    @GraphId
+    Long id
+    String uuid
+    Date dateCreated
+    Date lastUpdated
 }
 
 @NodeEntity
