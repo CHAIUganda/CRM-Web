@@ -3,6 +3,7 @@ package com.omnitech.chai.util
 import com.omnitech.chai.model.AbstractEntity
 import groovy.transform.CompileStatic
 import groovy.transform.TypeCheckingMode
+import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.grails.databinding.SimpleDataBinder
 import org.grails.databinding.SimpleMapDataBindingSource
@@ -28,7 +29,7 @@ import static java.util.Collections.EMPTY_MAP
 @CompileStatic
 class ModelFunctions {
 
-    private static def log = LogFactory.getLog(ModelFunctions.class)
+    private static Log log = LogFactory.getLog(ModelFunctions.class)
     final public static List META_FIELDS = Collections.unmodifiableList(['uuid', 'lastUpdated', 'dateCreated'])
 
 
@@ -133,7 +134,7 @@ class ModelFunctions {
     static <T> Page<T> searchAll(Neo4jTemplate neo, Class<T> aClass, String search, Map params, int level, Map filters) {
         def query = CypherGenerator.getPaginatedQuery(aClass, params, level, filters).toString()
         def count = CypherGenerator.getCountQuery(aClass, level, filters).toString()
-        log.trace("**** Query ***** \n$query*** Count ***\n$count****")
+        log.trace("**** Query ***** \n$query*** Count ***\n$count****".toString())
         def searchParams = [search: search] as Map
         def size = neo.query(count, searchParams).to(Long).single()
         def data = neo.query(query, searchParams).to(aClass).as(List).collect()
