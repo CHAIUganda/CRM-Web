@@ -20,16 +20,16 @@ class CypherGenerator {
         new CypherGenImpl(aClass).getPaginatedQuery(params)
     }
 
-    static StringBuilder getNonPaginatedQuery(Class aClass, int pageLevel) {
-        new CypherGenImpl(aClass, pageLevel, []).getPlainQuery(false)
+    static StringBuilder getNonPaginatedQuery(Class aClass, int pageLevel, Map filters) {
+        new CypherGenImpl(aClass, pageLevel, filters).getPlainQuery(false)
     }
 
-    static StringBuilder getCountQuery(Class aClass, int pageLevel) {
-        new CypherGenImpl(aClass, pageLevel, Collections.EMPTY_LIST).getPlainQuery(true)
+    static StringBuilder getCountQuery(Class aClass, int pageLevel, Map filters) {
+        new CypherGenImpl(aClass, pageLevel, filters).getPlainQuery(true)
     }
 
-    static StringBuilder getPaginatedQuery(Class aClass, Map params, int pageLevel) {
-        new CypherGenImpl(aClass, pageLevel, Collections.EMPTY_LIST).getPaginatedQuery(params)
+    static StringBuilder getPaginatedQuery(Class aClass, Map params, int pageLevel, Map filters) {
+        new CypherGenImpl(aClass, pageLevel, filters).getPaginatedQuery(params)
     }
 
 }

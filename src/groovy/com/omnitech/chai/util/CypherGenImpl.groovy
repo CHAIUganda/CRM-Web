@@ -15,7 +15,7 @@ import static com.omnitech.chai.util.ReflectFunctions.findAllPersistentFields
 class CypherGenImpl {
 
     int nestLevel = Integer.MAX_VALUE
-    Map filters = []
+    FieldQualifier qualifier
     Class aClass
 
     CypherGenImpl() {
@@ -25,9 +25,9 @@ class CypherGenImpl {
         this.aClass = aClass
     }
 
-    CypherGenImpl(Class aClass,int nestLevel, List<String> filters ) {
+    CypherGenImpl(Class aClass, int nestLevel, Map filters) {
         this.nestLevel = nestLevel
-        this.filters = filters
+        this.qualifier = new FieldQualifier(filters)
         this.aClass = aClass
     }
 
@@ -107,8 +107,8 @@ class CypherGenImpl {
         return filterFields.collect { "$it =~ {search}" }.join(' or ')
     }
 
-    private static List<String> findAllFilterFields(Class aClass, String nodeName) {
-        findAllPersistentFields(aClass).findAll { isSearchAbleField(it) }.collect {
+    private List<String> findAllFilterFields(Class aClass, String nodeName) {
+        findAllPersistentFields(aClass).findAll { isFieldOk(it) && isSearchAbleField(it) }.collect {
             createToStringFunction(it, nodeName)
         }
     }
@@ -147,12 +147,17 @@ class CypherGenImpl {
         return Number.isAssignableFrom(field.type) ? "str(${nodeName}.$field.name)" : "${nodeName}.$field.name"
     }
 
-    static List<Field> findNodeFields(Class aClass) {
-        findAllPersistentFields(aClass).findAll { it.type.isAnnotationPresent(NodeEntity) }
+    List<Field> findNodeFields(Class aClass) {
+        findAllPersistentFields(aClass).findAll { isFieldOk(it) && it.type.isAnnotationPresent(NodeEntity) }
     }
 
     private static isSearchAbleField(Field field) {
-        CharSequence.isAssignableFrom(field.type) || Number.isAssignableFrom(field.type)
+        (CharSequence.isAssignableFrom(field.type) || Number.isAssignableFrom(field.type))
+    }
+
+    private boolean isFieldOk(Field field) {
+        if (!qualifier) return true
+        return qualifier.isAllowed(field.declaringClass.simpleName, field.name)
     }
 
 
