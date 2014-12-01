@@ -47,7 +47,7 @@ class ModelFunctions {
 
     static <T> T createObj(Class<T> obj, Map properties) {
         def instance = obj.newInstance()
-        bind(instance,properties)
+        bind(instance, properties)
     }
 
     static <T> T bind(T obj, Map properties, List whiteList) {
@@ -62,7 +62,7 @@ class ModelFunctions {
 
     static <T> T bind(T obj, Map properties, boolean copyMetaInfo = false) {
         if (copyMetaInfo) {
-            bind(obj,properties,null,null)
+            bind(obj, properties, null, null)
         } else {
             bind(obj, properties, null, META_FIELDS)
         }
@@ -130,12 +130,22 @@ class ModelFunctions {
         return new PageImpl<T>(data, PageUtils.create(params), size)
     }
 
+    static <T> Page<T> searchAll(Neo4jTemplate neo, Class<T> aClass, String search, Map params, int level, Map filters) {
+        def query = CypherGenerator.getPaginatedQuery(aClass, params, level, filters).toString()
+        def count = CypherGenerator.getCountQuery(aClass, level, filters).toString()
+        log.trace("**** Query ***** \n$query*** Count ***\n$count****")
+        def searchParams = [search: search] as Map
+        def size = neo.query(count, searchParams).to(Long).single()
+        def data = neo.query(query, searchParams).to(aClass).as(List).collect()
+        return new PageImpl<T>(data, PageUtils.create(params), size)
+    }
+
     static <T> Result<T> query(CypherDslRepository<T> repo, ReturnNext execute, Map params, Class container) {
         PageUtils.addPagination(execute, params, container)
         return repo.query(execute, EMPTY_MAP)
     }
 
-    static <T> Page<T> query(Neo4jTemplate neo, Execute query, Execute countQuery, Map params,Class<T> container) {
+    static <T> Page<T> query(Neo4jTemplate neo, Execute query, Execute countQuery, Map params, Class<T> container) {
         def data = neo.query(query.toString(), EMPTY_MAP).to(container).as(List)
         def size = neo.query(countQuery.toString(), EMPTY_MAP).to(Long).single()
 
@@ -168,7 +178,6 @@ class ModelFunctions {
         }
         return getParent(id)
     }
-
 
     /**
      * Add a label to a node incase its absent
