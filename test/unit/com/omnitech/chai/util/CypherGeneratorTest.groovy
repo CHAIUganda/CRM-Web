@@ -176,7 +176,7 @@ class CypherGeneratorTest extends Specification {
 
     def 'test generation with levels 1'() {
         when:
-        def query = CypherGenerator.getNonPaginatedQuery(MCustomer, 1).toString()
+        def query = CypherGenerator.getNonPaginatedQuery(MCustomer, 1, [:]).toString()
 
         then:
         query == 'MATCH (mcustomer:MCustomer)\n' +
@@ -189,7 +189,7 @@ class CypherGeneratorTest extends Specification {
 
     def 'test generation with high level'() {
         when:
-        def query = CypherGenerator.getNonPaginatedQuery(MCustomer, 10).toString()
+        def query = CypherGenerator.getNonPaginatedQuery(MCustomer, 10, [:]).toString()
 
         then:
         query == 'MATCH (mcustomer:MCustomer)\n' +
@@ -199,6 +199,28 @@ class CypherGeneratorTest extends Specification {
                 ' optional match (MParish_subCounty)-[:DIS]->(MSubCounty_district:MDistrict)\n' +
                 'WITH mcustomer,MCustomer_village,MVillage_parish,MParish_subCounty,MSubCounty_district\n' +
                 'WHERE mcustomer.name =~ {search} or mcustomer.address =~ {search} or MCustomer_village.name =~ {search} or MVillage_parish.name =~ {search} or MParish_subCounty.name =~ {search} or MSubCounty_district.name =~ {search}\n' +
+                'return mcustomer\n'
+    }
+
+    def 'test generation with fielter'() {
+        when:
+        def filters = [
+                allow: [
+                        [class: MCustomer.simpleName],
+                        [class: MVillage.simpleName, patterns: ['parish']],
+                        [class: MParish.simpleName, patterns: ['subCounty']],
+                        [class: MSubCounty.simpleName, patterns: ['name']],
+                ]
+        ]
+        def query = CypherGenerator.getNonPaginatedQuery(MCustomer, 10, filters).toString()
+
+        then:
+        query == 'MATCH (mcustomer:MCustomer)\n' +
+                ' optional match (mcustomer)-[:VILL]->(MCustomer_village:MVillage)\n' +
+                ' optional match (MCustomer_village)-[:PAR]->(MVillage_parish:MParish)\n' +
+                ' optional match (MVillage_parish)-[:SUB]->(MParish_subCounty:MSubCounty)\n' +
+                'WITH mcustomer,MCustomer_village,MVillage_parish,MParish_subCounty\n' +
+                'WHERE mcustomer.name =~ {search} or mcustomer.address =~ {search} or MParish_subCounty.name =~ {search}\n' +
                 'return mcustomer\n'
     }
 
