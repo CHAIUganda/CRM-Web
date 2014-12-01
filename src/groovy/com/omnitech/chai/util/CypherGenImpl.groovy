@@ -15,7 +15,7 @@ import static com.omnitech.chai.util.ReflectFunctions.findAllPersistentFields
 class CypherGenImpl {
 
     int nestLevel = Integer.MAX_VALUE
-    List<String> filters = []
+    Map filters = []
     Class aClass
 
     CypherGenImpl() {
@@ -108,7 +108,7 @@ class CypherGenImpl {
     }
 
     private static List<String> findAllFilterFields(Class aClass, String nodeName) {
-        findAllPersistentFields(aClass).findAll { isProcessableField(it) }.collect {
+        findAllPersistentFields(aClass).findAll { isSearchAbleField(it) }.collect {
             createToStringFunction(it, nodeName)
         }
     }
@@ -151,7 +151,7 @@ class CypherGenImpl {
         findAllPersistentFields(aClass).findAll { it.type.isAnnotationPresent(NodeEntity) }
     }
 
-    private static isProcessableField(Field field) {
+    private static isSearchAbleField(Field field) {
         CharSequence.isAssignableFrom(field.type) || Number.isAssignableFrom(field.type)
     }
 
