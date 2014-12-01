@@ -1,10 +1,9 @@
 package com.omnitech.chai.crm
 
 import com.omnitech.chai.exception.ImportException
-import com.omnitech.chai.model.Customer
-import com.omnitech.chai.model.CustomerContact
-import com.omnitech.chai.model.CustomerSegment
+import com.omnitech.chai.model.*
 import com.omnitech.chai.util.ModelFunctions
+import com.omnitech.chai.util.ReflectFunctions
 import com.xlson.groovycsv.CsvParser
 import com.xlson.groovycsv.PropertyMapper
 import org.springframework.beans.factory.annotation.Autowired
@@ -49,7 +48,17 @@ class CustomerService {
 
     @Neo4jTransactional
     Page<Customer> searchCustomers(String search, Map params) {
-        ModelFunctions.searchAll(neo, Customer, ModelFunctions.getWildCardRegex(search), params)
+        def customerFields = ReflectFunctions.findAllBasicFields(Customer)
+        customerFields.add('village')
+        def filters = [allow: [
+                [class: Customer.simpleName, patterns: customerFields],
+                [class: Village.simpleName, patterns: ['name', 'parish']],
+                [class: Parish.simpleName, patterns: ['name', 'subCounty']],
+                [class: SubCounty.simpleName, patterns: ['name', 'district']],
+                [class: District.simpleName, patterns: ['name', 'region']],
+                [class: Region.simpleName, patterns: ['name']]
+        ]]
+        ModelFunctions.searchAll(neo, Customer, ModelFunctions.getWildCardRegex(search), params, Integer.MAX_VALUE, filters)
     }
 
     @Neo4jTransactional
@@ -122,10 +131,10 @@ class CustomerService {
         def lng = prop(mapper, idx, 'GPS LONGITUDE', false)
 
         execSilently("Converting Lat[$lat] to GPS") {
-            customer.lat = lat?.replace('S', '-')?.replace('N','')?.toDouble()
+            customer.lat = lat?.replace('S', '-')?.replace('N', '')?.toDouble()
         }
         execSilently("Converting Lng[$lng] GPS") {
-            customer.lng = lng?.replace('E', '')?.replace('W','-')?.toDouble()
+            customer.lng = lng?.replace('E', '')?.replace('W', '-')?.toDouble()
         }
 
         def customerContact = new CustomerContact(
