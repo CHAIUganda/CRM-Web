@@ -9,7 +9,7 @@ import org.springframework.core.type.filter.AnnotationTypeFilter
 import org.springframework.data.neo4j.annotation.NodeEntity
 
 import static com.omnitech.chai.model.Role.DETAILER_ROLE_NAME
-import static com.omnitech.chai.model.Role.getSALES_ROLE_NAME
+import static com.omnitech.chai.model.Role.SALES_ROLE_NAME
 
 class BootStrap {
 
