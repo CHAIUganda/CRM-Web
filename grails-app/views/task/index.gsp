@@ -99,8 +99,13 @@
                 </li>
             </g:else>
 
+        %{-- The Show Map Button--}%
             <li>
-                <g:link controller="task" action="map" params="${params}">
+                <%
+                    def newParams = [ui: 'map']
+                    newParams.putAll(params)
+                %>
+                <g:link controller="task" params="${newParams}">
                     <i class="glyphicon glyphicon-map-marker"></i>Show Map
                 </g:link>
             </li>

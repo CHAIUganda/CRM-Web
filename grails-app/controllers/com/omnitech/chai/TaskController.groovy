@@ -34,6 +34,10 @@ class TaskController {
     Neo4jTemplate neo
 
     def index(Integer max) {
+        if (params.remove('ui') == 'map') {
+            redirect(action: 'map', params: params)
+            return
+        }
         Page<Task> page = loadPageData(max)
         respond page.content, model: [taskInstanceCount: page.totalElements, users: userService.listAllUsers([:])]
     }
