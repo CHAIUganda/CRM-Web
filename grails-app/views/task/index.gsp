@@ -105,7 +105,7 @@
                     def newParams = [ui: 'map']
                     newParams.putAll(params)
                 %>
-                <g:link controller="task" params="${newParams}">
+                <g:link controller="task" action="${params.action}" params="${newParams}">
                     <i class="glyphicon glyphicon-map-marker"></i>Show Map
                 </g:link>
             </li>

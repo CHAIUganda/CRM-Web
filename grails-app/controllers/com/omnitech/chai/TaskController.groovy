@@ -45,8 +45,8 @@ class TaskController {
     def map(Integer max) {
         def page = loadPageData(max)
         def mapData = page.content.collect { ReflectFunctions.extractProperties(it) } as JSON
-        def jsonString = mapData.toString(true)
-        respond page.content, model: [taskInstanceCount: page.totalElements, users: userService.listAllUsers([:]), mapData: jsonString]
+        def jsonMapString = mapData.toString(true)
+        respond page.content, model: [taskInstanceCount: page.totalElements, users: userService.listAllUsers([:]), mapData: jsonMapString]
     }
 
     private Page<Task> loadPageData(Integer max) {
@@ -103,11 +103,28 @@ class TaskController {
             redirect(action: 'search', id: params.term)
             return
         }
+
+        if (params.remove('ui') == 'map') {
+            redirect(action: 'searchMap', params: params, id: params.term)
+            return
+        }
+
         def page = taskService.searchTasks(params.id, params)
         txHelperService.doInTransaction {
             page.content.each { neo.fetch(it.territoryUser()) }
         }
         respond page.content, view: 'index', model: [taskInstanceCount: page.totalElements, users: userService.listAllUsers([:])]
+    }
+
+    def searchMap(Integer max) {
+        def page = taskService.searchTasks(params.id, params)
+        txHelperService.doInTransaction {
+            page.content.each { neo.fetch(it.territoryUser()) }
+        }
+
+        def mapData = page.content.collect { ReflectFunctions.extractProperties(it) } as JSON
+        def jsonMapString = mapData.toString(true)
+        respond page.content, view: 'map', model: [taskInstanceCount: page.totalElements, users: userService.listAllUsers([:]),mapData: jsonMapString]
     }
 
     def show() {
