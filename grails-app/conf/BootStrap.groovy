@@ -1,6 +1,4 @@
-import com.omnitech.chai.model.RequestMap
-import com.omnitech.chai.model.Role
-import com.omnitech.chai.model.User
+import com.omnitech.chai.model.*
 import com.omnitech.chai.util.ChaiUtils
 import grails.plugin.springsecurity.ReflectionUtils
 import org.springframework.beans.factory.config.BeanDefinition
@@ -23,6 +21,7 @@ class BootStrap {
         insertBootStrapData()
         createUuidConstraints()
         insertEssentialRoles()
+        insertDefaultSegments()
         //override this so that a proper request map is loaded by spring security
         ReflectionUtils.metaClass.static.getRequestMapClass = { RequestMap }
     }
@@ -91,6 +90,26 @@ class BootStrap {
         def provider = new ClassPathScanningCandidateComponentProvider(false);
         provider.addIncludeFilter(new AnnotationTypeFilter(NodeEntity));
         provider.findCandidateComponents("com.omnitech.chai.model");
+    }
+
+    def settingRepository
+    def customerSegmentRepository
+
+    void insertDefaultSegments() {
+        txHelperService.doInTransaction {
+            def setting = settingRepository.findByName(Setting.SEGMENTATION_SCRIPT)
+            if (!setting) {
+                println "Inserting default setting into DB..."
+                setting = new Setting(name: Setting.SEGMENTATION_SCRIPT, value: '2.5')
+                neo.save(setting)
+            }
+
+            def count = customerSegmentRepository.count()
+            if (!count) {
+                println "Inserting Default Segment..."
+                neo.save(new CustomerSegment(name: 'Default Segment', callFrequency: 2, segmentationScript: 'true'))
+            }
+        }
     }
 
 }
