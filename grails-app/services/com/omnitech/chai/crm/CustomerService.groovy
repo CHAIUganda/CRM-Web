@@ -4,8 +4,8 @@ import com.omnitech.chai.exception.ImportException
 import com.omnitech.chai.model.*
 import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.ReflectFunctions
-import com.xlson.groovycsv.CsvParser
-import com.xlson.groovycsv.PropertyMapper
+import fuzzycsv.FuzzyCSV
+import fuzzycsv.Record
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
@@ -13,6 +13,7 @@ import org.springframework.data.neo4j.transaction.Neo4jTransactional
 
 import static com.omnitech.chai.model.Relations.*
 import static com.omnitech.chai.util.ChaiUtils.execSilently
+import static fuzzycsv.RecordFx.fn
 import static org.neo4j.cypherdsl.CypherQuery.*
 
 /**
@@ -92,43 +93,44 @@ class CustomerService {
 
     @Neo4jTransactional
     def processCustomers(String s) {
-        def csv = CsvParser.parseCsv(s.toUpperCase())
+        def csv = FuzzyCSV.parseCsv(s)
+        csv = csv.collect { it as List<String> }
 
-        csv.eachWithIndex { PropertyMapper record, idx ->
+        FuzzyCSV.map(csv, fn { Record record ->
             try {
-                processRecord(record, idx)
+                processRecord(record)
             } catch (Throwable ex) {
-                def e = new ImportException("Error on Record[${idx + 2}]: $ex.message".toString())
+                def e = new ImportException("Error on Record[${record.idx()}]: $ex.message".toString())
                 e.stackTrace = ex.stackTrace
                 throw e
             }
-        }
+        })
     }
 
-    private processRecord(PropertyMapper mapper, int idx) {
-        String regionName = prop(mapper, idx, 'REGION NAME')
+    private processRecord(Record record) {
+        String regionName = prop(record, 'Region')
         def region = regionService.getOrCreateRegion(regionName)
 
-        String districtName = prop(mapper, idx, 'DISTRICT NAME')
+        String districtName = prop(record, 'District')
         def district = regionService.getOrCreateDistrict(region, districtName)
 
-        String subCountyName = prop(mapper, idx, 'SUB-COUNTY NAME', true, "$districtName-DummySubCounty")
+        String subCountyName = prop(record, 'subCounty', true, "$districtName-DummySubCounty")
         def subCounty = regionService.getOrCreateSubCounty(district, subCountyName)
 
-        String parishName = prop(mapper, idx, 'PARISH NAME', true, "$subCountyName-DummyParish")
+        String parishName = prop(record, 'parish', true, "$subCountyName-DummyParish")
         def parish = regionService.getOrCreateParish(subCounty, parishName)
 
-        String villageName = prop(mapper, idx, 'VILLAGE NAME', true, "$parishName-DummyVillage")
+        String villageName = prop(record, 'village', true, "$parishName-DummyVillage")
         def village = regionService.getOrCreateVillage(parish, villageName)
+        record as Map
 
-        def customer = new Customer(
-                descriptionOfOutletLocation: prop(mapper, idx, 'EA NAME', false),
-                outletName: prop(mapper, idx, 'NAME OF THE OUTLET / FACILITY', true, '(NO NAME) OUTLET'),
-        )
 
-        customer.outletType = prop(mapper, idx, 'OUTLET TYPE', false)?.replaceFirst(/\d\s*\-\s*/, '')//1 - DrugShop
-        def lat = prop(mapper, idx, 'GPS LATITUDE', false)
-        def lng = prop(mapper, idx, 'GPS LONGITUDE', false)
+
+        def customer = ModelFunctions.createObj(Customer, record.toMap())
+
+        customer.outletType = prop(record, 'OUTLET TYPE', false)?.replaceFirst(/\d\s*\-\s*/, '')//1 - DrugShop
+        def lat = prop(record, 'GPS LATITUDE', false)
+        def lng = prop(record, 'GPS LONGITUDE', false)
 
         execSilently("Converting Lat[$lat] to GPS") {
             customer.lat = lat?.replace('S', '-')?.replace('N', '')?.toDouble()
@@ -138,8 +140,7 @@ class CustomerService {
         }
 
         def customerContact = new CustomerContact(
-                firstName: prop(mapper, idx, 'PROVIDER/OWNER CONTACT NUMBER', false),
-                title: prop(mapper, idx, 'PROVIDER/OWNER NAME', false),
+                firstName: prop(record, 'firstName', false),
         )
 
         customer.village = village
@@ -149,18 +150,17 @@ class CustomerService {
     }
 
     private
-    static String prop(PropertyMapper mapper, int idx, String name, boolean required = true, String defaultValue = null) {
-
+    static String prop(Record mapper, String name, boolean required = true, String defaultValue = null) {
         if (required) {
-            assert mapper.columns.containsKey(name), "Record ${idx + 2} should have a [$name]"
-        } else if (!mapper.columns.containsKey(name)) {
+            assert mapper.derivedHeaders.contains(name), "Record ${mapper.idx()} should have a [$name]"
+        } else if (!mapper.derivedHeaders.contains(name)) {
             return null
         }
 
         def value = mapper.propertyMissing(name)?.toString()?.trim()
         if (required && !value) {
             if (defaultValue) return defaultValue
-            throw new ImportException("Record [${idx + 2}] has an Empty Cell[$name] that is Required")
+            throw new ImportException("Record [${mapper.idx()}] has an Empty Cell[$name] that is Required")
         }
         return value
     }

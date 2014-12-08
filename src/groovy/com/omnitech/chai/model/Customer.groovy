@@ -48,7 +48,8 @@ public class Customer extends AbstractEntity implements LeafNode {
            buildingStructure,
            descriptionOfOutletLocation,
            numberOfProducts,
-           pictureURL
+            pictureURL,
+            tradingCenter
 
 
     Integer numberOfEmployees,
