@@ -44,7 +44,14 @@ class TaskController {
 
     def map(Integer max) {
         def page = loadPageData(max)
-        def mapData = page.content.collect { ReflectFunctions.extractProperties(it) } as JSON
+        def mapData = page.content.collect {
+            def map = ReflectFunctions.extractProperties(it)
+            if (!(map.lat && map.lng)) {
+                map.lat = it.customer.lat
+                map.lng = it.customer.lng
+            }
+            return map
+        } as JSON
         def jsonMapString = mapData.toString(true)
         respond page.content, model: [taskInstanceCount: page.totalElements, users: userService.listAllUsers([:]), mapData: jsonMapString]
     }

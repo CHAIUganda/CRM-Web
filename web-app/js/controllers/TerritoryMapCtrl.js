@@ -60,3 +60,4 @@ var omnitech;
         angular.module('omnitechApp', ['ngResource']).controller('TerritoryMapCtrl', TerritoryMapCtrl.prototype.injection()).service('dataLoader', chai.DataLoader.prototype.injection());
     })(chai = omnitech.chai || (omnitech.chai = {}));
 })(omnitech || (omnitech = {}));
+//# sourceMappingURL=TerritoryMapCtrl.js.map

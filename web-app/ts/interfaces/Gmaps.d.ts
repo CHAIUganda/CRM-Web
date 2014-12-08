@@ -17,7 +17,7 @@ interface GMapOptions {
 interface GMarkerOptions {
     lat:number
     lng:number
-    title: string
+    title?: string
     click?: (event:google.maps.MouseEvent)=>void
 }
 
