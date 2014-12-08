@@ -14,6 +14,7 @@ class CustomerContact extends AbstractEntity {
     String title
     String firstName
     String surname
+    String contact
 
 
     String gender
