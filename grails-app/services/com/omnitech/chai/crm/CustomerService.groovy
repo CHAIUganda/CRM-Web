@@ -128,9 +128,9 @@ class CustomerService {
 
         def customer = ModelFunctions.createObj(Customer, record.toMap())
 
-        customer.outletType = prop(record, 'OUTLET TYPE', false)?.replaceFirst(/\d\s*\-\s*/, '')//1 - DrugShop
-        def lat = prop(record, 'GPS LATITUDE', false)
-        def lng = prop(record, 'GPS LONGITUDE', false)
+        def lat = prop(record, 'lat', false)
+        def lng = prop(record, 'lng', false)
+        def restockFrequency = prop(record, 'restockFrequency', false)
 
         execSilently("Converting Lat[$lat] to GPS") {
             customer.lat = lat?.replace('S', '-')?.replace('N', '')?.toDouble()
@@ -139,8 +139,20 @@ class CustomerService {
             customer.lng = lng?.replace('E', '')?.replace('W', '-')?.toDouble()
         }
 
+        execSilently("Converting Restock Frequency To Int ${restockFrequency}") {
+            customer.restockFrequency = restockFrequency?.toInteger()
+        }
+
         def customerContact = new CustomerContact(
+                title: prop(record, 'title', false),
                 firstName: prop(record, 'firstName', false),
+                surname: prop(record, 'surname', false),
+                contact: prop(record, 'contact', false),
+                gender: prop(record, 'gender', false),
+                role: prop(record, 'role', false),
+                qualification: prop(record, 'qualification', false),
+                networkOrAssociation: execSilently("Converting Network Or Association") { prop(record, 'parish', true) }
+
         )
 
         customer.village = village
