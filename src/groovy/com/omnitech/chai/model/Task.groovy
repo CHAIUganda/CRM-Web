@@ -79,7 +79,7 @@ class Task extends AbstractEntity {
     }
 
     Set<User> territoryUser() {
-        this.customer?.village?.parish?.subCounty?.territory?.territoryUsers
+        this.customer?.subCounty?.territory?.territoryUsers
     }
 
     static constraints = {
