@@ -24,7 +24,7 @@ interface Relations {
     final static String HAS_CONTACT = 'HAS_CONTACT'
 
     //Customer -> SubCounty
-    final static String BELONGS_TO_SC = 'BELONGS_TO_SC'
+    final static String CUST_IN_SC = 'CUST_IN_SC'
 
     //Customer -> Village
     final static String CUST_IN_VILLAGE = 'CUST_IN_VILLAGE'

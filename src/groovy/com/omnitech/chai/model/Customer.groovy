@@ -69,7 +69,7 @@ public class Customer extends AbstractEntity implements LeafNode {
     Set<CustomerContact> customerContacts
 
     @Fetch
-    @RelatedTo(type = Relations.BELONGS_TO_SC)
+    @RelatedTo(type = Relations.CUST_IN_SC)
     SubCounty subCounty
 
     @Fetch
