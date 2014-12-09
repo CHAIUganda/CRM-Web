@@ -30,7 +30,7 @@ class CypherGeneratorTest extends Specification {
         def arrow = CypherGenImpl.getAssocArrow(field)
 
         then:
-        arrow == '-[:BELONGS_TO_SC]->'
+        arrow == '-[:CUST_IN_SC]->'
 
         when:
         field = ReflectFunctions.findAllFields(District).find { it.type == Region }
@@ -150,7 +150,7 @@ class CypherGeneratorTest extends Specification {
 
     def 'test generation with levels'() {
         when:
-        def query = CypherGenerator.getNonPaginatedQuery(MCustomer, 2).toString()
+        def query = CypherGenerator.getNonPaginatedQuery(MCustomer, 2,Collections.EMPTY_MAP).toString()
 
         then:
         query == 'MATCH (mcustomer:MCustomer)\n' +
@@ -164,7 +164,7 @@ class CypherGeneratorTest extends Specification {
 
     def 'test generation with levels 0'() {
         when:
-        def query = CypherGenerator.getNonPaginatedQuery(MCustomer, 0).toString()
+        def query = CypherGenerator.getNonPaginatedQuery(MCustomer, 0,Collections.EMPTY_MAP).toString()
 
         then:
         query == 'MATCH (mcustomer:MCustomer)\n' +
