@@ -73,6 +73,10 @@ public class Customer extends AbstractEntity implements LeafNode {
     SubCounty subCounty
 
     @Fetch
+    @RelatedTo(type = Relations.CUST_IN_PARISH)
+    Parish parish
+
+    @Fetch
     @RelatedTo(type = Relations.CUST_IN_VILLAGE)
     Village village
 

@@ -29,6 +29,9 @@ interface Relations {
     //Customer -> Village
     final static String CUST_IN_VILLAGE = 'CUST_IN_VILLAGE'
 
+    //Customer -> Village
+    final static String CUST_IN_PARISH = 'CUST_IN_PARISH'
+
     //Customer -> Segment
     final static String IN_SEGMENT = 'IN_SEGMENT'
 
