@@ -87,6 +87,8 @@ class TaskService {
         def task = 'task'
         def query = mathQueryForUserTasks(userId)
                 .match(node('sc').in(HAS_SUB_COUNTY).node('d')).optional()
+                .match(node('c').out(CUST_IN_VILLAGE).node('v')).optional()
+                .match(node('c').out(CUST_IN_PARISH).node('p')).optional()
 
 
         def fields = [az(identifier('d').property('name'), 'DISTRICT'),
@@ -112,10 +114,10 @@ class TaskService {
         def query = match(
                 node('task').label(Task.simpleName)
                         .in(CUST_TASK).node('c')
-                        .out(CUST_IN_VILLAGE).node('v')
-                        .in(HAS_VILLAGE).node('p')
-                        .in(HAS_PARISH).node('sc')
+                        .out(CUST_IN_SC).node('sc')
                         .in(HAS_SUB_COUNTY).node('d'))
+                .match(node('c').out(CUST_IN_VILLAGE).node('v')).optional()
+                .match(node('c').out(CUST_IN_PARISH).node('p')).optional()
 
 
         def fields = [az(identifier('d').property('name'), 'DISTRICT'),
@@ -141,9 +143,7 @@ class TaskService {
         start(nodesById('u', userId))
                 .match(node('u').out(USER_TERRITORY).node('ut')
                 .in(SC_IN_TERRITORY).node('sc')
-                .out(HAS_PARISH).node('p')
-                .out(HAS_VILLAGE).node('v')
-                .in(CUST_IN_VILLAGE).node('c')
+                .in(CUST_IN_SC).node('c')
                 .out(CUST_TASK).node('task'))
 
     }
