@@ -19,21 +19,21 @@
 			<tr class="prop">
 				<td valign="top" class="name">District</td>
 				
-				<td valign="top" class="value">${customerInstance?.village?.parish?.subCounty?.district}</td>
+				<td valign="top" class="value">${customerInstance?.subCounty?.district}</td>
 				
 			</tr>
 
         <tr class="prop">
 				<td valign="top" class="name">SubCounty</td>
 
-				<td valign="top" class="value">${customerInstance?.village?.parish?.subCounty}</td>
+				<td valign="top" class="value">${customerInstance?.subCounty}</td>
 
 			</tr>
 
         <tr class="prop">
 				<td valign="top" class="name">Parish</td>
 
-				<td valign="top" class="value">${customerInstance?.village?.parish}</td>
+				<td valign="top" class="value">${customerInstance?.parish}</td>
 
 			</tr>
         <tr class="prop">

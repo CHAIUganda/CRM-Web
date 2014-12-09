@@ -59,7 +59,7 @@
 
                 <td>${fieldValue(bean: customerInstance, field: "openingHours")}</td>
 
-                <td>${customerInstance?.element?.village?.parish?.subCounty?.district}</td>
+                <td>${customerInstance?.element?.subCounty?.district}</td>
 
                 <td><g:formatDate date="${customerInstance.dateCreated}" format="dd-MMM-yyyy" /></td>
 
