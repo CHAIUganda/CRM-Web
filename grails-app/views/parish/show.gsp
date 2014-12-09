@@ -23,13 +23,6 @@
 				
 			</tr>
 		
-			<tr class="prop">
-				<td valign="top" class="name"><g:message code="parish.subCounty.label" default="Sub County" /></td>
-				
-				<td valign="top" class="value"><g:link controller="subCounty" action="show" id="${parishInstance?.subCounty?.id}">${parishInstance?.subCounty?.encodeAsHTML()}</g:link></td>
-				
-			</tr>
-		
 		</tbody>
 	</table>
 </section>

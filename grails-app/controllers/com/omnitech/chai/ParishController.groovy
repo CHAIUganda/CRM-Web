@@ -33,7 +33,7 @@ class ParishController {
     }
 
     def create() {
-        respond ModelFunctions.bind(new Parish(), params), model: getPageModel()
+        respond ModelFunctions.bind(new Parish(), params)
     }
 
     def save(Parish parishInstance) {
@@ -65,7 +65,7 @@ class ParishController {
             notFound(); return
         }
         def parishInstance = regionService.findParish(id)
-        respond parishInstance  , model: getPageModel()
+        respond parishInstance
     }
 
     @Transactional
@@ -119,9 +119,5 @@ class ParishController {
             }
             '*' { render status: NOT_FOUND }
         }
-    }
-
-    Map getPageModel() {
-        [subCountys: regionService.listAllSubCountys()]
     }
 }

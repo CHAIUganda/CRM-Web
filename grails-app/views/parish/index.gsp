@@ -19,8 +19,6 @@
             
             <g:sortableColumn property="name" title="${message(code: 'parish.name.label', default: 'Name')}" />
             
-            <th><g:message code="parish.subCounty.label" default="Sub County" /></th>
-            
             <td>
                 Action
             </td>
@@ -31,8 +29,6 @@
             <tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
                 
                 <td><g:link action="show" id="${parishInstance.id}">${fieldValue(bean: parishInstance, field: "name")}</g:link></td>
-                
-                <td>${fieldValue(bean: parishInstance, field: "subCounty")}</td>
                 
                 <td>
                     <g:link action="edit" id="${parishInstance.id}"><i
