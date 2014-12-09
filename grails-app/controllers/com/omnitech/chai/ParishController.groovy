@@ -43,7 +43,7 @@ class ParishController {
         }
 
         if (parishInstance.hasErrors()) {
-            respond parishInstance.errors, view: 'create', model: getPageModel()
+            respond parishInstance.errors, view: 'create'
             return
         }
 
@@ -76,7 +76,7 @@ class ParishController {
         }
 
         if (parishInstance.hasErrors()) {
-            respond parishInstance.errors, view: 'edit', model: getPageModel()
+            respond parishInstance.errors, view: 'edit'
             return
         }
 
