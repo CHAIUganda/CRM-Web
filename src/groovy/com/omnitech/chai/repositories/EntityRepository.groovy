@@ -47,6 +47,8 @@ interface ParishRepository extends GraphRepository<Parish> {
 
     Parish findByUuid(String uuid)
 
+    Parish findByName(String uuid)
+
     @Query('start r=node({subCountyId}) match r-[:HAS_PARISH]->(s) where s.name =~ {name} return s')
     Parish findBySubCountyAndName(@Param('subCountyId') Long subCountyId, @Param('name') String name)
 
@@ -57,6 +59,8 @@ interface ParishRepository extends GraphRepository<Parish> {
 interface VillageRepository extends GraphRepository<Village> {
 
     Village findByUuid(String uuid)
+
+    Village findByName(String name)
 
     @Query('start r=node({parishId}) match r-[:HAS_VILLAGE]->(v) where v.name =~ {name} return v')
     Village findByParishAndName(@Param('parishId') Long parishId, @Param('name') String name)

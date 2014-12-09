@@ -75,17 +75,17 @@ class RegionService {
         )
     }
 
-    Parish getOrCreateParish(SubCounty sc, String name) {
+    Parish getOrCreateParish(String name) {
         getOrCreate(
-                { parishRepository.findBySubCountyAndName(sc.id, name) },
-                { parishRepository.save(new Parish(subCounty: sc, name: name)) }
+                { parishRepository.findByName(name) },
+                { parishRepository.save(new Parish(name: name)) }
         )
     }
 
-    Village getOrCreateVillage(Parish parish, String name) {
+    Village getOrCreateVillage(String name) {
         getOrCreate(
-                { villageRepository.findByParishAndName(parish.id, name) },
-                { villageRepository.save(new Village(parish: parish, name: name)) }
+                { villageRepository.findByName(name) },
+                { villageRepository.save(new Village(name: name)) }
         )
     }
 

@@ -118,10 +118,10 @@ class CustomerService {
         def subCounty = regionService.getOrCreateSubCounty(district, subCountyName)
 
         String parishName = prop(record, 'parish', true, "$subCountyName-DummyParish")
-        def parish = regionService.getOrCreateParish(subCounty, parishName)
+        def parish = regionService.getOrCreateParish(parishName)
 
         String villageName = prop(record, 'village', true, "$parishName-DummyVillage")
-        def village = regionService.getOrCreateVillage(parish, villageName)
+        def village = regionService.getOrCreateVillage(villageName)
         record as Map
 
 
@@ -156,6 +156,8 @@ class CustomerService {
         )
 
         customer.village = village
+        customer.parish = parish
+        customer.subCounty = subCounty
         customer.customerContacts = [customerContact] as Set
 
         customerRepository.save(customer)
