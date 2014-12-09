@@ -18,15 +18,8 @@
 		
 			<tr class="prop">
 				<td valign="top" class="name"><g:message code="village.name.label" default="Name" /></td>
-				
+
 				<td valign="top" class="value">${fieldValue(bean: villageInstance, field: "name")}</td>
-				
-			</tr>
-		
-			<tr class="prop">
-				<td valign="top" class="name"><g:message code="village.parish.label" default="Parish" /></td>
-				
-				<td valign="top" class="value"><g:link controller="parish" action="show" id="${villageInstance?.parish?.id}">${villageInstance?.parish?.encodeAsHTML()}</g:link></td>
 				
 			</tr>
 		

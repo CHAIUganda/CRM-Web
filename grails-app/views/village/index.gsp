@@ -18,7 +18,6 @@
 
             <g:sortableColumn property="name" title="${message(code: 'village.name.label', default: 'Name')}"/>
 
-            <th><g:message code="village.parish.label" default="Parish"/></th>
 
             <td>
                 Action
@@ -32,7 +31,6 @@
                 <td><g:link action="show"
                             id="${villageInstance.id}">${fieldValue(bean: villageInstance, field: "name")}</g:link></td>
 
-                <td>${fieldValue(bean: villageInstance, field: "parish")}</td>
 
                 <td>
                     <g:link action="edit" id="${villageInstance.id}"><i class="glyphicon glyphicon-pencil"></i></g:link>

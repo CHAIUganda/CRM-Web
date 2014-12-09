@@ -32,7 +32,7 @@ class VillageController {
     }
 
     def create() {
-        respond ModelFunctions.bind(new Village(), params), model: getPageModel()
+        respond ModelFunctions.bind(new Village(), params)
     }
 
     def save(Village villageInstance) {
@@ -42,7 +42,7 @@ class VillageController {
         }
 
         if (villageInstance.hasErrors()) {
-            respond villageInstance.errors, view: 'create', model: getPageModel()
+            respond villageInstance.errors, view: 'create'
             return
         }
 
@@ -64,7 +64,7 @@ class VillageController {
             notFound(); return
         }
         def villageInstance = regionService.findVillage(id)
-        respond villageInstance, model: getPageModel()
+        respond villageInstance
     }
 
     @Transactional
@@ -75,7 +75,7 @@ class VillageController {
         }
 
         if (villageInstance.hasErrors()) {
-            respond villageInstance.errors, view: 'edit', model: getPageModel()
+            respond villageInstance.errors, view: 'edit'
             return
         }
 
@@ -120,7 +120,4 @@ class VillageController {
         }
     }
 
-    Map getPageModel() {
-        [parishs: regionService.listAllParishs()]
-    }
 }
