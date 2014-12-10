@@ -97,7 +97,7 @@ class PlaceController {
     def parishes() {
         log.debug("Req:${neoSecurityService.currentUser}-ParishList")
         def parishes = regionService.findAllParishesForUser(neoSecurityService.currentUser.id).collect {
-            [id: it.id, name: it.name, uuid: it.uuid, 'subCountyId': it.subCounty.id]
+            [id: it.id, name: it.name, uuid: it.uuid]
         }
         log.debug("Resp:${neoSecurityService.currentUser}-${parishes?.size()} Parishes")
         respond parishes

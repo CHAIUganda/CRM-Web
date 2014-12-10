@@ -52,7 +52,7 @@ interface ParishRepository extends GraphRepository<Parish> {
     @Query('start r=node({subCountyId}) match r-[:HAS_PARISH]->(s) where s.name =~ {name} return s')
     Parish findBySubCountyAndName(@Param('subCountyId') Long subCountyId, @Param('name') String name)
 
-    @Query('start u = node({userId}) match u-[:USER_TERRITORY]->(t)<-[:SC_IN_TERRITORY]-(sc)-[:HAS_PARISH]->(p) return distinct p')
+    @Query('start u = node({userId}) match u-[:USER_TERRITORY]->(t)<-[:SC_IN_TERRITORY]-(sc)<-[:CUST_IN_SC]-(c)-[:CUST_IN_PARISH]->(p) return distinct p')
     Iterable<Parish> findAllForUser(@Param('userId') Long userId)
 }
 
@@ -90,10 +90,6 @@ interface TaskRepository extends GraphRepository<Task>, CypherDslRepository<Task
 
     @Query('start c = node({customerId}) match c -[:CUST_TASK]-> (t) return t order by t.dateCreated desc limit 1')
     Task findLastTask(@Param('customerId') Long customerId)
-
-    //START u=node(1) MATCH (u)-[:USER_TERRITORY]->(t)<-[:SC_IN_TERRITORY]-(sc)<-[:CUST_IN_SC]-(sc)-[:HAS_PARISH]->(p)-[:HAS_VILLAGE]->(v)<-[:CUST_IN_VILLAGE]-(customer)-[:CUST_TASK]-(tsk) RETURN distinct tsk
-    @Query("START u=node({userId}) MATCH (u)-[:USER_TERRITORY]->(t)<-[:SC_IN_TERRITORY]-(sc)-[:HAS_PARISH]->(p)-[:HAS_VILLAGE]->(v)<-[:CUST_IN_VILLAGE]-(customer)-[:CUST_TASK]-(tsk) WHERE (u-[:ASSIGNED_TASK]->(tsk) or NOT(tsk<-[:ASSIGNED_TASK]-())) and not(tsk.status = 'complete') RETURN distinct tsk")
-    Iterable<Task> findAllTaskForUser(@Param("userId") Long userId)
 
 }
 
