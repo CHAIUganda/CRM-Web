@@ -11,11 +11,11 @@
     <!-- Collection of nav links, forms, and other content for toggling -->
     <div id="navbarCollapse" class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
+            <li class="active"><a href="#"><i class="glyphicon glyphicon-home"></i>Home</a></li>
 
             %{--    PRODUCTS    --}%
             <li>
-                <a data-toggle="dropdown" class="dropdown-toggle" href="#">Products <b class="caret"></b></a>
+                <a data-toggle="dropdown" class="dropdown-toggle" href="#"><i class="glyphicon glyphicon-briefcase"></i>Products <b class="caret"></b></a>
                 <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
                     <li><g:link controller="product" action="index">Products</g:link></li>
                     <li><g:link controller="productGroup" action="index">Product Groups</g:link></li>
@@ -24,15 +24,15 @@
             </li>
 
             %{--    CUSTOMERS   --}%
-            <li><g:link controller="customer" action="index">Customers</g:link></li>
+            <li><g:link controller="customer" action="index"><i class="glyphicon glyphicon-home"></i>Customers</g:link></li>
 
 
             %{-- Tasks --}%
-            <li><g:link controller="task" action="index">Tasks</g:link></li>
+            <li><g:link controller="task" action="index"><i class="glyphicon glyphicon-tasks"></i>Tasks</g:link></li>
 
             %{--    SETTINGS    --}%
             <li class="dropdown">
-                <a data-toggle="dropdown" class="dropdown-toggle" href="#">Settings <b class="caret"></b></a>
+                <a data-toggle="dropdown" class="dropdown-toggle" href="#"><i class="glyphicon glyphicon-wrench"></i>Settings <b class="caret"></b></a>
                 <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
                     <li><g:link controller="region" action="index">Regions</g:link></li>
                     <li><g:link controller="district" action="index">Districts</g:link></li>
