@@ -48,8 +48,8 @@ public class Customer extends AbstractEntity implements LeafNode {
            buildingStructure,
            descriptionOfOutletLocation,
            numberOfProducts,
-            pictureURL,
-            tradingCenter
+           pictureURL,
+           tradingCenter
 
 
     Integer numberOfEmployees,
@@ -59,7 +59,7 @@ public class Customer extends AbstractEntity implements LeafNode {
     //todo add hasSisterBranch
     Boolean hasSisterBranch
     //todo add dateOutletOpened
-    Date  dateOutletOpened
+    Date dateOutletOpened
 
 
     String turnOver
