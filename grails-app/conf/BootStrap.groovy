@@ -22,6 +22,10 @@ class BootStrap {
         createUuidConstraints()
         insertEssentialRoles()
         insertDefaultSegments()
+
+        //Test Data
+        println("Inserting test Data....")
+       insertProductsAndGroups()
         //override this so that a proper request map is loaded by spring security
         ReflectionUtils.metaClass.static.getRequestMapClass = { RequestMap }
     }
@@ -112,6 +116,42 @@ class BootStrap {
                 neo.save(new CustomerSegment(name: 'Default Segment', callFrequency: 2, segmentationScript: 'true'))
             }
         }
+    }
+
+    //Testing data
+    void insertProductsAndGroups() {
+
+        println("inserting products and groups...")
+        def medicines = new ProductGroup(name: 'Medicines')
+        def tabs = new ProductGroup(name: 'Tabs', parent: medicines)
+        def syrups = new ProductGroup(name: 'Syrups', parent: medicines)
+        def detergents = new ProductGroup(name: 'Detergents')
+
+        txHelperService.doInTransaction {
+            medicines = neo.save(medicines)
+            tabs = neo.save(tabs)
+            syrups = neo.save(syrups)
+            detergents = neo.save(detergents)
+        }
+
+
+        [
+                new Product(name: 'QUININ', group: tabs),
+                new Product(name: 'CHLOROQUIN', group: tabs),
+                new Product(name: 'FANSIDAR', group: tabs),
+                new Product(name: 'IBRUFEN', group: tabs),
+
+                // Syrups
+                new Product(name: 'COUGH-SY', group: syrups),
+                new Product(name: 'BHM-SY', group: syrups),
+                new Product(name: 'MORINGA-SY', group: syrups),
+
+                //soaps
+                new Product(name: 'DETTOL', group: detergents),
+                new Product(name: 'JIREH', group: detergents)
+        ].each { prod -> txHelperService.doInTransaction { neo.save(prod) } }
+
+
     }
 
 }
