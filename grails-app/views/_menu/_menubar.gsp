@@ -28,7 +28,22 @@
 
 
             %{-- Tasks --}%
-            <li><g:link controller="task" action="index"><i class="glyphicon glyphicon-tasks"></i>Tasks</g:link></li>
+            <li>
+                <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                    <i class="glyphicon glyphicon-tasks"></i>Tasks <b class="caret"></b></a>
+                <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+                    <li>
+                        <g:link controller="task" action="index">All Tasks</g:link>
+                    </li>
+                    <li>
+                        <g:link controller="task" action="index">Detailer</g:link>
+                    </li>
+                    <li>
+                        <g:link controller="order" action="index">Orders</g:link>
+                    </li>
+                </ul>
+
+            </li>
 
             %{--    SETTINGS    --}%
             <li class="dropdown">
