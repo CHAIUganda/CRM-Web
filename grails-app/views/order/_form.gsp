@@ -6,27 +6,28 @@
 
     <div class="panel panel-body">
 
-    <div class="form-horizontal">
+        <div class="form-horizontal">
             <div class="form-group">
-                <label for="comment2" class="col-sm-5 control-label">Search</label>
+                <label class="col-sm-5 control-label">Search</label>
 
                 <div class="col-sm-5">
                     <input type="text" placeholder="Search Term...">
                 </div>
             </div>
 
-        <div class="row">
-            <div class="col-lg-2"><strong>Outlet Name:</strong></div>
+            <div class="row">
+                <div class="col-lg-2"><strong>Outlet Name:</strong></div>
 
-            <div class="col-lg-2">B-Y Pharmacy</div>
+                <div class="col-lg-2">B-Y Pharmacy</div>
 
-            <div class="col-lg-1"><strong>Location:</strong></div>
+                <div class="col-lg-1"><strong>Location:</strong></div>
 
-            <div class="col-lg-2">Tororo</div>
+                <div class="col-lg-2">Tororo</div>
 
-            <div class="col-lg-2"><strong>Key Contact:</strong></div>
+                <div class="col-lg-2"><strong>Key Contact:</strong></div>
 
-            <div class="col-lg-2">256-712-789-965</div>
+                <div class="col-lg-2">256-712-789-965</div>
+            </div>
         </div>
 
     </div>
@@ -69,6 +70,7 @@
             </tr>
             </tbody>
         </table>
+        <button class="btn badge-important">Add Item</button>
     </div>
 </div>
 
@@ -89,3 +91,6 @@
     </div>
 </div>
 
+
+%{-- Order Form --}%
+<g:render template="lineItemForm"/>
