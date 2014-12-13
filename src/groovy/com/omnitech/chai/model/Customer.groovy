@@ -176,4 +176,8 @@ public class Customer extends AbstractEntity implements LeafNode {
     String getName() {
         return outletName
     }
+
+    CustomerContact keyContact() {
+        customerContacts?.find {}
+    }
 }

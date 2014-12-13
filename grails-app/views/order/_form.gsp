@@ -70,7 +70,7 @@
             </tr>
             </tbody>
         </table>
-        <button class="btn badge-important">Add Item</button>
+        <button class="btn badge-important" data-toggle="modal" data-target="#line-item-form">Add Item</button>
     </div>
 </div>
 
