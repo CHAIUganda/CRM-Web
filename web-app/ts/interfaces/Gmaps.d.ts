@@ -1,7 +1,7 @@
 ///<reference path='../libs/googlemaps/google.maps.d.ts'/>
 declare class GMaps {
-    constructor(options:GMapOptions)
-    addMarker(options:GMarkerOptions):void
+    constructor(options:GMapOptions);
+    addMarker(options:GMarkerOptions):void;
 }
 
 interface GMapOptions {
