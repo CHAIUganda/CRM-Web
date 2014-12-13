@@ -9,6 +9,8 @@ import com.omnitech.chai.util.ReflectFunctions
 import grails.converters.JSON
 import org.springframework.http.HttpStatus
 
+import static com.omnitech.chai.util.ReflectFunctions.extractProperties
+
 /**
  * Created by kay on 10/29/14.
  */
@@ -32,8 +34,8 @@ class CustomerController {
     }
 
     Map customerToMap(Customer customer) {
-        def cMap = ReflectFunctions.extractProperties(customer)
-        def contacts = customer?.customerContacts?.collect { ReflectFunctions.extractProperties(it) }
+        def cMap = extractProperties(customer)
+        def contacts = customer?.customerContacts?.collect { extractProperties(it) }
         cMap['villageId'] = customer?.village?.id
 
         //todo to fix on upload
@@ -76,10 +78,10 @@ class CustomerController {
         customer = _updateVillage(json.uuid, customer, village)
         customer.lng = ChaiUtils.execSilently('Converting long to float') { json['longitude'] as Float }
         customer.lat = ChaiUtils.execSilently('Converting lat to float') { json['latitude'] as Float }
-        customer.customerContacts?.each {it.id = null}
+        customer.customerContacts?.each { it.id = null }
         customerService.saveCustomer(customer)
 
-        render  ([status: HttpStatus.OK.reasonPhrase, message: "Success"] as JSON )
+        render([status: HttpStatus.OK.reasonPhrase, message: "Success"] as JSON)
     }
 
     private Customer _updateVillage(String customerId, Customer customer, Village village) {
@@ -100,6 +102,21 @@ class CustomerController {
         render([status: 'error', message: error] as JSON)
     }
 
+    def searchByName() {
 
+        String term = params.term
+        if (!term) {
+            respond([])
+            return
+        }
+
+        respond customerService.searchCustomers(term, [sort: 'outletName'])
+                .content.collect {
+            [district  : it.subCounty.district.name,
+             outletName: it.outletName,
+             keyContact: it.customerContacts?.iterator()?.next()?.contact
+            ]
+        }
+    }
 
 }
