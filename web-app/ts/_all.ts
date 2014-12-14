@@ -6,4 +6,5 @@
 /// <reference path='interfaces/Resources.d.ts'/>
 /// <reference path='services/Common.ts'/>
 /// <reference path='controllers/TerritoryMapCtrl.ts'/>
+/// <reference path='controllers/OrderCtrl.ts'/>
 /// <reference path='maps/ListMap.ts'/>

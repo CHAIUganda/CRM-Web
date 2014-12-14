@@ -1,7 +1,8 @@
 <%@ page import="com.omnitech.chai.model.Task" %>
 
+
 %{-- Customer Details Sections --}%
-<div class="panel panel-success">
+<div class="panel panel-success" ng-controller="OrderCtrl">
     <div class="panel panel-heading">Select Customer</div>
 
     <div class="panel panel-body">
@@ -11,7 +12,11 @@
                 <label class="col-sm-5 control-label">Search</label>
 
                 <div class="col-sm-5">
-                    <input type="text" placeholder="Search Term...">
+                    <input type="text" placeholder="Search Term..."
+                           ng-model="cutomerObj"
+                           typeahead="customer.outletName for customer in searchCustomerByName($viewValue) | filter:$viewValue"
+                           typeahead-editable="false" typeahead-on-select="onSelectCustomer($item)">
+
                 </div>
             </div>
 
@@ -94,3 +99,7 @@
 
 %{-- Order Form --}%
 <g:render template="lineItemForm"/>
+
+<r:require modules="angular,angular-resource,angular-ui"/>
+<g:javascript src="services/Common.js"/>
+<g:javascript src="controllers/OrderCtrl.js"/>

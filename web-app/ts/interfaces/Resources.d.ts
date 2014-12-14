@@ -17,6 +17,12 @@ declare module omnitech.chai {
         territory: string;
     }
 
+    interface Customer {
+        name: string;
+        contact: string;
+        district: string;
+    }
+
     interface HttPromise {
         success(func:() => void):HttPromise ;
         error (func:(data:string) => void):HttPromise;

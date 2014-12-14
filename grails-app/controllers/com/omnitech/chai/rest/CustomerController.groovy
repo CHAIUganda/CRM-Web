@@ -102,9 +102,9 @@ class CustomerController {
         render([status: 'error', message: error] as JSON)
     }
 
-    def searchByName() {
+    def searchByName(String id) {
 
-        String term = params.term
+        String term = id ?: params.term
         if (!term) {
             respond([])
             return
@@ -114,7 +114,7 @@ class CustomerController {
                 .content.collect {
             [district  : it.subCounty.district.name,
              outletName: it.outletName,
-             keyContact: it.customerContacts?.iterator()?.next()?.contact
+             contact   : it.customerContacts?.iterator()?.next()?.contact
             ]
         }
     }

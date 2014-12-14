@@ -20,4 +20,9 @@ modules = {
         resource url: 'js/lib/jquery-ui-1.11.2.custom/jquery-ui.min.js'
         resource url: 'js/lib/jquery-ui-1.11.2.custom/jquery-ui.min.css'
     }
+
+    'angular-ui' {
+        dependsOn('angular')
+        resource url: 'js/lib/ui-bootstrap/ui-bootstrap-custom-tpls-0.12.0.min.js'
+    }
 }
