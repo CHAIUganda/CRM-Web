@@ -29,7 +29,6 @@ module omnitech.chai {
 
         searchForCustomers(searchParam:string):ng.IPromise<Customer[]> {
             var url = omnitechBase + '/rest/customer/searchByName';
-            //return <Customer[]>this.resouce(url).query({term: searchParam})
             return this.http.get(url, {params: {term: searchParam}}).then((res:ng.IHttpPromiseCallbackArg<Customer[]>) => res.data)
         }
 
