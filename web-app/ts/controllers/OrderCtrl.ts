@@ -5,8 +5,7 @@ module omnitech.chai {
         searchCustomerByName : (searchTerm:string) =>ng.IPromise<Customer[]>;
         onSelectCustomer : (customer:Customer) => void;
         order  : Order
-
-
+        products : Product[];
     }
 
     class OrderCtrl {
@@ -28,11 +27,14 @@ module omnitech.chai {
         }
 
         private initData() {
-                this.scope.order = {customer : null}
+            this.scope.products = [{name:'SKks'},{name:'Sijjd'}];
+            this.scope.order = {};
+
         }
 
-
     }
+
+
 
     angular.module('omnitechApp', ['ngResource', 'ui.bootstrap'])
         .controller('OrderCtrl', OrderCtrl.injection())

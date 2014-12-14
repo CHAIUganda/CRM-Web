@@ -6,6 +6,9 @@
 	<meta name="layout" content="kickstart" />
 	<g:set var="entityName" value="${message(code: 'task.label', default: 'Task')}" />
 	<title><g:message code="default.create.label" args="[entityName]" /></title>
+	<script type="application/javascript">
+		_products = ${raw(jsProducts)}
+	</script>
 </head>
 
 <body>
@@ -29,6 +32,7 @@
 
 	</section>
 <r:require modules="angular,angular-resource,angular-ui"/>
+<g:javascript src="models/Domain.js"/>
 <g:javascript src="services/Common.js"/>
 <g:javascript src="controllers/OrderCtrl.js"/>
 </body>

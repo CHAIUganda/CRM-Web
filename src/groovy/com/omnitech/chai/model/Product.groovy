@@ -32,6 +32,8 @@ class Product extends AbstractEntity implements LeafNode {
         group nullable: false
     }
 
+    String toString() { name }
+
     @Override
     GroupNode getParent() { return group }
 }

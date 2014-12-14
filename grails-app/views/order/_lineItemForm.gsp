@@ -15,22 +15,25 @@
                     %{-- Select Product --}%
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Product</label>
+
                         <div class="col-sm-8">
-                            <g:select name="product" from="${['Quninin', 'Septring']}" class="form-control"/>
+                            <g:select name="product" from="${products}" optionKey="id" class="form-control"/>
                         </div>
                     </div>
 
                     %{-- Quantity --}%
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Quantity</label>
+
                         <div class="col-sm-8">
                             <input type="text" class="form-control">
                         </div>
                     </div>
 
-                     %{-- Unit Price --}%
+                    %{-- Unit Price --}%
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Recommended Price</label>
+
                         <div class="col-sm-8">
                             <p class="form-control-static">7005</p>
                         </div>
@@ -39,6 +42,7 @@
                     %{-- Total Price --}%
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Total</label>
+
                         <div class="col-sm-8">
                             <p class="form-control-static">7005</p>
                         </div>

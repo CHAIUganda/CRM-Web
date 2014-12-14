@@ -26,6 +26,7 @@ class OrderController {
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
     def orderService
+    def productService
     def userService
     def regionService
     def customerService
@@ -157,7 +158,8 @@ class OrderController {
     }
 
     def create() {
-        respond ModelFunctions.bind(new Order(), params), model: [users: userService.listAllUsers(), customers: customerService.listAllCustomers()]
+        def products = productService.listAllProducts()
+        respond(ModelFunctions.bind(new Order(), params), model: [users: userService.listAllUsers(), products: products, jsProducts: (products as JSON).toString()])
     }
 
     def save(Task taskInstance) {

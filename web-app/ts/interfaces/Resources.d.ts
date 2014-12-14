@@ -24,10 +24,10 @@ declare module omnitech.chai {
     }
 
     interface Product {
-        name : string;
-        unitOfMeasure : string;
-        formulation : string;
-        unitPrice : string;
+        name ?: string;
+        unitOfMeasure ?: string;
+        formulation ?: string;
+        unitPrice ?: string;
     }
 
     interface LineItem {
@@ -71,3 +71,4 @@ declare class MarkerWithLabel extends google.maps.Marker {
 
 declare var omnitechBase:string;
 declare var chaiMapData:omnitech.chai.HasCoords[];
+declare var _products:omnitech.chai.Product[];
