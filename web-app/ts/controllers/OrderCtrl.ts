@@ -1,9 +1,11 @@
 ///<reference path='../_all.ts'/>
 module omnitech.chai {
-    interface IOrderScope extends HasError,ng.IScope {
 
+    interface IOrderScope extends HasError,ng.IScope {
         searchCustomerByName : (searchTerm:string) =>ng.IPromise<Customer[]>;
         onSelectCustomer : (customer:Customer) => void;
+        order  : Order
+
 
     }
 
@@ -15,16 +17,18 @@ module omnitech.chai {
 
         constructor(private scope:IOrderScope, private dataLoader:DataLoader, private filterFilter) {
 
+            this.initData();
 
-            scope.searchCustomerByName = (searchTerm)=> {
-                var searchForCustomers = dataLoader.searchForCustomers(searchTerm);
-                console.log(searchForCustomers);
-                return searchForCustomers;
-            };
+            scope.searchCustomerByName = (searchTerm)=> dataLoader.searchForCustomers(searchTerm);
 
-            scope.onSelectCustomer = (c) => {
-                console.log(c)
-            };
+
+            scope.onSelectCustomer = (c)=> scope.order.customer = c;
+
+
+        }
+
+        private initData() {
+                this.scope.order = {customer : null}
         }
 
 

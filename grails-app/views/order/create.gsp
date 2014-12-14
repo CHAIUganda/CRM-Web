@@ -28,10 +28,9 @@
 		</g:form>
 
 	</section>
-<r:require modules="chosen"/>
-<g:javascript>
-        $(".chzn-select").chosen({enable_split_word_search:true});
-</g:javascript>
+<r:require modules="angular,angular-resource,angular-ui"/>
+<g:javascript src="services/Common.js"/>
+<g:javascript src="controllers/OrderCtrl.js"/>
 </body>
 
 </html>

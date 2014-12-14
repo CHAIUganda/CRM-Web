@@ -18,9 +18,28 @@ declare module omnitech.chai {
     }
 
     interface Customer {
-        name: string;
+        outletName: string;
         contact: string;
         district: string;
+    }
+
+    interface Product {
+        name : string;
+        unitOfMeasure : string;
+        formulation : string;
+        unitPrice : string;
+    }
+
+    interface LineItem {
+        order  ?: Order;
+        product ?: Product;
+        quantity ?: number;
+        unitPrice  ?: number;
+    }
+
+    interface Order {
+        customer ?: Customer;
+        lineItems ?: LineItem[];
     }
 
     interface HttPromise {

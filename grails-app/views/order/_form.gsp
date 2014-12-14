@@ -23,15 +23,15 @@
             <div class="row">
                 <div class="col-lg-2"><strong>Outlet Name:</strong></div>
 
-                <div class="col-lg-2">B-Y Pharmacy</div>
+                <div class="col-lg-2">{{order.customer.outletName}}</div>
 
                 <div class="col-lg-1"><strong>Location:</strong></div>
 
-                <div class="col-lg-2">Tororo</div>
+                <div class="col-lg-2">{{order.customer.district}}</div>
 
                 <div class="col-lg-2"><strong>Key Contact:</strong></div>
 
-                <div class="col-lg-2">256-712-789-965</div>
+                <div class="col-lg-2">{{order.customer.contact}}</div>
             </div>
         </div>
 
@@ -100,6 +100,3 @@
 %{-- Order Form --}%
 <g:render template="lineItemForm"/>
 
-<r:require modules="angular,angular-resource,angular-ui"/>
-<g:javascript src="services/Common.js"/>
-<g:javascript src="controllers/OrderCtrl.js"/>

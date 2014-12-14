@@ -26,7 +26,6 @@ var omnitech;
             };
             DataLoader.prototype.searchForCustomers = function (searchParam) {
                 var url = omnitechBase + '/rest/customer/searchByName';
-                //return <Customer[]>this.resouce(url).query({term: searchParam})
                 return this.http.get(url, { params: { term: searchParam } }).then(function (res) { return res.data; });
             };
             return DataLoader;
