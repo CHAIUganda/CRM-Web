@@ -17,7 +17,8 @@
                         <label class="col-sm-4 control-label">Product</label>
 
                         <div class="col-sm-8">
-                            <g:select name="product" from="${products}" optionKey="id" class="form-control"/>
+                            <g:select name="product" from="${products}" optionKey="id" class="form-control"
+                                      ng-change="onProductSelected()" ng-model="order.activeLineItem.productId"/>
                         </div>
                     </div>
 
@@ -26,7 +27,7 @@
                         <label class="col-sm-4 control-label">Quantity</label>
 
                         <div class="col-sm-8">
-                            <input type="text" class="form-control">
+                            <input type="text" class="form-control" ng-model="order.activeLineItem.quantity">
                         </div>
                     </div>
 
@@ -35,7 +36,7 @@
                         <label class="col-sm-4 control-label">Recommended Price</label>
 
                         <div class="col-sm-8">
-                            <p class="form-control-static">7005</p>
+                            <p class="form-control-static">{{order.activeLineItem.unitPrice}}</p>
                         </div>
                     </div>
 
@@ -44,7 +45,18 @@
                         <label class="col-sm-4 control-label">Total</label>
 
                         <div class="col-sm-8">
-                            <p class="form-control-static">7005</p>
+                            <p class="form-control-static">{{lineCost(order.activeLineItem)}}</p>
+                        </div>
+                    </div>
+
+                    %{-- Add Button --}%
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"></label>
+
+                        <div class="col-sm-8">
+                            <p class="form-control-static">
+
+                            <div class="btn btn-default">Add</div></p>
                         </div>
                     </div>
 

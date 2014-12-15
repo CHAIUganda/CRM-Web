@@ -24,20 +24,22 @@ declare module omnitech.chai {
     }
 
     interface Product {
+        id?:number;
         name ?: string;
         unitOfMeasure ?: string;
         formulation ?: string;
-        unitPrice ?: string;
+        unitPrice ?: number;
     }
 
     interface LineItem {
-        order  ?: Order;
+        productId ?: number;
         product ?: Product;
         quantity ?: number;
         unitPrice  ?: number;
     }
 
     interface Order {
+        activeLineItem ?: LineItem;
         customer ?: Customer;
         lineItems ?: LineItem[];
     }

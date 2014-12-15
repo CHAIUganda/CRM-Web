@@ -2,7 +2,7 @@
 
 
 %{-- Customer Details Sections --}%
-<div class="panel panel-success" ng-controller="OrderCtrl">
+<div class="panel panel-success" >
     <div class="panel panel-heading">Select Customer</div>
 
     <div class="panel panel-body">
@@ -53,20 +53,17 @@
             </tr>
             </thead>
             <tbody>
-            <tr class="odd">
-                <td><i class="glyphicon glyphicon-edit"></i><i class="glyphicon glyphicon-trash"></i>Fansidar</td>
-                <td>3</td>
-                <td>2000</td>
-                <td>6000</td>
+            <tr class="odd" ng-repeat="li in order.lineItems">
+                <td>
+                    <i class="glyphicon glyphicon-edit"></i>
+                    <i class="glyphicon glyphicon-trash"></i>
+                    {{li.name}}
+                </td>
+                <td>{{li.quantity}}</td>
+                <td>{{li.unitPrice}}</td>
+                <td>{{lineCost(li)}}</td>
 
             </tr>
-            <tr class="even">
-                <td><i class="glyphicon glyphicon-edit"></i><i class="glyphicon glyphicon-trash"></i>Fansidar</td>
-                <td>3</td>
-                <td>2000</td>
-                <td>6000</td>
-            </tr>
-
             <tr class="info">
                 <td><strong>Total</strong></td>
                 <td></td>
@@ -75,7 +72,7 @@
             </tr>
             </tbody>
         </table>
-        <button class="btn badge-important" data-toggle="modal" data-target="#line-item-form">Add Item</button>
+        <div class="btn btn-default" data-toggle="modal" data-target="#line-item-form" ng-click="addLineItem()">Add Item</div>
     </div>
 </div>
 

@@ -13,7 +13,7 @@
 
 <body>
 
-	<section id="create-task" class="first">
+	<section id="create-task" class="first" ng-controller="OrderCtrl">
 
 		<g:hasErrors bean="${taskInstance}">
 		<div class="alert alert-danger">

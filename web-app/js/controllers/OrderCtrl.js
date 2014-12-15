@@ -5,19 +5,57 @@ var omnitech;
     (function (chai) {
         var OrderCtrl = (function () {
             function OrderCtrl(scope, dataLoader, filterFilter) {
+                var _this = this;
                 this.scope = scope;
                 this.dataLoader = dataLoader;
                 this.filterFilter = filterFilter;
                 this.initData();
                 scope.searchCustomerByName = function (searchTerm) { return dataLoader.searchForCustomers(searchTerm); };
                 scope.onSelectCustomer = function (c) { return scope.order.customer = c; };
+                scope.lineCost = function (li) { return OrderCtrl.lineCost(li); };
+                scope.orderCost = function (o) { return OrderCtrl.orderCost(o); };
+                scope.addLineItem = function () { return _this.addLineItem(); };
+                scope.onProductSelected = function () { return _this.onProductSelected(); };
             }
             OrderCtrl.injection = function () {
                 return ['$scope', 'dataLoader', 'filterFilter', OrderCtrl];
             };
+            OrderCtrl.prototype.onProductSelected = function () {
+                var li = this.scope.order.activeLineItem;
+                var p = this.getSelectedProduct();
+                li.product = p;
+                li.unitPrice = p.unitPrice;
+            };
+            OrderCtrl.prototype.getSelectedProduct = function () {
+                var _this = this;
+                var filter = function (p) {
+                    //use == to allow coercion
+                    return p.id == _this.scope.order.activeLineItem.productId;
+                };
+                var prods = _products.filter(filter);
+                return prods[0];
+            };
+            OrderCtrl.prototype.addLineItem = function () {
+                var li = {};
+                this.scope.order.lineItems.push(li);
+                this.scope.order.activeLineItem = li;
+            };
+            OrderCtrl.lineCost = function (li) {
+                if (li.unitPrice && li.quantity)
+                    return li.unitPrice * li.quantity;
+                return 0;
+            };
+            OrderCtrl.orderCost = function (order) {
+                return order.lineItems.reduce(function (prv, cur) { return OrderCtrl.lineCost(prv) + OrderCtrl.lineCost(cur); }, 0);
+            };
             OrderCtrl.prototype.initData = function () {
-                this.scope.products = [{ name: 'SKks' }, { name: 'Sijjd' }];
-                this.scope.order = {};
+                this.scope.order = OrderCtrl.createOrder();
+            };
+            OrderCtrl.createOrder = function () {
+                return { activeLineItem: {}, lineItems: [] };
+            };
+            OrderCtrl.prototype.createLineItem = function () {
+                return {};
             };
             return OrderCtrl;
         })();
