@@ -11,3 +11,4 @@ wrapper/
 *.ipr
 *.iws
 out/
+messages.log
