@@ -8,7 +8,8 @@ module omnitech.chai {
         orderCost : (order:Order) => number;
         order  : Order
         products : Product[];
-        addLineItem : () => void;
+        createLineItem : () => void;
+        addLineItem: () => void;
         onProductSelected: ()=>void;
     }
 
@@ -30,7 +31,12 @@ module omnitech.chai {
 
             scope.orderCost = (o) => OrderCtrl.orderCost(o);
 
-            scope.addLineItem = () => this.addLineItem();
+            scope.createLineItem = () => scope.order.activeLineItem = this.createLineItem();
+
+            scope.addLineItem = () => {
+                $("#line-item-form").modal('hide');
+                scope.order.lineItems.push(scope.order.activeLineItem);
+            };
 
             scope.onProductSelected = () => this.onProductSelected();
         }
@@ -51,11 +57,6 @@ module omnitech.chai {
             return prods[0];
         }
 
-        private addLineItem() {
-            var li:LineItem = {};
-            this.scope.order.lineItems.push(li);
-            this.scope.order.activeLineItem = li;
-        }
 
         private static lineCost(li:LineItem):number {
             if (li.unitPrice && li.quantity)

@@ -56,7 +56,7 @@
                         <div class="col-sm-8">
                             <p class="form-control-static">
 
-                            <div class="btn btn-default">Add</div></p>
+                            <div class="btn btn-default" ng-click="addLineItem()">Add</div></p>
                         </div>
                     </div>
 

@@ -72,7 +72,7 @@
             </tr>
             </tbody>
         </table>
-        <div class="btn btn-default" data-toggle="modal" data-target="#line-item-form" ng-click="addLineItem()">Add Item</div>
+        <div class="btn btn-default" data-toggle="modal" data-target="#line-item-form" ng-click="createLineItem()">Add Item</div>
     </div>
 </div>
 

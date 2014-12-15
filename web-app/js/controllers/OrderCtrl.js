@@ -14,7 +14,11 @@ var omnitech;
                 scope.onSelectCustomer = function (c) { return scope.order.customer = c; };
                 scope.lineCost = function (li) { return OrderCtrl.lineCost(li); };
                 scope.orderCost = function (o) { return OrderCtrl.orderCost(o); };
-                scope.addLineItem = function () { return _this.addLineItem(); };
+                scope.createLineItem = function () { return scope.order.activeLineItem = _this.createLineItem(); };
+                scope.addLineItem = function () {
+                    $("#line-item-form").modal('hide');
+                    scope.order.lineItems.push(scope.order.activeLineItem);
+                };
                 scope.onProductSelected = function () { return _this.onProductSelected(); };
             }
             OrderCtrl.injection = function () {
@@ -34,11 +38,6 @@ var omnitech;
                 };
                 var prods = _products.filter(filter);
                 return prods[0];
-            };
-            OrderCtrl.prototype.addLineItem = function () {
-                var li = {};
-                this.scope.order.lineItems.push(li);
-                this.scope.order.activeLineItem = li;
             };
             OrderCtrl.lineCost = function (li) {
                 if (li.unitPrice && li.quantity)
