@@ -42,6 +42,7 @@ declare module omnitech.chai {
         activeLineItem ?: LineItem;
         customer ?: Customer;
         lineItems ?: LineItem[];
+        comment ?: string;
     }
 
     interface HttPromise {

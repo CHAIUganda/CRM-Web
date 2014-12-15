@@ -12,6 +12,7 @@ module omnitech.chai {
         addLineItem: () => void;
         onProductSelected: ()=>void;
         deleteLine: (idx:number) => void;
+        editLine : (idx:number)=> void;
     }
 
     class OrderCtrl {
@@ -36,12 +37,18 @@ module omnitech.chai {
 
             scope.addLineItem = () => {
                 $("#line-item-form").modal('hide');
-                scope.order.lineItems.push(scope.order.activeLineItem);
+                var lineItems = scope.order.lineItems;
+                if (lineItems.indexOf(scope.order.activeLineItem) < 0)
+                    lineItems.push(scope.order.activeLineItem);
             };
 
             scope.onProductSelected = () => this.onProductSelected();
 
             scope.deleteLine = (idx) => scope.order.lineItems.splice(idx, 1);
+
+            scope.editLine = (idx) => {
+                scope.order.activeLineItem = scope.order.lineItems[idx];
+            };
         }
 
         private onProductSelected() {

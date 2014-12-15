@@ -55,8 +55,9 @@
                     <tbody>
                     <tr class="odd" ng-repeat="li in order.lineItems">
                         <td>
-                            <a class="glyphicon glyphicon-edit" href="#"></a>
-                            <a class="glyphicon glyphicon-trash text-danger" href="#" ng-click="deleteLine($index)"></a>
+                            <a class="glyphicon glyphicon-edit" href="#" ng-click="editLine($index)" data-toggle="modal"
+                               data-target="#line-item-form"></a>
+                            <a class="glyphicon glyphicon-trash text-danger" ng-click="deleteLine($index)"></a>
                             {{li.product.name}}
                         </td>
                         <td>{{li.quantity}}</td>
@@ -91,7 +92,7 @@
                     <label for="comment" class="col-sm-1 control-label">Comment</label>
 
                     <div class="col-sm-11">
-                        <textarea id="comment" class="form-control"></textarea>
+                        <textarea id="comment" class="form-control" ng-model="order.comment"></textarea>
                     </div>
                 </div>
             </div>

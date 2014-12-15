@@ -17,10 +17,15 @@ var omnitech;
                 scope.createLineItem = function () { return scope.order.activeLineItem = _this.createLineItem(); };
                 scope.addLineItem = function () {
                     $("#line-item-form").modal('hide');
-                    scope.order.lineItems.push(scope.order.activeLineItem);
+                    var lineItems = scope.order.lineItems;
+                    if (lineItems.indexOf(scope.order.activeLineItem) < 0)
+                        lineItems.push(scope.order.activeLineItem);
                 };
                 scope.onProductSelected = function () { return _this.onProductSelected(); };
                 scope.deleteLine = function (idx) { return scope.order.lineItems.splice(idx, 1); };
+                scope.editLine = function (idx) {
+                    scope.order.activeLineItem = scope.order.lineItems[idx];
+                };
             }
             OrderCtrl.injection = function () {
                 return ['$scope', 'dataLoader', 'filterFilter', OrderCtrl];
