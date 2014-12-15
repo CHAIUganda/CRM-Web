@@ -64,7 +64,7 @@ module omnitech.chai {
         }
 
         private static orderCost(order:Order):number {
-            return <number>order.lineItems.reduce((prv, cur)=>OrderCtrl.lineCost(prv) + OrderCtrl.lineCost(cur), 0);
+            return <number>order.lineItems.reduce((prv, cur)=>(<number>prv) + OrderCtrl.lineCost(cur), 0);
         }
 
         private initData() {

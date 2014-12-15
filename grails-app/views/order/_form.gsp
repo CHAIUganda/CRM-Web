@@ -57,7 +57,7 @@
                 <td>
                     <i class="glyphicon glyphicon-edit"></i>
                     <i class="glyphicon glyphicon-trash"></i>
-                    {{li.name}}
+                    {{li.product.name}}
                 </td>
                 <td>{{li.quantity}}</td>
                 <td>{{li.unitPrice}}</td>
@@ -68,7 +68,7 @@
                 <td><strong>Total</strong></td>
                 <td></td>
                 <td></td>
-                <td>20000</td>
+                <td>{{orderCost(order)}}</td>
             </tr>
             </tbody>
         </table>

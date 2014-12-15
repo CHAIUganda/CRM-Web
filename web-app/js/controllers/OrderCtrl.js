@@ -46,7 +46,7 @@ var omnitech;
                 return 0;
             };
             OrderCtrl.orderCost = function (order) {
-                return order.lineItems.reduce(function (prv, cur) { return OrderCtrl.lineCost(prv) + OrderCtrl.lineCost(cur); }, 0);
+                return order.lineItems.reduce(function (prv, cur) { return prv + OrderCtrl.lineCost(cur); }, 0);
             };
             OrderCtrl.prototype.initData = function () {
                 this.scope.order = OrderCtrl.createOrder();
