@@ -20,6 +20,7 @@ var omnitech;
                     scope.order.lineItems.push(scope.order.activeLineItem);
                 };
                 scope.onProductSelected = function () { return _this.onProductSelected(); };
+                scope.deleteLine = function (idx) { return scope.order.lineItems.splice(idx, 1); };
             }
             OrderCtrl.injection = function () {
                 return ['$scope', 'dataLoader', 'filterFilter', OrderCtrl];

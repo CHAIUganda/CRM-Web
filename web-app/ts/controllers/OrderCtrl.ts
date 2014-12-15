@@ -11,6 +11,7 @@ module omnitech.chai {
         createLineItem : () => void;
         addLineItem: () => void;
         onProductSelected: ()=>void;
+        deleteLine: (idx:number) => void;
     }
 
     class OrderCtrl {
@@ -39,6 +40,8 @@ module omnitech.chai {
             };
 
             scope.onProductSelected = () => this.onProductSelected();
+
+            scope.deleteLine = (idx) => scope.order.lineItems.splice(idx, 1);
         }
 
         private onProductSelected() {

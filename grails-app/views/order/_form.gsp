@@ -3,7 +3,7 @@
 
 %{-- Customer Details Sections --}%
 <div class="panel panel-success">
-    <div class="panel panel-heading">Select Customer</div>
+    <div class="panel panel-heading">Customer Order</div>
 
     <div class="panel panel-body">
 
@@ -55,8 +55,8 @@
                     <tbody>
                     <tr class="odd" ng-repeat="li in order.lineItems">
                         <td>
-                            <i class="glyphicon glyphicon-edit"></i>
-                            <i class="glyphicon glyphicon-trash"></i>
+                            <a class="glyphicon glyphicon-edit" href="#"></a>
+                            <a class="glyphicon glyphicon-trash text-danger" href="#" ng-click="deleteLine($index)"></a>
                             {{li.product.name}}
                         </td>
                         <td>{{li.quantity}}</td>
