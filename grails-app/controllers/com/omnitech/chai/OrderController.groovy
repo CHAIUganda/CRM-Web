@@ -1,8 +1,10 @@
 package com.omnitech.chai
 
 import com.omnitech.chai.model.DetailerTask
+import com.omnitech.chai.model.LineItem
 import com.omnitech.chai.model.Order
 import com.omnitech.chai.model.Task
+import com.omnitech.chai.util.ChaiUtils
 import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.ReflectFunctions
 import com.omnitech.chai.util.ServletUtil
@@ -162,26 +164,43 @@ class OrderController {
         respond(ModelFunctions.bind(new Order(), params), model: [users: userService.listAllUsers(), products: products, jsProducts: (products as JSON).toString()])
     }
 
-    def save(Task taskInstance) {
-        if (taskInstance == null) {
-            notFound()
-            return
+    def saveOrUpdate() {
+        try {
+            def json = request.JSON as Map
+            def orderInstance = toOrder(json)
+            orderService.saveOrder orderInstance
+            render status: OK, text: 'Success'
+        } catch (Throwable x) {
+            log.error('Error while saving order', x)
+            render status: BAD_REQUEST, text: ChaiUtils.getBestMessage(x)
+        }
+    }
+
+    private Order toOrder(Map orderMap) {
+        def customer = customerService.findCustomer(orderMap.customerId)
+
+        assert customer, 'customer should exist in the DB'
+
+        Order order = new Order()
+        if (orderMap.id) {
+            order = orderService.findOrder(orderMap.id)
+            assert order, 'order should exist in database'
         }
 
-        if (taskInstance.hasErrors()) {
-            respond taskInstance.errors, view: 'create'
-            return
-        }
+        order.customer = customer
 
-        taskService.saveTask taskInstance
+        def lineItems = (orderMap.lineItems as List<Map>).collect { toLineItem(it) }
+        order.lineItems = lineItems
+        order.comment = orderMap.comment
 
-        request.withFormat {
-            form {
-                flash.message = message(code: 'default.created.message', args: [message(code: 'Task.label', default: 'Task'), taskInstance.id])
-                redirect action: 'show', id: taskInstance.id
-            }
-            '*' { respond taskInstance, [status: CREATED] }
-        }
+        return order
+    }
+
+    private LineItem toLineItem(Map map) {
+        def product = productService.findProduct(map.productId as Long)
+        assert product, 'product should exist in data base'
+        assert map.quantity, 'quantity should not be null'
+        return new LineItem(product: product, quantity: map.quantity as Double, unitPrice: map.unitPrice as Double)
     }
 
     def edit() {
@@ -195,29 +214,6 @@ class OrderController {
             neo.fetch(taskInstance.territoryUser())
         }
         respond taskInstance, model: [users: userService.listAllUsers(), customers: customerService.listAllCustomers()]
-    }
-
-    @Transactional
-    def update(Task taskInstance) {
-        if (taskInstance == null) {
-            notFound()
-            return
-        }
-
-        if (taskInstance.hasErrors()) {
-            respond taskInstance.errors, view: 'edit'
-            return
-        }
-
-        taskService.saveTask taskInstance
-
-        request.withFormat {
-            form {
-                flash.message = message(code: 'default.updated.message', args: [message(code: 'Task.label', default: 'Task'), taskInstance.id])
-                redirect action: 'show', id: taskInstance.id
-            }
-            '*' { respond taskInstance, [status: OK] }
-        }
     }
 
     @Transactional
