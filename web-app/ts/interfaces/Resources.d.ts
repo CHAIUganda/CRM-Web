@@ -18,6 +18,7 @@ declare module omnitech.chai {
     }
 
     interface Customer {
+        id : number;
         outletName: string;
         contact: string;
         district: string;
@@ -39,6 +40,7 @@ declare module omnitech.chai {
     }
 
     interface Order {
+        id ?: number;
         activeLineItem ?: LineItem;
         customer ?: Customer;
         lineItems ?: LineItem[];

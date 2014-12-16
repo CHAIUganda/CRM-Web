@@ -28,6 +28,18 @@ var omnitech;
                 var url = omnitechBase + '/rest/customer/searchByName';
                 return this.http.get(url, { params: { term: searchParam } }).then(function (res) { return res.data; });
             };
+            DataLoader.prototype.persistOrder = function (order) {
+                var url = omnitechBase + '/order/saveOrUpdate';
+                var jsonFriendlyOrder = {
+                    id: order.id,
+                    customerId: order.customer.id,
+                    description: order.comment,
+                    lineItems: order.lineItems.map(function (m) {
+                        return { 'productId': m.productId, quantity: m.quantity };
+                    })
+                };
+                return this.http.post(url, JSON.stringify(jsonFriendlyOrder));
+            };
             return DataLoader;
         })();
         chai.DataLoader = DataLoader;

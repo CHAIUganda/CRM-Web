@@ -26,9 +26,18 @@ var omnitech;
                 scope.editLine = function (idx) {
                     scope.order.activeLineItem = scope.order.lineItems[idx];
                 };
+                scope.onSave = function () { return _this.save(); };
             }
             OrderCtrl.injection = function () {
                 return ['$scope', 'dataLoader', 'filterFilter', OrderCtrl];
+            };
+            OrderCtrl.prototype.save = function () {
+                var _this = this;
+                this.dataLoader.persistOrder(this.scope.order).success(function () {
+                    chai.Utils.postError(_this.scope, 'Success');
+                }).error(function (data) {
+                    window.alert(data);
+                });
             };
             OrderCtrl.prototype.onProductSelected = function () {
                 var li = this.scope.order.activeLineItem;

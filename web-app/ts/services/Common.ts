@@ -32,6 +32,19 @@ module omnitech.chai {
             return this.http.get(url, {params: {term: searchParam}}).then((res:ng.IHttpPromiseCallbackArg<Customer[]>) => res.data)
         }
 
+        persistOrder(order:Order):HttPromise {
+            var url = omnitechBase + '/order/saveOrUpdate';
+            var jsonFriendlyOrder = {
+                id: order.id,
+                customerId: order.customer.id,
+                description: order.comment,
+                lineItems: order.lineItems.map((m) => {
+                    return {'productId': m.productId, quantity: m.quantity}
+                })
+            };
+            return this.http.post(url, JSON.stringify(jsonFriendlyOrder));
+        }
+
 
     }
 
