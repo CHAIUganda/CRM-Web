@@ -107,6 +107,10 @@ interface DetailerTaskRepository extends GraphRepository<DetailerTask> {
     DetailerTask findByUuid(String uuid)
 }
 
+interface OrderRepository extends GraphRepository<Order> {
+    Order findByUuid(String uuid)
+}
+
 interface SettingRepository extends GraphRepository<Setting> {
     Setting findByUuid(String uuid)
 

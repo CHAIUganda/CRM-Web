@@ -189,18 +189,20 @@ class OrderController {
 
         order.customer = customer
 
-        def lineItems = (orderMap.lineItems as List<Map>).collect { toLineItem(it) }
+        def lineItems = (orderMap.lineItems as List<Map>).collect {
+            toLineItem(it, order)
+        }
         order.lineItems = lineItems
         order.comment = orderMap.comment
 
         return order
     }
 
-    private LineItem toLineItem(Map map) {
+    private LineItem toLineItem(Map map, Order order) {
         def product = productService.findProduct(map.productId as Long)
         assert product, 'product should exist in data base'
         assert map.quantity, 'quantity should not be null'
-        return new LineItem(product: product, quantity: map.quantity as Double, unitPrice: map.unitPrice as Double)
+        return new LineItem(product: product, order: order, quantity: map.quantity as Double, unitPrice: map.unitPrice as Double)
     }
 
     def edit() {
