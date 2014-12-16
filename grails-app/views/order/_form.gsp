@@ -101,6 +101,12 @@
         </div>
 
     </div>
+
+    <div class="row">
+        <div class="text-center">
+            <button class="btn btn-info" ng-click="onSave()"><g:message code="default.button.submit.label" default="Submit"/></button>
+        </div>
+    </div>
 </div>
 
 
