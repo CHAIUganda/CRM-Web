@@ -112,7 +112,8 @@ class CustomerController {
 
         respond customerService.searchCustomers(term, [sort: 'outletName'])
                 .content.collect {
-            [district  : it.subCounty.district.name,
+            [id        : it.id,
+             district  : it.subCounty.district.name,
              outletName: it.outletName,
              contact   : it.customerContacts?.iterator()?.next()?.contact
             ]
