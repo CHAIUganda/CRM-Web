@@ -117,7 +117,7 @@ class ChaiUtils {
     }
 
     static String getBestMessage(Throwable x){
-        def message = x.message
+        def message = "${x.getClass().simpleName}: $x.message"
         if(message) return message
         return "Technical Error Please Contact Sytem Admin: $x"
     }

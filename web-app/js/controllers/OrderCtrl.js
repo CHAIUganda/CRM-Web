@@ -33,11 +33,13 @@ var omnitech;
             };
             OrderCtrl.prototype.save = function () {
                 var _this = this;
-                this.dataLoader.persistOrder(this.scope.order).success(function () {
-                    chai.Utils.postError(_this.scope, 'Success');
-                }).error(function (data) {
-                    window.alert(data);
-                });
+                chai.Utils.safe(this.scope, function () {
+                    _this.dataLoader.persistOrder(_this.scope.order).success(function () {
+                        chai.Utils.postError(_this.scope, 'Success');
+                    }).error(function (data) {
+                        chai.Utils.postError(_this.scope, data);
+                    });
+                }, 'Saving order failed');
             };
             OrderCtrl.prototype.onProductSelected = function () {
                 var li = this.scope.order.activeLineItem;

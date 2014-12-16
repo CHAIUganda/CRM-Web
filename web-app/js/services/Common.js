@@ -47,10 +47,19 @@ var omnitech;
             function Utils() {
             }
             Utils.postError = function (hasError, error) {
-                hasError.error = error;
+                hasError.error = error ? error : 'Technical Error';
                 setTimeout(function () {
                     hasError.error = null;
                 }, 2000);
+            };
+            Utils.safe = function (hasError, fun, message) {
+                try {
+                    return fun();
+                }
+                catch (Error) {
+                    var msg = Error.message + ': ' + message;
+                    Utils.postError(hasError, msg);
+                }
             };
             return Utils;
         })();

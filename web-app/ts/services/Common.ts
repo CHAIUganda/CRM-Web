@@ -51,10 +51,19 @@ module omnitech.chai {
     export class Utils {
 
         static postError(hasError:HasError, error:string) {
-            hasError.error = error;
+            hasError.error = error ? error : 'Technical Error';
             setTimeout(()=> {
                 hasError.error = null
             }, 2000)
+        }
+
+        static  safe(hasError:HasError, fun:()=>any, message:string) {
+            try {
+                return fun()
+            } catch (Error) {
+                var msg = Error.message + ': ' + message;
+                Utils.postError(hasError, msg)
+            }
         }
     }
 }

@@ -56,13 +56,17 @@ module omnitech.chai {
         }
 
         private save() {
-            this.dataLoader.persistOrder(this.scope.order)
-                .success(() => {
-                    Utils.postError(this.scope, 'Success')
-                })
-                .error((data)=> {
-                    window.alert(data)
-                });
+            Utils.safe(this.scope,
+                ()=> {
+                    this.dataLoader.persistOrder(this.scope.order)
+                        .success(() => {
+                            Utils.postError(this.scope, 'Success')
+                        })
+                        .error((data)=> {
+                            Utils.postError(this.scope, data);
+                        });
+                }, 'Saving order failed')
+
         }
 
         private onProductSelected() {
