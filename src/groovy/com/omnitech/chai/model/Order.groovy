@@ -15,13 +15,16 @@ class Order extends Task {
     @Fetch
     @RelatedToVia
     Set<LineItem> lineItems = new HashSet()
+    String comment
 
     def beforeSave() {
-        this.type = Order.simpleName
+        super.beforeSave()
+        description = "Go Sale to [$customer.outletName]"
     }
 
     static constraints = {
         importFrom(Task)
     }
+
 
 }
