@@ -7,6 +7,9 @@
 
     <div class="panel panel-body">
 
+        %{--Errors--}%
+        <g:render template="/_common/ngError"/>
+
         <div class="form-horizontal">
             <div class="form-group">
                 <label class="col-sm-5 control-label">Search</label>
