@@ -39,7 +39,7 @@ class TaskController {
             return
         }
         Page<Task> page = loadPageData(max)
-        respond page.content, model: [taskInstanceCount: page.totalElements, users: userService.listAllUsers([:])]
+        [taskInstanceList: page.content,taskInstanceCount: page.totalElements, users: userService.listAllUsers([:])]
     }
 
     def map(Integer max) {
@@ -53,7 +53,7 @@ class TaskController {
             return map
         } as JSON
         def jsonMapString = mapData.toString(true)
-        respond page.content, model: [taskInstanceCount: page.totalElements, users: userService.listAllUsers([:]), mapData: jsonMapString]
+        [taskInstanceList: page.content,taskInstanceCount: page.totalElements, users: userService.listAllUsers([:]), mapData: jsonMapString]
     }
 
     private Page<Task> loadPageData(Integer max) {
@@ -72,7 +72,7 @@ class TaskController {
             page = new PageImpl<Task>(tasks)
         } else {
             if (params.status) {
-                page = taskService.listTasksByStatus(params.status, params)
+                page = taskService.listTasksByStatus(params.status, params,Task)
             } else {
                 page = taskService.listTasks(params)
             }

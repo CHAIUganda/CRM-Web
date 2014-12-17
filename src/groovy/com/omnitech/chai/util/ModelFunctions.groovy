@@ -5,10 +5,12 @@ import groovy.transform.CompileStatic
 import groovy.transform.TypeCheckingMode
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.codehaus.groovy.runtime.DefaultGroovyMethods
 import org.grails.databinding.SimpleDataBinder
 import org.grails.databinding.SimpleMapDataBindingSource
 import org.neo4j.cypherdsl.grammar.Execute
 import org.neo4j.cypherdsl.grammar.ReturnNext
+import org.neo4j.cypherdsl.querydsl.CypherQueryDSL
 import org.neo4j.graphdb.DynamicLabel
 import org.neo4j.graphdb.Label
 import org.springframework.data.domain.Page
@@ -22,6 +24,7 @@ import org.springframework.data.neo4j.support.Neo4jTemplate
 import java.util.regex.Pattern
 
 import static java.util.Collections.EMPTY_MAP
+import static org.neo4j.cypherdsl.CypherQuery.*
 
 /**
  * Created by kay on 9/24/14.
@@ -92,7 +95,7 @@ class ModelFunctions {
             if (tempNeoEntity) {
                 beforeBind?.call(tempNeoEntity)
                 neoEntity = tempNeoEntity
-                bind(neoEntity, entity.properties)
+                bind(neoEntity, DefaultGroovyMethods.getProperties(entity))
             }
         }
         repo.save(neoEntity)
@@ -110,7 +113,7 @@ class ModelFunctions {
                 beforeBind?.call(tempNeoEntity)
                 neoEntity = tempNeoEntity
                 addInheritanceLabelToNode(repo, entity)
-                bind(neoEntity, entity.properties)
+                bind(neoEntity,  DefaultGroovyMethods.getProperties(entity))
             }
         }
         repo.save(neoEntity)
@@ -120,6 +123,17 @@ class ModelFunctions {
     static <T> Page<T> listAll(GraphRepository<T> repo, Map params) {
         def request = PageUtils.create(params)
         new PageImpl<T>(repo.findAll(request).content, request, repo.count())
+    }
+
+
+    static <T> Page<T> listAll(Neo4jTemplate repo, Class<T> type, Map params) {
+        def nodeName = type.simpleName.toLowerCase()
+
+        def dataQuery = match(node(nodeName).label(type.simpleName)).returns(identifier(nodeName))
+        dataQuery = PageUtils.addPagination(dataQuery, params, type)
+
+        def countQuery = match(node(nodeName).label(type.simpleName)).returns(count(identifier(nodeName)))
+        return query(repo, dataQuery, countQuery, params, type)
     }
 
     static <T> Page<T> searchAll(Neo4jTemplate neo, Class<T> aClass, String search, Map params) {
@@ -147,7 +161,9 @@ class ModelFunctions {
     }
 
     static <T> Page<T> query(Neo4jTemplate neo, Execute query, Execute countQuery, Map params, Class<T> container) {
+        log.trace("ModelFx: Query: $query")
         def data = neo.query(query.toString(), EMPTY_MAP).to(container).as(List)
+        log.trace("ModelFx: Count Query: $countQuery")
         def size = neo.query(countQuery.toString(), EMPTY_MAP).to(Long).single()
 
         return new PageImpl<T>(data, PageUtils.create(params), size)

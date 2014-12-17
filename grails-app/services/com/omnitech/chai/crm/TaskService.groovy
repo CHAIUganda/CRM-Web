@@ -32,22 +32,22 @@ class TaskService {
 
     List<Task> listAllTasks() { taskRepository.findAll().collect() }
 
-    Page<Task> listTasks(Map params) { ModelFunctions.listAll(taskRepository, params) }
+    Page<Task> listTasks(Map params) { ModelFunctions.listAll(neo, Task, params) }
 
-    Page<Task> listTasksByStatus(String status, Map params) {
+    def <T extends Task> Page<T> listTasksByStatus(String status, Map params, Class<T> taskType) {
 
-        def resultQuery = getTaskQuery(status).returns(identifier('task'))
+        def resultQuery = getTaskQuery(status, taskType).returns(identifier('task'))
         PageUtils.addPagination(resultQuery, params, Task)
 
-        def countyQuery = getTaskQuery(status).returns(count(identifier('task')))
+        def countyQuery = getTaskQuery(status, taskType).returns(count(identifier('task')))
         log.trace("listTasksByStatus: countQuery: $countyQuery")
         log.trace("listTasksByStatus: dataQuery: $resultQuery")
 
-        ModelFunctions.query(neo, resultQuery, countyQuery, params, Task)
+        ModelFunctions.query(neo, resultQuery, countyQuery, params, taskType)
     }
 
-    private static getTaskQuery(String status) {
-        def query = match(node('task').label(Task.simpleName))
+    private static getTaskQuery(String status, Class<? extends Task> taskType) {
+        def query = match(node('task').label(taskType.simpleName))
                 .where(identifier('task').string('status').eq(status))
         return query
     }
@@ -92,16 +92,16 @@ class TaskService {
 
 
         def fields = [az(identifier('d').property('name'), 'DISTRICT'),
-                az(identifier('sc').property('name'), 'SUBCOUNTY'),
-                az(identifier('v').property('name'), 'VILLAGE'),
-                az(identifier('c').property('outletName'), 'OUTLET NAME'),
-                az(identifier('c').property('outletType'), 'OUTLET TYPE')]
+                      az(identifier('sc').property('name'), 'SUBCOUNTY'),
+                      az(identifier('v').property('name'), 'VILLAGE'),
+                      az(identifier('c').property('outletName'), 'OUTLET NAME'),
+                      az(identifier('c').property('outletType'), 'OUTLET TYPE')]
 
         ReflectFunctions.findAllBasicFields(DetailerTask).each {
             if ('_dateLastUpdated' == it || it == '_dateCreated') return
             fields << az(identifier(task).property(it), getNaturalName(it).toUpperCase())
         }
-        query.returns(* fields)
+        query.returns(*fields)
 
         //District,Subcounty,Village,Customer Name, outletType,
         // All other fields
@@ -121,16 +121,16 @@ class TaskService {
 
 
         def fields = [az(identifier('d').property('name'), 'DISTRICT'),
-                az(identifier('sc').property('name'), 'SUBCOUNTY'),
-                az(identifier('v').property('name'), 'VILLAGE'),
-                az(identifier('c').property('outletName'), 'OUTLET NAME'),
-                az(identifier('c').property('outletType'), 'OUTLET TYPE')]
+                      az(identifier('sc').property('name'), 'SUBCOUNTY'),
+                      az(identifier('v').property('name'), 'VILLAGE'),
+                      az(identifier('c').property('outletName'), 'OUTLET NAME'),
+                      az(identifier('c').property('outletType'), 'OUTLET TYPE')]
 
         ReflectFunctions.findAllBasicFields(DetailerTask).each {
             if ('_dateLastUpdated' == it || it == '_dateCreated') return
             fields << az(identifier('task').property(it), getNaturalName(it).toUpperCase())
         }
-        query.returns(* fields)
+        query.returns(*fields)
         //District,Subcounty,Village,Customer Name, outletType,
         // All other fields
         log.trace("exportAllTasks(): [$query]")
