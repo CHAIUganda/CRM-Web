@@ -38,12 +38,12 @@ class TaskController {
             redirect(action: 'map', params: params)
             return
         }
-        Page<Task> page = loadPageData(max)
-        [taskInstanceList: page.content,taskInstanceCount: page.totalElements, users: userService.listAllUsers([:])]
+        Page<Task> page = taskService.loadPageData(max,params,Task)
+        [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: userService.listAllUsers([:])]
     }
 
     def map(Integer max) {
-        def page = loadPageData(max)
+        def page = taskService.loadPageData(max, params, Task)
         def mapData = page.content.collect {
             def map = ReflectFunctions.extractProperties(it)
             if (!(map.lat && map.lng)) {
@@ -53,37 +53,8 @@ class TaskController {
             return map
         } as JSON
         def jsonMapString = mapData.toString(true)
-        [taskInstanceList: page.content,taskInstanceCount: page.totalElements, users: userService.listAllUsers([:]), mapData: jsonMapString]
+        [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: userService.listAllUsers([:]), mapData: jsonMapString]
     }
-
-    private Page<Task> loadPageData(Integer max) {
-        params.max = Math.min(max ?: 50, 100)
-        if (!params.sort) {
-            params.sort = 'dueDate'
-        }
-
-        Page<Task> page = null
-
-        def user = params.user ? userService.findUserByName(params.user) : null
-        if (user) {
-            def status = params.status ?: Task.STATUS_NEW
-            params.status = status
-            def tasks = taskService.findAllTaskForUser(user.id, status, params)
-            page = new PageImpl<Task>(tasks)
-        } else {
-            if (params.status) {
-                page = taskService.listTasksByStatus(params.status, params,Task)
-            } else {
-                page = taskService.listTasks(params)
-            }
-        }
-
-        txHelperService.doInTransaction {
-            page.content.each { neo.fetch(it.territoryUser()) }
-        }
-        return page
-    }
-
 
     def export() {
         def user = params.user ? userService.findUserByName(params.user) : null
@@ -93,11 +64,11 @@ class TaskController {
         exportFields.addAll(fields.collect { GrailsNameUtils.getNaturalName(it).toUpperCase() })
         if (user) {
             def data = taskService.exportTasksForUser(user.id)
-            def csvData = FuzzyCSV.toCSV(data, * exportFields)
+            def csvData = FuzzyCSV.toCSV(data, *exportFields)
             ServletUtil.exportCSV(response, "Tasks-${params.user}.csv", csvData)
         } else {
             def data = taskService.exportAllTasks()
-            def csvData = FuzzyCSV.toCSV(data, * exportFields)
+            def csvData = FuzzyCSV.toCSV(data, *exportFields)
             ServletUtil.exportCSV(response, "Tasks-All.csv", csvData)
         }
 
@@ -131,7 +102,7 @@ class TaskController {
 
         def mapData = page.content.collect { ReflectFunctions.extractProperties(it) } as JSON
         def jsonMapString = mapData.toString(true)
-        respond page.content, view: 'map', model: [taskInstanceCount: page.totalElements, users: userService.listAllUsers([:]),mapData: jsonMapString]
+        respond page.content, view: 'map', model: [taskInstanceCount: page.totalElements, users: userService.listAllUsers([:]), mapData: jsonMapString]
     }
 
     def show() {
