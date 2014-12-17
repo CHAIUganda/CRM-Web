@@ -169,10 +169,10 @@ class TaskService {
 
     def <T extends Task> Match mathQueryForUserTasks(Long userId, Class<T> taskType) {
         start(nodesById('u', userId))
-                .match(node('u').out(USER_TERRITORY).node('ut').label(taskType.simpleName)
+                .match(node('u').out(USER_TERRITORY).node('ut')
                 .in(SC_IN_TERRITORY).node('sc')
                 .in(CUST_IN_SC).node('c')
-                .out(CUST_TASK).node('task'))
+                .out(CUST_TASK).node('task').label(taskType.simpleName))
 
     }
 
