@@ -148,13 +148,13 @@ class WholeSalerController {
             neo.fetch(district.subCounties)
             neo.fetch(wholeSaler.subCounties)
         }
-        def subcouties = district.subCounties.collect { sc ->
+        def subCounties = district.subCounties.collect { sc ->
             [id       : sc.id, name: sc.name,
              mapped   : wholeSaler.subCounties.any { sc.id == it.id },
              territory: sc.wholeSaler?.name]
         }
 
-        render subcouties as JSON
+        render subCounties as JSON
 
     }
 
