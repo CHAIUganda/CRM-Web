@@ -30,7 +30,7 @@ module omnitech.chai {
 
             scope.onToggleAll = ()=> {
                 this.checkAll();
-            }
+            };
 
             scope.$watch('districtId', ()=>this.onDistrictChanged());
             scope.$watch('territory.id', ()=>this.onDistrictChanged());
@@ -51,7 +51,7 @@ module omnitech.chai {
             if (!this.scope.territory) {
                 return;
             }
-            this.scope.subCounties = this.dataLoader.findMappedSubCounties(this.scope.territory.id, this.scope.districtId)
+            this.scope.subCounties = this.dataLoader.findWholeSalerSubCounties(this.scope.territory.id, this.scope.districtId)
         }
 
         private onSave() {

@@ -1,8 +1,13 @@
 package com.omnitech.chai
 
+import com.omnitech.chai.crm.TxHelperService
+import com.omnitech.chai.model.Territory
 import com.omnitech.chai.model.WholeSaler
 import com.omnitech.chai.util.ModelFunctions
+import grails.converters.JSON
 import grails.transaction.Transactional
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
 
 import static com.omnitech.chai.util.ModelFunctions.extractId
 import static org.springframework.http.HttpStatus.*
@@ -16,11 +21,19 @@ class WholeSalerController {
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
     def customerService
+    def regionService
+    @Autowired
+    TxHelperService tx
 
     def index(Integer max) {
         params.max = Math.min(max ?: 10, 100)
         def page = customerService.listWholeSalers(params)
-        respond page.content, model: [wholeSalerInstanceCount: page.totalElements]
+        respond page.content, model: pageModel(page)
+    }
+
+    private Map pageModel(Page<WholeSaler> page) {
+        def districts = regionService.listAllDistrictWithSubCounties()?.sort{it.name}
+        return [wholeSalerInstanceCount: page.totalElements, districts: districts]
     }
 
     def search(Integer max) {
@@ -118,6 +131,31 @@ class WholeSalerController {
             }
             '*' { render status: NO_CONTENT }
         }
+    }
+
+    def findMappedSubCounties() {
+        def districtId = extractId(params, 'district')
+        def territoryId = extractId(params, 'territory')
+
+        if (districtId == -1 || territoryId == -1) {
+            render '[]'
+            return
+        }
+
+        def district = regionService.findDistrict(districtId)
+        def wholeSaler = customerService.findWholeSaler(territoryId)
+        tx.doInTransaction {
+            neo.fetch(district.subCounties)
+            neo.fetch(wholeSaler.subCounties)
+        }
+        def subcouties = district.subCounties.collect { sc ->
+            [id       : sc.id, name: sc.name,
+             mapped   : wholeSaler.subCounties.any { sc.id == it.id },
+             territory: sc.wholeSaler?.name]
+        }
+
+        render subcouties as JSON
+
     }
 
     protected void notFound() {

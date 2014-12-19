@@ -39,7 +39,7 @@ var omnitech;
                 if (!this.scope.territory) {
                     return;
                 }
-                this.scope.subCounties = this.dataLoader.findMappedSubCounties(this.scope.territory.id, this.scope.districtId);
+                this.scope.subCounties = this.dataLoader.findWholeSalerSubCounties(this.scope.territory.id, this.scope.districtId);
             };
             TerritoryMapCtrl.prototype.onSave = function () {
                 var _this = this;

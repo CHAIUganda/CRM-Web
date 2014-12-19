@@ -16,6 +16,10 @@ var omnitech;
                 var url = omnitechBase + '/territory/findMappedSubCounties';
                 return this.resouce(url).query({ district: district, territory: territory });
             };
+            DataLoader.prototype.findWholeSalerSubCounties = function (wholeSaler, district) {
+                var url = omnitechBase + '/wholeSaler/findMappedSubCounties';
+                return this.resouce(url).query({ district: district, territory: wholeSaler });
+            };
             DataLoader.prototype.getTerritory = function (id) {
                 var url = omnitechBase + '/territory/territoryAsJson/' + id;
                 return this.resouce(url).get();

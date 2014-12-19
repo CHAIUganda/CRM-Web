@@ -49,13 +49,14 @@
         </tbody>
     </table>
 
+
+    <g:render template="/territory/mapTerritory"/>
     <div>
         <bs:paginate total="${wholeSalerInstanceCount}"
                      id="${params.action == 'search' ? (params.term ?: params.id) : null}"/>
     </div>
 </section>
 
-<g:render template="/territory/mapTerritory"/>
 
 <r:require modules="angular,angular-resource"/>
 <g:javascript src="services/Common.js"/>

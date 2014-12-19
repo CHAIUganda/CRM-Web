@@ -17,6 +17,11 @@ module omnitech.chai {
             return <SubCounty[]>this.resouce(url).query({district: district, territory: territory})
         }
 
+        findWholeSalerSubCounties(wholeSaler:number,district:number):SubCounty[]{
+            var url = omnitechBase + '/wholeSaler/findMappedSubCounties';
+            return <SubCounty[]>this.resouce(url).query({district: district, territory: wholeSaler})
+        }
+
         getTerritory(id:string):Territory {
             var url = omnitechBase + '/territory/territoryAsJson/' + id;
             return this.resouce(url).get()
