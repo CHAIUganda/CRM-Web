@@ -37,7 +37,7 @@
                         class="caret"></b></a>
                 <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
                     <g:each in="${users}" var="u">
-                        <li><g:link controller="task" action="index" params="${[user: u, status: params.status]}">
+                        <li><g:link controller="order" action="index" params="${[user: u, status: params.status]}">
                             <i class="glyphicon glyphicon-user"></i>${u}
                         </g:link></li>
                     </g:each>
@@ -53,13 +53,13 @@
                     <g:if test="${params.user != null}">
                         <li>
 
-                            <g:link controller="task" action="index"
+                            <g:link controller="order" action="index"
                                     params="${[status: Task.STATUS_NEW, user: params.user]}">
                                 <i class="glyphicon glyphicon-list"></i>Active
                             </g:link>
                         </li>
                         <li>
-                            <g:link controller="task" action="index"
+                            <g:link controller="order" action="index"
                                     params="${[status: Task.STATUS_COMPLETE, user: params.user]}">
                                 <i class="glyphicon glyphicon-list"></i>Complete
                             </g:link>
@@ -69,11 +69,11 @@
                     <g:else>
                         <li>
 
-                            <g:link controller="task" action="index"
+                            <g:link controller="order" action="index"
                                     params="${[status: Task.STATUS_NEW]}">
                                 <i class="glyphicon glyphicon-list"></i>Active</g:link></li>
                         <li>
-                            <g:link controller="task" action="index"
+                            <g:link controller="order" action="index"
                                     params="${[status: Task.STATUS_COMPLETE]}">
                                 <i class="glyphicon glyphicon-list"></i>Complete
                             </g:link>
@@ -86,14 +86,14 @@
         %{--The Export Button--}%
             <g:if test="${params.user != null}">
                 <li>
-                    <g:link controller="task" action="export" params="${[user: params.user]}">
+                    <g:link controller="order" action="export" params="${[user: params.user]}">
                         <i class="glyphicon glyphicon-export"></i>Export ${params.user}'s  Tasks
                     </g:link>
                 </li>
             </g:if>
             <g:else>
                 <li>
-                    <g:link controller="task" action="export" params="${[user: params.user]}">
+                    <g:link controller="order" action="export" params="${[user: params.user]}">
                         <i class="glyphicon glyphicon-export"></i>Export All
                     </g:link>
                 </li>
@@ -105,7 +105,7 @@
                     def newParams = [ui: 'map']
                     newParams.putAll(params)
                 %>
-                <g:link controller="task" action="${params.action}" params="${newParams}">
+                <g:link controller="order" action="${params.action}" params="${newParams}">
                     <i class="glyphicon glyphicon-map-marker"></i>Show Map
                 </g:link>
             </li>
@@ -174,7 +174,7 @@
     </table>
 
     <div>
-        <bs:paginate total="${orderInstanceCount}" params="${params}"
+        <bs:paginate total="${taskInstanceCount}" params="${params}"
                      id="${params.action == 'search' ? (params.term ?: params.id) : null}"/>
     </div>
 

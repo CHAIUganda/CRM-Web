@@ -28,6 +28,7 @@ class OrderController {
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
     def orderService
+    def taskService
     def productService
     def userService
     def regionService
@@ -37,20 +38,16 @@ class OrderController {
     Neo4jTemplate neo
 
     def index(Integer max) {
-
-        params.max = Math.min(max ?: 10, 100)
-        def page = regionService.listParishs(params)
-        respond page.content, model: [orderInstanceCount: page.totalElements]
-//        if (params.remove('ui') == 'map') {
-//            redirect(action: 'map', params: params)
-//            return
-//        }
-//        Page<Task> page = loadPageData(max)
-//        respond page.content, model: [taskInstanceCount: page.totalElements, users: userService.listAllUsers([:])]
+        if (params.remove('ui') == 'map') {
+            redirect(action: 'map', params: params)
+            return
+        }
+        Page<Task> page = taskService.loadPageData(max,params,Order)
+        [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: userService.listAllUsers([:])]
     }
 
     def map(Integer max) {
-        def page = loadPageData(max)
+        def page = taskService.loadPageData(max, params, Order)
         def mapData = page.content.collect {
             def map = ReflectFunctions.extractProperties(it)
             if (!(map.lat && map.lng)) {
@@ -60,37 +57,8 @@ class OrderController {
             return map
         } as JSON
         def jsonMapString = mapData.toString(true)
-        respond page.content, model: [taskInstanceCount: page.totalElements, users: userService.listAllUsers([:]), mapData: jsonMapString]
+        [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: userService.listAllUsers([:]), mapData: jsonMapString]
     }
-
-    private Page<Task> loadPageData(Integer max) {
-        params.max = Math.min(max ?: 50, 100)
-        if (!params.sort) {
-            params.sort = 'dueDate'
-        }
-
-        Page<Task> page = null
-
-        def user = params.user ? userService.findUserByName(params.user) : null
-        if (user) {
-            def status = params.status ?: Task.STATUS_NEW
-            params.status = status
-            def tasks = taskService.findAllTaskForUser(user.id, status, params)
-            page = new PageImpl<Task>(tasks)
-        } else {
-            if (params.status) {
-                page = taskService.listTasksByStatus(params.status, params)
-            } else {
-                page = taskService.listTasks(params)
-            }
-        }
-
-        txHelperService.doInTransaction {
-            page.content.each { neo.fetch(it.territoryUser()) }
-        }
-        return page
-    }
-
 
     def export() {
         def user = params.user ? userService.findUserByName(params.user) : null

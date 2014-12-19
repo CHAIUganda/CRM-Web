@@ -33,7 +33,7 @@ class TaskService {
 
     List<Task> listAllTasks() { taskRepository.findAll().collect() }
 
-    Page<Task> listTasks(Map params) { ModelFunctions.listAll(neo, Task, params) }
+    def <T extends Task> Page<T> listTasks(Class<T> taskType,Map params) { ModelFunctions.listAll(neo, taskType, params) }
 
     def <T extends Task> Page<T> listTasksByStatus(String status, Map params, Class<T> taskType) {
 
@@ -65,7 +65,7 @@ class TaskService {
             if (params.status) {
                 page = listTasksByStatus(params.status as String, params, taskType)
             } else {
-                page = listTasks(params)
+                page = listTasks(taskType,params)
             }
         }
 
