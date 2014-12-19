@@ -155,3 +155,7 @@ interface RequestMapRepository extends GraphRepository<RequestMap> {
     RequestMap findByConfigAtrribLike(@Param('attrib') String attrib)
 }
 
+interface WholeSalerRepository extends GraphRepository<WholeSaler> {
+    District findByUuid(String uuid)
+}
+

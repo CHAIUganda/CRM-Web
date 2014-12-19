@@ -57,5 +57,8 @@ interface Relations {
     //Group -> Group
     final static GRP_HAS_GRP = 'GRP_HAS_GRP'
 
+    //WholeSaler -> SubCounty
+    final static WHOLE_SALER_SC = 'WHOLE_SALER_SC'
+
 
 }

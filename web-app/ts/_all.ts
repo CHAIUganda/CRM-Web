@@ -9,4 +9,5 @@
 /// <reference path='services/Common.ts'/>
 /// <reference path='controllers/TerritoryMapCtrl.ts'/>
 /// <reference path='controllers/OrderCtrl.ts'/>
+/// <reference path='controllers/WholeSaleCtrl.ts'/>
 /// <reference path='maps/ListMap.ts'/>

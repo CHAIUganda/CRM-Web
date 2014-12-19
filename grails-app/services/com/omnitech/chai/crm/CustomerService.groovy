@@ -25,6 +25,7 @@ class CustomerService {
     def regionService
     def customerContactRepository
     def customerSegmentRepository
+    def wholeSalerRepository
     @Autowired
     Neo4jTemplate neo
 
@@ -46,6 +47,22 @@ class CustomerService {
     Customer findCustomer(String uuid) { uuid ? customerRepository.findByUuid(uuid) : null }
 
     void deleteCustomer(Long id) { customerRepository.delete(id) }
+
+    List<WholeSaler> listAllWholeSalers() { wholeSalerRepository.findAll().collect() }
+
+    Page<WholeSaler> listWholeSalers(Map params) { ModelFunctions.listAll(wholeSalerRepository, params) }
+
+    WholeSaler findWholeSaler(Long id) { wholeSalerRepository.findOne(id) }
+
+    WholeSaler findWholeSaler(String uuid) { wholeSalerRepository.findByUuid(id) }
+
+    WholeSaler saveWholeSaler(WholeSaler wholeSaler) { ModelFunctions.saveEntity(wholeSalerRepository, wholeSaler) }
+
+    void deleteWholeSaler(Long id) { wholeSalerRepository.delete(id) }
+
+    Page<WholeSaler> searchWholeSalers(String search, Map params) {
+        ModelFunctions.searchAll(neo, WholeSaler, ModelFunctions.getWildCardRegex(search), params)
+    }
 
     @Neo4jTransactional
     Page<Customer> searchCustomers(String search, Map params) {
