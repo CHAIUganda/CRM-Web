@@ -36,7 +36,9 @@ class CustomerController {
     Map customerToMap(Customer customer) {
         def cMap = extractProperties(customer)
         def contacts = customer?.customerContacts?.collect { extractProperties(it) }
-        cMap['villageId'] = customer?.village?.id
+        cMap['villageName'] = customer?.village?.name
+        cMap['subcountyId'] = customer?.subCounty?.id
+        cMap['parishName'] = customer?.parish?.name
 
         //todo to fix on upload
         cMap['longitude'] = customer.lng
