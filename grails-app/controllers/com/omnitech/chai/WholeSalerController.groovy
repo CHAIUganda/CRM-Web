@@ -7,6 +7,7 @@ import grails.converters.JSON
 import grails.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
+import org.springframework.data.neo4j.support.Neo4jTemplate
 
 import static com.omnitech.chai.util.ModelFunctions.extractId
 import static org.springframework.http.HttpStatus.*
@@ -23,6 +24,8 @@ class WholeSalerController {
     def regionService
     @Autowired
     TxHelperService tx
+    @Autowired
+    Neo4jTemplate neo
 
     def index(Integer max) {
         params.max = Math.min(max ?: 10, 100)
@@ -50,7 +53,9 @@ class WholeSalerController {
         if (id == -1) {
             notFound(); return
         }
-        respond customerService.findWholeSaler(id)
+        def wholeSaler = customerService.findWholeSaler(id)
+        tx.doInTransaction { neo.fetch(wholeSaler.subCounties) }
+        respond wholeSaler
     }
 
     def create() {

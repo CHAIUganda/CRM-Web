@@ -29,6 +29,24 @@
 				<td valign="top" class="value">${fieldValue(bean: wholeSalerInstance, field: "name")}</td>
 				
 			</tr>
+
+		<tr class="prop">
+			<td valign="top" class="name"><g:message code="territory.subcounties.label" default="SubCounties"/></td>
+
+			<td valign="top" class="value">
+
+				<g:each in="${wholeSalerInstance?.subCounties}" var="sc">
+					<div class="col-md-3">
+						<g:link controller="subCounty" action="show" id="${sc.id}">
+							<i class="glyphicon glyphicon-arrow-right"></i>
+							${sc}  (${sc.district})
+						</g:link>
+					</div>
+				</g:each>
+
+			</td>
+
+		</tr>
 		
 		</tbody>
 	</table>
