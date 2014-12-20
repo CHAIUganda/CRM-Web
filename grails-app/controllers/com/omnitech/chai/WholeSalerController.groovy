@@ -1,7 +1,6 @@
 package com.omnitech.chai
 
 import com.omnitech.chai.crm.TxHelperService
-import com.omnitech.chai.model.Territory
 import com.omnitech.chai.model.WholeSaler
 import com.omnitech.chai.util.ModelFunctions
 import grails.converters.JSON
@@ -18,7 +17,7 @@ import static org.springframework.http.HttpStatus.*
  */
 class WholeSalerController {
 
-    static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
+    static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE", mapToSubCounties: 'POST']
 
     def customerService
     def regionService
@@ -32,7 +31,7 @@ class WholeSalerController {
     }
 
     private Map pageModel(Page<WholeSaler> page) {
-        def districts = regionService.listAllDistrictWithSubCounties()?.sort{it.name}
+        def districts = regionService.listAllDistrictWithSubCounties()?.sort { it.name }
         return [wholeSalerInstanceCount: page.totalElements, districts: districts]
     }
 
@@ -135,27 +134,43 @@ class WholeSalerController {
 
     def findMappedSubCounties() {
         def districtId = extractId(params, 'district')
-        def territoryId = extractId(params, 'territory')
+        def wholeSalerId = extractId(params, 'territory')
 
-        if (districtId == -1 || territoryId == -1) {
+        if (districtId == -1 || wholeSalerId == -1) {
             render '[]'
             return
         }
 
         def district = regionService.findDistrict(districtId)
-        def wholeSaler = customerService.findWholeSaler(territoryId)
+        def wholeSaler = customerService.findWholeSaler(wholeSalerId)
         tx.doInTransaction {
             neo.fetch(district.subCounties)
+            district.subCounties
             neo.fetch(wholeSaler.subCounties)
         }
         def subCounties = district.subCounties.collect { sc ->
-            [id       : sc.id, name: sc.name,
+            [id       : sc.id,
+             name     : sc.name,
              mapped   : wholeSaler.subCounties.any { sc.id == it.id },
              territory: sc.wholeSaler?.name]
-        }
+        }.sort { it.name }
 
         render subCounties as JSON
 
+    }
+
+    def mapToSubCounties() {
+        try {
+            def data = request.JSON
+            def territory = data.wholeSaler as Long
+            def district = data.district as Long
+            def subCounties = data.subCounties as List
+            customerService.mapWholeSalerToSubs(territory, district, subCounties)
+            render 'Success!'
+        } catch (Exception x) {
+            log.error('Error while processing mapping territory', x)
+            render status: BAD_REQUEST, text: "${x.getClass().simpleName}: $x.message"
+        }
     }
 
     protected void notFound() {

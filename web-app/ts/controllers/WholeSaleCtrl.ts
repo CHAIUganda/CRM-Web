@@ -60,7 +60,7 @@ module omnitech.chai {
                 return
             }
             var subIds = this.scope.subCounties.filter((obj)=>obj.mapped).map((obj)=>obj.id);
-            this.dataLoader.persistSubCountyMap(this.scope.territory.id, this.scope.districtId, subIds)
+            this.dataLoader.persistSubCountyMapToWholeSaler(this.scope.territory.id, this.scope.districtId, subIds)
                 .success(()=> {
                     this.onDistrictChanged();
                     Utils.postError(this.scope, 'Success');

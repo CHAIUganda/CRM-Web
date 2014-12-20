@@ -25,6 +25,7 @@ class SubCounty extends AbstractEntity {
     @RelatedTo(type = Relations.SC_IN_TERRITORY)
     Territory territory
 
+    @Fetch
     @RelatedTo(type = Relations.WHOLE_SALER_SC,direction = Direction.INCOMING)
     WholeSaler wholeSaler
 

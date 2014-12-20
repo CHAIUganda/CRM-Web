@@ -48,7 +48,7 @@ var omnitech;
                     return;
                 }
                 var subIds = this.scope.subCounties.filter(function (obj) { return obj.mapped; }).map(function (obj) { return obj.id; });
-                this.dataLoader.persistSubCountyMap(this.scope.territory.id, this.scope.districtId, subIds).success(function () {
+                this.dataLoader.persistSubCountyMapToWholeSaler(this.scope.territory.id, this.scope.districtId, subIds).success(function () {
                     _this.onDistrictChanged();
                     chai.Utils.postError(_this.scope, 'Success');
                 }).error(function (data) {

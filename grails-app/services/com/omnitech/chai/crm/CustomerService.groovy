@@ -26,6 +26,7 @@ class CustomerService {
     def customerContactRepository
     def customerSegmentRepository
     def wholeSalerRepository
+    def subCountyRepository
     @Autowired
     Neo4jTemplate neo
 
@@ -188,7 +189,7 @@ class CustomerService {
 
     WholeSaler findWholeSaler(Long id) { wholeSalerRepository.findOne(id) }
 
-    WholeSaler findWholeSaler(String uuid) { wholeSalerRepository.findByUuid(id) }
+    WholeSaler findWholeSaler(String uuid) { wholeSalerRepository.findByUuid(uuid) }
 
     WholeSaler saveWholeSaler(WholeSaler wholeSaler) { ModelFunctions.saveEntity(wholeSalerRepository, wholeSaler) }
 
@@ -198,7 +199,26 @@ class CustomerService {
         ModelFunctions.searchAll(neo, WholeSaler, ModelFunctions.getWildCardRegex(search), params)
     }
 
+    @Neo4jTransactional
+    void mapWholeSalerToSubs(long id, long districtId, List<Long> scIds) {
+        def wholeSaler = wholeSalerRepository.findOne(id)
+        def scToBeMapped = scIds?.collect { subCountyRepository.findOne(it as Long) }
 
+        assert scToBeMapped.every { it.district.id == districtId }
+
+        neo.fetch(wholeSaler.subCounties)
+        wholeSaler.subCounties.each {
+            if (it.district.id == districtId && !scIds.contains(it.id)) {
+                it.wholeSaler = null
+                subCountyRepository.save(it)
+            }
+        }
+
+        scToBeMapped.each {
+            it.wholeSaler = wholeSaler
+            subCountyRepository.save(it)
+        }
+    }
 
 
 }

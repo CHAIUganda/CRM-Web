@@ -28,6 +28,10 @@ var omnitech;
                 var url = omnitechBase + '/territory/mapTerritoryToSubCounties';
                 return this.http.post(url, { territory: territory, district: district, subCounties: subCounties });
             };
+            DataLoader.prototype.persistSubCountyMapToWholeSaler = function (wholerSalerId, district, subCounties) {
+                var url = omnitechBase + '/wholeSaler/mapToSubCounties';
+                return this.http.post(url, { wholeSaler: wholerSalerId, district: district, subCounties: subCounties });
+            };
             DataLoader.prototype.searchForCustomers = function (searchParam) {
                 var url = omnitechBase + '/rest/customer/searchByName';
                 return this.http.get(url, { params: { term: searchParam } }).then(function (res) { return res.data; });

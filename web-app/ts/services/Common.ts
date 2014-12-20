@@ -32,6 +32,11 @@ module omnitech.chai {
             return <HttPromise>this.http.post(url, {territory: territory, district: district, subCounties: subCounties})
         }
 
+        persistSubCountyMapToWholeSaler(wholerSalerId:number, district:number, subCounties:number[]):HttPromise {
+            var url = omnitechBase + '/wholeSaler/mapToSubCounties';
+            return <HttPromise>this.http.post(url, {wholeSaler: wholerSalerId, district: district, subCounties: subCounties})
+        }
+
         searchForCustomers(searchParam:string):ng.IPromise<Customer[]> {
             var url = omnitechBase + '/rest/customer/searchByName';
             return this.http.get(url, {params: {term: searchParam}}).then((res:ng.IHttpPromiseCallbackArg<Customer[]>) => res.data)
