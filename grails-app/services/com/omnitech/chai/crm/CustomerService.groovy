@@ -195,6 +195,7 @@ class CustomerService {
 
     void deleteWholeSaler(Long id) { wholeSalerRepository.delete(id) }
 
+    @Neo4jTransactional
     Page<WholeSaler> searchWholeSalers(String search, Map params) {
         ModelFunctions.searchAll(neo, WholeSaler, ModelFunctions.getWildCardRegex(search), params)
     }
