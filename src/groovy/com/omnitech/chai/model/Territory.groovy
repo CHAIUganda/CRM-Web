@@ -19,9 +19,6 @@ class Territory extends AbstractEntity {
     @Indexed(unique = true)
     String name
 
-    @RelatedTo(type = Relations.CUST_IN_TERRITORY, direction = Direction.INCOMING)
-    Set<Customer> cutomers
-
     @RelatedTo(type = Relations.SC_IN_TERRITORY, direction = Direction.INCOMING)
     Set<SubCounty> subCounties
 

@@ -14,9 +14,6 @@ interface Relations {
     //Parish -> Village
     final static String HAS_VILLAGE = 'HAS_VILLAGE'
 
-    //Customer -> Territory
-    final static String CUST_IN_TERRITORY = 'CUST_IN_TERRITORY'
-
     //Region -> District
     final static String HAS_DISTRICT = 'HAS_DISTRICT'
 

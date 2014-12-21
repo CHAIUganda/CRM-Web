@@ -82,10 +82,6 @@ public class Customer extends AbstractEntity implements LeafNode {
 
 
     @Fetch
-    @RelatedTo(type = Relations.CUST_IN_TERRITORY)
-    Territory territory
-
-    @Fetch
     @RelatedTo(type = Relations.IN_SEGMENT)
     CustomerSegment segment
 
