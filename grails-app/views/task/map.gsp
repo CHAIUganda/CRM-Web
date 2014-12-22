@@ -176,12 +176,19 @@
                     </div>
 
                     <div class="form-group">
+                        <label class="col-md-3 control-label">Moment From Now</label>
+
+                        <div class="col-md-9"><p class="form-control-static">{{momentFromNow()}}</p></div>
+                    </div>
+
+                    <div class="form-group">
                         <label class="col-md-3 control-label">Due Date</label>
 
                         <div class="col-md-9">
 
                             <div class="input-group">
-                                <bs:datePicker name="dueDate" class="form-control"/>
+                                <input id="dueDateText" name="dueDate" class="datepicker form-control" size="16" type="text" value="2014-12-22" data-date-format="yyyy-mm-dd" ng-model="text.dueDateText">
+                                %{--<bs:datePicker name="dueDate" class="form-control" ng-model="text.dueDateText"/>--}%
                                 %{--<input type="text" class="form-control">--}%
                                 <span class="input-group-btn">
                                     <button class="btn btn-default" type="button">Save!</button>
@@ -202,6 +209,7 @@
 <script type="text/javascript"
         src="http://google-maps-utility-library-v3.googlecode.com/svn/tags/markerwithlabel/1.1.5/src/markerwithlabel_packed.js"></script>
 <r:require modules="angular,angular-resource"/>
+<g:javascript src="lib/moment.min.js"/>
 <g:javascript src="lib/gmaps.js"/>
 <g:javascript src="services/Common.js"/>
 <g:javascript src="controllers/TaskMapCtrl.js"/>

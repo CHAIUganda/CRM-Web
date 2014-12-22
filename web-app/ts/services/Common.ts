@@ -17,7 +17,7 @@ module omnitech.chai {
             return <SubCounty[]>this.resouce(url).query({district: district, territory: territory})
         }
 
-        findWholeSalerSubCounties(wholeSaler:number,district:number):SubCounty[]{
+        findWholeSalerSubCounties(wholeSaler:number, district:number):SubCounty[] {
             var url = omnitechBase + '/wholeSaler/findMappedSubCounties';
             return <SubCounty[]>this.resouce(url).query({district: district, territory: wholeSaler})
         }
@@ -34,7 +34,11 @@ module omnitech.chai {
 
         persistSubCountyMapToWholeSaler(wholerSalerId:number, district:number, subCounties:number[]):HttPromise {
             var url = omnitechBase + '/wholeSaler/mapToSubCounties';
-            return <HttPromise>this.http.post(url, {wholeSaler: wholerSalerId, district: district, subCounties: subCounties})
+            return <HttPromise>this.http.post(url, {
+                wholeSaler: wholerSalerId,
+                district: district,
+                subCounties: subCounties
+            })
         }
 
         searchForCustomers(searchParam:string):ng.IPromise<Customer[]> {
@@ -74,6 +78,11 @@ module omnitech.chai {
                 var msg = Error.message + ': ' + message;
                 Utils.postError(hasError, msg)
             }
+        }
+
+        static dayDiff(first:Date, second:Date):number {
+            var number2 = (<any>second - <any>first) / (1000 * 60 * 60 * 24);
+            return Math.round(number2);
         }
     }
 }

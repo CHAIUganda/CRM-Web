@@ -64,11 +64,11 @@ declare module omnitech.chai {
     interface Task extends HasCoords{
         description:string
         dueDate:Date
+        dueDateText:string
         completionDate:Date
         systemDueDate:Date
         assignedTo:string
         completedBy:string
-        customer:string
         lat:number
         lng:number
         wkt:string

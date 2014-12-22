@@ -7,7 +7,7 @@ module omnitech.chai {
 
         public gmap:GMaps;
 
-        constructor(private data:HasCoords[], private onClickCallBack:(Task,MarkerWithLabel)=> void) {
+        constructor(private data:Task[], private onClickCallBack:(Task, MarkerWithLabel)=> void) {
             this.createMap();
         }
 
@@ -18,22 +18,26 @@ module omnitech.chai {
                     this.gmap.addMarker({
                         lat: item.lat,
                         lng: item.lng,
-                        icon: {
-                            path: google.maps.SymbolPath.CIRCLE,
-                            scale: 4,
-                            fillColor: MapContainer.getColor(item.dueDays),
-                            strokeColor: MapContainer.getColor(item.dueDays)
-                        },
+                        icon: MapContainer.getMapIconOptions(item),
 
                         infoWindow: {
-                            content: '<p>' + item.description + '</p>'
+                            content: '<div>' + item.description + '</div>'
                         },
                         click: (marker)=> {
-                            this.onClickCallBack(item,marker);
+                            this.onClickCallBack(item, marker);
                         }
 
                     });
             });
+        }
+
+        static getMapIconOptions(item:Task):any {
+            return {
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 4,
+                fillColor: MapContainer.getColor(item.dueDays),
+                strokeColor: MapContainer.getColor(item.dueDays)
+            };
         }
 
         static getColor(days:number):string {
@@ -43,9 +47,9 @@ module omnitech.chai {
             if (days == 3) return '#4daf4a';
             if (days == 4) return '#984ea3';
             if (days >= 30) return '#ff7f00';
-            if (days >= 20) return '#ffff33';
-            if (days >= 15) return '#a65628';
-            if (days >= 10) return '#f781bf';
+            if (days >= 14) return '#ffff33';
+            if (days >= 11) return '#a65628';
+            if (days >= 8) return '#f781bf';
             if (days >= 5) return '#999999';
         }
 

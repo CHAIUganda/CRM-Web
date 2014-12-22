@@ -30,7 +30,11 @@ var omnitech;
             };
             DataLoader.prototype.persistSubCountyMapToWholeSaler = function (wholerSalerId, district, subCounties) {
                 var url = omnitechBase + '/wholeSaler/mapToSubCounties';
-                return this.http.post(url, { wholeSaler: wholerSalerId, district: district, subCounties: subCounties });
+                return this.http.post(url, {
+                    wholeSaler: wholerSalerId,
+                    district: district,
+                    subCounties: subCounties
+                });
             };
             DataLoader.prototype.searchForCustomers = function (searchParam) {
                 var url = omnitechBase + '/rest/customer/searchByName';
@@ -68,6 +72,10 @@ var omnitech;
                     var msg = Error.message + ': ' + message;
                     Utils.postError(hasError, msg);
                 }
+            };
+            Utils.dayDiff = function (first, second) {
+                var number2 = (second - first) / (1000 * 60 * 60 * 24);
+                return Math.round(number2);
             };
             return Utils;
         })();

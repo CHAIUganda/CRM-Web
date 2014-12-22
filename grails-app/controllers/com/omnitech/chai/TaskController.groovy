@@ -14,6 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
 
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+
 import static com.omnitech.chai.util.ModelFunctions.extractId
 import static org.springframework.http.HttpStatus.*
 
@@ -59,8 +62,10 @@ class TaskController {
             map.lng = task.customer.lng
         }
         map.description = "$task.description - (${ChaiUtils.fromNow(task.dueDate)})"
-        if (task.dueDate)
+        if (task.dueDate) {
             map.dueDays = task.dueDate - new Date()
+            map.dueDateText = ChaiUtils.formatDate(task.dueDate)
+        }
 
         if (task.customer?.segment)
             map.segment = task.customer.segment.name

@@ -17,20 +17,23 @@ var omnitech;
                         _this.gmap.addMarker({
                             lat: item.lat,
                             lng: item.lng,
-                            icon: {
-                                path: google.maps.SymbolPath.CIRCLE,
-                                scale: 4,
-                                fillColor: MapContainer.getColor(item.dueDays),
-                                strokeColor: MapContainer.getColor(item.dueDays)
-                            },
+                            icon: MapContainer.getMapIconOptions(item),
                             infoWindow: {
-                                content: '<p>' + item.description + '</p>'
+                                content: '<div>' + item.description + '</div>'
                             },
                             click: function (marker) {
                                 _this.onClickCallBack(item, marker);
                             }
                         });
                 });
+            };
+            MapContainer.getMapIconOptions = function (item) {
+                return {
+                    path: google.maps.SymbolPath.CIRCLE,
+                    scale: 4,
+                    fillColor: MapContainer.getColor(item.dueDays),
+                    strokeColor: MapContainer.getColor(item.dueDays)
+                };
             };
             MapContainer.getColor = function (days) {
                 //http://colorbrewer2.org/
@@ -44,11 +47,11 @@ var omnitech;
                     return '#984ea3';
                 if (days >= 30)
                     return '#ff7f00';
-                if (days >= 20)
+                if (days >= 14)
                     return '#ffff33';
-                if (days >= 15)
+                if (days >= 11)
                     return '#a65628';
-                if (days >= 10)
+                if (days >= 8)
                     return '#f781bf';
                 if (days >= 5)
                     return '#999999';
