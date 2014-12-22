@@ -74,6 +74,9 @@ interface CustomerRepository extends GraphRepository<Customer>, CypherDslReposit
 
     Customer findByUuid(String uuid)
 
+    @Query('start t=node({territoryId}) MATCH (t)<-[:`SC_IN_TERRITORY`]-(sc)<-[:CUST_IN_SC]-(c) RETURN c')
+    Iterator<Customer> findByTerritory(@Param('territoryId') Long territoryId)
+
 }
 
 interface CustomerContactRepository extends GraphRepository<CustomerContact> {
@@ -90,6 +93,9 @@ interface TaskRepository extends GraphRepository<Task>, CypherDslRepository<Task
 
     @Query('start c = node({customerId}) match c -[:CUST_TASK]-> (t) return t order by t.dateCreated desc limit 1')
     Task findLastTask(@Param('customerId') Long customerId)
+
+    @Query('start t=node({territoryId}) MATCH (t)<-[:`SC_IN_TERRITORY`]-(sc)<-[:CUST_IN_SC]-(c)-[:CUST_TASK]->(ts) RETURN ts')
+    Iterable<Task> findAllTasksInTerritory(@Param('territoryId') Long territoryId)
 
 }
 

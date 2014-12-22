@@ -17,12 +17,39 @@ var omnitech;
                         _this.gmap.addMarker({
                             lat: item.lat,
                             lng: item.lng,
-                            icon: "http://labs.google.com/ridefinder/images/mm_20_blue.png",
+                            //icon : "http://labs.google.com/ridefinder/images/mm_20_blue.png" ,
+                            icon: {
+                                path: google.maps.SymbolPath.CIRCLE,
+                                scale: 4,
+                                fillColor: MapContainer.getColor(item.dueDays),
+                                strokeColor: MapContainer.getColor(item.dueDays)
+                            },
                             infoWindow: {
                                 content: '<p>' + item.description + '</p>'
                             }
                         });
                 });
+            };
+            MapContainer.getColor = function (days) {
+                //http://colorbrewer2.org/
+                if (days == 1)
+                    return '#e41a1c';
+                if (days == 2)
+                    return '#377eb8';
+                if (days == 3)
+                    return '#4daf4a';
+                if (days == 4)
+                    return '#984ea3';
+                if (days >= 30)
+                    return '#ff7f00';
+                if (days >= 20)
+                    return '#ffff33';
+                if (days >= 15)
+                    return '#a65628';
+                if (days >= 10)
+                    return '#f781bf';
+                if (days >= 5)
+                    return '#999999';
             };
             return MapContainer;
         })();

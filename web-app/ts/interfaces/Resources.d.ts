@@ -56,6 +56,7 @@ declare module omnitech.chai {
         lat: number
         lng: number
         title: string
+        dueDays: number
         description: string
     }
 

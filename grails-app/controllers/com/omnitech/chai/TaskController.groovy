@@ -2,6 +2,7 @@ package com.omnitech.chai
 
 import com.omnitech.chai.model.DetailerTask
 import com.omnitech.chai.model.Task
+import com.omnitech.chai.util.ChaiUtils
 import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.ReflectFunctions
 import com.omnitech.chai.util.ServletUtil
@@ -11,7 +12,6 @@ import grails.transaction.Transactional
 import grails.util.GrailsNameUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
 import org.springframework.data.neo4j.support.Neo4jTemplate
 
 import static com.omnitech.chai.util.ModelFunctions.extractId
@@ -30,6 +30,7 @@ class TaskController {
     def regionService
     def customerService
     def txHelperService
+    def clusterService
     @Autowired
     Neo4jTemplate neo
 
@@ -38,7 +39,7 @@ class TaskController {
             redirect(action: 'map', params: params)
             return
         }
-        Page<Task> page = taskService.loadPageData(max,params,Task)
+        Page<Task> page = taskService.loadPageData(max, params, Task)
         [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: userService.listAllUsers([:])]
     }
 
@@ -50,6 +51,9 @@ class TaskController {
                 map.lat = it.customer.lat
                 map.lng = it.customer.lng
             }
+            map.description = "$it.description - (${ChaiUtils.fromNow(it.dueDate)})"
+            if (it.dueDate)
+                map.dueDays =  it.dueDate - new Date()
             return map
         } as JSON
         def jsonMapString = mapData.toString(true)
@@ -73,6 +77,10 @@ class TaskController {
         }
 
 
+    }
+
+    def cluster() {
+        clusterService.scheduleTasks()
     }
 
     def search(Integer max) {

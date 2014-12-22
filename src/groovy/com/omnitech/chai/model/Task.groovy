@@ -23,6 +23,7 @@ class Task extends AbstractEntity {
     String status = STATUS_NEW
     Date dueDate
     Date completionDate
+    Date systemDueDate
 
     @Fetch
     @RelatedTo(type = Relations.ASSIGNED_TASK, direction = Direction.INCOMING)
@@ -63,6 +64,8 @@ class Task extends AbstractEntity {
     User getAssignedTo() { assignedTo }
 
     String getType() { type }
+
+    boolean isLocatable() { customer?.wkt != null }
 
     boolean isComplete() { status == STATUS_COMPLETE }
 
