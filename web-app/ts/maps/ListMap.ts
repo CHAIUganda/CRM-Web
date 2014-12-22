@@ -3,11 +3,11 @@
 module omnitech.chai {
 
 
-    class MapContainer {
+    export class MapContainer {
 
         public gmap:GMaps;
 
-        constructor(private data?:HasCoords[]) {
+        constructor(private data:HasCoords[], private onClickCallBack:(Task,MarkerWithLabel)=> void) {
             this.createMap();
         }
 
@@ -15,7 +15,6 @@ module omnitech.chai {
             this.gmap = new GMaps({lat: 1.354255, lng: 32.314228, div: "#map", zoom: 7});
             this.data.forEach((item)=> {
                 if (item.lat && item.lng)
-//                    title: item.description,
                     this.gmap.addMarker({
                         lat: item.lat,
                         lng: item.lng,
@@ -28,7 +27,11 @@ module omnitech.chai {
 
                         infoWindow: {
                             content: '<p>' + item.description + '</p>'
+                        },
+                        click: (marker)=> {
+                            this.onClickCallBack(item,marker);
                         }
+
                     });
             });
         }
@@ -48,5 +51,5 @@ module omnitech.chai {
 
     }
 
-    var cont = new MapContainer(chaiMapData);
+
 }

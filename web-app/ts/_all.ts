@@ -3,6 +3,7 @@
 /// <reference path='libs/googlemaps/google.maps.d.ts'/>
 /// <reference path='libs/jquery/jquery.d.ts'/>
 /// <reference path='libs/bootstrap/bootstrap.d.ts'/>
+/// <reference path='libs/moment/moment.d.ts'/>
 /// <reference path='interfaces/Gmaps.d.ts'/>
 /// <reference path='interfaces/Resources.d.ts'/>
 /// <reference path='models/Domain.ts'/>
@@ -11,3 +12,4 @@
 /// <reference path='controllers/OrderCtrl.ts'/>
 /// <reference path='controllers/WholeSaleCtrl.ts'/>
 /// <reference path='maps/ListMap.ts'/>
+/// <reference path='controllers/TaskMapCtrl.ts'/>

@@ -243,3 +243,7 @@ a:link, a:active, a:visited {
     /*width: 10px;*/
     white-space: nowrap;
 }
+
+.datepicker{
+    margin-top: 0px !important;
+}

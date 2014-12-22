@@ -60,6 +60,23 @@ declare module omnitech.chai {
         description: string
     }
 
+
+    interface Task extends HasCoords{
+        description:string
+        dueDate:Date
+        completionDate:Date
+        systemDueDate:Date
+        assignedTo:string
+        completedBy:string
+        customer:string
+        lat:number
+        lng:number
+        wkt:string
+        segment: string
+        assignedUser:string
+        customer: string
+        customerDescription:string
+    }
 }
 
 
@@ -76,5 +93,5 @@ declare class MarkerWithLabel extends google.maps.Marker {
 }
 
 declare var omnitechBase:string;
-declare var chaiMapData:omnitech.chai.HasCoords[];
+declare var chaiMapData:omnitech.chai.Task[];
 declare var _products:omnitech.chai.Product[];

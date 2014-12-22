@@ -45,19 +45,34 @@ class TaskController {
 
     def map(Integer max) {
         def page = taskService.loadPageData(max, params, Task)
-        def mapData = page.content.collect {
-            def map = ReflectFunctions.extractProperties(it)
-            if (!(map.lat && map.lng)) {
-                map.lat = it.customer.lat
-                map.lng = it.customer.lng
-            }
-            map.description = "$it.description - (${ChaiUtils.fromNow(it.dueDate)})"
-            if (it.dueDate)
-                map.dueDays =  it.dueDate - new Date()
-            return map
+        def mapData = page.content.collect { task ->
+            return taskToJsonMap(task)
         } as JSON
         def jsonMapString = mapData.toString(true)
         [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: userService.listAllUsers([:]), mapData: jsonMapString]
+    }
+
+    private Map taskToJsonMap(Task task) {
+        def map = ReflectFunctions.extractProperties(task)
+        if (!(map.lat && map.lng)) {
+            map.lat = task.customer.lat
+            map.lng = task.customer.lng
+        }
+        map.description = "$task.description - (${ChaiUtils.fromNow(task.dueDate)})"
+        if (task.dueDate)
+            map.dueDays = task.dueDate - new Date()
+
+        if (task.customer?.segment)
+            map.segment = task.customer.segment.name
+
+        if(task.customer) {
+            map.customer = task.customer.outletName
+            map.customerDescription = task.customer.descriptionOfOutletLocation
+        }
+
+        map.assignedUser = task.territoryUser()?.collect { it.username }?.toString();
+
+        return map
     }
 
     def export() {

@@ -4,8 +4,9 @@ var omnitech;
     var chai;
     (function (chai) {
         var MapContainer = (function () {
-            function MapContainer(data) {
+            function MapContainer(data, onClickCallBack) {
                 this.data = data;
+                this.onClickCallBack = onClickCallBack;
                 this.createMap();
             }
             MapContainer.prototype.createMap = function () {
@@ -13,11 +14,9 @@ var omnitech;
                 this.gmap = new GMaps({ lat: 1.354255, lng: 32.314228, div: "#map", zoom: 7 });
                 this.data.forEach(function (item) {
                     if (item.lat && item.lng)
-                        //                    title: item.description,
                         _this.gmap.addMarker({
                             lat: item.lat,
                             lng: item.lng,
-                            //icon : "http://labs.google.com/ridefinder/images/mm_20_blue.png" ,
                             icon: {
                                 path: google.maps.SymbolPath.CIRCLE,
                                 scale: 4,
@@ -26,6 +25,9 @@ var omnitech;
                             },
                             infoWindow: {
                                 content: '<p>' + item.description + '</p>'
+                            },
+                            click: function (marker) {
+                                _this.onClickCallBack(item, marker);
                             }
                         });
                 });
@@ -53,7 +55,7 @@ var omnitech;
             };
             return MapContainer;
         })();
-        var cont = new MapContainer(chaiMapData);
+        chai.MapContainer = MapContainer;
     })(chai = omnitech.chai || (omnitech.chai = {}));
 })(omnitech || (omnitech = {}));
 //# sourceMappingURL=ListMap.js.map
