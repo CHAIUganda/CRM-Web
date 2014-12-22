@@ -54,7 +54,8 @@ public class Customer extends AbstractEntity implements LeafNode {
 
     Integer numberOfEmployees,
             numberOfCustomersPerDay,
-            restockFrequency
+            restockFrequency,
+            visibleEquipment
 
     //todo add hasSisterBranch
     Boolean hasSisterBranch

@@ -142,7 +142,6 @@
             <th>Customer</th>
             <th>Assigned User</th>
 
-            <th>Action</th>
         </tr>
         </thead>
         <tbody>
@@ -150,7 +149,7 @@
             <tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
 
                 <td><g:link action="show"
-                            id="${taskInstance.id}">${fieldValue(bean: taskInstance, field: "description")}</g:link></td>
+                            id="${taskInstance.id}">${ChaiUtils.truncateString(taskInstance.description,50)}</g:link></td>
 
                 <td><g:if test="${taskInstance.dueDate}">
                     <span class="${taskInstance.isOverDue() ? 'alert-danger' : ''}">
@@ -164,10 +163,10 @@
 
                 <td>${taskInstance.territoryUser()}</td>
 
-                <td>
-                    <g:link action="edit" id="${taskInstance.id}" title="Edit/Schedule"><i
-                            class="glyphicon glyphicon-calendar"></i></g:link>
-                </td>
+                %{--<td>--}%
+                    %{--<g:link action="edit" id="${taskInstance.id}" title="Edit/Schedule"><i--}%
+                            %{--class="glyphicon glyphicon-calendar"></i></g:link>--}%
+                %{--</td>--}%
             </tr>
         </g:each>
         </tbody>

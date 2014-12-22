@@ -81,6 +81,8 @@ class TaskController {
 
     def cluster() {
         clusterService.scheduleTasks()
+        flash.message = "Done Clustering"
+        redirect(action: 'index')
     }
 
     def search(Integer max) {

@@ -44,7 +44,6 @@ class ClusterService {
     }
 
 
-
     @Neo4jTransactional
     void scheduleTasks() {
         territoryRepository.findAll().each {
@@ -55,18 +54,19 @@ class ClusterService {
     List<CentroidCluster<LocatableTask>> clusterAndGeneratesTasks(Territory territory, int tasksPerDay, int numberOfUsers) {
 
         def locatableTasks = getLocatableTasks(territory)
-        if(!locatableTasks) return []
+        if (!locatableTasks) return []
         def clusters = getClusters(locatableTasks, tasksPerDay, numberOfUsers)
 
         def nowDate = new Date(), pad = 0
         clusters.eachWithIndex { CentroidCluster<LocatableTask> entry, int i ->
 
-            def dayOfWeek = nowDate[DAY_OF_WEEK]
+            def dateToSet = nowDate + i
+            def dayOfWeek = dateToSet[DAY_OF_WEEK]
             if (dayOfWeek == SATURDAY || dayOfWeek == SUNDAY) {
-                pad++
+                dateToSet = dateToSet + (++pad)
             }
             entry.getPoints().each { locatableTask ->
-                locatableTask.task.setDueDate(nowDate + i + pad)
+                locatableTask.task.setDueDate(dateToSet)
                 taskRepository.save(locatableTask.task)
             }
         }

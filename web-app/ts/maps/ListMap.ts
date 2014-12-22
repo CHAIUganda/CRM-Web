@@ -19,10 +19,9 @@ module omnitech.chai {
                     this.gmap.addMarker({
                         lat: item.lat,
                         lng: item.lng,
-                        //icon : "http://labs.google.com/ridefinder/images/mm_20_blue.png" ,
                         icon: {
                             path: google.maps.SymbolPath.CIRCLE,
-                            scale:4 ,
+                            scale: 4,
                             fillColor: MapContainer.getColor(item.dueDays),
                             strokeColor: MapContainer.getColor(item.dueDays)
                         },
@@ -35,7 +34,7 @@ module omnitech.chai {
         }
 
         static getColor(days:number):string {
-                //http://colorbrewer2.org/
+            //http://colorbrewer2.org/
             if (days == 1) return '#e41a1c';
             if (days == 2) return '#377eb8';
             if (days == 3) return '#4daf4a';
