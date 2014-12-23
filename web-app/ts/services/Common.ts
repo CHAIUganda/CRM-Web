@@ -59,6 +59,12 @@ module omnitech.chai {
             return this.http.post(url, JSON.stringify(jsonFriendlyOrder));
         }
 
+        persistTaskDate(task:Task,date:string):HttPromise {
+            var url = omnitechBase + '/task/updateTaskDate';
+            return this.http.post(url, {taskId: task.id, date: date});
+
+        }
+
 
     }
 

@@ -52,6 +52,10 @@ var omnitech;
                 };
                 return this.http.post(url, JSON.stringify(jsonFriendlyOrder));
             };
+            DataLoader.prototype.persistTaskDate = function (task, date) {
+                var url = omnitechBase + '/task/updateTaskDate';
+                return this.http.post(url, { taskId: task.id, date: date });
+            };
             return DataLoader;
         })();
         chai.DataLoader = DataLoader;

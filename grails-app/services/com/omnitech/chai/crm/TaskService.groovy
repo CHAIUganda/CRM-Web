@@ -33,7 +33,9 @@ class TaskService {
 
     List<Task> listAllTasks() { taskRepository.findAll().collect() }
 
-    def <T extends Task> Page<T> listTasks(Class<T> taskType,Map params) { ModelFunctions.listAll(neo, taskType, params) }
+    def <T extends Task> Page<T> listTasks(Class<T> taskType, Map params) {
+        ModelFunctions.listAll(neo, taskType, params)
+    }
 
     def <T extends Task> Page<T> listTasksByStatus(String status, Map params, Class<T> taskType) {
 
@@ -59,13 +61,13 @@ class TaskService {
         if (user) {
             def status = params.status ?: Task.STATUS_NEW
             params.status = status
-            def tasks = findAllTaskForUser(user.id, status, params,taskType)
+            def tasks = findAllTaskForUser(user.id, status, params, taskType)
             page = new PageImpl<T>(tasks)
         } else {
             if (params.status) {
                 page = listTasksByStatus(params.status as String, params, taskType)
             } else {
-                page = listTasks(taskType,params)
+                page = listTasks(taskType, params)
             }
         }
 
@@ -109,6 +111,12 @@ class TaskService {
 
         log.trace("Tasks for user: [$query]")
         taskRepository.query(query, [:]).collect()
+    }
+
+    void updateTaskDate(Long taskId, Date date) {
+        def task = findTask(taskId)
+        task.dueDate = date
+        saveTask(task)
     }
 
     List<Map> exportTasksForUser(Long userId) {

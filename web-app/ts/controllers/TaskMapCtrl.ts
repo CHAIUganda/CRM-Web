@@ -5,6 +5,7 @@ module omnitech.chai {
         task: Task
         marker : MarkerWithLabel
         momentFromNow : () => string
+        persistDueDate : () => void
     }
 
     class TaskMapCtrl {
@@ -26,12 +27,15 @@ module omnitech.chai {
             });
 
             scope.momentFromNow = () => {
-
                 if (!scope.task || !scope.task.dueDate) return "";
-
-                //2014-12-31T08:19:17Z
-                //'MMMM Do YYYY, h:mm:ss a
                 return moment(scope.task.dueDate).fromNow()
+            };
+
+            scope.persistDueDate = () => {
+                var date = moment(scope.task.dueDate).format('YYYY-MM-DD');
+                dataLoader.persistTaskDate(scope.task,date)
+                    .success(()=>Utils.postError(scope, 'Success'))
+                    .error((msg)=>Utils.postError(scope, msg));
             };
 
 

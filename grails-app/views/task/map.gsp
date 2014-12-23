@@ -182,7 +182,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="col-md-3 control-label">Due Date</label>
+                        <label class="col-md-3 control-label">Set Due Date</label>
 
                         <div class="col-md-9">
 
@@ -191,11 +191,15 @@
                                 %{--<bs:datePicker name="dueDate" class="form-control" ng-model="text.dueDateText"/>--}%
                                 %{--<input type="text" class="form-control">--}%
                                 <span class="input-group-btn">
-                                    <button class="btn btn-default" type="button">Save!</button>
+                                    <button class="btn btn-default" type="button" ng-click="persistDueDate()">Save!</button>
                                 </span>
                             </div>
 
                         </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-offset-3 col-md-9"><g:render template="/_common/ngError"/></div>
                     </div>
                 </div>
             </div>

@@ -10,11 +10,12 @@ import fuzzycsv.FuzzyCSV
 import grails.converters.JSON
 import grails.transaction.Transactional
 import grails.util.GrailsNameUtils
+import org.grails.databinding.converters.DateConversionHelper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
+import org.springframework.http.HttpStatus
 
-import java.text.DateFormat
 import java.text.SimpleDateFormat
 
 import static com.omnitech.chai.util.ModelFunctions.extractId
@@ -26,7 +27,7 @@ import static org.springframework.http.HttpStatus.*
  */
 class TaskController {
 
-    static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
+    static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE",updateTaskDate:'POST']
 
     def taskService
     def userService
@@ -55,6 +56,22 @@ class TaskController {
         [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: userService.listAllUsers([:]), mapData: jsonMapString]
     }
 
+    def updateTaskDate() {
+        try {
+            def json = request.JSON as Map
+            SimpleDateFormat df = new SimpleDateFormat('yyyy-MM-dd')
+            Date date = df.parse(json.date)
+            Long taskId = json.taskId as Long
+            taskService.updateTaskDate(taskId, date)
+            render "Success"
+        } catch (Exception x) {
+            log.error("Error Updating Task Date:", x)
+            render status: HttpStatus.INTERNAL_SERVER_ERROR, text: ChaiUtils.getBestMessage(x)
+        }
+
+
+    }
+
     private Map taskToJsonMap(Task task) {
         def map = ReflectFunctions.extractProperties(task)
         if (!(map.lat && map.lng)) {
@@ -70,7 +87,7 @@ class TaskController {
         if (task.customer?.segment)
             map.segment = task.customer.segment.name
 
-        if(task.customer) {
+        if (task.customer) {
             map.customer = task.customer.outletName
             map.customerDescription = task.customer.descriptionOfOutletLocation
         }

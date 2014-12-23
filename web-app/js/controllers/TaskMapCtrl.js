@@ -17,9 +17,11 @@ var omnitech;
                 scope.momentFromNow = function () {
                     if (!scope.task || !scope.task.dueDate)
                         return "";
-                    //2014-12-31T08:19:17Z
-                    //'MMMM Do YYYY, h:mm:ss a
                     return moment(scope.task.dueDate).fromNow();
+                };
+                scope.persistDueDate = function () {
+                    var date = moment(scope.task.dueDate).format('YYYY-MM-DD');
+                    dataLoader.persistTaskDate(scope.task, date).success(function () { return chai.Utils.postError(scope, 'Success'); }).error(function (msg) { return chai.Utils.postError(scope, msg); });
                 };
                 $('#dueDateText').datepicker().on('changeDate', function (ev) {
                     _this.updateTaskDate(ev.date);

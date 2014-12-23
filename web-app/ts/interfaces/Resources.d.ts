@@ -62,6 +62,7 @@ declare module omnitech.chai {
 
 
     interface Task extends HasCoords{
+        id : string
         description:string
         dueDate:Date
         dueDateText:string
