@@ -1,6 +1,6 @@
 package com.omnitech.chai.util
 
-import grails.util.GrailsNameUtils
+import grails.validation.ValidationException
 import groovy.time.TimeCategory
 import groovy.transform.CompileStatic
 import org.slf4j.LoggerFactory
@@ -72,7 +72,7 @@ class ChaiUtils {
 
             long months = (long) (days / 30)
             if (months) {
-                def roundMonth = Math.round(days/30)
+                def roundMonth = Math.round(days / 30)
                 return "${roundMonth.abs()} month${numberEnding roundMonth}"
             }
 
@@ -116,9 +116,15 @@ class ChaiUtils {
         );
     }
 
-    static String getBestMessage(Throwable x){
+    static String getBestMessage(Throwable x) {
+
+        if (x instanceof ValidationException) {
+            return ValidationException.formatErrors(x.errors)
+        }
+
         def message = "${x.getClass().simpleName}: $x.message"
-        if(message) return message
+
+        if (message) return message
         return "Technical Error Please Contact Sytem Admin: $x"
     }
 

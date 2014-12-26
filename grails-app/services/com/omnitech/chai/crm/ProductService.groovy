@@ -29,7 +29,7 @@ class ProductService {
         productRepository.findOne(id)
     }
 
-    Product findProduct(String uuid) {
+    Product findProductByUuid(String uuid) {
         productRepository.findByUuid(uuid)
     }
 
