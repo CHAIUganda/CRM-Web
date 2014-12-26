@@ -61,7 +61,7 @@ class TaskService {
         if (user) {
             def status = params.status ?: Task.STATUS_NEW
             params.status = status
-            def tasks = findAllTaskForUser(user.id, status, params, taskType)
+            def tasks = findAllTasksForUser(user.id, status, params, taskType)
             page = new PageImpl<T>(tasks)
         } else {
             if (params.status) {
@@ -98,7 +98,7 @@ class TaskService {
 
     DetailerTask findDetailerTask(Long id) { neo.findOne(id, DetailerTask) }
 
-    def <T extends Task> List<T> findAllTaskForUser(Long userId, String status, Map params, Class<T> taskType) {
+    def <T extends Task> List<T> findAllTasksForUser(Long userId, String status, Map params, Class<T> taskType) {
         def task = 'task'
         def query = mathQueryForUserTasks(userId, taskType)
                 .where(

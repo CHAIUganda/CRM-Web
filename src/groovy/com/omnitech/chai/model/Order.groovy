@@ -10,7 +10,7 @@ import org.springframework.data.neo4j.annotation.RelatedToVia
  */
 @NodeEntity
 @Validateable
-class Order extends Task {
+class Order extends Task implements HasLineItem {
 
     @Fetch
     @RelatedToVia

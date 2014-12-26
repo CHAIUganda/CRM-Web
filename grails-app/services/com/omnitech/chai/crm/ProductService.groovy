@@ -29,6 +29,10 @@ class ProductService {
         productRepository.findOne(id)
     }
 
+    Product findProduct(String uuid) {
+        productRepository.findByUuid(uuid)
+    }
+
     Product saveProduct(Product product) {
         ModelFunctions.saveEntity(productRepository, product)
     }

@@ -9,8 +9,7 @@ import org.springframework.data.neo4j.annotation.RelatedToVia
  */
 
 @NodeEntity
-interface Sale {
-    Set<LineItem> getLineItems()
+interface Sale extends HasLineItem {
     String getComment()
 }
 
@@ -22,7 +21,7 @@ class DirectSale extends Task implements Sale {
     String pointOfSaleMaterial;
     String recommendationNextStep;
     String recommendationLevel;
-    String governmentApproval;
+    Boolean governmentApproval;
     Date dateOfSale;
 
     @Fetch
@@ -32,12 +31,20 @@ class DirectSale extends Task implements Sale {
 
     def beforeSave() {
         super.beforeSave()
+
+        if (!dateOfSale)
+            dateOfSale = new Date()
+
+        if (!this.dueDate)
+            this.dueDate = dateOfSale
+
         this.status = STATUS_COMPLETE
         description = "Direct Sale [$customer.outletName]"
     }
 
     static constraints = {
         importFrom(Task)
+        lineItems minSize: 1
     }
 }
 
