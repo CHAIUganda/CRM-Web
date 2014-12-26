@@ -1,6 +1,4 @@
 
-* Change SpringSecurity Reflection Utils to load classes using Class for name instead of grailsApplication
-
 ### Rest Interface ###
 #### Place (Regions/Districts/SubCountys) etc... ####
 
@@ -31,7 +29,16 @@ All the url below return a map of [id,name,uuid]
 
 
 #### Tasks
+This URL Below will also come with orders
 - http://localhost:8080/chai-crm/rest/task/list
+
+#### Sales
+- http://localhost:8080/chai-crm/rest/sale/directSale
+- http://localhost:8080/chai-crm/rest/sale/orderSale
+
+#### DetailerTask
+- http://localhost:8080/chai-crm/rest/task/update
+
 
 
 
