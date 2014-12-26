@@ -1,14 +1,13 @@
 package com.omnitech.chai.rest
 
-import com.omnitech.chai.model.DirectSale
-import com.omnitech.chai.model.LineItem
+import com.omnitech.chai.model.*
 import com.omnitech.chai.util.ChaiUtils
 import com.omnitech.chai.util.ModelFunctions
+import com.omnitech.chai.util.ReflectFunctions
 import grails.converters.JSON
 import grails.validation.ValidationException
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST
-
 
 /**
  * SaleController
@@ -35,7 +34,31 @@ class SaleController {
 
     }
 
-    DirectSale toDirectSale(Map map) {
+    def saleOrder() {
+
+        handleSafely {
+            def json = request.JSON as Map
+
+            //Convert Order to Sale
+            def order = taskService.findOrder(json.orderId as String)
+
+            assert order, "Order should exist in the database"
+
+            def saleOrder = toSaleOrder(json)
+
+            //copy original order props to saleOrder
+            def whiteList = ReflectFunctions.findAllFields(Task).collect { it.name }
+            whiteList << 'comment'
+            ModelFunctions.bind(saleOrder, order.properties, whiteList)
+            //Explicitly copy the ID ModelFunctions ignores this
+            saleOrder.id = order.id
+
+            saleOrder.completedBy(neoSecurityService.currentUser)
+            taskService.saveTask(saleOrder)
+        }
+    }
+
+    private DirectSale toDirectSale(Map map) {
         def dupeMap = new HashMap(map)
         dupeMap.remove('salesDatas')
         def ds = ModelFunctions.createObj(DirectSale, dupeMap)
@@ -45,7 +68,15 @@ class SaleController {
         return ds
     }
 
-    LineItem toLineItem(Map map, DirectSale directSale) {
+    private SaleOrder toSaleOrder(Map map) {
+        def dupeMap = new HashMap(map)
+        dupeMap.remove('salesDatas')
+        def saleOrder = ModelFunctions.createObj(SaleOrder, dupeMap)
+        saleOrder.lineItems = map.salesDatas.collect { toLineItem(it, saleOrder) }
+        return saleOrder
+    }
+
+    private LineItem toLineItem(Map map, HasLineItem directSale) {
 
         def product = productService.findProductByUuid(map.productId as String)
 
@@ -71,11 +102,11 @@ class SaleController {
             x.errors.allErrors.each {
                 ms << message(error: it)
             }
-            log.error("** Error while performs direct sale: $ms", x)
+            log.error("** Error while handling request: $ms \n $params", x)
             render(status: BAD_REQUEST, text: [status: BAD_REQUEST.reasonPhrase, message: ms] as JSON)
         } catch (Throwable x) {
             x.printStackTrace()
-            log.error('Error while performs direct sale: ', x)
+            log.error("Error while handling request: \n $params", x)
             render(status: BAD_REQUEST, text: [status: BAD_REQUEST.reasonPhrase, text: ChaiUtils.getBestMessage(x)] as JSON)
         }
     }

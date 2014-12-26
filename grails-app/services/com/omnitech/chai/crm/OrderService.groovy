@@ -25,7 +25,7 @@ class OrderService {
 
     Order findOrder(Long id) { orderRepository.findOne(id) }
 
-    Order findOrder(String uuid) { orderRepository.findByUuid(id) }
+    Order findOrder(String uuid) { orderRepository.findByUuidImpl(id) }
 
     Order saveOrder(Order order) { ModelFunctions.saveEntity(orderRepository, order) }
 

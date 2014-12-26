@@ -66,6 +66,17 @@ class ReflectFunctions {
             aClass = aClass.superclass
             classes << aClass
         }
+
+        return classes
+    }
+
+    static List<Class> getClassHierarchyWithInterfaces(Class aClass) {
+        List<Class> classes = getClassHierarchy(aClass)
+        classes.addAll(aClass.interfaces)
+        while (aClass.superclass != Object) {
+            aClass = aClass.superclass
+            classes.addAll(aClass.interfaces)
+        }
         return classes
     }
 
@@ -103,7 +114,7 @@ class ReflectFunctions {
     }
 
     static List<Class> findAllClassesWithAnnotation(Class klass, Class<? extends Annotation> annotation) {
-        getClassHierarchy(klass).findAll { Class klass1 ->
+        getClassHierarchyWithInterfaces(klass).findAll { Class klass1 ->
             klass1.getDeclaredAnnotations().any { Annotation annot -> annot.annotationType() == annotation }
         }  as List
     }

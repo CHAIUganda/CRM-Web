@@ -56,7 +56,7 @@ class SaleOrder extends Order implements Sale {
     String pointOfSaleMaterial;
     String recommendationNextStep;
     String recommendationLevel;
-    String governmentApproval;
+    Boolean governmentApproval;
     Date dateOfSale;
 
     def beforeSave() {

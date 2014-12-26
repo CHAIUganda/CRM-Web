@@ -34,6 +34,10 @@ class LineItem extends AbstractEntity {
     }
 }
 
+
+/**
+ * Implemented by any class that has LineItems. E.g A sale or an order
+ */
 @NodeEntity
 interface HasLineItem {
     Set<LineItem> getLineItems()

@@ -2,6 +2,7 @@ package com.omnitech.chai.crm
 
 import com.omnitech.chai.model.Customer
 import com.omnitech.chai.model.DetailerTask
+import com.omnitech.chai.model.Order
 import com.omnitech.chai.model.Task
 import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.PageUtils
@@ -27,6 +28,7 @@ class TaskService {
     Neo4jTemplate neo
     def customerRepository
     def detailerTaskRepository
+    def orderRepository
     def neoSecurityService
 
     /* Tasks */
@@ -234,6 +236,24 @@ class TaskService {
         neoTask.completedBy(neoSecurityService.currentUser)
 
         saveTask(neoTask)
+    }
+
+    /* Orders */
+
+    List<Order> listAllOrders() { orderRepository.findAll().collect() }
+
+    Page<Order> listOrders(Map params) { ModelFunctions.listAll(neo, Order, params) }
+
+    Order findOrder(Long id) { orderRepository.findOne(id) }
+
+    Order findOrder(String uuid) {
+        orderRepository.findByUuidImpl(uuid)
+    }
+
+    void deleteOrder(Long id) { orderRepository.delete(id) }
+
+    Page<Order> searchOrders(String search, Map params) {
+        ModelFunctions.searchAll(neo, Order, ModelFunctions.getWildCardRegex(search), params)
     }
 
 }
