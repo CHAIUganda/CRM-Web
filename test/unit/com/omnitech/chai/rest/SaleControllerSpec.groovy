@@ -4,12 +4,7 @@ import com.omnitech.chai.crm.CustomerService
 import com.omnitech.chai.crm.NeoSecurityService
 import com.omnitech.chai.crm.ProductService
 import com.omnitech.chai.crm.TaskService
-import com.omnitech.chai.model.Customer
-import com.omnitech.chai.model.DirectSale
-import com.omnitech.chai.model.Order
-import com.omnitech.chai.model.Product
-import com.omnitech.chai.model.SaleOrder
-import com.omnitech.chai.model.User
+import com.omnitech.chai.model.*
 import grails.test.mixin.TestFor
 import spock.lang.Specification
 
@@ -23,6 +18,12 @@ class SaleControllerSpec extends Specification {
     }
 
     def cleanup() {
+        controller.with {
+            taskService = null
+            customerService = null
+            productService = null
+        }
+
     }
 
     void "test valid JSON Request"() {
@@ -60,15 +61,16 @@ class SaleControllerSpec extends Specification {
 //            assert ds.dateOfSale != null
 
             assert ds.lineItems.size() == 2
-            assert ds.lineItems[0].quantity == 2
-            assert ds.lineItems[0].unitPrice == 300
+            assert ds.lineItems.find {it.quantity == 2}
+            assert ds.lineItems.find {it.unitPrice == 300}
 
-            assert ds.lineItems[1].quantity == 5
-            assert ds.lineItems[1].unitPrice == 454
+            assert ds.lineItems.find {it.quantity == 5}
+            assert ds.lineItems.find {it.unitPrice == 454}
 
             assert ds.isComplete()
             assert ds.completedBy
             assert ds.customer
+            assert ds.id == null
 
             return true
         }
@@ -178,16 +180,17 @@ class SaleControllerSpec extends Specification {
 //            assert ds.dateOfSale != null
 
             assert sale.lineItems.size() == 2
-            assert sale.lineItems[0].quantity == 2
-            assert sale.lineItems[0].unitPrice == 300
+            assert sale.lineItems.find {it.quantity == 2}
+            assert sale.lineItems.find {it.unitPrice == 300}
 
-            assert sale.lineItems[1].quantity == 5
-            assert sale.lineItems[1].unitPrice == 454
+            assert sale.lineItems.find {it.quantity == 5}
+            assert sale.lineItems.find {it.unitPrice == 454}
 
             assert sale.isComplete()
             assert sale.completedBy
             assert sale.customer
             assert sale.comment
+            assert sale.id == 5
 
             return true
         }
@@ -209,7 +212,7 @@ class SaleControllerSpec extends Specification {
         1 * productService.findProductByUuid('xxxx-xxxx') >> new Product()
         1 * productService.findProductByUuid('yyyy-yyyyy') >> new Product()
         1 * securityService.currentUser >> new User()
-        1 * taskService.findOrder('oooo') >> new Order(customer: new Customer(),comment: "SSjj")
+        1 * taskService.findOrder('oooo') >> new Order(customer: new Customer(), comment: "SSjj", id: 5)
         1 * taskService.saveTask({ directSaleValidator(it) })
         response.contentAsString == 'Success'
 
