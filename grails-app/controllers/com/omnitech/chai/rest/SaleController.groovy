@@ -26,24 +26,13 @@ class SaleController {
 
     def directSale() {
 
-        try {
+        handleSafely {
             def json = request.JSON as Map
             def sale = toDirectSale(json)
             sale.completedBy(neoSecurityService.currentUser)
             taskService.saveTask(sale)
-            render 'Success'
-        } catch (ValidationException x) {
-            def ms = new StringBuilder()
-            x.errors.allErrors.each {
-                ms << message(error: it)
-            }
-            log.error("** Error while performs direct sale: $ms", x)
-            render(status: BAD_REQUEST, text: [status: BAD_REQUEST.reasonPhrase, message: ms] as JSON)
-        } catch (Throwable x) {
-            x.printStackTrace()
-            log.error('Error while performs direct sale: ', x)
-            render(status: BAD_REQUEST, text: [status: BAD_REQUEST.reasonPhrase, text: ChaiUtils.getBestMessage(x)] as JSON)
         }
+
     }
 
     DirectSale toDirectSale(Map map) {
@@ -52,7 +41,7 @@ class SaleController {
         def ds = ModelFunctions.createObj(DirectSale, dupeMap)
         ds.lineItems = map.salesDatas.collect { toLineItem(it, ds) }
         ds.customer = customerService.findCustomer(map.customerId as String)
-        assert ds.customer , "Customer Has To Exist In the System [$map.customerId]"
+        assert ds.customer, "Customer Has To Exist In the System [$map.customerId]"
         return ds
     }
 
@@ -71,6 +60,24 @@ class SaleController {
 
         return lineItem
 
+    }
+
+    private def handleSafely(def func) {
+        try {
+            func()
+            render 'Success'
+        } catch (ValidationException x) {
+            def ms = new StringBuilder()
+            x.errors.allErrors.each {
+                ms << message(error: it)
+            }
+            log.error("** Error while performs direct sale: $ms", x)
+            render(status: BAD_REQUEST, text: [status: BAD_REQUEST.reasonPhrase, message: ms] as JSON)
+        } catch (Throwable x) {
+            x.printStackTrace()
+            log.error('Error while performs direct sale: ', x)
+            render(status: BAD_REQUEST, text: [status: BAD_REQUEST.reasonPhrase, text: ChaiUtils.getBestMessage(x)] as JSON)
+        }
     }
 
 
