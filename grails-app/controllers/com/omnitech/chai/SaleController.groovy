@@ -56,22 +56,7 @@ class SaleController {
     }
 
     def export() {
-        def user = params.user ? userService.findUserByName(params.user) : null
-        def exportFields = ['DISTRICT', 'SUBCOUNTY', 'VILLAGE', 'OUTLET NAME', 'OUTLET TYPE']
-        def fields = ReflectFunctions.findAllBasicFields(DetailerTask).reverse()
-        fields.removeAll('_dateLastUpdated', '_dateCreated')
-        exportFields.addAll(fields.collect { GrailsNameUtils.getNaturalName(it).toUpperCase() })
-        if (user) {
-            def data = taskService.exportTasksForUser(user.id)
-            def csvData = FuzzyCSV.toCSV(data, *exportFields)
-            ServletUtil.exportCSV(response, "Tasks-${params.user}.csv", csvData)
-        } else {
-            def data = taskService.exportAllTasks()
-            def csvData = FuzzyCSV.toCSV(data, *exportFields)
-            ServletUtil.exportCSV(response, "Tasks-All.csv", csvData)
-        }
-
-
+        render  status: INTERNAL_SERVER_ERROR  , text: 'Not Implemented Yet'
     }
 
     def search(Integer max) {

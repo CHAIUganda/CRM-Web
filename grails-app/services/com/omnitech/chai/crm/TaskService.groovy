@@ -48,7 +48,7 @@ class TaskService {
         log.trace("listTasksByStatus: countQuery: $countyQuery")
         log.trace("listTasksByStatus: dataQuery: $resultQuery")
 
-        ModelFunctions.query(neo, resultQuery, countyQuery, params, taskType)
+        ModelFunctions.query(neo, resultQuery, countyQuery, params, Task)
     }
 
     def <T extends Task> Page<T> loadPageData(Integer max, Map params, Class<T> taskType) {
