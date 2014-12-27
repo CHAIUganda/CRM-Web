@@ -1,11 +1,7 @@
 package com.omnitech.chai.model
 
 import grails.validation.Validateable
-import org.springframework.data.neo4j.annotation.EndNode
-import org.springframework.data.neo4j.annotation.Fetch
-import org.springframework.data.neo4j.annotation.NodeEntity
-import org.springframework.data.neo4j.annotation.RelationshipEntity
-import org.springframework.data.neo4j.annotation.StartNode
+import org.springframework.data.neo4j.annotation.*
 
 import javax.validation.constraints.NotNull
 
@@ -26,6 +22,10 @@ class LineItem extends AbstractEntity {
     @NotNull
     Double unitPrice
 
+    Double getLineCost() { quantity * (unitPrice ?: product.unitPrice ?: 0) }
+
+    Double getUnitPrice(){unitPrice ?: product.unitPrice}
+
     static constraints = {
         product nullable: false
         hasLineItem nullable: false
@@ -34,11 +34,11 @@ class LineItem extends AbstractEntity {
     }
 }
 
-
 /**
  * Implemented by any class that has LineItems. E.g A sale or an order
  */
 @NodeEntity
 interface HasLineItem {
     Set<LineItem> getLineItems()
+    Double totalCost()
 }

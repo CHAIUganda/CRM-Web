@@ -46,6 +46,11 @@ class DirectSale extends Task implements Sale {
         importFrom(Task)
         lineItems minSize: 1
     }
+
+    @Override
+    Double totalCost() {
+        return lineItems?.sum {it.lineCost()} as Double
+    }
 }
 
 @NodeEntity
@@ -67,6 +72,8 @@ class SaleOrder extends Order implements Sale {
     static constraints = {
         importFrom(Task)
     }
+
+
 }
 
 

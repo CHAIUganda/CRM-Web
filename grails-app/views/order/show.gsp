@@ -111,13 +111,10 @@
 				<td valign="top" class="value">${fieldValue(bean: taskInstance, field: "uuid")}</td>
 				
 			</tr>
-
-        <g:if test="${taskInstance.getClass() == DetailerTask}">
-            <g:render template="showDetailerTask"/>
-        </g:if>
-		
 		</tbody>
 	</table>
+
+    <g:render template="lineItemList"/>
 </section>
 
 </body>

@@ -26,5 +26,10 @@ class Order extends Task implements HasLineItem {
         importFrom(Task)
     }
 
+    @Override
+    Double totalCost() {
+        return lineItems?.sum {it.lineCost} as Double
+    }
+
 
 }
