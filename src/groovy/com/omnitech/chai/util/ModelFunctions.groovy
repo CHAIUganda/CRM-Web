@@ -10,7 +10,6 @@ import org.grails.databinding.SimpleDataBinder
 import org.grails.databinding.SimpleMapDataBindingSource
 import org.neo4j.cypherdsl.grammar.Execute
 import org.neo4j.cypherdsl.grammar.ReturnNext
-import org.neo4j.cypherdsl.querydsl.CypherQueryDSL
 import org.neo4j.graphdb.DynamicLabel
 import org.neo4j.graphdb.Label
 import org.springframework.data.domain.Page
@@ -113,7 +112,7 @@ class ModelFunctions {
                 beforeBind?.call(tempNeoEntity)
                 neoEntity = tempNeoEntity
                 addInheritanceLabelToNode(repo, entity)
-                bind(neoEntity,  DefaultGroovyMethods.getProperties(entity))
+                bind(neoEntity, DefaultGroovyMethods.getProperties(entity))
             }
         }
         repo.save(neoEntity)
@@ -133,7 +132,7 @@ class ModelFunctions {
         dataQuery = PageUtils.addPagination(dataQuery, params, type)
 
         def countQuery = match(node(nodeName).label(type.simpleName)).returns(count(identifier(nodeName)))
-        return query(repo, dataQuery, countQuery, params,rtResult)
+        return query(repo, dataQuery, countQuery, params, rtResult)
     }
 
     static <T> Page<T> searchAll(Neo4jTemplate neo, Class<T> aClass, String search, Map params) {
@@ -222,6 +221,19 @@ class ModelFunctions {
                 node.addLabel(DynamicLabel.label(className))
             }
         }
+
+
+        def oldConcreteLabel = labels.find { String s -> s.startsWith('_') }
+        def newConcreteLabel = "_${entity.getClass().simpleName}"
+
+        if (newConcreteLabel == oldConcreteLabel) return entity
+
+        //remove old concrete label
+        if (oldConcreteLabel) node.removeLabel(DynamicLabel.label(oldConcreteLabel))
+
+        //add new concrete label
+        node.addLabel(DynamicLabel.label(newConcreteLabel))
+
         return entity
     }
 

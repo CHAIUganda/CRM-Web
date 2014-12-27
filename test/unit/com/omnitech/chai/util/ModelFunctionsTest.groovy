@@ -87,6 +87,24 @@ class ModelFunctionsTest extends Specification {
         task.is(rt)
     }
 
+    def 'test addDynamicLabels() adds Labels Plus Concrete labels when a node exists in the DB'() {
+        Neo4jTemplate neo = Mock()
+        org.neo4j.graphdb.Node node = Mock()
+
+        DetailerTask task = new DetailerTask(id: 787)
+
+        when:
+        def rt = ModelFunctions.addInheritanceLabelToNode(neo, task)
+
+        then:
+        1 * neo.getNode(787) >> node
+        1 * node.getLabels() >> [DynamicLabel.label('Task'),DynamicLabel.label('_Task')]
+        1 * node.addLabel(DynamicLabel.label(DetailerTask.simpleName))
+        1 * node.addLabel(DynamicLabel.label('_DetailerTask'))
+        1 * node.removeLabel(DynamicLabel.label('_Task'))
+        task.is(rt)
+    }
+
 
     def 'test addDynamicLabels() doest not add Labels if node does not exist in DB'() {
         Neo4jTemplate neo = Mock()
