@@ -1,8 +1,8 @@
 package com.omnitech.chai
 
-import com.omnitech.chai.model.DetailerTask
-import com.omnitech.chai.model.Sale
-import com.omnitech.chai.model.Task
+import com.omnitech.chai.model.*
+import com.omnitech.chai.util.ChaiUtils
+import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.ReflectFunctions
 import com.omnitech.chai.util.ServletUtil
 import fuzzycsv.FuzzyCSV
@@ -14,8 +14,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
 
 import static com.omnitech.chai.util.ModelFunctions.extractId
-import static org.springframework.http.HttpStatus.NOT_FOUND
-import static org.springframework.http.HttpStatus.NO_CONTENT
+import static org.springframework.http.HttpStatus.*
 
 /**
  * Created by kay on 12/10/2014.
@@ -25,12 +24,13 @@ class SaleController {
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
     def taskService
+    def productService
     def userService
     def regionService
+    def customerService
     def txHelperService
     @Autowired
     Neo4jTemplate neo
-
 
     def index(Integer max) {
         if (params.remove('ui') == 'map') {
@@ -38,11 +38,11 @@ class SaleController {
             return
         }
         Page<Sale> page = taskService.loadPageData(max, params, Sale)
-        [saleInstanceList: page.content, saleInstanceCount: page.totalElements, users: userService.listAllUsers([:])]
+        render(view: '/order/index', model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: userService.listAllUsers([:])])
     }
 
     def map(Integer max) {
-        def page = taskService.loadPageData(max, params, Sale)
+        def page = taskService.loadPageData(max, params, Order)
         def mapData = page.content.collect {
             def map = ReflectFunctions.extractProperties(it)
             if (!(map.lat && map.lng)) {
@@ -52,7 +52,7 @@ class SaleController {
             return map
         } as JSON
         def jsonMapString = mapData.toString(true)
-        [saleInstanceList: page.content, saleInstanceCount: page.totalElements, users: userService.listAllUsers([:]), mapData: jsonMapString]
+        render(view: '/order/map', model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: userService.listAllUsers([:]), mapData: jsonMapString])
     }
 
     def export() {
@@ -70,6 +70,8 @@ class SaleController {
             def csvData = FuzzyCSV.toCSV(data, *exportFields)
             ServletUtil.exportCSV(response, "Tasks-All.csv", csvData)
         }
+
+
     }
 
     def search(Integer max) {
@@ -88,7 +90,7 @@ class SaleController {
         txHelperService.doInTransaction {
             page.content.each { neo.fetch(it.territoryUser()) }
         }
-        respond page.content, view: 'index', model: [saleInstanceCount: page.totalElements, users: userService.listAllUsers([:])]
+        respond page.content, view: 'index', model: [taskInstanceCount: page.totalElements, users: userService.listAllUsers([:])]
     }
 
     def searchMap(Integer max) {
@@ -99,7 +101,7 @@ class SaleController {
 
         def mapData = page.content.collect { ReflectFunctions.extractProperties(it) } as JSON
         def jsonMapString = mapData.toString(true)
-        respond page.content, view: 'map', model: [saleInstanceCount: page.totalElements, users: userService.listAllUsers([:]), mapData: jsonMapString]
+        respond page.content, view: 'map', model: [taskInstanceCount: page.totalElements, users: userService.listAllUsers([:]), mapData: jsonMapString]
     }
 
     def show() {
@@ -117,9 +119,21 @@ class SaleController {
         txHelperService.doInTransaction {
             neo.fetch(task.territoryUser())
         }
-        [saleInstance: task]
+        [taskInstance: task]
     }
 
+    def edit() {
+        def id = extractId(params)
+
+        if (id == -1) {
+            notFound(); return
+        }
+        def taskInstance = taskService.findTask(id)
+        txHelperService.doInTransaction {
+            neo.fetch(taskInstance.territoryUser())
+        }
+        respond taskInstance, model: [users: userService.listAllUsers(), customers: customerService.listAllCustomers()]
+    }
 
     @Transactional
     def delete() {

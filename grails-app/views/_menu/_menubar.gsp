@@ -42,7 +42,7 @@
                         <g:link controller="order" action="index">Orders</g:link>
                     </li>
                     <li>
-                        <g:link controller="order" action="index">Sales</g:link>
+                        <g:link controller="sale" action="index">Sales</g:link>
                     </li>
                 </ul>
 

@@ -126,14 +126,14 @@ class ModelFunctions {
     }
 
 
-    static <T> Page<T> listAll(Neo4jTemplate repo, Class<T> type, Map params) {
+    static <T> Page<T> listAll(Neo4jTemplate repo, Class<T> type, Map params, Class rtResult) {
         def nodeName = type.simpleName.toLowerCase()
 
         def dataQuery = match(node(nodeName).label(type.simpleName)).returns(identifier(nodeName))
         dataQuery = PageUtils.addPagination(dataQuery, params, type)
 
         def countQuery = match(node(nodeName).label(type.simpleName)).returns(count(identifier(nodeName)))
-        return query(repo, dataQuery, countQuery, params, type)
+        return query(repo, dataQuery, countQuery, params,rtResult)
     }
 
     static <T> Page<T> searchAll(Neo4jTemplate neo, Class<T> aClass, String search, Map params) {

@@ -1,7 +1,9 @@
 package com.omnitech.chai.model
 
 import org.springframework.data.neo4j.annotation.Fetch
+import org.springframework.data.neo4j.annotation.MapResult
 import org.springframework.data.neo4j.annotation.NodeEntity
+import org.springframework.data.neo4j.annotation.QueryResult
 import org.springframework.data.neo4j.annotation.RelatedToVia
 
 /**
@@ -9,6 +11,7 @@ import org.springframework.data.neo4j.annotation.RelatedToVia
  */
 
 @NodeEntity
+@QueryResult
 interface Sale extends HasLineItem {
     String getComment()
 }
