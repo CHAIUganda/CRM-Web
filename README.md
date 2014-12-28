@@ -4,7 +4,7 @@
 
 All the url below return a map of [id,name,uuid]
 
-- http://23.2- 39.27.196:8080/web-crm/rest/place/regions
+- http://23.239.27.196:8080/web-crm/rest/place/regions
 - http://23.239.27.196:8080/web-crm/rest/place/districts
 - http://23.239.27.196:8080/web-crm/rest/place/subCounties
 - http://23.239.27.196:8080/web-crm/rest/place/parishes
@@ -35,6 +35,7 @@ This URL Below will also come with orders
 #### Sales
 - http://localhost:8080/chai-crm/rest/sale/directSale
 - http://localhost:8080/chai-crm/rest/sale/orderSale
+- http://localhost:8080/chai-crm/rest/sale/placeOrder
 
 #### DetailerTask
 - http://localhost:8080/chai-crm/rest/task/update
