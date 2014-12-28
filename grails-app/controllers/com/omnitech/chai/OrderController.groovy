@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
 
+import static com.omnitech.chai.crm.ControllerUtils.taskToJsonMap
 import static com.omnitech.chai.util.ModelFunctions.extractId
 import static org.springframework.http.HttpStatus.*
 
@@ -53,16 +54,11 @@ class OrderController {
 
     def map(Integer max) {
         def page = taskService.loadPageData(max, params, Order)
-        def mapData = page.content.collect {
-            def map = ReflectFunctions.extractProperties(it)
-            if (!(map.lat && map.lng)) {
-                map.lat = it.customer.lat
-                map.lng = it.customer.lng
-            }
-            return map
+        def mapData = page.content.collect { Task task ->
+            return taskToJsonMap(task)
         } as JSON
         def jsonMapString = mapData.toString(true)
-        [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: userService.listAllUsers([:]), mapData: jsonMapString]
+        render(view: '/task/map', model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: userService.listAllUsers([:]), mapData: jsonMapString])
     }
 
     def export() {

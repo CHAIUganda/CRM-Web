@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus
 
 import java.text.SimpleDateFormat
 
+import static com.omnitech.chai.crm.ControllerUtils.taskToJsonMap
 import static com.omnitech.chai.util.ModelFunctions.extractId
 import static org.springframework.http.HttpStatus.*
 
@@ -72,30 +73,7 @@ class TaskController {
 
     }
 
-    private Map taskToJsonMap(Task task) {
-        def map = ReflectFunctions.extractProperties(task)
-        if (!(map.lat && map.lng)) {
-            map.lat = task.customer.lat
-            map.lng = task.customer.lng
-        }
-        map.description = "$task.description - (${ChaiUtils.fromNow(task.dueDate)})"
-        if (task.dueDate) {
-            map.dueDays = task.dueDate - new Date()
-            map.dueDateText = ChaiUtils.formatDate(task.dueDate)
-        }
 
-        if (task.customer?.segment)
-            map.segment = task.customer.segment.name
-
-        if (task.customer) {
-            map.customer = task.customer.outletName
-            map.customerDescription = task.customer.descriptionOfOutletLocation
-        }
-
-        map.assignedUser = task.territoryUser()?.collect { it.username }?.toString();
-
-        return map
-    }
 
     def export() {
         def user = params.user ? userService.findUserByName(params.user) : null

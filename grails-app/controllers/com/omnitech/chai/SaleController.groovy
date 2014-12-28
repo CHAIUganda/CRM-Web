@@ -3,6 +3,7 @@ package com.omnitech.chai
 import com.omnitech.chai.model.DetailerTask
 import com.omnitech.chai.model.Order
 import com.omnitech.chai.model.Sale
+import com.omnitech.chai.model.Task
 import com.omnitech.chai.util.ReflectFunctions
 import grails.converters.JSON
 import grails.transaction.Transactional
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
 
+import static com.omnitech.chai.crm.ControllerUtils.taskToJsonMap
 import static com.omnitech.chai.util.ModelFunctions.extractId
 import static org.springframework.http.HttpStatus.*
 
@@ -39,17 +41,12 @@ class SaleController {
     }
 
     def map(Integer max) {
-        def page = taskService.loadPageData(max, params, Order)
-        def mapData = page.content.collect {
-            def map = ReflectFunctions.extractProperties(it)
-            if (!(map.lat && map.lng)) {
-                map.lat = it.customer.lat
-                map.lng = it.customer.lng
-            }
-            return map
+        def page = taskService.loadPageData(max, params, Sale)
+        def mapData = page.content.collect { Task task ->
+            return taskToJsonMap(task)
         } as JSON
         def jsonMapString = mapData.toString(true)
-        render(view: '/order/map', model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: userService.listAllUsers([:]), mapData: jsonMapString])
+        render(view: '/task/map', model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: userService.listAllUsers([:]), mapData: jsonMapString])
     }
 
     def export() {
