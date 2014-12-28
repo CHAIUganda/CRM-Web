@@ -52,7 +52,7 @@ class DirectSale extends Task implements Sale {
 
     @Override
     Double totalCost() {
-        return lineItems?.sum {it.lineCost()} as Double
+        return lineItems?.sum {it.lineCost} as Double
     }
 }
 

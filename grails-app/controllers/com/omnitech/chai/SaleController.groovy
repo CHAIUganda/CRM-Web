@@ -1,14 +1,11 @@
 package com.omnitech.chai
 
-import com.omnitech.chai.model.*
-import com.omnitech.chai.util.ChaiUtils
-import com.omnitech.chai.util.ModelFunctions
+import com.omnitech.chai.model.DetailerTask
+import com.omnitech.chai.model.Order
+import com.omnitech.chai.model.Sale
 import com.omnitech.chai.util.ReflectFunctions
-import com.omnitech.chai.util.ServletUtil
-import fuzzycsv.FuzzyCSV
 import grails.converters.JSON
 import grails.transaction.Transactional
-import grails.util.GrailsNameUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
@@ -56,7 +53,7 @@ class SaleController {
     }
 
     def export() {
-        render  status: INTERNAL_SERVER_ERROR  , text: 'Not Implemented Yet'
+        render status: INTERNAL_SERVER_ERROR, text: 'Not Implemented Yet'
     }
 
     def search(Integer max) {
@@ -104,7 +101,7 @@ class SaleController {
         txHelperService.doInTransaction {
             neo.fetch(task.territoryUser())
         }
-        [taskInstance: task]
+        render view: '/order/show', model: [taskInstance: task]
     }
 
     def edit() {
