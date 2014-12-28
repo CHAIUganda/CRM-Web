@@ -16,6 +16,7 @@ class Order extends Task implements HasLineItem {
     @RelatedToVia
     Set<LineItem> lineItems = new HashSet()
     String comment
+    String clientRefId
 
     def beforeSave() {
         super.beforeSave()

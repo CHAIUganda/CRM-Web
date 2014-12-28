@@ -26,7 +26,7 @@ class SaleControllerSpec extends Specification {
 
     }
 
-    void "test valid JSON Request"() {
+    void "test valid JSON Sale Request"() {
 
         def data = '''{
   "customerId" : "cccc",
@@ -61,11 +61,11 @@ class SaleControllerSpec extends Specification {
 //            assert ds.dateOfSale != null
 
             assert ds.lineItems.size() == 2
-            assert ds.lineItems.find {it.quantity == 2}
-            assert ds.lineItems.find {it.unitPrice == 300}
+            assert ds.lineItems.find { it.quantity == 2 }
+            assert ds.lineItems.find { it.unitPrice == 300 }
 
-            assert ds.lineItems.find {it.quantity == 5}
-            assert ds.lineItems.find {it.unitPrice == 454}
+            assert ds.lineItems.find { it.quantity == 5 }
+            assert ds.lineItems.find { it.unitPrice == 454 }
 
             assert ds.isComplete()
             assert ds.completedBy
@@ -180,11 +180,11 @@ class SaleControllerSpec extends Specification {
 //            assert ds.dateOfSale != null
 
             assert sale.lineItems.size() == 2
-            assert sale.lineItems.find {it.quantity == 2}
-            assert sale.lineItems.find {it.unitPrice == 300}
+            assert sale.lineItems.find { it.quantity == 2 }
+            assert sale.lineItems.find { it.unitPrice == 300 }
 
-            assert sale.lineItems.find {it.quantity == 5}
-            assert sale.lineItems.find {it.unitPrice == 454}
+            assert sale.lineItems.find { it.quantity == 5 }
+            assert sale.lineItems.find { it.unitPrice == 454 }
 
             assert sale.isComplete()
             assert sale.completedBy
@@ -216,6 +216,69 @@ class SaleControllerSpec extends Specification {
         1 * taskService.saveTask({ directSaleValidator(it) })
         response.contentAsString == 'Success'
 
+    }
+
+    void "test valid JSON placeOrder Request"() {
+        def data = '''{
+  "customerId" : "cccc",
+  "orderId":"oooo",
+  "clientRefId":"clientRefId1",
+  "dateOfSale": "2013-01-3 04:05:40",
+  "comment":"Some weird comment",
+  "salesDatas": [
+    {
+      "quantity": 5,
+      "price": 454,
+      "productId": "xxxx-xxxx"
+    },
+    {
+      "quantity": 2,
+      "price": 300,
+      "productId": "yyyy-yyyyy"
+    }
+  ]
+}'''
+
+        def validateOrder = { Order order ->
+
+            assert order.comment == 'Some weird comment'
+            assert order.lineItems.size() == 2
+            assert order.lineItems.find { it.quantity == 2 }
+            assert order.lineItems.find { it.unitPrice == 300 }
+
+            assert order.lineItems.find { it.quantity == 5 }
+            assert order.lineItems.find { it.unitPrice == 454 }
+
+            assert !order.isComplete()
+            assert !order.completedBy
+            assert order.customer
+
+            return true
+        }
+
+        ProductService productService = Mock()
+        TaskService taskService = Mock()
+        NeoSecurityService securityService = Mock()
+        CustomerService customerService = Mock()
+
+        controller.productService = productService
+        controller.taskService = taskService
+        controller.neoSecurityService = securityService
+        controller.customerService = customerService
+
+
+        when:
+        request.json = data
+        controller.placeOrder()
+
+        then:
+        1 * productService.findProductByUuid('xxxx-xxxx') >> new Product()
+        1 * productService.findProductByUuid('yyyy-yyyyy') >> new Product()
+        0 * securityService.currentUser >> new User()
+        1 * taskService.findOrderByClientRefId('clientRefId1') >> null
+        1 * customerService.findCustomer('cccc') >> new Customer()
+        1 * taskService.saveTask({ validateOrder(it) })
+        response.contentAsString == 'Success'
     }
 
 

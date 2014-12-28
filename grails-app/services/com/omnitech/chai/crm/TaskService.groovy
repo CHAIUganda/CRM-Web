@@ -36,7 +36,7 @@ class TaskService {
     List<Task> listAllTasks() { taskRepository.findAll().collect() }
 
     def <T extends Task> Page<T> listTasks(Class<T> taskType, Map params) {
-        ModelFunctions.listAll(neo, taskType, params,Task)
+        ModelFunctions.listAll(neo, taskType, params, Task)
     }
 
     def <T extends Task> Page<T> listTasksByStatus(String status, Map params, Class<T> taskType) {
@@ -242,12 +242,16 @@ class TaskService {
 
     List<Order> listAllOrders() { orderRepository.findAll().collect() }
 
-    Page<Order> listOrders(Map params) { ModelFunctions.listAll(neo, Order, params,Order) }
+    Page<Order> listOrders(Map params) { ModelFunctions.listAll(neo, Order, params, Order) }
 
     Order findOrder(Long id) { orderRepository.findOne(id) }
 
     Order findOrder(String uuid) {
         orderRepository.findByUuidImpl(uuid)
+    }
+
+    Order findOrderByClientRefId(String refId) {
+        orderRepository.findByClientRefId(refId)
     }
 
     void deleteOrder(Long id) { orderRepository.delete(id) }

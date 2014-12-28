@@ -116,6 +116,9 @@ interface DetailerTaskRepository extends GraphRepository<DetailerTask> {
 interface OrderRepository extends GraphRepository<Order> {
     @Query('match (o:Order) where o.uuid = {uuid} return o')
     Order findByUuidImpl(@Param('uuid') String uuid)
+
+//    @Query('match (o:Order) where o.uuid = {uuid} return o')
+    Order findByClientRefId(String clientRefId)
 }
 
 interface SettingRepository extends GraphRepository<Setting> {
