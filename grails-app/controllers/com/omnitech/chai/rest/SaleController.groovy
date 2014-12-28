@@ -27,6 +27,12 @@ class SaleController {
 
         handleSafely {
             def json = request.JSON as Map
+
+            assert json.clientRefId, 'ClientRefId Should exist in the request'
+            def dupeSale = taskService.findDirectSaleByClientRefId(json.clientRefId)
+
+            assert !dupeSale, 'Duplicate Sale'
+
             def sale = toDirectSale(json)
             sale.completedBy(neoSecurityService.currentUser)
             taskService.saveTask(sale)
@@ -43,7 +49,7 @@ class SaleController {
             def order = taskService.findOrder(json.orderId as String)
             assert order, "Order should exist in the database"
 
-            def saleOrder = toOrder(json,SaleOrder)
+            def saleOrder = toOrder(json, SaleOrder)
             bindSaleOrderToDbInstance(saleOrder, order)
             saleOrder.completedBy(neoSecurityService.currentUser)
             taskService.saveTask(saleOrder)
@@ -58,7 +64,7 @@ class SaleController {
             def dupeOrder = taskService.findOrderByClientRefId(json.clientRefId)
 
             assert !dupeOrder, 'Duplicate Order'
-            def order = toOrder(json,Order)
+            def order = toOrder(json, Order)
 
             order.customer = customerService.findCustomer(json.customerId as String)
             assert order.customer, "Customer Has To Exist In the System [$json.customerId]"
@@ -125,7 +131,6 @@ class SaleController {
             log.error("** Error while handling request: $ms \n $params", x)
             render(status: BAD_REQUEST, text: [status: BAD_REQUEST.reasonPhrase, message: ms] as JSON)
         } catch (Throwable x) {
-            x.printStackTrace()
             log.error("Error while handling request: \n $params", x)
             render(status: BAD_REQUEST, text: [status: BAD_REQUEST.reasonPhrase, text: ChaiUtils.getBestMessage(x)] as JSON)
         }

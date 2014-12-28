@@ -49,9 +49,6 @@ interface ParishRepository extends GraphRepository<Parish> {
 
     Parish findByName(String uuid)
 
-    @Query('start r=node({subCountyId}) match r-[:HAS_PARISH]->(s) where s.name =~ {name} return s')
-    Parish findBySubCountyAndName(@Param('subCountyId') Long subCountyId, @Param('name') String name)
-
     @Query('start u = node({userId}) match u-[:USER_TERRITORY]->(t)<-[:SC_IN_TERRITORY]-(sc)<-[:CUST_IN_SC]-(c)-[:CUST_IN_PARISH]->(p) return distinct p')
     Iterable<Parish> findAllForUser(@Param('userId') Long userId)
 }
@@ -61,9 +58,6 @@ interface VillageRepository extends GraphRepository<Village> {
     Village findByUuid(String uuid)
 
     Village findByName(String name)
-
-    @Query('start r=node({parishId}) match r-[:HAS_VILLAGE]->(v) where v.name =~ {name} return v')
-    Village findByParishAndName(@Param('parishId') Long parishId, @Param('name') String name)
 
     @Query('start u = node({userId}) match u-[:USER_TERRITORY]->(t)<-[:SC_IN_TERRITORY]-(sc)<-[:CUST_IN_SC]-(c)-[:CUST_IN_VILLAGE]->(p) return distinct p')
     Iterable<Village> findAllForUser(@Param('userId') Long userId)
@@ -117,8 +111,14 @@ interface OrderRepository extends GraphRepository<Order> {
     @Query('match (o:Order) where o.uuid = {uuid} return o')
     Order findByUuidImpl(@Param('uuid') String uuid)
 
-//    @Query('match (o:Order) where o.uuid = {uuid} return o')
     Order findByClientRefId(String clientRefId)
+}
+
+interface DirectSaleRepository extends GraphRepository<DirectSale> {
+    @Query('match (o:DirectSale) where o.uuid = {uuid} return o')
+    DirectSale findByUuidImpl(@Param('uuid') String uuid)
+
+    DirectSale findByClientRefId(String clientRefId)
 }
 
 interface SettingRepository extends GraphRepository<Setting> {

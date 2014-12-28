@@ -2,6 +2,7 @@ package com.omnitech.chai.crm
 
 import com.omnitech.chai.model.Customer
 import com.omnitech.chai.model.DetailerTask
+import com.omnitech.chai.model.DirectSale
 import com.omnitech.chai.model.Order
 import com.omnitech.chai.model.Task
 import com.omnitech.chai.util.ModelFunctions
@@ -27,7 +28,7 @@ class TaskService {
     @Autowired
     Neo4jTemplate neo
     def customerRepository
-    def detailerTaskRepository
+    def direcSaleRepository
     def orderRepository
     def neoSecurityService
 
@@ -252,6 +253,11 @@ class TaskService {
 
     Order findOrderByClientRefId(String refId) {
         orderRepository.findByClientRefId(refId)
+    }
+
+
+    DirectSale findDirectSaleByClientRefId(String refId) {
+        direcSaleRepository.findByClientRefId(refId)
     }
 
     void deleteOrder(Long id) { orderRepository.delete(id) }

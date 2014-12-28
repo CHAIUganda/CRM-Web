@@ -30,6 +30,7 @@ class SaleControllerSpec extends Specification {
 
         def data = '''{
   "customerId" : "cccc",
+   "clientRefId":"clientRefId1",
   "howManyZincInStock": 5,
   "howManyOrsInStock": 3,
   "pointOfSaleMaterial": "counting,ors",
@@ -104,6 +105,7 @@ class SaleControllerSpec extends Specification {
 
         def data = '''{
   "howManyZincInStock": 5,
+   "clientRefId":"clientRefId1",
   "howManyOrsInStock": 3,
   "pointOfSaleMaterial": "counting,ors",
   "recommendationNextStep": "start recommending ors",
@@ -141,6 +143,50 @@ class SaleControllerSpec extends Specification {
         1 * productService.findProductByUuid('xxxx-xxxx') >> new Product()
         0 * taskService.saveTask(_)
         response.contentAsString ==~ ".*is less than minimum value.*"
+
+    }
+
+    void "test duplicate Direct Sale Request"() {
+
+        def data = '''{
+  "howManyZincInStock": 5,
+   "clientRefId":"clientRefId1",
+  "howManyOrsInStock": 3,
+  "pointOfSaleMaterial": "counting,ors",
+  "recommendationNextStep": "start recommending ors",
+  "recommendationLevel": "Level 2",
+  "governmentApproval": true,
+  "dateOfSale": "2013-01-3 04:05:40",
+  "salesDatas": [
+    {
+      "quantity": 0,
+      "price": 454,
+      "productId": "xxxx-xxxx"
+    },
+    {
+      "quantity": 2,
+      "price": 300,
+      "productId": "yyyy-yyyyy"
+    }
+  ]
+}'''
+
+        ProductService productService = Mock()
+        TaskService taskService = Mock()
+        NeoSecurityService securityService = Mock()
+
+        controller.productService = productService
+        controller.taskService = taskService
+        controller.neoSecurityService = securityService
+
+
+        when:
+        request.json = data
+        controller.directSale()
+
+        then:
+        1 * taskService.findDirectSaleByClientRefId('clientRefId1') >> new DirectSale()
+        response.contentAsString ==~ ".*Duplicate.*"
 
     }
 
@@ -279,6 +325,41 @@ class SaleControllerSpec extends Specification {
         1 * customerService.findCustomer('cccc') >> new Customer()
         1 * taskService.saveTask({ validateOrder(it) })
         response.contentAsString == 'Success'
+    }
+
+    void "test duplicate placeOrder Request"() {
+        def data = '''{
+  "customerId" : "cccc",
+  "orderId":"oooo",
+  "clientRefId":"clientRefId1",
+  "dateOfSale": "2013-01-3 04:05:40",
+  "comment":"Some weird comment",
+  "salesDatas": [
+    {
+      "quantity": 5,
+      "price": 454,
+      "productId": "xxxx-xxxx"
+    },
+    {
+      "quantity": 2,
+      "price": 300,
+      "productId": "yyyy-yyyyy"
+    }
+  ]
+}'''
+
+        TaskService taskService = Mock()
+
+        controller.taskService = taskService
+
+
+        when:
+        request.json = data
+        controller.placeOrder()
+
+        then:
+        1 * taskService.findOrderByClientRefId('clientRefId1') >> new Order()
+        response.contentAsString.contains 'Duplicate Order'
     }
 
 

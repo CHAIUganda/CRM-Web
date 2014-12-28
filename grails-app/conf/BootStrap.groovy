@@ -25,7 +25,7 @@ class BootStrap {
 
         //Test Data
         println("Inserting test Data....")
-       insertProductsAndGroups()
+        insertProductsAndGroups()
         //override this so that a proper request map is loaded by spring security
         ReflectionUtils.metaClass.static.getRequestMapClass = { RequestMap }
     }
@@ -87,7 +87,17 @@ class BootStrap {
                 println("Creating Unique UUID Constraint for $it.beanClassName")
                 neo.query(constrainQuery, [:])
             }
+
+            //other constraints
+            ["CREATE CONSTRAINT ON (bean:${Order.simpleName}) ASSERT bean.clientRefId IS UNIQUE",
+             "CREATE CONSTRAINT ON (bean:${DirectSale.simpleName}) ASSERT bean.clientRefId IS UNIQUE"
+            ].each {
+                println("Executing: $it")
+                neo.query(it, [:])
+            }
         }
+
+
     }
 
     String getSimpleName(String className) { Class.forName(className).simpleName }
