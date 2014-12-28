@@ -10,7 +10,6 @@ import fuzzycsv.FuzzyCSV
 import grails.converters.JSON
 import grails.transaction.Transactional
 import grails.util.GrailsNameUtils
-import org.grails.databinding.converters.DateConversionHelper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
@@ -18,7 +17,7 @@ import org.springframework.http.HttpStatus
 
 import java.text.SimpleDateFormat
 
-import static com.omnitech.chai.crm.ControllerUtils.taskToJsonMap
+import static com.omnitech.chai.util.ControllerUtils.taskToJsonMap
 import static com.omnitech.chai.util.ModelFunctions.extractId
 import static org.springframework.http.HttpStatus.*
 
@@ -28,7 +27,7 @@ import static org.springframework.http.HttpStatus.*
  */
 class TaskController {
 
-    static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE",updateTaskDate:'POST']
+    static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE", updateTaskDate: 'POST']
 
     def taskService
     def userService
@@ -72,7 +71,6 @@ class TaskController {
 
 
     }
-
 
 
     def export() {

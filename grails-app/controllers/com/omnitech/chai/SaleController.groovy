@@ -1,7 +1,6 @@
 package com.omnitech.chai
 
 import com.omnitech.chai.model.DetailerTask
-import com.omnitech.chai.model.Order
 import com.omnitech.chai.model.Sale
 import com.omnitech.chai.model.Task
 import com.omnitech.chai.util.ReflectFunctions
@@ -11,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
 
-import static com.omnitech.chai.crm.ControllerUtils.taskToJsonMap
+import static com.omnitech.chai.util.ControllerUtils.taskToJsonMap
 import static com.omnitech.chai.util.ModelFunctions.extractId
 import static org.springframework.http.HttpStatus.*
 
