@@ -7,13 +7,14 @@ var omnitech;
             function MapContainer(data, onClickCallBack) {
                 this.data = data;
                 this.onClickCallBack = onClickCallBack;
+                this.latLngBounds = new google.maps.LatLngBounds();
                 this.createMap();
             }
             MapContainer.prototype.createMap = function () {
                 var _this = this;
-                this.gmap = new GMaps({ lat: 1.354255, lng: 32.314228, div: "#map", zoom: 7 });
+                this.gmap = new GMaps({ lat: 1.354255, lng: 32.314228, div: "#map", zoom: 3 });
                 this.data.forEach(function (item) {
-                    if (item.lat && item.lng)
+                    if (item.lat && item.lng) {
                         _this.gmap.addMarker({
                             lat: item.lat,
                             lng: item.lng,
@@ -25,7 +26,10 @@ var omnitech;
                                 _this.onClickCallBack(item, marker);
                             }
                         });
+                        _this.latLngBounds.extend(new google.maps.LatLng(item.lat, item.lng));
+                    }
                 });
+                this.gmap.map.fitBounds(this.latLngBounds);
             };
             MapContainer.getMapIconOptions = function (item) {
                 return {

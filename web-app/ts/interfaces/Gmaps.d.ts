@@ -2,12 +2,13 @@
 declare class GMaps {
     constructor(options:GMapOptions);
     addMarker(options:GMarkerOptions):void;
+    public map:google.maps.Map;
 }
 
 interface GMapOptions {
     div: string
-    lat: number
-    lng: number
+    lat?: number
+    lng?: number
     zoom?:number
     width?:number
     height?:number

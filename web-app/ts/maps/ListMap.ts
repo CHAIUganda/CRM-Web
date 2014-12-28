@@ -5,16 +5,18 @@ module omnitech.chai {
 
     export class MapContainer {
 
+        latLngBounds = new google.maps.LatLngBounds();
         public gmap:GMaps;
 
         constructor(private data:Task[], private onClickCallBack:(Task, MarkerWithLabel)=> void) {
             this.createMap();
+
         }
 
         private createMap() {
-            this.gmap = new GMaps({lat: 1.354255, lng: 32.314228, div: "#map", zoom: 7});
+            this.gmap = new GMaps({lat: 1.354255, lng: 32.314228, div: "#map",zoom : 3});
             this.data.forEach((item)=> {
-                if (item.lat && item.lng)
+                if (item.lat && item.lng) {
                     this.gmap.addMarker({
                         lat: item.lat,
                         lng: item.lng,
@@ -28,7 +30,12 @@ module omnitech.chai {
                         }
 
                     });
+
+                    this.latLngBounds.extend(new google.maps.LatLng(item.lat, item.lng))
+                }
             });
+
+            this.gmap.map.fitBounds(this.latLngBounds);
         }
 
         static getMapIconOptions(item:Task):any {
