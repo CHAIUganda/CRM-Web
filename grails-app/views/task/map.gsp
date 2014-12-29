@@ -80,9 +80,7 @@
                         <div class="col-md-9">
 
                             <div class="input-group">
-                                <input id="dueDateText" name="dueDate" class="datepicker form-control" size="16" type="text" value="2014-12-22" data-date-format="yyyy-mm-dd" ng-model="text.dueDateText">
-                                %{--<bs:datePicker name="dueDate" class="form-control" ng-model="text.dueDateText"/>--}%
-                                %{--<input type="text" class="form-control">--}%
+                                <input id="dueDateText" name="dueDate" class="datepicker form-control" size="16" type="text" data-date-format="yyyy-mm-dd" ng-model="text.dueDateText">
                                 <span class="input-group-btn">
                                     <button class="btn btn-default" type="button" ng-click="persistDueDate()">Save!</button>
                                 </span>
