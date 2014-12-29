@@ -189,19 +189,19 @@ class TaskService {
 
     def autoGenerateTasks() {
         customerRepository.findAll().each {
-            def task = generateCustomerTask(it)
+            def task = generateCustomerDetailingTask(it)
             if (task) taskRepository.save(task)
         }
     }
 
-    Task generateCustomerTask(Customer customer) {
+    Task generateCustomerDetailingTask(Customer customer) {
         def segment = customer.segment
         if (!segment) return null
 
         def prevTask = taskRepository.findLastTask(customer.id)
 
         def spaceBtnVisits = segment.spaceBetweenVisits
-        def newTask = new Task(customer: customer, description: "Go Check on [$customer.outletName]", dueDate: new Date())
+        def newTask = new DetailerTask(customer: customer, description: "Go Check on [$customer.outletName]", dueDate: new Date())
         if (prevTask?.completionDate) {
             //if we have a previous task set the date *n* days after previous task
             def daysBtnDates = new Date() - prevTask.completionDate

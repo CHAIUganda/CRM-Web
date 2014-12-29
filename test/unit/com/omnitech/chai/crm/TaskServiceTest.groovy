@@ -25,7 +25,7 @@ class TaskServiceTest extends Specification {
         service.taskRepository = repo
 
         when:
-        def newTask = service.generateCustomerTask(c)
+        def newTask = service.generateCustomerDetailingTask(c)
 
         then:
         1 * repo.findLastTask(_) >> new Task(completionDate: new Date() - 60)
@@ -38,7 +38,7 @@ class TaskServiceTest extends Specification {
         service.taskRepository = repo
 
         when:
-        def newTask = service.generateCustomerTask(c)
+        def newTask = service.generateCustomerDetailingTask(c)
 
         then:
         1 * repo.findLastTask(_) >> new Task(completionDate: new Date() - 15)
