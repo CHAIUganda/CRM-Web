@@ -11,7 +11,7 @@
     <!-- Collection of nav links, forms, and other content for toggling -->
     <div id="navbarCollapse" class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
-            <li class="active"><a href="#"><i class="glyphicon glyphicon-home"></i>Home</a></li>
+            <li class="${params.controller == 'home' ? 'active':''}"><g:link controller="home" action="index"><i class="glyphicon glyphicon-home"></i>Home</g:link></li>
 
             %{--    PRODUCTS    --}%
             <li>
@@ -44,6 +44,18 @@
                     <li>
                         <g:link controller="sale" action="index">Sales</g:link>
                     </li>
+                </ul>
+
+            </li>
+
+            %{-- REPORTS --}%
+            <li>
+                <a data-toggle="dropdown" class="dropdown-toggle" href="#"><i
+                        class="glyphicon glyphicon-dashboard"></i>Reports <b class="caret"></b></a>
+
+                <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+                    <li><g:link controller="customer" action="index">Generate Report</g:link></li>
+                    <li><g:link controller="customer" action="index">Other Reports</g:link></li>
                 </ul>
 
             </li>
