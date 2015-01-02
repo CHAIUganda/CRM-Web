@@ -57,5 +57,9 @@ interface Relations {
     //WholeSaler -> SubCounty
     final static WHOLE_SALER_SC = 'WHOLE_SALER_SC'
 
+    final static REPORT_GRP_REPORT = 'REPORT_GRP_REPORT'
+
+    final static REPORT_GRP_GRP = 'REPORT_GRP_GRP'
+
 
 }

@@ -169,3 +169,11 @@ interface WholeSalerRepository extends GraphRepository<WholeSaler> {
     District findByUuid(String uuid)
 }
 
+interface ReportRepository extends GraphRepository<Report> {
+    Report findByUuid(String uuid)
+}
+
+interface ReportGroupRepository extends GraphRepository<ReportGroup> {
+    ReportGroup findByUuid(String uuid)
+}
+

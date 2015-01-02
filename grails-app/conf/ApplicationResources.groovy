@@ -25,4 +25,10 @@ modules = {
         dependsOn('angular')
         resource url: 'js/lib/ui-bootstrap/ui-bootstrap-custom-tpls-0.12.0.min.js'
     }
+
+    reportWiz{
+        dependsOn('angular','angular-resource')
+        resource url: 'js/lib/reportWiz/reportWiz.js'
+        resource url: 'js/lib/reportWiz/styles.css'
+    }
 }

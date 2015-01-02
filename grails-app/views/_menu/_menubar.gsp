@@ -54,8 +54,8 @@
                         class="glyphicon glyphicon-dashboard"></i>Reports <b class="caret"></b></a>
 
                 <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
-                    <li><g:link controller="customer" action="index">Generate Report</g:link></li>
-                    <li><g:link controller="customer" action="index">Other Reports</g:link></li>
+                    <li><g:link controller="report" action="index">Reports</g:link></li>
+                    <li><g:link controller="reportGroup" action="index">Report Groups</g:link></li>
                 </ul>
 
             </li>

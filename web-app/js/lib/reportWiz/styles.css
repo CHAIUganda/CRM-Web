@@ -1,0 +1,50 @@
+.red_background {
+    background-color: red;
+}
+
+.left-border {
+    border-left: 1px solid #87cefa;
+
+}
+
+.right-border{
+    border-right: 2px solid brown;
+    /*border-radius: 3px 0 3px 0;*/
+    /*background-color: #afd9ee;*/
+    /*display: block;*/
+    /*height: 100%;*/
+}
+
+.bottom-border {
+    border-bottom: 1px solid #87cefa;
+    padding-bottom: 1ex;
+
+}
+
+.report-header {
+   font-weight: 700;
+
+    /*background-color: #87cefa;*/
+}
+
+.squarebrackets
+{
+    font-family: calibri;
+    font-size:20px;
+    position: relative;
+    width:100px;
+    height: 100%;
+    padding:0px;
+}
+.squarebrackets:after
+{
+    content: " ";
+    position: absolute;
+    border-left:2px solid brown;
+    border-top:2px solid brown;
+    border-bottom:2px solid brown;
+    padding:5px;
+    top:0px;
+    bottom:0px;
+    right: 5px;
+}
