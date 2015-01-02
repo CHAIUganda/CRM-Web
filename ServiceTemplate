@@ -22,7 +22,7 @@ class {domain}Service {
 
     {domain} find{domain}(Long id) { {instance}Repository.findOne(id) }
 
-    {domain} find{domain}(String uuid) { {instance}Repository.findByUuid(id) }
+    {domain} find{domain}(String uuid) { {instance}Repository.findByUuid(uuid) }
 
     {domain} save{domain}({domain} {instance}) { ModelFunctions.saveEntity({instance}Repository, {instance}) }
 
