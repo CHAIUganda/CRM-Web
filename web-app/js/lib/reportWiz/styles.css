@@ -62,3 +62,22 @@
     position: relative;
     z-index: 2;
 }
+
+
+/* Animations */  
+/* you can also define the transition style
+   on the base class as well (.anim-repeat-item) */
+.anim-repeat-item.ng-enter,
+.anim-repeat-item.ng-leave {
+    -webkit-transition:0.5s linear all;
+    transition:0.5s linear all;
+}
+
+.anim-repeat-item.ng-enter,
+.anim-repeat-item.ng-leave.ng-leave-active {
+    opacity:0;
+}
+.anim-repeat-item.ng-leave,
+.anim-repeat-item.ng-enter.ng-enter-active {
+    opacity:1;
+}

@@ -27,7 +27,7 @@ modules = {
     }
 
     reportWiz{
-        dependsOn('angular','angular-resource')
+        dependsOn('angular','angular-resource','angular-animate')
         resource url: 'js/lib/reportWiz/reportWiz.js'
         resource url: 'js/lib/reportWiz/styles.css'
     }

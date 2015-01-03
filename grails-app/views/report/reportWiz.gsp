@@ -36,7 +36,7 @@
         <div class="panel-body">
             <div class="col-md-12 left-border">
 
-                <div ng-repeat="col in statement.aggregations()" class="col-md-3 left-border bottom-border">
+                <div ng-repeat="col in statement.aggregations()" class="col-md-3 well anim-repeat-item">
 
                     <div class="form-horizontal">
                         <div class="form-group">
@@ -68,7 +68,7 @@
                     <div class="form-group">
                         <div class="col-sm-offset-3 col-sm-9">
                             <button class="glyphicon glyphicon-trash  form-control"
-                                 ng-click="removeAggregation()">Delete</button>
+                                 ng-click="removeAggregation(col)">Delete</button>
                         </div>
 
                     </div>
