@@ -133,7 +133,7 @@ class SaleController {
             render(status: BAD_REQUEST, text: [status: BAD_REQUEST.reasonPhrase, message: ms] as JSON)
         } catch (Throwable x) {
             log.error("Error while handling request: \n $params", x)
-            render(status: BAD_REQUEST, text: [status: BAD_REQUEST.reasonPhrase, text: ChaiUtils.getBestMessage(x)] as JSON)
+            render(status: BAD_REQUEST, text: [status: BAD_REQUEST.reasonPhrase, message: ChaiUtils.getBestMessage(x)] as JSON)
         }
     }
 
