@@ -38,29 +38,18 @@
 
                 <div ng-repeat="col in statement.aggregations()" class="col-md-3 well anim-repeat-item">
 
-                    <div class="form-horizontal">
+                    <div class="form-inline">
                         <div class="form-group">
-                            <label class="col-sm-3 control-label">Function</label>
-
-                            <div class="col-sm-9">
-                                <select ng-model="col.agg" class="form-control" style="width: 100%">
-                                    <option>Average</option>
-                                    <option>Sum</option>
-                                    <option>Standard Deviation</option>
-                                    <option>Count</option>
-                                    <option>Count Unique</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">Column</label>
-
-                            <div class="col-sm-9">
-                                <select ng-model="col.expr" class="form-control" style="width: 100%">
-                                    <option ng-repeat="col2 in columns">{{col2.emitString()}}</option>
-                                </select>
-                            </div>
+                            <select ng-model="col.agg" class="form-control" style="width: 100%">
+                                <option>Average</option>
+                                <option>Sum</option>
+                                <option>Standard Deviation</option>
+                                <option>Count</option>
+                                <option>Count Unique</option>
+                            </select>
+                            <select ng-model="col.expr" class="form-control" style="width: 100%">
+                                <option ng-repeat="col2 in columns">{{col2.emitString()}}</option>
+                            </select>
                         </div>
 
                     </div>
@@ -68,7 +57,7 @@
                     <div class="form-group">
                         <div class="col-sm-offset-3 col-sm-9">
                             <button class="glyphicon glyphicon-trash  form-control"
-                                 ng-click="removeAggregation(col)">Delete</button>
+                                    ng-click="removeAggregation(col)">Delete</button>
                         </div>
 
                     </div>
