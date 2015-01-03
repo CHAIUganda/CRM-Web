@@ -6,6 +6,7 @@ import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.ReflectFunctions
 import grails.converters.JSON
 import grails.validation.ValidationException
+import org.springframework.http.HttpStatus
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST
 
@@ -122,7 +123,7 @@ class SaleController {
     private def handleSafely(def func) {
         try {
             func()
-            render 'Success'
+            render([status: HttpStatus.OK.reasonPhrase, message: "Success"] as JSON)
         } catch (ValidationException x) {
             def ms = new StringBuilder()
             x.errors.allErrors.each {
