@@ -7,31 +7,78 @@
     <g:set var="entityName" value="${message(code: 'report.label', default: 'Report')}"/>
     <title><g:message code="default.show.label" args="[entityName]"/></title>
     <r:require module="reportWiz"/>
-    <style type="text/css">
-    .glyphicon:empty {
-            width: auto;
-    }
-    .form-control {
-        width: auto;
-        padding: 6px 10px;
-    }
-</style>
 </head>
 
 <body>
 
-<div class="container" ng-controller="ReportCtrl">
+<div ng-controller="ReportCtrl">
 
     <!--    THE COLUMNS     -->
-    <div class="row ">
+    <div class="panel panel-success">
 
-        <div class="col-md-2 text-right">
-            <span class="badge">Columns To Display</span>
+        <div class="panel-heading"><span class="badge">Columns To Display</span></div>
+
+        <div class="panel-body">
+            <div class="col-md-12 left-border">
+                <div ng-repeat="col in columns" class="col-md-3">
+                    <label class=""><input type="checkbox" ng-model="col.selected"> {{col.name}}</label>
+                </div>
+            </div>
         </div>
 
-        <div class="col-md-10 left-border">
-            <div ng-repeat="col in columns" class="col-md-3">
-                <label class=""><input type="checkbox" ng-model="col.selected"> {{col.name}}</label>
+    </div>
+
+    <!--    AGGREGATIONS     -->
+    <div class="panel panel-success">
+
+        <div class="panel-heading"><span class="badge">Aggregation</span></div>
+
+        <div class="panel-body">
+            <div class="col-md-12 left-border">
+
+                <div ng-repeat="col in statement.aggregations()" class="col-md-3 left-border bottom-border">
+
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Function</label>
+
+                            <div class="col-sm-9">
+                                <select ng-model="col.agg" class="form-control" style="width: 100%">
+                                    <option>Average</option>
+                                    <option>Sum</option>
+                                    <option>Standard Deviation</option>
+                                    <option>Count</option>
+                                    <option>Count Unique</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Column</label>
+
+                            <div class="col-sm-9">
+                                <select ng-model="col.expr" class="form-control" style="width: 100%">
+                                    <option ng-repeat="col2 in columns">{{col2.emitString()}}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-3 col-sm-9">
+                            <button class="glyphicon glyphicon-trash  form-control"
+                                 ng-click="removeAggregation()">Delete</button>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-12">
+                    <button class="glyphicon glyphicon-plus-sign form-control" ng-click="addAggregation()">Add</button>
+                </div>
             </div>
         </div>
 
@@ -39,75 +86,35 @@
 
 
     <!--    SELECTED COLUMNS     -->
-    <div class="row ">
+    <div class="panel panel-success ">
 
-        <div class="col-md-2 text-right">
-            <div class="badge">Selected Columns</div>
-        </div>
+        <div class="panel-heading"><span class="badge">Selected Columns</span></div>
 
-        <div class="col-md-10 left-border">
-            <div ng-repeat="col in statement.cols" class="col-md-3">
-                <label ng-class="{'glyphicon-asterisk': col.isAggregation() == true, 'glyphicon-tag': col.isAggregation() == false}"
-                       class="glyphicon">{{col.emitString()}}</label>
-            </div>
-        </div>
-
-    </div>
-
-
-    <!--    AGGREGATIONS     -->
-    <div class="row ">
-
-        <div class="col-md-2 text-right"><span class="badge">Aggregation</span></div>
-
-        <div class="col-md-10 left-border">
-            <div class="col-md-12">
-                <div ng-repeat="col in statement.aggregations()" class="col-md-4 thumbnail">
-                    <div class="col-md-12">
-                        <label class="col-md-4 text-right">Function</label>
-                        <select ng-model="col.agg" class="col-md-8">
-                            <option>Average</option>
-                            <option>Sum</option>
-                            <option>Standard Deviation</option>
-                            <option>Count</option>
-                            <option>Count Unique</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-12">
-                        <label class="col-md-4 text-right">
-                            Column
-                        </label>
-                        <select class="col-md-8" ng-model="col.expr">
-                            <option ng-repeat="col2 in columns">{{col2.emitString()}}</option>
-                        </select>
-
-                    </div>
-
-                    <div class="col-md-12 text-right">
-                        <button class="glyphicon glyphicon-trash alert-danger btn"
-                                ng-click="removeAggregation()"></button>
-                    </div>
-
+        <div class="panel-body">
+            <div class="col-md-12 left-border">
+                <div ng-repeat="col in statement.cols" class="col-md-3">
+                    <label ng-class="{'glyphicon-asterisk': col.isAggregation() == true, 'glyphicon-tag': col.isAggregation() == false}"
+                           class="glyphicon">{{col.emitString()}}</label>
                 </div>
             </div>
-
-            <div class="col-md-12">
-                <button class="glyphicon glyphicon-plus-sign btn-info btn" ng-click="addAggregation()">Add</button>
-            </div>
         </div>
 
     </div>
+
+
+
 
 
     <!--    FILTERS     -->
-    <div class="row ">
+    <div class="panel panel-success ">
 
-        <div class="col-md-2 text-right"><span class="badge">Filters</span></div>
+        <div class="panel-heading"><span class="badge">Filters</span></div>
 
-        <div class="col-md-10 left-border">
-            <% myTemplate = createLink(action: 'conditionGroup') %>
-            <div ng-repeat="group in statement.where" ng-include="'${myTemplate}'"></div>
+        <div class="panel-body">
+            <div class="col-md-10 left-border">
+                <% myTemplate = createLink(action: 'conditionGroup') %>
+                <div ng-repeat="group in statement.where" ng-include="'${myTemplate}'"></div>
+            </div>
         </div>
 
     </div>

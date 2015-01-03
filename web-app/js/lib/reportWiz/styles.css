@@ -48,3 +48,17 @@
     bottom:0px;
     right: 5px;
 }
+
+.glyphicon:empty {
+    width: auto;
+}
+.form-control {
+    width: auto;
+    padding: 6px 10px;
+}
+
+/*Make the control lie on top*/
+.input-group .form-control {
+    position: relative;
+    z-index: 2;
+}
