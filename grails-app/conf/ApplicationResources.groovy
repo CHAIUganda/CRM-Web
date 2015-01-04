@@ -29,6 +29,7 @@ modules = {
     reportWiz{
         dependsOn('angular','angular-resource','angular-animate')
         resource url: 'js/lib/reportWiz/reportWiz.js'
+        resource url: 'js/lib/jquery.fileDownload.js'
         resource url: 'js/lib/reportWiz/styles.css'
     }
 }

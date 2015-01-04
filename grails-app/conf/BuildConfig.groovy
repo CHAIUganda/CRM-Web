@@ -27,6 +27,7 @@ grails.project.dependency.resolution = {
     inherits("global") {
         // specify dependency exclusions here; for example, uncomment this to disable ehcache:
 //        excludes 'ehcache'
+        excludes "itext"
     }
     log "error" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
     checksums true // Whether to verify checksums on resolve
@@ -55,6 +56,7 @@ grails.project.dependency.resolution = {
     def seleniumVersion = "2.43.1"
 
     dependencies {
+
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes e.g.
         compile 'org.springframework.data:spring-data-neo4j:3.1.4.RELEASE'
         compile 'org.springframework.data:spring-data-neo4j-tx:3.1.4.RELEASE'
@@ -62,7 +64,9 @@ grails.project.dependency.resolution = {
         runtime 'org.neo4j:neo4j-spatial:0.13-neo4j-2.1.2'
         compile 'org.neo4j:neo4j-cypher-dsl:2.1.4'
         compile 'fuzzy-csv:fuzzycsv:1.0-SNAPSHOT'
+        compile 'com.xlson.groovycsv:groovycsv:1.0'
         compile 'org.apache.commons:commons-math3:3.3'
+        compile 'org.omnitech:sms-api:1.0-SNAPSHOT'
 
         runtime('org.neo4j.app:neo4j-server:2.1.2') {
             excludes 'org.slf4j:slf4j-jdk14'
@@ -75,6 +79,16 @@ grails.project.dependency.resolution = {
 //        compile 'org.hibernate:hibernate-validator:4.2.0.Final'
 
 
+//      Dynamics
+        compile ('net.sourceforge.dynamicreports:dynamicreports-core:3.1.2') {
+            excludes 'jdtcore:eclipse'
+        }
+        build "com.lowagie:itext:2.1.7"
+        compile 'csv-graphs:csv-graphs:1.0-SNAPSHOT'
+        compile 'filter_report:filter_report:1.0-SNAPSHOT'
+        compile 'com.lowagie:itext:2.1.7'
+
+
         test("org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion")
 
         test "org.gebish:geb-spock:$gebVersion"
@@ -83,7 +97,7 @@ grails.project.dependency.resolution = {
         test "org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion"
         test "org.seleniumhq.selenium:selenium-ie-driver:$seleniumVersion"
         test("org.seleniumhq.selenium:selenium-htmlunit-driver:$seleniumVersion")
-        compile 'com.xlson.groovycsv:groovycsv:1.0'
+
 
 
     }

@@ -118,9 +118,20 @@
     </div>
 
 </div>
+
+<r:require module="reportWiz"/>
 <g:javascript>
 
     omnitech.js.reports.DataLoader.reportColumns = ${raw(reportInstance.fields)};
+    omnitech.js.reports.DataLoader.generateReportCallback = function (cols, filter) {
+        //alert('Columns:\n' + cols + '\n' + 'Filters:\n' + filter + '\n');
+        var encodedCols = encodeURIComponent(cols);
+        var encodedFilter = encodeURIComponent(filter);
+
+        $.fileDownload(omnitechBase + '/report/download/${reportInstance.id}?cols='+encodedCols + '&filter='+encodedFilter)
+            .done(function () { alert('File download a success!'); })
+            .fail(function () { alert('Report Download Failed!'); });
+    };
 
 </g:javascript>
 </body>

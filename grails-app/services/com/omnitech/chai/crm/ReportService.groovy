@@ -3,6 +3,7 @@ package com.omnitech.chai.crm
 import com.omnitech.chai.model.Report
 import com.omnitech.chai.model.ReportGroup
 import com.omnitech.chai.util.ModelFunctions
+import net.sf.dynamicreports.jasper.builder.JasperReportBuilder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
@@ -13,6 +14,7 @@ class ReportService {
 
     def reportRepository
     def reportGroupRepository
+    def scriptService
     @Autowired
     Neo4jTemplate neo
 
@@ -32,6 +34,23 @@ class ReportService {
 
     Page<Report> searchReports(String search, Map params) {
         ModelFunctions.searchAll(neo, Report, ModelFunctions.getWildCardRegex(search), params)
+    }
+
+    JasperReportBuilder buildReport(Long reportId, String cols, String filters) {
+        def report = findReport(reportId)
+//        assert report.type == Report.TYPE_DYNAMIC, 'report should be of dynamic type'
+
+        def newScript = report.script
+                .replace('{{colums}}', cols)
+                .replace('{{filters}}', filters)
+
+        log.debug("replacing report script for [${reportId}] from \n[$report.script]\nto\n[$newScript]")
+
+        log.info('now generating report')
+
+        return scriptService.buildReport(newScript)
+
+
     }
 
     /* ReportGroups */

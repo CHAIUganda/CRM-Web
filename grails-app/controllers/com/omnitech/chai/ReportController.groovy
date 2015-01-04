@@ -3,7 +3,9 @@ package com.omnitech.chai
 import com.omnitech.chai.model.Report
 import com.omnitech.chai.util.GroupFlattener
 import com.omnitech.chai.util.ModelFunctions
+import com.omnitech.chai.util.ServletUtil
 import grails.transaction.Transactional
+import net.sf.dynamicreports.jasper.builder.JasperReportBuilder
 
 import static com.omnitech.chai.util.ModelFunctions.extractId
 import static org.springframework.http.HttpStatus.*
@@ -53,6 +55,16 @@ class ReportController {
             notFound(); return
         }
         [reportInstance: reportService.findReport(id)]
+    }
+
+    def download(Long id) {
+        log.debug("downloading params: $params")
+        def columns = params.cols as String
+        def filter = params.filter ? params.filter : 'true'
+        def report = reportService.findReport(id)
+        def reportBuilder = reportService.buildReport(id, columns, filter)
+        ServletUtil.setAttachment(response,"${report.name}.pdf")
+        reportBuilder.toPdf(response.outputStream)
     }
 
     def create() {

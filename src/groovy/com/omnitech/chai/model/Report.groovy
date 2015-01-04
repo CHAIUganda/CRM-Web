@@ -12,10 +12,13 @@ import org.springframework.data.neo4j.annotation.RelatedTo
 @Validateable
 class Report extends AbstractEntity implements LeafNode {
 
+    final static String TYPE_DYNAMIC = 'dynamic'
+    final static String TYPE_STATIC = 'static'
+
     String name
     String script
     String fields
-    String type
+    String type = TYPE_DYNAMIC
 
 
     @Fetch
