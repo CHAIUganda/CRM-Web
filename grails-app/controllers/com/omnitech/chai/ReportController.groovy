@@ -43,8 +43,8 @@ class ReportController {
         respond reportService.findReport(id)
     }
 
-    def conditionGroup(){
-        render (template: 'conditionGroup')
+    def conditionGroup() {
+        render(template: 'conditionGroup')
     }
 
     def reportWiz() {
@@ -52,7 +52,7 @@ class ReportController {
         if (id == -1) {
             notFound(); return
         }
-        respond reportService.findReport(id)
+        [reportInstance: reportService.findReport(id)]
     }
 
     def create() {
@@ -67,7 +67,7 @@ class ReportController {
         }
 
         if (reportInstance.hasErrors()) {
-            respond reportInstance.errors, view: 'create'
+            respond reportInstance.errors, view: 'create', model: [reportGroups: reportService.listAllReportGroups()]
             return
         }
 
@@ -100,7 +100,7 @@ class ReportController {
         }
 
         if (reportInstance.hasErrors()) {
-            respond reportInstance.errors, view: 'edit'
+            respond reportInstance.errors, view: 'edit', model: [reportGroups: reportService.listAllReportGroups()]
             return
         }
 

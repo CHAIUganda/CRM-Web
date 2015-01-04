@@ -21,7 +21,7 @@
         <div class="panel-body">
             <div class="col-md-12 left-border">
                 <div ng-repeat="col in columns" class="col-md-3">
-                    <label class=""><input type="checkbox" ng-model="col.selected"> {{col.name}}</label>
+                    <label class=""><input type="checkbox" ng-model="col.selected"> {{col.desc}}</label>
                 </div>
             </div>
         </div>
@@ -48,7 +48,7 @@
                                 <option>Count Unique</option>
                             </select>
                             <select ng-model="col.expr" class="form-control" style="width: 100%">
-                                <option ng-repeat="col2 in columns">{{col2.emitString()}}</option>
+                                <option ng-repeat="col2 in columns" value="{{col2.name}}">{{col2.desc}}</option>
                             </select>
                         </div>
 
@@ -118,6 +118,11 @@
     </div>
 
 </div>
+<g:javascript>
+
+    omnitech.js.reports.DataLoader.reportColumns = ${raw(reportInstance.fields)};
+
+</g:javascript>
 </body>
 
 </html>

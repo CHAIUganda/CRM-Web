@@ -23,7 +23,7 @@
             <div ng-repeat="cnd in group.conditions" class="form-inline anim-repeat-item" >
                 <div class="form-group">
                     <select class="form-control" ng-model="cnd.left">
-                        <option ng-repeat="col2 in columns">{{col2.emitString()}}</option>
+                        <option ng-repeat="col2 in columns" value="{{col2.name}}">{{col2.desc}}</option>
                     </select>
                     <select class="form-control" ng-model="cnd.operator">
                         <option>Equal to</option>
