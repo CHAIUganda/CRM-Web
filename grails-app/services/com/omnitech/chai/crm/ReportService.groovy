@@ -44,7 +44,7 @@ class ReportService {
                 .replace('{{colums}}', cols)
                 .replace('{{filters}}', filters)
 
-        log.debug("replacing report script for [${reportId}] from \n[$report.script]\nto\n[$newScript]")
+//        log.debug("replacing report script for [${reportId}] from \n[$report.script]\nto\n[$newScript]")
 
         log.info('now generating report')
 
