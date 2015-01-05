@@ -182,7 +182,7 @@ class TaskController {
         txHelperService.doInTransaction {
             neo.fetch(taskInstance.territoryUser())
         }
-        respond taskInstance, model: [users: userService.listAllUsers(), customers: customerService.listAllCustomers()]
+        [taskInstance: taskInstance,users: userService.listAllUsers(), customers: customerService.listAllCustomers()]
     }
 
     @Transactional

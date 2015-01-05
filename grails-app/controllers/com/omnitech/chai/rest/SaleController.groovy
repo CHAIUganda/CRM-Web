@@ -96,8 +96,12 @@ class SaleController {
     private <T extends Order> T toOrder(Map map, Class<T> typeOfOrder) {
         def dupeMap = new HashMap(map)
         dupeMap.remove('salesDatas')
+        dupeMap.remove('orderDatas')
         def saleOrder = ModelFunctions.createObj(typeOfOrder, dupeMap)
-        saleOrder.lineItems = map.salesDatas.collect { toLineItem(it, saleOrder) }
+        if (typeOfOrder == Order)
+            saleOrder.lineItems = map.orderDatas.collect { toLineItem(it, saleOrder) }
+        else
+            saleOrder.lineItems = map.salesDatas.collect { toLineItem(it, saleOrder) }
         return saleOrder
     }
 

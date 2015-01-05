@@ -97,7 +97,7 @@ class SaleControllerSpec extends Specification {
         1 * securityService.currentUser >> new User()
         1 * taskService.saveTask({ directSaleValidator(it) })
         1 * customerService.findCustomer('cccc') >> new Customer()
-        response.contentAsString == 'Success'
+        response.contentAsString == '{"status":"OK","message":"Success"}'
 
     }
 
@@ -260,7 +260,7 @@ class SaleControllerSpec extends Specification {
         1 * securityService.currentUser >> new User()
         1 * taskService.findOrder('oooo') >> new Order(customer: new Customer(), comment: "SSjj", id: 5)
         1 * taskService.saveTask({ directSaleValidator(it) })
-        response.contentAsString == 'Success'
+        response.contentAsString == '{"status":"OK","message":"Success"}'
 
     }
 
@@ -271,7 +271,7 @@ class SaleControllerSpec extends Specification {
   "clientRefId":"clientRefId1",
   "dateOfSale": "2013-01-3 04:05:40",
   "comment":"Some weird comment",
-  "salesDatas": [
+  "orderDatas": [
     {
       "quantity": 5,
       "price": 454,
@@ -324,7 +324,7 @@ class SaleControllerSpec extends Specification {
         1 * taskService.findOrderByClientRefId('clientRefId1') >> null
         1 * customerService.findCustomer('cccc') >> new Customer()
         1 * taskService.saveTask({ validateOrder(it) })
-        response.contentAsString == 'Success'
+        response.contentAsString == '{"status":"OK","message":"Success"}'
     }
 
     void "test duplicate placeOrder Request"() {

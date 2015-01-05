@@ -19,6 +19,7 @@ import static org.neo4j.cypherdsl.CypherQuery.*
 /**
  * Created by kay on 10/2/14.
  */
+@Neo4jTransactional
 class CustomerService {
 
     def customerRepository
@@ -32,9 +33,8 @@ class CustomerService {
 
     /* Customers */
 
-    Page<Customer> listCustomers(Map params) { ModelFunctions.listAll(customerRepository, params) }
+    Page<Customer> listCustomers(Map params) { ModelFunctions.listAll(neo,Customer, params,Customer) }
 
-    @Neo4jTransactional
     List<Customer> listAllCustomers() { customerRepository.findAll().collect() }
 
     Customer findCustomer(Long id) { customerRepository.findOne(id) }
