@@ -60,6 +60,7 @@ class SaleController {
     def placeOrder() {
         handleSafely {
             def json = request.JSON as Map
+            json.remove('id')
 
             assert json.clientRefId, 'ClientRefId Should exist in the request'
             def dupeOrder = taskService.findOrderByClientRefId(json.clientRefId)
@@ -102,6 +103,11 @@ class SaleController {
             saleOrder.lineItems = map.orderDatas.collect { toLineItem(it, saleOrder) }
         else
             saleOrder.lineItems = map.salesDatas.collect { toLineItem(it, saleOrder) }
+
+        if (map.deliveryDate) {
+            ChaiUtils.execSilently { saleOrder.dueDate = new Date(map.deliveryDate as Long) }
+        }
+
         return saleOrder
     }
 
