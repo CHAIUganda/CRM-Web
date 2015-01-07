@@ -27,7 +27,8 @@ class ScriptService implements InitializingBean {
     }
 
 
-    JasperReportBuilder buildReport(String script) {
+    JasperReportBuilder buildReport(String script,Map params = [:]) {
+        def shell = getShell(params)
         def result = shell.evaluate(script)
         return result as JasperReportBuilder
     }

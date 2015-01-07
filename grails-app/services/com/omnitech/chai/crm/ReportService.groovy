@@ -41,14 +41,14 @@ class ReportService {
 //        assert report.type == Report.TYPE_DYNAMIC, 'report should be of dynamic type'
 
         def newScript = report.script
-                .replace('{{colums}}', cols)
+                .replace('{{columns}}', cols)
                 .replace('{{filters}}', filters)
 
 //        log.debug("replacing report script for [${reportId}] from \n[$report.script]\nto\n[$newScript]")
 
         log.info('now generating report')
 
-        return scriptService.buildReport(newScript)
+        return scriptService.buildReport(newScript, [columns: cols, filters: filters])
 
 
     }
