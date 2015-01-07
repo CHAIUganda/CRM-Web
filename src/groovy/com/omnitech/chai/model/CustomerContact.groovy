@@ -20,7 +20,7 @@ class CustomerContact extends AbstractEntity {
     String gender
     String role
     String qualification
-    Boolean networkOrAssociation
+    String networkOrAssociationName
 
     //todo add to form
 

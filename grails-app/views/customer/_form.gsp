@@ -129,8 +129,7 @@
                                                                default="Turn Over"/></label>
 
         <div>
-            <g:select class='form-control' type="number" name="turnOver"
-                from="${customerInstance.constraints.turnOver.inList}"
+            <g:textField class='form-control' type="number" name="turnOver"
                      value="${customerInstance.turnOver}"/>
             <span class="help-inline alert-danger">${hasErrors(bean: customerInstance, field: 'turnOver', 'error')}</span>
         </div>
@@ -225,9 +224,7 @@
                                                                    default="Opening Hours"/></label>
 
         <div>
-            <g:select class='form-control' name="openingHours"
-                from="${customerInstance?.constraints?.openingHours?.inList}"
-                         value="${customerInstance?.openingHours}"/>
+            <g:textField class='form-control' name="openingHours"  value="${customerInstance?.openingHours}"/>
             <span class="help-inline alert-danger">${hasErrors(bean: customerInstance, field: 'openingHours', 'error')}</span>
         </div>
     </div>

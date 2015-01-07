@@ -7,13 +7,15 @@
             <table class="table">
                 <tbody>
 
-                  <tr class="prop">
-                    <td valign="top" class="name"><g:message code="customerContact.dateCreated.label"
-                                                             default="Date Created"/></td>
+                <tr class="prop">
+                    <td valign="top" class="name"><g:message code="customerContact.surnname.label"
+                                                             default="Surname"/></td>
 
-                    <td valign="top" class="value"><g:formatDate date="${customerContactInstance?.dateCreated}"/></td>
+                    <td valign="top" class="value">${fieldValue(bean: customerContactInstance, field: "surname")}</td>
 
                 </tr>
+
+
 
                 <tr class="prop">
                     <td valign="top" class="name"><g:message code="customerContact.gender.label" default="Gender"/></td>
@@ -22,28 +24,21 @@
 
                 </tr>
 
-
                 <tr class="prop">
-                    <td valign="top" class="name"><g:message code="customerContact.lastUpdated.label"
-                                                             default="Last Updated"/></td>
+                    <td valign="top" class="name"><g:message code="customerContact.contact.label"
+                                                             default="Contact"/></td>
 
-                    <td valign="top" class="value"><g:formatDate date="${customerContactInstance?.lastUpdated}"/></td>
+                    <td valign="top" class="value">${fieldValue(bean: customerContactInstance, field: "contact")}</td>
 
                 </tr>
 
-                <tr class="prop">
-                    <td valign="top" class="name"><g:message code="customerContact.surnname.label" default="Surname"/></td>
-
-                    <td valign="top" class="value">${fieldValue(bean: customerContactInstance, field: "surname")}</td>
-
-                </tr>
 
                 <tr class="prop">
                     <td valign="top" class="name"><g:message code="customerContact.networkOrAssociation.label"
                                                              default="Network Or Association"/></td>
 
                     <td valign="top"
-                        class="value">${fieldValue(bean: customerContactInstance, field: "networkOrAssociation")}</td>
+                        class="value">${fieldValue(bean: customerContactInstance, field: "networkOrAssociationName")}</td>
 
                 </tr>
 
@@ -63,7 +58,22 @@
 
                 </tr>
 
+                <tr class="prop">
+                    <td valign="top" class="name"><g:message code="customerContact.dateCreated.label"
+                                                             default="Date Created"/></td>
 
+                    <td valign="top" class="value"><g:formatDate date="${customerContactInstance?.dateCreated}"/></td>
+
+                </tr>
+
+
+                <tr class="prop">
+                    <td valign="top" class="name"><g:message code="customerContact.lastUpdated.label"
+                                                             default="Last Updated"/></td>
+
+                    <td valign="top" class="value"><g:formatDate date="${customerContactInstance?.lastUpdated}"/></td>
+
+                </tr>
 
                 </tbody>
             </table>

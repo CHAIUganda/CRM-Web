@@ -33,7 +33,7 @@ class CustomerService {
 
     /* Customers */
 
-    Page<Customer> listCustomers(Map params) { ModelFunctions.listAll(neo,Customer, params,Customer) }
+    Page<Customer> listCustomers(Map params) { ModelFunctions.listAll(neo, Customer, params, Customer) }
 
     List<Customer> listAllCustomers() { customerRepository.findAll().collect() }
 
@@ -110,6 +110,8 @@ class CustomerService {
     }
 
     private processRecord(Record record) {
+
+        //Processing Regions
         String regionName = prop(record, 'Region')
         def region = regionService.getOrCreateRegion(regionName)
 
@@ -153,7 +155,7 @@ class CustomerService {
                 gender: prop(record, 'gender', false),
                 role: prop(record, 'role', false),
                 qualification: prop(record, 'qualification', false),
-                networkOrAssociation: execSilently("Converting Network Or Association") { prop(record, 'parish', true) }
+                networkOrAssociationName: prop(record, 'networkOrAssociationName', false)
 
         )
 
@@ -161,6 +163,23 @@ class CustomerService {
         customer.parish = parish
         customer.subCounty = subCounty
         customer.customerContacts = [customerContact] as Set
+
+        //add other customer contact if existent.
+        //todo automate this
+        if (prop(record, 'surname2', false) || prop(record, 'firstName2', false)) {
+            def customerContact2 = new CustomerContact(
+                    title: prop(record, 'title2', false),
+                    firstName: prop(record, 'firstName2', false),
+                    surname: prop(record, 'surname2', false),
+                    contact: prop(record, 'contact2', false),
+                    gender: prop(record, 'gender2', false)?.toLowerCase(),
+                    role: prop(record, 'role2', false),
+                    qualification: prop(record, 'qualification2', false),
+                    networkOrAssociationName: prop(record, 'networkOrAssociationName2', false)
+
+            )
+            customer.customerContacts << customerContact2
+        }
 
         customerRepository.save(customer)
     }
@@ -180,7 +199,6 @@ class CustomerService {
         }
         return value
     }
-
 
     // WholeSalers
     List<WholeSaler> listAllWholeSalers() { wholeSalerRepository.findAll().collect() }

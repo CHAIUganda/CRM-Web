@@ -49,21 +49,21 @@ public class Customer extends AbstractEntity implements LeafNode {
            descriptionOfOutletLocation,
            numberOfProducts,
            pictureURL,
-           tradingCenter
+           tradingCenter,
+           turnOver
 
 
     Integer numberOfEmployees,
             numberOfCustomersPerDay,
             restockFrequency,
-            visibleEquipment
+            visibleEquipment,
+            childrenUnder5yrs
 
     //todo add hasSisterBranch
     Boolean hasSisterBranch
     //todo add dateOutletOpened
     Date dateOutletOpened
 
-
-    String turnOver
 
     @Fetch
     @RelatedTo(type = Relations.HAS_CONTACT)
@@ -98,9 +98,9 @@ public class Customer extends AbstractEntity implements LeafNode {
         typeOfLicence blank: false, inList: ['National Drug Authority', 'Pharmaceutical Society of Uganda', 'Ugandan Medical and Dental Practitioners', 'Ministry of Health', 'Unlicensed', 'Others']
         split blank: false, inList: ['urban', 'rural']
         numberOfEmployees nullable: false, min: 0, max: 30
-        openingHours blank: false, inList: ['early morning', 'late morning', 'noon', 'early afternoon', 'late afternoon', 'evening']
+//        openingHours blank: false, inList: ['early morning', 'late morning', 'noon', 'early afternoon', 'late afternoon', 'evening']
 
-        turnOver nullable: false, inList: ['less than 50,000 UGX', '50,000-150,000 UGX', '150,000 - 300,000 UGX', 'greater than 300,000 UGX']
+//        turnOver nullable: false, inList: ['less than 50,000 UGX', '50,000-150,000 UGX', '150,000 - 300,000 UGX', 'greater than 300,000 UGX']
         numberOfCustomersPerDay nullable: false, min: 1
         majoritySourceOfSupply blank: false
         buildingStructure blank: false, inList: [STRUCT_PERMANENT, STRUCT_SEMI_PERMANENT, STRUCT_NON_PERMANENT]
