@@ -24,7 +24,7 @@ class SegmentationService {
         if (!segmentSetting) throw new IllegalStateException("Cannot run segmentation job with out the segmentation script")
 
 
-        def segmentScript = getShell().parse(segmentSetting.value)
+        def segmentScript = compileScript(segmentSetting.value)
 
         customerRepository.findAll().each { c ->
             segments.each { s ->
@@ -41,10 +41,8 @@ class SegmentationService {
         def script = cs.getSegmentationScript()
 
         if (script) {
-            def shell = getShell(customer: c, segment: cs, customerScore: customerScore)
-
             def result = ChaiUtils.execSilently("Failed to execute segmentation script on customer") {
-                shell.evaluate(script)
+                evaluateScript(script,[customer: c, segment: cs, customerScore: customerScore])
             }
 
             if (result == true) {
@@ -72,5 +70,15 @@ class SegmentationService {
     }
 
     Binding getParamBinding(Map params = [:]) { return new Binding(params) }
+
+    def evaluateScript(String script, Map params) {
+        def compiledScript = compileScript.call(script)
+        compiledScript.setBinding(new Binding(params))
+        return compiledScript.run()
+    }
+
+    Closure<Script> compileScript = { String script ->
+        getShell().parse(script)
+    }.memoizeBetween(0, 20)
 
 }
