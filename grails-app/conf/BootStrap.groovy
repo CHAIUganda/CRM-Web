@@ -43,14 +43,31 @@ class BootStrap {
             txHelperService.doInTransaction {
 
                 //pass salt start u = node(1) set u.password = "$2a$10$.J1svR3w6dQTJqsspc2.0.GJuNdZcB5Xuz892wgMCAHNPT0KpQnmu"
+
+                def territory = neo.save new Territory(name: 'Root Territory')
+
+                def roleSuper = neo.save new Role(authority: 'ROLE_SUPER_ADMIN')
+                def roleSaler = neo.save new Role(authority: SALES_ROLE_NAME)
+                def roleDetailer = neo.save new Role(authority: DETAILER_ROLE_NAME)
                 neo.save new User(username: 'root',
                         password: springSecurityService.encodePassword('pass'),
                         dateCreated: new Date(),
                         lastUpdated: new Date(),
-                        territory: new Territory(name: 'Root Territory'),
-                        roles: [
-                                new Role(authority: 'ROLE_SUPER_ADMIN')
-                        ]
+                        territory: territory,
+                        roles: [roleSuper]
+                )
+
+                neo.save new User(username: 'detailer1',
+                        password: springSecurityService.encodePassword('pass'),
+                        territory: territory,
+                        roles: [roleSuper, roleDetailer]
+                )
+
+                neo.save new User(
+                        username: 'sales1',
+                        password: springSecurityService.encodePassword('pass'),
+                        territory: territory,
+                        roles: [roleSuper, roleSaler]
                 )
 
                 neo.save new RequestMap(url: '/**', configAttribute: 'ROLE_SUPER_ADMIN')
