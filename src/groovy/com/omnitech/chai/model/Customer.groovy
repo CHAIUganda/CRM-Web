@@ -50,13 +50,13 @@ public class Customer extends AbstractEntity implements LeafNode {
            numberOfProducts,
            pictureURL,
            tradingCenter,
+           visibleEquipment,
            turnOver
 
 
     Integer numberOfEmployees,
             numberOfCustomersPerDay,
             restockFrequency,
-            visibleEquipment,
             childrenUnder5yrs
 
     //todo add hasSisterBranch

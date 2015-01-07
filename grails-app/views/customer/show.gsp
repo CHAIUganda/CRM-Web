@@ -142,6 +142,13 @@
 				<td valign="top" class="value">${fieldValue(bean: customerInstance, field: "numberOfProducts")}</td>
 				
 			</tr>
+
+		<tr class="prop">
+				<td valign="top" class="name"><g:message code="customer.visibleEquipment.label" default="Visible Equipment" /></td>
+
+				<td valign="top" class="value">${fieldValue(bean: customerInstance, field: "visibleEquipment")}</td>
+
+			</tr>
 		
 			<tr class="prop">
 				<td valign="top" class="name"><g:message code="customer.openingHours.label" default="Opening Hours" /></td>
