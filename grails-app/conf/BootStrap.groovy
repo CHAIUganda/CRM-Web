@@ -140,8 +140,14 @@ class BootStrap {
             def count = customerSegmentRepository.count()
             if (!count) {
                 println "Inserting Default Segment..."
-                neo.save(new CustomerSegment(name: 'Default Segment', callFrequency: 2, segmentationScript: 'true'))
+//                neo.save(new CustomerSegment(name: 'Default Segment', callFrequency: 2, segmentationScript: 'true'))
+                neo.save(new CustomerSegment(name: 'A', callFrequency: 3, segmentationScript: 'customerScore >= 2'))
+                neo.save(new CustomerSegment(name: 'B', callFrequency: 2, segmentationScript: 'customerScore >= 1.5 && customerScore < 2'))
+                neo.save(new CustomerSegment(name: 'C', callFrequency: 1, segmentationScript: 'customerScore >= 1 && customerScore < 1.5'))
+                neo.save(new CustomerSegment(name: 'D', callFrequency: 0, segmentationScript: 'customerScore >= 0 && customerScore < 1'))
             }
+
+
         }
     }
 
