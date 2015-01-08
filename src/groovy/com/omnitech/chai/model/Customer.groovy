@@ -20,11 +20,10 @@ import org.springframework.validation.FieldError
 @Validateable
 public class Customer extends AbstractEntity implements LeafNode {
 
-    final static TYPE_CLINIC = 'clinic'
-    final static TYPE_PHARMACY = 'pharmacy'
-    final static TYPE_DRUG_SHOP = 'drug shop'
-    final static TYPE_HOSPITAL = 'hospital'
-    final static TYPE_HEALTH_CENTER = 'health center'
+    final static TYPE_CLINIC = 'Clinic'
+    final static TYPE_PHARMACY = 'Pharmacy'
+    final static TYPE_DRUG_SHOP = 'Drug Shop'
+    final static TYPE_HEALTH_CENTER = 'Health Centre'
     final static STRUCT_SEMI_PERMANENT = 'semi-permanent'
     final static STRUCT_PERMANENT = 'permanent'
     final static STRUCT_NON_PERMANENT = 'non-permanent'
@@ -57,7 +56,7 @@ public class Customer extends AbstractEntity implements LeafNode {
     Integer numberOfEmployees,
             numberOfCustomersPerDay,
             restockFrequency,
-            childrenUnder5yrs
+            childrenUnder5yrsPerDay
 
     //todo add hasSisterBranch
     Boolean hasSisterBranch
@@ -93,7 +92,7 @@ public class Customer extends AbstractEntity implements LeafNode {
 
     static constraints = {
         outletName blank: false
-        outletType blank: false, inList: [TYPE_PHARMACY, TYPE_DRUG_SHOP, TYPE_CLINIC, TYPE_HEALTH_CENTER, TYPE_HOSPITAL]
+        outletType blank: false, inList: [TYPE_PHARMACY, TYPE_DRUG_SHOP, TYPE_CLINIC, TYPE_HEALTH_CENTER]
         outletSize blank: false, inList: ['big', 'medium', 'small']
         typeOfLicence blank: false, inList: ['National Drug Authority', 'Pharmaceutical Society of Uganda', 'Ugandan Medical and Dental Practitioners', 'Ministry of Health', 'Unlicensed', 'Others']
         split blank: false, inList: ['urban', 'rural']

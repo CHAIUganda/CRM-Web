@@ -13,7 +13,7 @@ class ScripHelpers {
         return m[products] ?: 0
     }
 
-
+    @Deprecated
     static int getTurnOver(String products) {
         def map = ['less than 50,000 UGX': 2500, '50,000-150,000 UGX': 100000, '150,000 - 300,000 UGX': 235000, 'greater than 300,000 UGX': 350000]
         return map[products] ?: 0

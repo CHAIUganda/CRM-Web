@@ -26,7 +26,21 @@ class ChaiUtils {
             def _delegate = delegate
             return execSilently { Long.valueOf(_delegate) }
         }
+
+        String.metaClass.removeExtraSpace = {
+            return ChaiUtils.cleanUp.call(delegate)
+        }
+
+        String.metaClass.removeAllSpace = {
+            return delegate.toString().replaceAll(/\s+/, '')
+        }
+
+        String.metaClass.removeNonAscII = {
+            return delegate.toString().replaceAll(/[^\u0020-\u007F \\ @,\/.#\n*\-\u0024'()\+{}]+/, '')
+        }
     }
+
+    static def cleanUp = { string -> string.toString().replaceAll(/\s+/, ' ').trim()}.memoizeBetween(0,100)
 
     static execSilently(String error, Closure code) {
         try {
