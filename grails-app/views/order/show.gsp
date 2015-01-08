@@ -47,12 +47,6 @@
 
         </tr>
 
-        <tr class="prop">
-            <td valign="top" class="name"><g:message code="task.dateCreated.label" default="Date Created"/></td>
-
-            <td valign="top" class="value"><g:formatDate date="${taskInstance?.dateCreated}"/></td>
-
-        </tr>
         <g:if test="${taskInstance.completedBy}">
             <tr class="prop">
                 <td valign="top" class="name">Completed By</td>
@@ -66,6 +60,14 @@
 
             </tr>
         </g:if>
+
+        <tr class="prop">
+            <td valign="top" class="name"><g:message code="task.dateCreated.label" default="Date Created"/></td>
+
+            <td valign="top" class="value"><g:formatDate date="${taskInstance?.dateCreated}"/></td>
+
+        </tr>
+
         <g:if test="${taskInstance.assignedTo}">
             <tr class="prop">
                 <td valign="top" class="name">Assigned To</td>
@@ -90,13 +92,17 @@
 
         </tr>
 
-
         <tr class="prop">
-            <td valign="top" class="name"><g:message code="task.lastUpdated.label" default="Last Updated"/></td>
+            <td valign="top" class="name"><g:message code="task.completionDate.label" default="Completion Date" /></td>
 
-            <td valign="top" class="value"><g:formatDate date="${taskInstance?.lastUpdated}"/></td>
+            <td valign="top" class="value">
+                <g:if test="${taskInstance.completionDate}">
+                    <g:formatDate date="${taskInstance.completionDate}" format="dd-MMM-yyyy" /> (Completed ${ChaiUtils.fromNow(taskInstance.dueDate)})
+                </g:if>
+            </td>
 
         </tr>
+
 
         <tr class="prop">
             <td valign="top" class="name"><g:message code="task.status.label" default="Status"/></td>
@@ -104,13 +110,57 @@
             <td valign="top" class="value">${fieldValue(bean: taskInstance, field: "status")}</td>
 				
 	    </tr>
-		
-			<tr class="prop">
-				<td valign="top" class="name"><g:message code="task.uuid.label" default="Uuid" /></td>
-				
-				<td valign="top" class="value">${fieldValue(bean: taskInstance, field: "uuid")}</td>
-				
-			</tr>
+
+
+         <g:if test="${taskInstance instanceof com.omnitech.chai.model.Sale}">
+             <tr class="prop">
+                 <td valign="top" class="name"><g:message code="task.howManyZincInStock.label" default="How Many Zinc In Stock" /></td>
+
+                 <td valign="top" class="value">${fieldValue(bean: taskInstance, field: "howManyZincInStock")}</td>
+
+             </tr>
+
+             <tr class="prop">
+                 <td valign="top" class="name"><g:message code="task.howManyOrsInStock.label" default="How Many ORS In Stock" /></td>
+
+                 <td valign="top" class="value">${fieldValue(bean: taskInstance, field: "howManyOrsInStock")}</td>
+
+             </tr>
+
+             <tr class="prop">
+                 <td valign="top" class="name"><g:message code="task.pointOfSaleMaterial.label" default="Point Of Sale Materials" /></td>
+
+                 <td valign="top" class="value">${fieldValue(bean: taskInstance, field: "pointOfSaleMaterial")}</td>
+
+             </tr>
+
+             <tr class="prop">
+                 <td valign="top" class="name"><g:message code="task.recommendationNextStep.label" default="Recommendation Next Step" /></td>
+
+                 <td valign="top" class="value">${fieldValue(bean: taskInstance, field: "recommendationNextStep")}</td>
+
+             </tr>
+
+             <tr class="prop">
+                 <td valign="top" class="name"><g:message code="task.recommendationLevel.label" default="Recommendation Level" /></td>
+
+                 <td valign="top" class="value">${fieldValue(bean: taskInstance, field: "recommendationLevel")}</td>
+
+             </tr>
+             <tr class="prop">
+                 <td valign="top" class="name"><g:message code="task.governmentApproval.label" default="Government Approval" /></td>
+
+                 <td valign="top" class="value">${fieldValue(bean: taskInstance, field: "governmentApproval")}</td>
+
+             </tr>
+
+             <tr class="prop">
+                 <td valign="top" class="name"><g:message code="task.dateOfSale.label" default="Date Of Sale" /></td>
+
+                 <td valign="top" class="value">${fieldValue(bean: taskInstance, field: "dateOfSale")}</td>
+
+             </tr>
+         </g:if>
 		</tbody>
 	</table>
 
