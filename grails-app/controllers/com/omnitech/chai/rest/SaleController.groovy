@@ -35,6 +35,8 @@ class SaleController {
             assert !dupeSale, 'Duplicate Sale'
 
             def sale = toDirectSale(json)
+            //explicitly remove the id
+            sale.id = null
             sale.completedBy(neoSecurityService.currentUser)
             taskService.saveTask(sale)
         }
@@ -87,8 +89,9 @@ class SaleController {
     private DirectSale toDirectSale(Map map) {
         def dupeMap = new HashMap(map)
         dupeMap.remove('salesDatas')
+        dupeMap.remove('adhockSalesDatas')
         def ds = ModelFunctions.createObj(DirectSale, dupeMap)
-        ds.lineItems = map.salesDatas.collect { toLineItem(it, ds) }
+        ds.lineItems = map.adhockSalesDatas.collect { toLineItem(it, ds) }
         ds.customer = customerService.findCustomer(map.customerId as String)
         assert ds.customer, "Customer Has To Exist In the System [$map.customerId]"
         return ds

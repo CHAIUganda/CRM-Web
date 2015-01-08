@@ -28,7 +28,7 @@ class TaskService {
     @Autowired
     Neo4jTemplate neo
     def customerRepository
-    def direcSaleRepository
+    def directSaleRepository
     def orderRepository
     def neoSecurityService
 
@@ -257,7 +257,7 @@ class TaskService {
 
 
     DirectSale findDirectSaleByClientRefId(String refId) {
-        direcSaleRepository.findByClientRefId(refId)
+        directSaleRepository.findByClientRefId(refId)
     }
 
     void deleteOrder(Long id) { orderRepository.delete(id) }
