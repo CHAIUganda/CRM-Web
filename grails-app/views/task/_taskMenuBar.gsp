@@ -12,13 +12,15 @@
                 <g:link action="index"><i class="glyphicon glyphicon-th-list"></i> All ${entityName}s</g:link>
             </li>
 
-            %{-- CREATE MENU --}%
-            <li class="${params.action == "create" ? 'active' : ''}">
-                <g:link action="create"><i class="glyphicon glyphicon-plus"></i> <g:message code="default.new.label"
-                                                                                            args="[entityName]"/></g:link>
-            </li>
+        %{-- CREATE MENU --}%
+            <g:if test="${params.controller != 'sale'}">
+                <li class="${params.action == "create" ? 'active' : ''}">
+                    <g:link action="create"><i class="glyphicon glyphicon-plus"></i> <g:message code="default.new.label"
+                                                                                                args="[entityName]"/></g:link>
+                </li>
+            </g:if>
 
-            %{-- SELECT USERS MENU--}%
+        %{-- SELECT USERS MENU--}%
             <li>
                 <a data-toggle="dropdown" href="#"><i
                         class="glyphicon glyphicon-user"></i>${params.user ? params.user : 'Select User'}<b
@@ -74,14 +76,14 @@
         %{--The Export Button--}%
             <g:if test="${params.user != null}">
                 <li>
-                    <g:link  action="export" params="${[user: params.user]}">
+                    <g:link action="export" params="${[user: params.user]}">
                         <i class="glyphicon glyphicon-export"></i>Export ${params.user}'s   ${entityName}s
                     </g:link>
                 </li>
             </g:if>
             <g:else>
                 <li>
-                    <g:link  action="export" params="${[user: params.user]}">
+                    <g:link action="export" params="${[user: params.user]}">
                         <i class="glyphicon glyphicon-export"></i>Export All
                     </g:link>
                 </li>
@@ -93,12 +95,12 @@
                     def newParams = [ui: 'map']
                     newParams.putAll(params)
                 %>
-                <g:link  action="${params.action}" params="${newParams}">
+                <g:link action="${params.action}" params="${newParams}">
                     <i class="glyphicon glyphicon-map-marker"></i>Show Map
                 </g:link>
             </li>
             <li>
-                <g:link  action="cluster" >
+                <g:link action="cluster">
                     <i class="glyphicon glyphicon-cloud" title="Cluster"></i>Clstr
                 </g:link>
             </li>
