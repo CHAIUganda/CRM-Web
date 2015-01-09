@@ -20,7 +20,7 @@ import static org.springframework.http.HttpStatus.*
 /**
  * Created by kay on 12/10/2014.
  */
-class OrderController {
+class CallController {
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 

@@ -39,7 +39,7 @@
                         <g:link controller="task" action="index">Detailer</g:link>
                     </li>
                     <li>
-                        <g:link controller="order" action="index">Orders</g:link>
+                        <g:link controller="call" action="index">Calls</g:link>
                     </li>
                     <li>
                         <g:link controller="sale" action="index">Sales</g:link>

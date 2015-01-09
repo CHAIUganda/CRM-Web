@@ -164,7 +164,7 @@
 		</tbody>
 	</table>
 
-    <g:render template="/order/lineItemList"/>
+    <g:render template="/call/lineItemList"/>
 </section>
 
 </body>

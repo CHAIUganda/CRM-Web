@@ -36,7 +36,7 @@ class SaleController {
             return
         }
         Page<Sale> page = taskService.loadPageData(max, params, Sale)
-        render(view: '/order/index', model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: userService.listAllUsers([:])])
+        render(view: '/call/index', model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: userService.listAllUsers([:])])
     }
 
     def map(Integer max) {
@@ -97,7 +97,7 @@ class SaleController {
         txHelperService.doInTransaction {
             neo.fetch(task.territoryUser())
         }
-        render view: '/order/show', model: [taskInstance: task]
+        render view: '/call/show', model: [taskInstance: task]
     }
 
     def edit() {
