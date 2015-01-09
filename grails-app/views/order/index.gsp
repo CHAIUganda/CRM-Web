@@ -23,9 +23,15 @@
             <g:sortableColumn property="description" params="${params}"
                               title="${message(code: 'task.description.label', default: 'Description')}"/>
 
-            <g:sortableColumn property="dueDate" params="${params}"
-                              title="${message(code: 'task.dueDate.label', default: 'Due Date')}"/>
+            <g:if test="${params.status == Task.STATUS_COMPLETE}">
+                <g:sortableColumn property="dueDate" params="${params}"
+                                  title="${message(code: 'task.completion.label', default: 'Completion Date')}"/>
 
+            </g:if>
+            <g:else>
+                <g:sortableColumn property="dueDate" params="${params}"
+                                  title="${message(code: 'task.dueDate.label', default: 'Due Date')}"/>
+            </g:else>
             <g:sortableColumn property="status" params="${params}"
                               title="${message(code: 'task.status.label', default: 'Status')}"/>
 
@@ -42,11 +48,18 @@
                 <td><g:link action="show"
                             id="${taskInstance.id}">${fieldValue(bean: taskInstance, field: "description")}</g:link></td>
 
-                <td><g:if test="${taskInstance.dueDate}">
-                    <span class="${taskInstance.isOverDue() ? 'alert-danger' : ''}">
-                        <g:formatDate date="${taskInstance.dueDate}" format="dd-MMM-yyyy"/>
-                    </span>
-                </g:if></td>
+                <td>
+                    <g:if test="${params.status == Task.STATUS_COMPLETE}">
+                        <g:formatDate date="${taskInstance.completionDate}" format="dd-MMM-yyyy"/>
+                    </g:if>
+                    <g:else>
+                        <g:if test="${taskInstance.dueDate}">
+                            <span class="${taskInstance.isOverDue() ? 'alert-danger' : ''}">
+                                <g:formatDate date="${taskInstance.dueDate}" format="dd-MMM-yyyy"/>
+                            </span>
+                        </g:if>
+                    </g:else>
+                </td>
 
                 <td>${taskInstance.getStatusMessage()}</td>
 
