@@ -74,7 +74,7 @@
     </table>
 
     <div>
-        <bs:paginate total="${productInstanceCount}"/>
+        %{--<bs:paginate total="${productInstanceCount}"/>--}%
     </div>
 </section>
 

@@ -20,9 +20,9 @@ class ProductController {
 
     def index(Integer max) {
         params.max = Math.min(max ?: 100, 100)
-        def page = productService.listProducts(params)
-        def content = new GroupFlattener(leaves: page.content).normalize()
-        [productInstanceList: content, productInstanceCount: page.totalElements,layout_nosearchtext:true]
+        def products = productService.listAllProducts()
+        def content = new GroupFlattener(leaves: products).normalize()
+        [productInstanceList: content, productInstanceCount: products.size(),layout_nosearchtext:true]
     }
 
     def show() {
