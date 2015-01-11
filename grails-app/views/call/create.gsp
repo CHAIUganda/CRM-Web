@@ -7,8 +7,7 @@
     <g:set var="entityName" value="${message(code: 'task.label', default: 'Task')}"/>
     <title><g:message code="default.create.label" args="[entityName]"/></title>
     <script type="application/javascript">
-        _products =
-        ${raw(jsProducts)}
+        _products = ${raw(jsProducts)};
     </script>
 </head>
 

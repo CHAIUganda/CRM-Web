@@ -1,5 +1,7 @@
 package com.omnitech.chai.util
 
+import com.omnitech.chai.exception.ImportException
+import fuzzycsv.Record
 import grails.validation.ValidationException
 import groovy.time.TimeCategory
 import groovy.transform.CompileStatic
@@ -141,5 +143,23 @@ class ChaiUtils {
         if (message) return message
         return "Technical Error Please Contact Sytem Admin: $x"
     }
+
+
+
+    static String prop(Record mapper, String name, boolean required = true, String defaultValue = null) {
+        if (required) {
+            assert mapper.derivedHeaders.contains(name), "Record ${mapper.idx()} should have a [$name]"
+        } else if (!mapper.derivedHeaders.contains(name)) {
+            return null
+        }
+
+        def value = mapper.propertyMissing(name)?.toString()?.trim()
+        if (required && !value) {
+            if (defaultValue) return defaultValue
+            throw new ImportException("Record [${mapper.idx()}] has an Empty Cell[$name] that is Required")
+        }
+        return value
+    }
+
 
 }

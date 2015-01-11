@@ -1,13 +1,19 @@
 package com.omnitech.chai.crm
 
+import com.omnitech.chai.exception.ImportException
 import com.omnitech.chai.model.*
+import com.omnitech.chai.util.ChaiUtils
 import com.omnitech.chai.util.ModelFunctions
+import fuzzycsv.FuzzyCSV
+import fuzzycsv.Record
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.data.neo4j.transaction.Neo4jTransactional
+import secondstring.PhraseHelper
 
 import static com.omnitech.chai.util.ModelFunctions.getOrCreate
+import static fuzzycsv.RecordFx.fn
 
 /**
  * Created by kay on 9/29/14.
@@ -89,6 +95,13 @@ class RegionService {
         )
     }
 
+    Territory getOrCreateTerrioty(String name) {
+        getOrCreate(
+                { territoryRepository.findByName(name) },
+                { territoryRepository.save(new Territory(name: name)) }
+        )
+    }
+
     /* SubCounty */
 
     Page<SubCounty> listSubCountys(Map params) { ModelFunctions.listAll(subCountyRepository, params) }
@@ -105,7 +118,7 @@ class RegionService {
         ModelFunctions.searchAll(neo, SubCounty, ModelFunctions.getWildCardRegex(search), params)
     }
 
-    List<SubCounty> findAllSubCountiesForUser(Long userId){subCountyRepository.findAllForUser(userId).collect()}
+    List<SubCounty> findAllSubCountiesForUser(Long userId) { subCountyRepository.findAllForUser(userId).collect() }
 
     /* Parish */
 
@@ -119,7 +132,7 @@ class RegionService {
 
     void deleteParish(Long id) { parishRepository.delete(id) }
 
-    List<Parish> findAllParishesForUser(Long userId){parishRepository.findAllForUser(userId).collect()}
+    List<Parish> findAllParishesForUser(Long userId) { parishRepository.findAllForUser(userId).collect() }
 
     /* Village */
 
@@ -171,5 +184,93 @@ class RegionService {
         }
     }
 
+    void importTerritories(String s) {
+        def csv = FuzzyCSV.parseCsv(s)
+        csv = csv.collect { it as List<String> }
+
+
+        def districts = listAllDistricts()
+        districts.each {
+            println("neo.fetch(it.subCounties) $it")
+            neo.fetch(it.subCounties)
+        }
+        def fuzzyEngine = PhraseHelper.train(districts?.collect { it.name })
+
+        FuzzyCSV.map(csv, fn { Record record ->
+            try {
+                processRecord(record, fuzzyEngine, districts)
+            } catch (Throwable ex) {
+                def e = new ImportException("Error on Record[${record.idx()}]: $ex.message".toString())
+                e.stackTrace = ex.stackTrace
+                log.error("Error:..... $e.message")
+//                throw e
+            }
+        })
+    }
+
+    void processRecord(Record record, PhraseHelper fuzzyEngine, List<District> districts) {
+
+        def modified = false
+        def name = ChaiUtils.prop(record, 'name')
+        def territory = getOrCreateTerrioty(name)
+        if (territory.id) {
+            neo.fetch territory.subCounties
+        }
+
+        def commaSeparatedDistrictNames = ChaiUtils.prop(record, 'districts')
+
+        assert commaSeparatedDistrictNames, 'You Should Provide Districts'
+
+        def districtNames = commaSeparatedDistrictNames.split(',')
+        for (unVerifiedDistrict in districtNames) {
+
+            def districtName = fuzzyEngine.bestInternalHit(unVerifiedDistrict, 90)
+
+            if (!districtName) {
+                log.error "$unVerifiedDistrict should exist in the database. Did you mean ${fuzzyEngine.internalHits(commaSeparatedDistrictNames, 70)}"
+                continue
+            }
+
+            assert districtName, "$unVerifiedDistrict should exist in the database. Did you mean ${fuzzyEngine.internalHits(commaSeparatedDistrictNames, 70)}"
+
+            def district = districts.find { it.name == districtName }
+
+            def commaSepSubCounties = ChaiUtils.prop(record, "$unVerifiedDistrict-subCounties", false)
+
+
+            if (!commaSepSubCounties) {
+                modified = true
+                mapTerritoryToSubs(territory.id, district.id, district.subCounties.collect { it.id })
+//                territory.subCounties.addAll(district.subCounties)
+            } else {
+                def unVerifiedScNames = commaSepSubCounties.split(',')
+                def engine = getFuzzyEngine.call(district)
+                for (unVerifiedSc in unVerifiedScNames) {
+                    def hit = engine.bestInternalHit(unVerifiedSc, 80)
+                    SubCounty scObj
+                    if (hit) {
+                        scObj = district.subCounties.find { it.name == hit }
+                    } else {
+                        scObj = getOrCreateSubCounty(district, unVerifiedSc)
+                    }
+
+                    modified = true
+                    mapTerritoryToSubs(territory.id, district.id, [scObj.id])
+//                    territory.subCounties.add(scObj)
+                }
+            }
+        }
+
+        if (!modified && !territory.subCounties)
+            deleteTerritory(territory.id)
+
+
+    }
+
+    def getFuzzyEngine = { District district ->
+        PhraseHelper.train(district.subCounties.collect { it.name })
+    }.memoizeBetween(0, 100)
+
 
 }
+

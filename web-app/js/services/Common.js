@@ -41,7 +41,7 @@ var omnitech;
                 return this.http.get(url, { params: { term: searchParam } }).then(function (res) { return res.data; });
             };
             DataLoader.prototype.persistOrder = function (order) {
-                var url = omnitechBase + '/order/saveOrUpdate';
+                var url = omnitechBase + '/call/saveOrUpdate';
                 var jsonFriendlyOrder = {
                     id: order.id,
                     customerId: order.customer.id,

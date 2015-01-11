@@ -23,7 +23,7 @@
             <g:sortableColumn property="description" params="${params}"
                               title="${message(code: 'task.description.label', default: 'Description')}"/>
 
-            <g:if test="${params.status == Task.STATUS_COMPLETE}">
+            <g:if test="${params.status == Task.STATUS_COMPLETE || params.controller == 'sale'}">
                 <g:sortableColumn property="dueDate" params="${params}"
                                   title="${message(code: 'task.completion.label', default: 'Completion Date')}"/>
 
@@ -49,7 +49,7 @@
                             id="${taskInstance.id}">${fieldValue(bean: taskInstance, field: "description")}</g:link></td>
 
                 <td>
-                    <g:if test="${params.status == Task.STATUS_COMPLETE}">
+                    <g:if test="${params.status == Task.STATUS_COMPLETE || params.controller == 'sale'}">
                         <g:formatDate date="${taskInstance.completionDate}" format="dd-MMM-yyyy"/>
                     </g:if>
                     <g:else>

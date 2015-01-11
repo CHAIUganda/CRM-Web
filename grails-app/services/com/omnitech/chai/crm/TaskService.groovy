@@ -1,10 +1,6 @@
 package com.omnitech.chai.crm
 
-import com.omnitech.chai.model.Customer
-import com.omnitech.chai.model.DetailerTask
-import com.omnitech.chai.model.DirectSale
-import com.omnitech.chai.model.Order
-import com.omnitech.chai.model.Task
+import com.omnitech.chai.model.*
 import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.PageUtils
 import com.omnitech.chai.util.ReflectFunctions
@@ -194,11 +190,20 @@ class TaskService {
         }
     }
 
+    def autoGenerateTasks(Territory territory) {
+        customerRepository.findByTerritory(territory.id).each {
+            def task = generateCustomerDetailingTask(it)
+            if (task) taskRepository.save(task)
+        }
+    }
+
     Task generateCustomerDetailingTask(Customer customer) {
         def segment = customer.segment
         if (!segment) return null
 
         def prevTask = taskRepository.findLastTask(customer.id)
+
+        if (prevTask?.status == Task.STATUS_NEW) return null
 
         def spaceBtnVisits = segment.spaceBetweenVisits
         def newTask = new DetailerTask(customer: customer, description: "Go Check on [$customer.outletName]", dueDate: new Date())

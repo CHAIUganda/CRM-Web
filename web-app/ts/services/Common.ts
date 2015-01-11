@@ -47,7 +47,7 @@ module omnitech.chai {
         }
 
         persistOrder(order:Order):HttPromise {
-            var url = omnitechBase + '/order/saveOrUpdate';
+            var url = omnitechBase + '/call/saveOrUpdate';
             var jsonFriendlyOrder = {
                 id: order.id,
                 customerId: order.customer.id,

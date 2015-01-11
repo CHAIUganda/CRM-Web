@@ -13,6 +13,7 @@ import org.springframework.data.neo4j.transaction.Neo4jTransactional
 
 import static com.omnitech.chai.model.Relations.*
 import static com.omnitech.chai.util.ChaiUtils.execSilently
+import static com.omnitech.chai.util.ChaiUtils.prop
 import static fuzzycsv.RecordFx.fn
 import static org.neo4j.cypherdsl.CypherQuery.*
 
@@ -182,22 +183,6 @@ class CustomerService {
         }
 
         customerRepository.save(customer)
-    }
-
-    private
-    static String prop(Record mapper, String name, boolean required = true, String defaultValue = null) {
-        if (required) {
-            assert mapper.derivedHeaders.contains(name), "Record ${mapper.idx()} should have a [$name]"
-        } else if (!mapper.derivedHeaders.contains(name)) {
-            return null
-        }
-
-        def value = mapper.propertyMissing(name)?.toString()?.trim()
-        if (required && !value) {
-            if (defaultValue) return defaultValue
-            throw new ImportException("Record [${mapper.idx()}] has an Empty Cell[$name] that is Required")
-        }
-        return value
     }
 
     // WholeSalers

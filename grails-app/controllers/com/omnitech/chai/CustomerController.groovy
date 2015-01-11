@@ -154,8 +154,24 @@ class CustomerController {
 
     def autoSegment() {
         segmentationService.runSegmentationRoutine()
-        taskService.autoGenerateTasks()
+        def territorys = regionService.listAllTerritorys()
+//        territorys.each {
+//            log.debug "generationg tasks for $it"
+//            taskService.autoGenerateTasks(it)
+                    taskService.autoGenerateTasks()
+//        }
         flash.message = 'Running auto Segmentation'
+        redirect action: 'index'
+    }
+
+    def autoTasks() {
+        def territorys = regionService.listAllTerritorys()
+        territorys.each {
+            log.debug "generationg tasks for $it"
+            taskService.autoGenerateTasks(it)
+            //        taskService.autoGenerateTasks()
+        }
+        flash.message = 'Tasks Have Been Generated'
         redirect action: 'index'
     }
 

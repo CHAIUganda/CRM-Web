@@ -99,11 +99,11 @@
                     <i class="glyphicon glyphicon-map-marker"></i>Show Map
                 </g:link>
             </li>
-            <li>
-                <g:link action="cluster">
-                    <i class="glyphicon glyphicon-cloud" title="Cluster"></i>Clstr
-                </g:link>
-            </li>
+            %{--<li>--}%
+                %{--<g:link action="cluster">--}%
+                    %{--<i class="glyphicon glyphicon-cloud" title="Cluster"></i>Clstr--}%
+                %{--</g:link>--}%
+            %{--</li>--}%
 
             %{--The Search Box--}%
             <li class="navbar-right">

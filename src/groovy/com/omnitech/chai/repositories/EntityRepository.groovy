@@ -69,7 +69,7 @@ interface CustomerRepository extends GraphRepository<Customer>, CypherDslReposit
     Customer findByUuid(String uuid)
 
     @Query('start t=node({territoryId}) MATCH (t)<-[:`SC_IN_TERRITORY`]-(sc)<-[:CUST_IN_SC]-(c) RETURN c')
-    Iterator<Customer> findByTerritory(@Param('territoryId') Long territoryId)
+    Iterable<Customer> findByTerritory(@Param('territoryId') Long territoryId)
 
 }
 
@@ -79,6 +79,7 @@ interface CustomerContactRepository extends GraphRepository<CustomerContact> {
 
 interface TerritoryRepository extends GraphRepository<Territory> {
     Territory findByUuid(String uuid)
+    Territory findByName(String name)
 }
 
 interface TaskRepository extends GraphRepository<Task>, CypherDslRepository<Task> {

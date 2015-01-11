@@ -13,3 +13,4 @@
 /// <reference path='controllers/WholeSaleCtrl.ts'/>
 /// <reference path='maps/ListMap.ts'/>
 /// <reference path='controllers/TaskMapCtrl.ts'/>
+/// <reference path='controllers/CallCtrl.ts'/>
