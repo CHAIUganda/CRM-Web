@@ -9,26 +9,17 @@ var omnitech;
                 this.dataLoader = dataLoader;
                 this.filterFilter = filterFilter;
                 scope.searchCustomerByName = function (searchTerm) { return dataLoader.searchForCustomers(searchTerm); };
+                scope.onSelectCustomer = function (c) {
+                    console.log(c);
+                    scope.customer = c;
+                };
             }
             CallCtrl.injection = function () {
                 return ['$scope', 'dataLoader', 'filterFilter', CallCtrl];
             };
-            CallCtrl.prototype.save = function () {
-            };
-            CallCtrl.lineCost = function (li) {
-                if (li.unitPrice && li.quantity)
-                    return li.unitPrice * li.quantity;
-                return 0;
-            };
-            CallCtrl.createOrder = function () {
-                return { activeLineItem: {}, lineItems: [] };
-            };
-            CallCtrl.prototype.createLineItem = function () {
-                return {};
-            };
             return CallCtrl;
         })();
-        angular.module('omnitechApp', ['ngResource', 'ui.bootstrap']).controller('OrderCtrl', CallCtrl.injection()).service('dataLoader', chai.DataLoader.prototype.injection());
+        angular.module('omnitechApp', ['ngResource', 'ui.bootstrap']).controller('CallCtrl', CallCtrl.injection()).service('dataLoader', chai.DataLoader.prototype.injection());
     })(chai = omnitech.chai || (omnitech.chai = {}));
 })(omnitech || (omnitech = {}));
 //# sourceMappingURL=CallCtrl.js.map

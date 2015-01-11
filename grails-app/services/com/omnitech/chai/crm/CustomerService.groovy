@@ -55,12 +55,11 @@ class CustomerService {
         def customerFields = ReflectFunctions.findAllBasicFields(Customer)
         customerFields.add('village')
         def filters = [allow: [
-                [class: Customer.simpleName, patterns: customerFields],
-                [class: Village.simpleName, patterns: ['name', 'parish']],
-                [class: Parish.simpleName, patterns: ['name', 'subCounty']],
+                [class: Customer.simpleName, patterns: ['outletName','keyWholeSalerName','descriptionOfOutletLocation','split','subCounty','village','parish']],
+                [class: Village.simpleName, patterns: ['name'] ],
+                [class: Parish.simpleName, patterns: ['name']],
                 [class: SubCounty.simpleName, patterns: ['name', 'district']],
-                [class: District.simpleName, patterns: ['name', 'region']],
-                [class: Region.simpleName, patterns: ['name']]
+                [class: District.simpleName, patterns: ['name']]
         ]]
         ModelFunctions.searchAll(neo, Customer, ModelFunctions.getWildCardRegex(search), params, Integer.MAX_VALUE, filters)
     }

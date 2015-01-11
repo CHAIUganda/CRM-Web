@@ -43,7 +43,7 @@ declare module omnitech.chai {
         id ?: number;
         activeLineItem ?: LineItem;
         customer ?: Customer;
-        lineItems ?: LineItem[];
+        lineItems ?: Array<LineItem>;
         comment ?: string;
     }
 

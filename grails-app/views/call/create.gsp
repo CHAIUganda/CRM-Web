@@ -6,14 +6,11 @@
     <meta name="layout" content="kickstart"/>
     <g:set var="entityName" value="${message(code: 'task.label', default: 'Task')}"/>
     <title><g:message code="default.create.label" args="[entityName]"/></title>
-    <script type="application/javascript">
-        _products = ${raw(jsProducts)};
-    </script>
 </head>
 
 <body>
 
-<section id="create-task" class="first" ng-controller="OrderCtrl">
+<section id="create-task" class="first" ng-controller="CallCtrl">
 
     <g:hasErrors bean="${taskInstance}">
         <div class="alert alert-danger">
@@ -21,15 +18,21 @@
         </div>
     </g:hasErrors>
 
+    <g:form action="saveOrUpdateCall">
 
-    <g:render template="form"/>
+        <g:render template="simpleCallForm"/>
 
+        <div class="form-actions margin-top-medium">
+            <g:submitButton name="create" class="btn btn-primary"
+                            value="${message(code: 'default.button.create.label', default: 'Create')}"/>
+            <button class="btn" type="reset"><g:message code="default.button.reset.label" default="Reset"/></button>
+        </div>
+    </g:form>
 
 </section>
 <r:require modules="angular,angular-resource,angular-ui"/>
-<g:javascript src="models/Domain.js"/>
 <g:javascript src="services/Common.js"/>
-<g:javascript src="controllers/OrderCtrl.js"/>
+<g:javascript src="controllers/CallCtrl.js"/>
 </body>
 
 </html>

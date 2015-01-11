@@ -129,8 +129,7 @@ class CallController {
     }
 
     def create() {
-        def products = productService.listAllProducts()
-        respond(ModelFunctions.bind(new Order(), params), model: [users: userService.listAllUsers(), products: products, jsProducts: (products as JSON).toString()])
+        respond(view: 'create', model: [taskInstance: ModelFunctions.createObj(Order, params)])
     }
 
     def saveOrUpdate() {
@@ -145,7 +144,41 @@ class CallController {
         }
     }
 
-    private Order toOrder(Map orderMap) {
+    def saveOrUpdateCall() {
+        try {
+            Order order
+
+            if (params.id) {
+                order = orderService.findOrder(params.id as Long)
+                ModelFunctions.bind(order, params)
+            } else {
+                order = ModelFunctions.createObj(Order, params)
+            }
+
+
+            Long customerId = "$params.customerId".toLongSafe()
+            assert customerId, 'You Did Not Select A Customer'
+
+            def customer = customerService.findCustomer(customerId)
+
+            if (!customer) {
+                render view: 'create', model: [taskInstance: order]
+                return
+            }
+
+            assert (order.dueDate - new Date()) >= 0, 'Due Date Has To Be A Future Date'
+
+            order.customer = customer
+            orderService.saveOrder order
+            redirect(action: 'show', id: order.id)
+        } catch (Throwable x) {
+            log.error('Error while saving order', x)
+            flash.error = ChaiUtils.getBestMessage(x)
+            render view: 'create', model: [taskInstance: params]
+        }
+    }
+
+    private Order toOrder(Map orderMap, boolean copyLineItems) {
         def customer = customerService.findCustomer(orderMap.customerId)
 
         assert customer, 'customer should exist in the DB'
@@ -157,13 +190,14 @@ class CallController {
         }
 
         order.customer = customer
-
-        def lineItems = (orderMap.lineItems as List<Map>).collect {
-            toLineItem(it, order)
-        }
-        order.lineItems = lineItems
         order.comment = orderMap.comment
 
+        if (copyLineItems) {
+            def lineItems = (orderMap.lineItems as List<Map>).collect {
+                toLineItem(it, order)
+            }
+            order.lineItems = lineItems
+        }
         return order
     }
 

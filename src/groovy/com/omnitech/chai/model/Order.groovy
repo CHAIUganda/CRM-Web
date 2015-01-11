@@ -20,7 +20,7 @@ class Order extends Task implements HasLineItem {
 
     def beforeSave() {
         super.beforeSave()
-        description = "Go Sale to [$customer.outletName]"
+        description = "Go Make A Call [$customer.outletName]"
     }
 
     static constraints = {
