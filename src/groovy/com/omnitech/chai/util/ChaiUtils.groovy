@@ -42,7 +42,7 @@ class ChaiUtils {
         }
     }
 
-    static def cleanUp = { string -> string.toString().replaceAll(/\s+/, ' ').trim()}.memoizeBetween(0,100)
+    static def cleanUp = { string -> string.toString().replaceAll(/\s+/, ' ').trim() }.memoizeBetween(0, 100)
 
     static execSilently(String error, Closure code) {
         try {
@@ -138,12 +138,16 @@ class ChaiUtils {
             return ValidationException.formatErrors(x.errors)
         }
 
+        if (x instanceof AssertionError) {
+            def message = x.message
+            return  message.substring(0, message.indexOf('Expression:'))
+        }
+
         def message = "${x.getClass().simpleName}: $x.message"
 
         if (message) return message
         return "Technical Error Please Contact Sytem Admin: $x"
     }
-
 
 
     static String prop(Record mapper, String name, boolean required = true, String defaultValue = null) {
