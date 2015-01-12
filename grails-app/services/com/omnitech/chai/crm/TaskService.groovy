@@ -244,6 +244,13 @@ class TaskService {
         saveTask(neoTask)
     }
 
+    void generateSalesTasks(Territory territory){
+        customerRepository.findByTerritory(territory.id).each {
+            def newTask = new Order(customer: it, dueDate: new Date())
+            if (newTask) taskRepository.save(newTask)
+        }
+    }
+
     /* Orders */
 
     List<Order> listAllOrders() { orderRepository.findAll().collect() }

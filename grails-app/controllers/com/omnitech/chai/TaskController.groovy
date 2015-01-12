@@ -93,7 +93,13 @@ class TaskController {
     }
 
     def cluster() {
-        clusterService.scheduleTasks()
+        clusterService.scheduleDetailerTasks()
+        flash.message = "Done Clustering"
+        redirect(action: 'index')
+    }
+
+    def clusterOrders() {
+        clusterService.scheduleOrders()
         flash.message = "Done Clustering"
         redirect(action: 'index')
     }
@@ -136,9 +142,9 @@ class TaskController {
 
         def task = taskService.findTask(id)
 
-        if (task.type == DetailerTask.simpleName) {
-            task = taskService.findDetailerTask(task.id)
-        }
+//        if (task.type == DetailerTask.simpleName) {
+//            task = taskService.findDetailerTask(task.id)
+//        }
 
         txHelperService.doInTransaction {
             neo.fetch(task.territoryUser())
@@ -182,7 +188,7 @@ class TaskController {
         txHelperService.doInTransaction {
             neo.fetch(taskInstance.territoryUser())
         }
-        [taskInstance: taskInstance,users: userService.listAllUsers(), customers: customerService.listAllCustomers()]
+        [taskInstance: taskInstance, users: userService.listAllUsers(), customers: customerService.listAllCustomers()]
     }
 
     @Transactional
@@ -228,6 +234,16 @@ class TaskController {
         }
     }
 
+    def autoSales() {
+        def territorys = regionService.listAllTerritorys()
+        territorys.each {
+            log.debug "generationg tasks for $it"
+            taskService.generateSalesTasks(it)
+        }
+        flash.message = 'Tasks Have Been Generated'
+        redirect action: 'index'
+    }
+
     protected void notFound() {
         request.withFormat {
             form {
@@ -237,4 +253,6 @@ class TaskController {
             '*' { render status: NOT_FOUND }
         }
     }
+
+
 }

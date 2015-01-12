@@ -106,6 +106,9 @@ interface ProductGroupRepository extends GraphRepository<ProductGroup> {
 
 interface DetailerTaskRepository extends GraphRepository<DetailerTask> {
     DetailerTask findByUuid(String uuid)
+
+    @Query('start t=node({territoryId}) MATCH (t)<-[:`SC_IN_TERRITORY`]-(sc)<-[:CUST_IN_SC]-(c)-[:CUST_TASK]->(ts:DetailerTask) RETURN ts')
+    Iterable<DetailerTask> findAllInTerritory(@Param('territoryId') Long territoryId)
 }
 
 interface OrderRepository extends GraphRepository<Order> {
@@ -113,6 +116,9 @@ interface OrderRepository extends GraphRepository<Order> {
     Order findByUuidImpl(@Param('uuid') String uuid)
 
     Order findByClientRefId(String clientRefId)
+
+    @Query('start t=node({territoryId}) MATCH (t)<-[:`SC_IN_TERRITORY`]-(sc)<-[:CUST_IN_SC]-(c)-[:CUST_TASK]->(ts:Order) RETURN ts')
+    Iterable<DetailerTask> findAllInTerritory(@Param('territoryId') Long territoryId)
 }
 
 interface DirectSaleRepository extends GraphRepository<DirectSale> {

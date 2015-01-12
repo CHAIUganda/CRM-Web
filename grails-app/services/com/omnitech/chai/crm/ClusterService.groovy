@@ -1,8 +1,6 @@
 package com.omnitech.chai.crm
 
-import com.omnitech.chai.model.LatLng
-import com.omnitech.chai.model.Task
-import com.omnitech.chai.model.Territory
+import com.omnitech.chai.model.*
 import org.apache.commons.math3.ml.clustering.CentroidCluster
 import org.apache.commons.math3.ml.clustering.Clusterable
 import org.apache.commons.math3.ml.clustering.KMeansPlusPlusClusterer
@@ -19,6 +17,8 @@ class ClusterService {
 
     def territoryRepository
     def taskRepository
+    def detailerTaskRepository
+    def orderRepository
     @Autowired
     Neo4jTemplate neo
     static int TASKS_PER_DAY = 10
@@ -45,15 +45,22 @@ class ClusterService {
 
 
     @Neo4jTransactional
-    void scheduleTasks() {
+    void scheduleDetailerTasks() {
         territoryRepository.findAll().each {
-            clusterAndGeneratesTasks(it, TASKS_PER_DAY, NUMBER_OF_USERS)
+            clusterAndGeneratesTasks(it, TASKS_PER_DAY, NUMBER_OF_USERS, DetailerTask)
         }
     }
 
-    List<CentroidCluster<LocatableTask>> clusterAndGeneratesTasks(Territory territory, int tasksPerDay, int numberOfUsers) {
+    @Neo4jTransactional
+    void scheduleOrders() {
+        territoryRepository.findAll().each {
+            clusterAndGeneratesTasks(it, TASKS_PER_DAY, NUMBER_OF_USERS, Order)
+        }
+    }
 
-        def locatableTasks = getLocatableTasks(territory)
+    List<CentroidCluster<LocatableTask>> clusterAndGeneratesTasks(Territory territory, int tasksPerDay, int numberOfUsers, Class type) {
+
+        def locatableTasks = getLocatableTasks(territory, type)
         if (!locatableTasks) return []
         def clusters = getClusters(locatableTasks, tasksPerDay, numberOfUsers)
 
@@ -83,8 +90,13 @@ class ClusterService {
     }
 
 
-    private List<LocatableTask> getLocatableTasks(Territory territory) {
-        def tasks = taskRepository.findAllTasksInTerritory(territory.id)
+    private List<LocatableTask> getLocatableTasks(Territory territory, Class type) {
+        def tasks
+        if (type == DetailerTask)
+            tasks = detailerTaskRepository.findAllInTerritory(territory.id)
+        else
+            tasks = orderRepository.findAllInTerritory(territory.id)
+
 
         List<LocatableTask> locatableTasks = []
 
