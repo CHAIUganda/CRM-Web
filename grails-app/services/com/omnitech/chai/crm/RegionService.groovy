@@ -109,6 +109,7 @@ class RegionService {
     List<SubCounty> listAllSubCountys() { subCountyRepository.findAll().collect() }
 
     SubCounty findSubCounty(Long id) { subCountyRepository.findOne(id) }
+    SubCounty findSubCounty(String uuid) { subCountyRepository.findByUuid(uuid) }
 
     SubCounty saveSubCounty(SubCounty subCounty) { ModelFunctions.saveEntity(subCountyRepository, subCounty) }
 

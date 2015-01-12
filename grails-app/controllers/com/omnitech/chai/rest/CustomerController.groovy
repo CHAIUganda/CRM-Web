@@ -1,15 +1,17 @@
 package com.omnitech.chai.rest
 
 import com.omnitech.chai.model.Customer
+import com.omnitech.chai.model.SubCounty
 import com.omnitech.chai.model.User
-import com.omnitech.chai.model.Village
 import com.omnitech.chai.util.ChaiUtils
 import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.ReflectFunctions
 import grails.converters.JSON
+import grails.validation.ValidationException
 import org.springframework.http.HttpStatus
 
 import static com.omnitech.chai.util.ReflectFunctions.extractProperties
+import static org.springframework.http.HttpStatus.BAD_REQUEST
 
 /**
  * Created by kay on 10/29/14.
@@ -57,11 +59,12 @@ class CustomerController {
     }
 
     def update() {
-        def json = request.JSON as Map
+        handleSafely {
+            def json = request.JSON as Map
 
-        println(json.inspect())
+            println(json.inspect())
 
-        def customer = ModelFunctions.createObj(Customer, json) as Customer
+            def customer = ModelFunctions.createObj(Customer, json) as Customer
 
 //        if (!customer.validate()) {
 //            response.status = HttpStatus.BAD_REQUEST.value()
@@ -69,28 +72,28 @@ class CustomerController {
 //            return
 //        }
 
-        def village = ModelFunctions.extractAndLoadParent('villageId', json) { Long it -> regionService.findVillage(it) }
+            def subCountyUuid = json['subcountyUuid'] as String
+            assert subCountyUuid, "You did not supply a subcounty uuid"
+            def subCounty = regionService.findSubCounty(subCountyUuid)
 
-        if (!village) {
-            renderError("The Village ID You Supplied Does Not Exist In The DB")
-            return
+            assert subCounty, "The Sub County ID You Supplied Does Not Exist In The DB"
+
+            customer.uuid = json.uuid
+            customer = _updateVillage(json.uuid, customer, subCounty)
+            customer.lng = ChaiUtils.execSilently('Converting long to float') { json['longitude'] as Float }
+            customer.lat = ChaiUtils.execSilently('Converting lat to float') { json['latitude'] as Float }
+            customer.customerContacts?.each { it.id = null }
+            customerService.saveCustomer(customer)
+
         }
 
-        customer.uuid = json.uuid
-        customer = _updateVillage(json.uuid, customer, village)
-        customer.lng = ChaiUtils.execSilently('Converting long to float') { json['longitude'] as Float }
-        customer.lat = ChaiUtils.execSilently('Converting lat to float') { json['latitude'] as Float }
-        customer.customerContacts?.each { it.id = null }
-        customerService.saveCustomer(customer)
-
-        render([status: HttpStatus.OK.reasonPhrase, message: "Success"] as JSON)
     }
 
-    private Customer _updateVillage(String customerId, Customer customer, Village village) {
+    private Customer _updateVillage(String customerId, Customer customer, SubCounty subCounty) {
 //        def neoCustomer = customerService.findCustomer(customer.id)
         def neoCustomer = customerService.findCustomer(customerId)
         if (!neoCustomer) {
-            customer.village = village
+            customer.subCounty = subCounty
             customer.id = null
             return customer
         }
@@ -121,6 +124,24 @@ class CustomerController {
              outletName: it.outletName,
              contact   : it.customerContacts?.iterator()?.next()?.contact
             ]
+        }
+    }
+
+
+    private def handleSafely(def func) {
+        try {
+            func()
+            render([status: HttpStatus.OK.reasonPhrase, message: "Success"] as JSON)
+        } catch (ValidationException x) {
+            def ms = new StringBuilder()
+            x.errors.allErrors.each {
+                ms << message(error: it)
+            }
+            log.error("** Error while handling request: $ms \n $params", x)
+            render(status: BAD_REQUEST, text: [status: BAD_REQUEST.reasonPhrase, message: ms] as JSON)
+        } catch (Throwable x) {
+            log.error("Error while handling request: \n $params", x)
+            render(status: BAD_REQUEST, text: [status: BAD_REQUEST.reasonPhrase, message: ChaiUtils.getBestMessage(x)] as JSON)
         }
     }
 
