@@ -214,11 +214,8 @@ class CallController {
         if (id == -1) {
             notFound(); return
         }
-        def taskInstance = taskService.findTask(id)
-        txHelperService.doInTransaction {
-            neo.fetch(taskInstance.territoryUser())
-        }
-        respond taskInstance, model: [users: userService.listAllUsers(), customers: customerService.listAllCustomers()]
+        def taskInstance = taskService.findOrder(id)
+        render  (view: 'create', model: [taskInstance: taskInstance])
     }
 
     @Transactional

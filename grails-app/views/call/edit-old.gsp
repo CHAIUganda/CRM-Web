@@ -22,10 +22,10 @@
 			<g:hiddenField name="id" value="${taskInstance?.id}" />
 			<g:hiddenField name="_method" value="PUT" />
 
-			<g:render template="form"/>
+			<g:render template="simpleCallForm"/>
 
 			<div class="form-actions margin-top-medium">
-				<g:actionSubmit class="btn btn-primary" action="update" value="${message(code: 'default.button.update.label', default: 'Update')}" />
+				<g:submitButton class="btn btn-primary" action="update" value="${message(code: 'default.button.update.label', default: 'Update')}" />
 	            <button class="btn" type="reset"><g:message code="default.button.reset.label" default="Reset" /></button>
 			</div>
 		</g:form>

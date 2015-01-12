@@ -4,18 +4,17 @@ var omnitech;
     var chai;
     (function (chai) {
         var CallCtrl = (function () {
-            function CallCtrl(scope, dataLoader, filterFilter) {
+            function CallCtrl(scope, dataLoader) {
                 this.scope = scope;
                 this.dataLoader = dataLoader;
-                this.filterFilter = filterFilter;
                 scope.searchCustomerByName = function (searchTerm) { return dataLoader.searchForCustomers(searchTerm); };
-                scope.onSelectCustomer = function (c) {
-                    console.log(c);
-                    scope.customer = c;
-                };
+                scope.onSelectCustomer = function (c) { return scope.customer = c; };
+                if (typeof _orderCustomer === undefined) {
+                    scope.customer = _orderCustomer;
+                }
             }
             CallCtrl.injection = function () {
-                return ['$scope', 'dataLoader', 'filterFilter', CallCtrl];
+                return ['$scope', 'dataLoader', CallCtrl];
             };
             return CallCtrl;
         })();

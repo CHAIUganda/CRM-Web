@@ -10,14 +10,16 @@ module omnitech.chai {
     class CallCtrl {
 
         public static injection() {
-            return ['$scope', 'dataLoader', 'filterFilter', CallCtrl]
+            return ['$scope', 'dataLoader', CallCtrl]
         }
 
-        constructor(private scope:ICallScope, private dataLoader:DataLoader, private filterFilter) {
+        constructor(private scope:ICallScope, private dataLoader:DataLoader) {
+
             scope.searchCustomerByName = (searchTerm)=> dataLoader.searchForCustomers(searchTerm);
-            scope.onSelectCustomer = (c)=>{
-                console.log(c);
-                scope.customer = c;
+            scope.onSelectCustomer = (c)=> scope.customer = c;
+
+            if (typeof _orderCustomer === undefined) {
+                scope.customer = _orderCustomer;
             }
         }
     }

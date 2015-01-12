@@ -6,6 +6,11 @@
     <meta name="layout" content="kickstart"/>
     <g:set var="entityName" value="${message(code: 'task.label', default: 'Task')}"/>
     <title><g:message code="default.create.label" args="[entityName]"/></title>
+    <g:if test="${taskInstance?.customer}">
+        <g:javascript>
+            _orderCustomer = {id: ${taskInstance.customer?.id},outletName:'${taskInstance?.customer?.outletName}'};
+        </g:javascript>
+    </g:if>
 </head>
 
 <body>
@@ -19,6 +24,10 @@
     </g:hasErrors>
 
     <g:form action="saveOrUpdateCall">
+
+        <g:if test="${taskInstance?.id}">
+            <g:hiddenField name="id" value="${taskInstance?.id}"/>
+        </g:if>
 
         <g:render template="simpleCallForm"/>
 

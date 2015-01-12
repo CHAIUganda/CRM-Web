@@ -104,3 +104,4 @@ declare class MarkerWithLabel extends google.maps.Marker {
 declare var omnitechBase:string;
 declare var chaiMapData:omnitech.chai.Task[];
 declare var _products:omnitech.chai.Product[];
+declare var _orderCustomer:omnitech.chai.Customer;

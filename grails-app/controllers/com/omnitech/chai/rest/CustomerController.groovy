@@ -112,8 +112,10 @@ class CustomerController {
             return
         }
 
-        respond customerService.searchCustomers(term, [sort: 'outletName'])
-                .content.collect {
+        respond customerService
+                .searchCustomers(term, [sort: 'outletName'])
+                .content
+                .collect {
             [id        : it.id,
              district  : it.subCounty.district.name,
              outletName: it.outletName,
