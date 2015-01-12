@@ -19,7 +19,7 @@
 		</g:hasErrors>
 
 		<g:form action="save" class="form-horizontal" role="form" >
-			<g:render template="form"/>
+			<g:render template="/task/form"/>
 
 			<div class="form-actions margin-top-medium">
 				<g:submitButton name="create" class="btn btn-primary" value="${message(code: 'default.button.create.label', default: 'Create')}" />

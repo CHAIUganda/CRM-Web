@@ -113,7 +113,7 @@
 			</tr>
 
         <g:if test="${taskInstance.getClass() == DetailerTask}">
-            <g:render template="showDetailerTask"/>
+            <g:render template="/task/showDetailerTask"/>
         </g:if>
 		
 		</tbody>

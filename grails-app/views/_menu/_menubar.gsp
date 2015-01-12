@@ -36,7 +36,7 @@
                         <g:link controller="task" action="index">All Tasks</g:link>
                     </li>
                     <li>
-                        <g:link controller="task" action="index">Detailer</g:link>
+                        <g:link controller="detailerTask" action="index">Detailer</g:link>
                     </li>
                     <li>
                         <g:link controller="call" action="index">Calls</g:link>

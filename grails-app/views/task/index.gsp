@@ -12,7 +12,7 @@
 <body>
 
 %{-- THE SUBMENU BAR --}%
-<g:render template="taskMenuBar"/>
+<g:render template="/task/taskMenuBar"/>
 %{-- END SUBMENU BAR --}%
 
 <section id="index-task" class="first">
