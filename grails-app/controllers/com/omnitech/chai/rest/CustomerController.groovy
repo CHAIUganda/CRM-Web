@@ -64,13 +64,8 @@ class CustomerController {
 
             println(json.inspect())
 
+            //todo maybe validate
             def customer = ModelFunctions.createObj(Customer, json) as Customer
-
-//        if (!customer.validate()) {
-//            response.status = HttpStatus.BAD_REQUEST.value()
-//            render(customer.errors as JSON)
-//            return
-//        }
 
             def subCountyUuid = json['subcountyUuid'] as String
             assert subCountyUuid, "You did not supply a subcounty uuid"
@@ -84,13 +79,12 @@ class CustomerController {
             customer.lat = ChaiUtils.execSilently('Converting lat to float') { json['latitude'] as Float }
             customer.customerContacts?.each { it.id = null }
             customerService.saveCustomer(customer)
-
+            render([status: HttpStatus.OK.reasonPhrase, message: "Success"] as JSON)
         }
 
     }
 
     private Customer _updateVillage(String customerId, Customer customer, SubCounty subCounty) {
-//        def neoCustomer = customerService.findCustomer(customer.id)
         def neoCustomer = customerService.findCustomer(customerId)
         if (!neoCustomer) {
             customer.subCounty = subCounty
@@ -100,11 +94,6 @@ class CustomerController {
         def whiteList = ReflectFunctions.findAllBasicFields(Customer)
         whiteList.removeAll(ModelFunctions.META_FIELDS)
         ModelFunctions.bind(neoCustomer, customer.properties, whiteList)
-    }
-
-    def renderError(String error) {
-        response.status = HttpStatus.INTERNAL_SERVER_ERROR.value()
-        render([status: 'error', message: error] as JSON)
     }
 
     def searchByName(String id) {
@@ -131,7 +120,6 @@ class CustomerController {
     private def handleSafely(def func) {
         try {
             func()
-            render([status: HttpStatus.OK.reasonPhrase, message: "Success"] as JSON)
         } catch (ValidationException x) {
             def ms = new StringBuilder()
             x.errors.allErrors.each {
