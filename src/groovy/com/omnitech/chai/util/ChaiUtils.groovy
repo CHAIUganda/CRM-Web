@@ -140,7 +140,8 @@ class ChaiUtils {
 
         if (x instanceof AssertionError) {
             def message = x.message
-            return  message.substring(0, message.indexOf('Expression:'))
+            if (message?.contains('Expression:'))
+                return message.substring(0, message.indexOf('Expression:'))
         }
 
         def message = "${x.getClass().simpleName}: $x.message"

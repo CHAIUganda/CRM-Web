@@ -38,7 +38,7 @@ class SaleControllerSpec extends Specification {
   "recommendationLevel": "Level 2",
   "governmentApproval": true,
   "dateOfSale": "2013-01-3 04:05:40",
-  "salesDatas": [
+  "adhockSalesDatas": [
     {
       "quantity": 5,
       "price": 454,
@@ -112,7 +112,7 @@ class SaleControllerSpec extends Specification {
   "recommendationLevel": "Level 2",
   "governmentApproval": true,
   "dateOfSale": "2013-01-3 04:05:40",
-  "salesDatas": [
+  "adhockSalesDatas": [
     {
       "quantity": 0,
       "price": 454,
@@ -140,6 +140,7 @@ class SaleControllerSpec extends Specification {
         controller.directSale()
 
         then:
+        1 * taskService.findDirectSaleByClientRefId('clientRefId1') >> null
         1 * productService.findProductByUuid('xxxx-xxxx') >> new Product()
         0 * taskService.saveTask(_)
         response.contentAsString ==~ ".*is less than minimum value.*"

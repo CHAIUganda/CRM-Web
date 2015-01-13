@@ -1,8 +1,10 @@
 package com.omnitech.chai.crm
 
 import com.omnitech.chai.model.Customer
+import com.omnitech.chai.model.DetailerTask
 import com.omnitech.chai.model.Task
 import com.omnitech.chai.model.Territory
+import com.omnitech.chai.repositories.DetailerTaskRepository
 import com.omnitech.chai.repositories.TaskRepository
 import spock.lang.Specification
 
@@ -16,7 +18,9 @@ class ClusterServiceTest extends Specification {
 
     def "ClusterAndGeneratesTasks"() {
 
+        DetailerTaskRepository detailerRepository = Mock(DetailerTaskRepository)
         TaskRepository taskRepository = Mock(TaskRepository)
+        service.detailerTaskRepository = detailerRepository
         service.taskRepository = taskRepository
 
         def territory = new Territory(id: 4)
@@ -25,10 +29,10 @@ class ClusterServiceTest extends Specification {
         when:
         def clusters = service.clusterAndGeneratesTasks(territory,
                 ClusterService.TASKS_PER_DAY,
-                ClusterService.NUMBER_OF_USERS)
+                ClusterService.NUMBER_OF_USERS,DetailerTask)
 
         then:
-        1 * taskRepository.findAllTasksInTerritory(4) >> generateDummyTasks()
+        1 * detailerRepository.findAllInTerritory(4) >> generateDummyTasks()
         52 * taskRepository.save(_ as Task)
         clusters.size() == 5
 
