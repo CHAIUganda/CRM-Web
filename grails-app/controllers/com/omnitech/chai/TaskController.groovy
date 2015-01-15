@@ -142,10 +142,6 @@ class TaskController {
 
         def task = taskService.findTask(id)
 
-//        if (task.type == DetailerTask.simpleName) {
-//            task = taskService.findDetailerTask(task.id)
-//        }
-
         txHelperService.doInTransaction {
             neo.fetch(task.territoryUser())
         }

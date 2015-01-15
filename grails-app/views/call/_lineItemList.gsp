@@ -13,7 +13,7 @@
             </tr>
             </thead>
             <tbody>
-            <g:each in="${taskInstance.lineItems}" var="li">
+            <g:each in="${taskInstance?.lineItems}" var="li">
                 <tr class="odd" ng-repeat="li in order.lineItems">
                     <td>
                         ${li.product.name}
