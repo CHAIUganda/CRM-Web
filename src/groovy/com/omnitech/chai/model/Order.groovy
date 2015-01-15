@@ -3,6 +3,7 @@ package com.omnitech.chai.model
 import grails.validation.Validateable
 import org.springframework.data.neo4j.annotation.Fetch
 import org.springframework.data.neo4j.annotation.NodeEntity
+import org.springframework.data.neo4j.annotation.RelatedTo
 import org.springframework.data.neo4j.annotation.RelatedToVia
 
 /**
@@ -17,6 +18,8 @@ class Order extends Task implements HasLineItem {
     Set<LineItem> lineItems = new HashSet()
     String comment
     String clientRefId
+    @RelatedTo(type = 'ORDER_TAKEN_BY_USR')
+    User takenBy
 
     def beforeSave() {
         super.beforeSave()
