@@ -218,7 +218,6 @@ class CallController {
         render  (view: 'create', model: [taskInstance: taskInstance])
     }
 
-    @Transactional
     def delete() {
 
         def id = extractId(params)

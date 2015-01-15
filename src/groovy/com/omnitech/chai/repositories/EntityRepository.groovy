@@ -118,7 +118,7 @@ interface OrderRepository extends GraphRepository<Order> {
     Order findByClientRefId(String clientRefId)
 
     @Query('start t=node({territoryId}) MATCH (t)<-[:`SC_IN_TERRITORY`]-(sc)<-[:CUST_IN_SC]-(c)-[:CUST_TASK]->(ts:Order) RETURN ts')
-    Iterable<DetailerTask> findAllInTerritory(@Param('territoryId') Long territoryId)
+    Iterable<Order> findAllInTerritory(@Param('territoryId') Long territoryId)
 }
 
 interface DirectSaleRepository extends GraphRepository<DirectSale> {

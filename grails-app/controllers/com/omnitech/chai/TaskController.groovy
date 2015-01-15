@@ -191,7 +191,6 @@ class TaskController {
         [taskInstance: taskInstance, users: userService.listAllUsers(), customers: customerService.listAllCustomers()]
     }
 
-    @Transactional
     def update(Task taskInstance) {
         if (taskInstance == null) {
             notFound()
@@ -214,7 +213,6 @@ class TaskController {
         }
     }
 
-    @Transactional
     def delete() {
 
         def id = extractId(params)
@@ -235,7 +233,7 @@ class TaskController {
     }
 
     def autoSales() {
-        def territorys = regionService.listAllTerritorys()
+        def territorys = regionService.listAllTerritorys()[0..1]
         territorys.each {
             log.debug "generationg tasks for $it"
             taskService.generateSalesTasks(it)
