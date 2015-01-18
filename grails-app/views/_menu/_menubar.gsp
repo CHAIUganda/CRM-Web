@@ -80,9 +80,6 @@
                         <g:link controller="village" action="index">Village</g:link>
                     </li>
                     <li>
-                        <g:link controller="territory" action="index">Territories</g:link>
-                    </li>
-                    <li>
                         <g:link controller="customerSegment" action="index">Customer Segments</g:link>
                     </li>
                     <li>
@@ -106,6 +103,12 @@
                     <li>
                         <g:link controller="user" action="index">
                             <i class="glyphicon glyphicon-user"></i>Users
+                        </g:link>
+                    </li>
+                    <li>
+                        <g:link controller="territory" action="index">
+                            <i class="glyphicon glyphicon-globe"></i>
+                            Territories
                         </g:link>
                     </li>
                     <li>

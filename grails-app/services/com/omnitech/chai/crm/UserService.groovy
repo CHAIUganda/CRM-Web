@@ -31,7 +31,7 @@ class UserService {
     Neo4jTemplate neo
 
     Page<User> list(Map params) {
-        ModelFunctions.listAll(userRepository, params)
+        ModelFunctions.listAll(neo,User, params,User)
     }
 
     List<User> listAllUsers(Map params) { userRepository.findAll().collect() }
@@ -150,7 +150,7 @@ class UserService {
             it.supervisor = null
             territoryRepository.save(it)
         }
-        user.superVisedTerritories = new HashSet(territories)
+        user.supervisedTerritories = new HashSet(territories)
         saveUser(user)
     }
 

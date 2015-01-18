@@ -15,19 +15,7 @@
 	<table class="table">
 		<tbody>
 		
-			<tr class="prop">
-				<td valign="top" class="name"><g:message code="territory.dateCreated.label" default="Date Created" /></td>
-				
-				<td valign="top" class="value"><g:formatDate date="${territoryInstance?.dateCreated}" /></td>
-				
-			</tr>
-		
-			<tr class="prop">
-				<td valign="top" class="name"><g:message code="territory.lastUpdated.label" default="Last Updated" /></td>
-				
-				<td valign="top" class="value"><g:formatDate date="${territoryInstance?.lastUpdated}" /></td>
-				
-			</tr>
+
 		
 			<tr class="prop">
 				<td valign="top" class="name"><g:message code="territory.name.label" default="Name" /></td>
@@ -35,6 +23,19 @@
 				<td valign="top" class="value">${fieldValue(bean: territoryInstance, field: "name")}</td>
 				
 			</tr>
+
+        <g:if test="${territoryInstance?.supervisor}">
+            <tr class="prop">
+                <td valign="top" class="name"><g:message code="territory.supervisor.label" default="Supervisor" /></td>
+
+                <td valign="top" class="value">
+                    <g:link controller="user" action="show" id="${territoryInstance?.supervisor?.id}">
+                        <i class="glyphicon glyphicon-user"></i>${territoryInstance?.supervisor}
+                    </g:link>
+                </td>
+
+            </tr>
+        </g:if>
 
 
 
@@ -53,6 +54,22 @@
                 </g:each>
 
             </td>
+
+        </tr>
+
+
+
+        <tr class="prop">
+            <td valign="top" class="name"><g:message code="territory.dateCreated.label" default="Date Created" /></td>
+
+            <td valign="top" class="value"><g:formatDate date="${territoryInstance?.dateCreated}" /></td>
+
+        </tr>
+
+        <tr class="prop">
+            <td valign="top" class="name"><g:message code="territory.lastUpdated.label" default="Last Updated" /></td>
+
+            <td valign="top" class="value"><g:formatDate date="${territoryInstance?.lastUpdated}" /></td>
 
         </tr>
 

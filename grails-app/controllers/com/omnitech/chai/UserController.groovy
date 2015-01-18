@@ -1,8 +1,12 @@
 package com.omnitech.chai
 
+import com.omnitech.chai.model.AbstractEntity
 import com.omnitech.chai.model.User
+import com.omnitech.chai.util.ChaiUtils
 import grails.converters.JSON
 import grails.transaction.Transactional
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.neo4j.support.Neo4jTemplate
 
 import static com.omnitech.chai.util.ModelFunctions.extractId
 import static org.springframework.http.HttpStatus.*
@@ -15,16 +19,16 @@ class UserController {
 
     def userService
     def regionService
+    def txHelperService
+    @Autowired
+    Neo4jTemplate neo
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
     def index(Integer max) {
         params.max = Math.min(max ?: 50, 100)
         def page = userService.list(params)
-
-        def territorys = regionService.listAllTerritorys()?.sort { it.name }
-        respond page.content, model: [userInstanceCount: page.totalElements,
-                                      territories      : territorys]
+        respond page.content, model: [userInstanceCount: page.totalElements]
     }
 
     def search(Integer max) {
@@ -42,14 +46,26 @@ class UserController {
         if (!id == -1) {
             notFound(); return
         }
-        respond userService.findUser(id)
+
+        def user = userService.findUser(id)
+
+        txHelperService.doInTransaction {
+            neo.fetch(user.supervisedTerritories)
+        }
+        respond user
     }
 
     def create() {
+        respond new User(params), model: getEditPageModel()
+    }
+
+    private LinkedHashMap<String, List<? extends AbstractEntity>> getEditPageModel() {
         def territories = regionService.listAllTerritorys()?.sort { it.name }
-        respond new User(params), model: [rolez      : userService.listAllRoles(),
-                                          devices    : userService.listAllFreeDevices(),
-                                          territories: territories]
+
+        def pageModel = [rolez      : userService.listAllRoles(),
+                         devices    : userService.listAllFreeDevices(),
+                         territories: territories]
+        return pageModel
     }
 
     def save(User userInstance) {
@@ -59,15 +75,17 @@ class UserController {
         }
 
         if (userInstance.hasErrors()) {
-            respond userInstance.errors, view: 'create', model: [rolez: userService.listAllRoles(), devices: userService.listAllFreeDevices(userInstance.id ?: -1)]
+            respond userInstance.errors, view: 'create', model: getEditPageModel()
             return
         }
 
-        def dbUser = userService.saveUserWithRoles userInstance, getRoleIds(), ('' + params.dvc).toLongSafe()
-
-        def territoryIds = getTerritoryIds()
-        if (territoryIds)
-            userService.mapUserToTerritories dbUser.id, territoryIds
+        try {
+            saveUser(userInstance)
+        } catch (Exception x) {
+            flash.error = ChaiUtils.getBestMessage(x)
+            respond userInstance, view: 'create', model: getEditPageModel()
+            return
+        }
 
         request.withFormat {
             form {
@@ -76,6 +94,8 @@ class UserController {
             }
             '*' { respond userInstance, [status: CREATED] }
         }
+
+
     }
 
     def userAsJson() {
@@ -116,17 +136,11 @@ class UserController {
         }
 
         if (userInstance.hasErrors()) {
-            respond userInstance.errors, view: 'edit', model: [rolez: userService.listAllRoles(), devices: userService.listAllFreeDevices(userInstance.id)]
+            respond userInstance.errors, view: 'edit', model: getEditPageModel()
             return
         }
 
-        def dbUser = userService.saveUserWithRoles userInstance, getRoleIds(), ('' + params.dvc).toLongSafe()
-
-        def territoryIds = getTerritoryIds()
-        if (territoryIds)
-            userService.mapUserToTerritories dbUser.id, territoryIds
-
-
+        saveUser(userInstance)
 
         request.withFormat {
             form {
@@ -135,6 +149,18 @@ class UserController {
             }
             '*' { respond userInstance, [status: OK] }
         }
+    }
+
+    private def saveUser(User userInstance) {
+
+        def deviceId = params.dvc ? ('' + params.dvc).toLongSafe() : null
+
+        def dbUser = userService.saveUserWithRoles userInstance, getRoleIds(), deviceId
+
+        def territoryIds = getTerritoryIds()
+        if (territoryIds)
+            userService.mapUserToTerritories dbUser.id, territoryIds
+
     }
 
     private List getRoleIds() {

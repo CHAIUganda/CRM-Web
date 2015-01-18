@@ -42,7 +42,7 @@ class User extends AbstractEntity {
     Territory territory
 
     @RelatedTo(type = Relations.SUPERVISES_TERRITORY)
-    Set<Territory>  superVisedTerritories
+    Set<Territory> supervisedTerritories
 
 
     User() {}

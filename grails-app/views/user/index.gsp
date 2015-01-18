@@ -29,8 +29,6 @@
 			
 				<g:sortableColumn property="enabled" title="${message(code: 'user.enabled.label', default: 'Enabled')}" />
 
-				<th></th>
-			
 			</tr>
 		</thead>
 		<tbody>
@@ -49,16 +47,6 @@
 			
 				<td><g:formatBoolean boolean="${userInstance.enabled}" /></td>
 
-				<td>
-
-					<a href="#" id="${userInstance.id}" title="Map To SubCounty"
-					   data-target="#map-supervisor"
-					   data-toggle="modal" ng-click="onRemap(${userInstance.id})">
-
-						<i class="glyphicon glyphicon-transfer"></i>
-					</a>
-				</td>
-
 			</tr>
 		</g:each>
 		</tbody>
@@ -69,11 +57,6 @@
 	</div>
 </section>
 
-<g:render template="mapSupervisor"/>
-
-<r:require modules="angular,angular-resource"/>
-<g:javascript src="services/Common.js"/>
-<g:javascript src="controllers/UserTerritoryCtrl.js"/>
 </body>
 
 </html>

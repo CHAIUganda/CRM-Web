@@ -19,13 +19,9 @@ This menu is used to show function that can be triggered on the content (an obje
                                                                                             args="[entityName]"/></g:link>
             </li>
 
-        %{-- Rendered on Customer View --}%
-            <g:if test="${params.controller == 'customer' && ['index', '', null].contains(params.action)}">
-                <li class="active">
-                    <a class="btn btn-primary" data-toggle="modal" data-target="#importCustomers">
-                        <i class="glyphicon glyphicon-upload"></i> Import Customers
-                    </a>
-                </li>
+        %{-- Rendered on CustomerSegment View --}%
+            <g:if test="${params.controller == 'customerSegment' && ['index', '', null].contains(params.action)}">
+
                 <li>
                     <a href="#SegmentModal" role="button" class="btn btn-success" data-toggle="modal"
                        title="Run Segmentation">
@@ -35,10 +31,15 @@ This menu is used to show function that can be triggered on the content (an obje
                 </li>
             </g:if>
 
-        %{--Rendered On Task View--}%
-            <g:if test="${params.controller == 'task' && ['index', '', null].contains(params.action)}">
-
-            </g:if>
+            <sec:ifAnyGranted roles="${['ROLE_SUPER_ROOT']}">
+                <g:if test="${params.controller == 'customer' && ['index', '', null].contains(params.action)}">
+                    <li class="active">
+                        <a class="btn btn-primary" data-toggle="modal" data-target="#importCustomers">
+                            <i class="glyphicon glyphicon-upload"></i> Import Customers
+                        </a>
+                    </li>
+                </g:if>
+            </sec:ifAnyGranted>
 
         %{--End Customer--}%
 

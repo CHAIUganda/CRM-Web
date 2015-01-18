@@ -34,44 +34,44 @@
                 </ul>
             </li>
 
-            %{-- COMPLETE OR NEW MENUS --}%
-            <li>
-                <a data-toggle="dropdown" href="#"><i
-                        class="glyphicon glyphicon-filter"></i>${params.status?.toUpperCase() ?: 'New'}  ${entityName}s<b
-                        class="caret"></b></a>
-                <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
-                    <g:if test="${params.user != null}">
-                        <li>
+        %{-- COMPLETE OR NEW MENUS --}%
+            <g:if test="${['detailerTask','call','task'].contains(params.controller)}">
+                <li>
+                    <a data-toggle="dropdown" href="#"><i
+                            class="glyphicon glyphicon-filter"></i>${params.status?.toUpperCase() ?: 'New'}  ${entityName}s<b
+                            class="caret"></b></a>
+                    <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+                        <g:if test="${params.user != null}">
+                            <li>
+                                <g:link action="index"
+                                        params="${[status: Task.STATUS_NEW, user: params.user]}">
+                                    <i class="glyphicon glyphicon-list"></i>Active
+                                </g:link>
+                            </li>
+                            <li>
+                                <g:link action="index"
+                                        params="${[status: Task.STATUS_COMPLETE, user: params.user]}">
+                                    <i class="glyphicon glyphicon-list"></i>Complete
+                                </g:link>
+                            </li>
 
-                            <g:link action="index"
-                                    params="${[status: Task.STATUS_NEW, user: params.user]}">
-                                <i class="glyphicon glyphicon-list"></i>Active
-                            </g:link>
-                        </li>
-                        <li>
-                            <g:link action="index"
-                                    params="${[status: Task.STATUS_COMPLETE, user: params.user]}">
-                                <i class="glyphicon glyphicon-list"></i>Complete
-                            </g:link>
-                        </li>
+                        </g:if>
+                        <g:else>
+                            <li>
 
-                    </g:if>
-                    <g:else>
-                        <li>
-
-                            <g:link action="index"
-                                    params="${[status: Task.STATUS_NEW]}">
-                                <i class="glyphicon glyphicon-list"></i>Active</g:link></li>
-                        <li>
-                            <g:link action="index"
-                                    params="${[status: Task.STATUS_COMPLETE]}">
-                                <i class="glyphicon glyphicon-list"></i>Complete
-                            </g:link>
-                        </li>
-                    </g:else>
-                </ul>
-            </li>
-
+                                <g:link action="index"
+                                        params="${[status: Task.STATUS_NEW]}">
+                                    <i class="glyphicon glyphicon-list"></i>Active</g:link></li>
+                            <li>
+                                <g:link action="index"
+                                        params="${[status: Task.STATUS_COMPLETE]}">
+                                    <i class="glyphicon glyphicon-list"></i>Complete
+                                </g:link>
+                            </li>
+                        </g:else>
+                    </ul>
+                </li>
+            </g:if>
 
         %{--The Export Button--}%
             <g:if test="${params.user != null}">
@@ -100,9 +100,9 @@
                 </g:link>
             </li>
             %{--<li>--}%
-                %{--<g:link action="cluster">--}%
-                    %{--<i class="glyphicon glyphicon-cloud" title="Cluster"></i>Clstr--}%
-                %{--</g:link>--}%
+            %{--<g:link action="cluster">--}%
+            %{--<i class="glyphicon glyphicon-cloud" title="Cluster"></i>Clstr--}%
+            %{--</g:link>--}%
             %{--</li>--}%
 
             %{--The Search Box--}%

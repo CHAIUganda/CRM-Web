@@ -8,6 +8,7 @@ import org.springframework.data.neo4j.annotation.NodeEntity
 
 import static com.omnitech.chai.model.Role.DETAILER_ROLE_NAME
 import static com.omnitech.chai.model.Role.SALES_ROLE_NAME
+import static com.omnitech.chai.model.Role.SUPERVISOR_ROLE_NAME
 
 class BootStrap {
 
@@ -96,6 +97,12 @@ class BootStrap {
             if (!detailerRole) {
                 println("Inserting essential role [$DETAILER_ROLE_NAME]...")
                 userService.saveRole(new Role(authority: DETAILER_ROLE_NAME))
+            }
+
+            def superVisorRole = userService.findRoleByAuthority(SUPERVISOR_ROLE_NAME)
+            if (!superVisorRole) {
+                println("Inserting essential role [$SUPERVISOR_ROLE_NAME]...")
+                userService.saveRole(new Role(authority: SUPERVISOR_ROLE_NAME))
             }
         }
     }
