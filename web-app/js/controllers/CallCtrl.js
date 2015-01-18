@@ -9,7 +9,7 @@ var omnitech;
                 this.dataLoader = dataLoader;
                 scope.searchCustomerByName = function (searchTerm) { return dataLoader.searchForCustomers(searchTerm); };
                 scope.onSelectCustomer = function (c) { return scope.customer = c; };
-                if (typeof _orderCustomer === undefined) {
+                if (typeof _orderCustomer !== undefined) {
                     scope.customer = _orderCustomer;
                 }
             }

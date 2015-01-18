@@ -18,7 +18,7 @@ module omnitech.chai {
             scope.searchCustomerByName = (searchTerm)=> dataLoader.searchForCustomers(searchTerm);
             scope.onSelectCustomer = (c)=> scope.customer = c;
 
-            if (typeof _orderCustomer === undefined) {
+            if (typeof _orderCustomer !== undefined) {
                 scope.customer = _orderCustomer;
             }
         }
