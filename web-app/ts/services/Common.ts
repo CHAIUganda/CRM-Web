@@ -27,6 +27,11 @@ module omnitech.chai {
             return this.resouce(url).get()
         }
 
+        getUser(id:string):User {
+            var url = omnitechBase + '/user/userAsJson/' + id;
+            return this.resouce(url).get()
+        }
+
         persistSubCountyMap(territory:number, district:number, subCounties:number[]):HttPromise {
             var url = omnitechBase + '/territory/mapTerritoryToSubCounties';
             return <HttPromise>this.http.post(url, {territory: territory, district: district, subCounties: subCounties})

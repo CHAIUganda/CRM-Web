@@ -15,28 +15,28 @@
 
         <div class="panel-body">
 
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-inline">
+            %{--<div class="row">--}%
+                %{--<div class="col-md-12">--}%
+                    %{--<div class="form-inline">--}%
 
-                        <div class="form-group">
-                            <label>Type</label>
-                            <g:select name="type" from="${['Detailing', 'Sales']}" class="form-control"/>
-                        </div>
+                        %{--<div class="form-group">--}%
+                            %{--<label>Type</label>--}%
+                            %{--<g:select name="type" from="${['Detailing', 'Sales']}" class="form-control"/>--}%
+                        %{--</div>--}%
 
-                        <div class="form-group">
-                            <label>Start Date</label>
-                            <bs:datePicker name="startDate" class="form-control"/>
-                        </div>
+                        %{--<div class="form-group">--}%
+                            %{--<label>Start Date</label>--}%
+                            %{--<bs:datePicker name="startDate" class="form-control"/>--}%
+                        %{--</div>--}%
 
-                        <div class="form-group">
-                            <label>End Date</label>
-                            <input id="dueDateText" name="dueDate" class=" form-control" type="text"
-                                   data-date-format="yyyy-mm-dd" ng-model="text.dueDateText">
-                        </div>
-                    </div>
-                </div>
-            </div>
+                        %{--<div class="form-group">--}%
+                            %{--<label>End Date</label>--}%
+                            %{--<input id="dueDateText" name="dueDate" class=" form-control" type="text"--}%
+                                   %{--data-date-format="yyyy-mm-dd" ng-model="text.dueDateText">--}%
+                        %{--</div>--}%
+                    %{--</div>--}%
+                %{--</div>--}%
+            %{--</div>--}%
 
             <div class="row">
                 <div class="col-md-12">

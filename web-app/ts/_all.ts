@@ -14,3 +14,4 @@
 /// <reference path='maps/ListMap.ts'/>
 /// <reference path='controllers/TaskMapCtrl.ts'/>
 /// <reference path='controllers/CallCtrl.ts'/>
+/// <reference path='controllers/UserTerritoryCtrl.ts'/>

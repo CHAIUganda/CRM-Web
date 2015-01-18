@@ -10,6 +10,9 @@ declare module omnitech.chai {
     }
 
     interface Territory extends District {
+        id: number
+        name: string
+        mapped: boolean
     }
 
     interface SubCounty extends District {
@@ -83,6 +86,12 @@ declare module omnitech.chai {
         customer: Customer
         description: string
         dueDate : string
+    }
+
+    interface User{
+        id : number
+        username: string
+
     }
 
 

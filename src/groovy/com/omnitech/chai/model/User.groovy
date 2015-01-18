@@ -41,6 +41,9 @@ class User extends AbstractEntity {
     @RelatedTo(type = Relations.USER_TERRITORY)
     Territory territory
 
+    @RelatedTo(type = Relations.SUPERVISES_TERRITORY)
+    Set<Territory>  superVisedTerritories
+
 
     User() {}
 

@@ -1,6 +1,7 @@
 package com.omnitech.chai
 
 import com.omnitech.chai.model.User
+import grails.converters.JSON
 import grails.transaction.Transactional
 
 import static com.omnitech.chai.util.ModelFunctions.extractId
@@ -20,7 +21,10 @@ class UserController {
     def index(Integer max) {
         params.max = Math.min(max ?: 50, 100)
         def page = userService.list(params)
-        respond page.content, model: [userInstanceCount: page.totalElements]
+
+        def territorys = regionService.listAllTerritorys()?.sort { it.name }
+        respond page.content, model: [userInstanceCount: page.totalElements,
+                                      territories      : territorys]
     }
 
     def search(Integer max) {
@@ -42,9 +46,10 @@ class UserController {
     }
 
     def create() {
-        respond new User(params), model: [rolez: userService.listAllRoles(),
-                devices: userService.listAllFreeDevices(),
-                territories: regionService.listAllTerritorys()]
+        def territories = regionService.listAllTerritorys()?.sort { it.name }
+        respond new User(params), model: [rolez      : userService.listAllRoles(),
+                                          devices    : userService.listAllFreeDevices(),
+                                          territories: territories]
     }
 
     def save(User userInstance) {
@@ -58,7 +63,11 @@ class UserController {
             return
         }
 
-        userService.saveUserWithRoles userInstance, getRoleIds(), ('' + params.dvc).toLongSafe()
+        def dbUser = userService.saveUserWithRoles userInstance, getRoleIds(), ('' + params.dvc).toLongSafe()
+
+        def territoryIds = getTerritoryIds()
+        if (territoryIds)
+            userService.mapUserToTerritories dbUser.id, territoryIds
 
         request.withFormat {
             form {
@@ -69,6 +78,23 @@ class UserController {
         }
     }
 
+    def userAsJson() {
+        def id = extractId(params)
+        if (id == -1) {
+            render Collections.EMPTY_MAP as JSON
+            return
+        }
+
+        def user = userService.findUser(id)
+
+        if (!user) {
+            render Collections.EMPTY_MAP as JSON
+
+        } else {
+            render([id: user.id, username: user.username] as JSON)
+        }
+    }
+
     def edit() {
         def id = extractId(params)
 
@@ -76,9 +102,10 @@ class UserController {
             notFound(); return
         }
         def user = userService.findUser(id)
-        respond user, model: [rolez: userService.listAllRoles(),
-                devices: userService.listAllFreeDevices(id),
-                territories: regionService.listAllTerritorys()]
+        def territories = regionService.listAllTerritorys()?.sort { it.name }
+        respond user, model: [rolez      : userService.listAllRoles(),
+                              devices    : userService.listAllFreeDevices(id),
+                              territories: territories]
     }
 
 
@@ -93,7 +120,13 @@ class UserController {
             return
         }
 
-        userService.saveUserWithRoles userInstance, getRoleIds(), ('' + params.dvc).toLongSafe()
+        def dbUser = userService.saveUserWithRoles userInstance, getRoleIds(), ('' + params.dvc).toLongSafe()
+
+        def territoryIds = getTerritoryIds()
+        if (territoryIds)
+            userService.mapUserToTerritories dbUser.id, territoryIds
+
+
 
         request.withFormat {
             form {
@@ -106,6 +139,10 @@ class UserController {
 
     private List getRoleIds() {
         params.rolez instanceof String ? [params.rolez] : params.rolez
+    }
+
+    private List getTerritoryIds() {
+        params.territories instanceof String ? [params.territories] : params.territories
     }
 
     @Transactional

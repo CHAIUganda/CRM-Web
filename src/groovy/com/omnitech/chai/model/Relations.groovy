@@ -42,6 +42,9 @@ interface Relations {
     // User -> Territory
     final static USER_TERRITORY = 'USER_TERRITORY'
 
+    // USer -> Manages Territory
+    final static SUPERVISES_TERRITORY = 'SUPERVISES_TERRITORY'
+
     //User -> Task
     final static COMPLETED_TASK = 'COMPLETED_TASK'
 

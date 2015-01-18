@@ -86,30 +86,51 @@
             </div>
         </div>
     </div>
-    %{--SELECT DEVICE--}%
+    %{--SELECT TERRITORIES--}%
     <div class="row">
         <div class="row">
-            <legend class="text-center">Select A Device For This User</legend>
+            <legend class="text-center">Which Territories Should This User Supervise?</legend>
         </div>
 
-        <div class="row ">
-            <div class="col-md-12">
-                <g:each in="${devices}" var="device" status="i">
-                    <div class="col-md-4 thumbnail  ${userInstance?.device?.id == device.id ? 'alert-info' : ''}">
-                        <g:radio name="dvc" value="${device.id}"
-                                 checked="${userInstance?.device?.id == device.id}"/>
-                        <label for="dvc">${device}</label>
+        <div class="row">
+
+                <g:each in="${territories}" var="territory" status="i">
+                    <div class="col-md-4  ${userInstance?.id && userInstance?.id == territory.supervisor?.id ? 'alert-info' : ''}">
+                        <g:checkBox name="territories" value="${territory.id}"
+                                 checked="${userInstance?.id && userInstance?.id == territory.supervisor?.id}"/>
+                        <label for="territories">${territory} ${territory.supervisor ? "<>($territory.supervisor)" : ''}</label>
                     </div>
 
                 </g:each>
 
-                <div class="col-md-4 thumbnail">
-                    <g:radio name="dvc" value=""/>
-                    <label for="dvc">None</label>
-                </div>
-            </div>
+
         </div>
     </div>
+
+    %{--SELECT DEVICE--}%
+    %{--<div class="row">--}%
+        %{--<div class="row">--}%
+            %{--<legend class="text-center">Select A Device For This User</legend>--}%
+        %{--</div>--}%
+
+        %{--<div class="row ">--}%
+            %{--<div class="col-md-12">--}%
+                %{--<g:each in="${devices}" var="device" status="i">--}%
+                    %{--<div class="col-md-4 thumbnail  ${userInstance?.device?.id == device.id ? 'alert-info' : ''}">--}%
+                        %{--<g:radio name="dvc" value="${device.id}"--}%
+                                 %{--checked="${userInstance?.device?.id == device.id}"/>--}%
+                        %{--<label for="dvc">${device}</label>--}%
+                    %{--</div>--}%
+
+                %{--</g:each>--}%
+
+                %{--<div class="col-md-4 thumbnail">--}%
+                    %{--<g:radio name="dvc" value=""/>--}%
+                    %{--<label for="dvc">None</label>--}%
+                %{--</div>--}%
+            %{--</div>--}%
+        %{--</div>--}%
+    %{--</div>--}%
 
 </div>
 

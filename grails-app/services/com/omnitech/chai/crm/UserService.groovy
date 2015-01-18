@@ -24,6 +24,7 @@ class UserService {
     UserRepository userRepository
     RoleRepository roleRepository
     DeviceRepository deviceRepository
+    def territoryRepository
     RequestMapRepository requestMapRepository
     def neoSecurityService
     @Autowired
@@ -136,6 +137,21 @@ class UserService {
         neoUser.device = device
 
         userRepository.save(neoUser)
+    }
+
+    User mapUserToTerritories(Long userId, List territoryIds){
+
+        def user = findUser(userId)
+
+        def territories =  territoryIds.collect{territoryRepository.findOne(it as Long)}
+
+        //first delete old references
+        territories.each {
+            it.supervisor = null
+            territoryRepository.save(it)
+        }
+        user.superVisedTerritories = new HashSet(territories)
+        saveUser(user)
     }
 
     Page<User> searchUsers(String search, Map params) {
