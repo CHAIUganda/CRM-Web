@@ -73,6 +73,7 @@ class SaleController {
             order.customer = customerService.findCustomer(json.customerId as String)
             assert order.customer, "Customer Has To Exist In the System [$json.customerId]"
 
+            order.takenBy = neoSecurityService.currentUser
             taskService.saveTask(order)
         }
     }

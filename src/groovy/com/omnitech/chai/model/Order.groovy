@@ -18,7 +18,7 @@ class Order extends Task implements HasLineItem {
     Set<LineItem> lineItems = new HashSet()
     String comment
     String clientRefId
-    @RelatedTo(type = 'ORDER_TAKEN_BY_USR')
+    @RelatedTo(type = Relations.ORDER_TAKEN_BY)
     User takenBy
 
     def beforeSave() {
@@ -32,7 +32,7 @@ class Order extends Task implements HasLineItem {
 
     @Override
     Double totalCost() {
-        return lineItems?.sum {it.lineCost} as Double
+        return lineItems?.sum { it.lineCost } as Double
     }
 
 

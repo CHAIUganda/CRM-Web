@@ -11,9 +11,6 @@ interface Relations {
     //SubCount -> Parish
     final static String HAS_PARISH = 'HAS_PARISH'
 
-    //Parish -> Village
-    final static String HAS_VILLAGE = 'HAS_VILLAGE'
-
     //Region -> District
     final static String HAS_DISTRICT = 'HAS_DISTRICT'
 
@@ -31,7 +28,6 @@ interface Relations {
 
     //Customer -> Segment
     final static String IN_SEGMENT = 'IN_SEGMENT'
-
 
     //Subcounty -> Territory
     final static String SC_IN_TERRITORY = 'SC_IN_TERRITORY'
@@ -63,6 +59,9 @@ interface Relations {
     final static REPORT_GRP_REPORT = 'REPORT_GRP_REPORT'
 
     final static REPORT_GRP_GRP = 'REPORT_GRP_GRP'
+
+    // Order -> User
+    final static ORDER_TAKEN_BY = 'ORDER_TAKEN_BY'
 
 
 }

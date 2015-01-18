@@ -31,6 +31,7 @@ class CallController {
     def regionService
     def customerService
     def txHelperService
+    def neoSecurityService
     @Autowired
     Neo4jTemplate neo
 
@@ -149,6 +150,7 @@ class CallController {
                 ModelFunctions.bind(order, params)
             } else {
                 order = ModelFunctions.createObj(Order, params)
+                order.takenBy = neoSecurityService.currentUser
             }
 
 
