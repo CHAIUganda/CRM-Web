@@ -18,6 +18,8 @@ class Order extends Task implements HasLineItem {
     Set<LineItem> lineItems = new HashSet()
     String comment
     String clientRefId
+
+    @Fetch
     @RelatedTo(type = Relations.ORDER_TAKEN_BY)
     User takenBy
 

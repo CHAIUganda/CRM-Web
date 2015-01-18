@@ -12,7 +12,7 @@
 <body>
 
 %{-- THE SUBMENU BAR --}%
-    <g:render template="/task/taskMenuBar"/>
+<g:render template="/task/taskMenuBar"/>
 %{-- END SUBMENU BAR --}%
 
 <section id="index-task" class="first">
@@ -22,6 +22,10 @@
         <tr>
             <g:sortableColumn property="description" params="${params}"
                               title="${message(code: 'task.description.label', default: 'Description')}"/>
+
+            <g:if test="${params.controller == 'call'}">
+                <th>Origin</th>
+            </g:if>
 
             <g:if test="${params.status == Task.STATUS_COMPLETE || params.controller == 'sale'}">
                 <g:sortableColumn property="dueDate" params="${params}"
@@ -47,6 +51,10 @@
 
                 <td><g:link action="show"
                             id="${taskInstance.id}">${fieldValue(bean: taskInstance, field: "description")}</g:link></td>
+
+                <g:if test="${params.controller == 'call'}">
+                    <td>${taskInstance?.takenBy ?: 'system'}</td>
+                </g:if>
 
                 <td>
                     <g:if test="${params.status == Task.STATUS_COMPLETE || params.controller == 'sale'}">
