@@ -1,3 +1,4 @@
+<%@ page import="com.omnitech.chai.model.Task" %>
 <nav role="navigation" class="navbar navbar-inverse" style="border-radius: 0px;">
     <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
@@ -32,14 +33,14 @@
                 <a data-toggle="dropdown" class="dropdown-toggle" href="#">
                     <i class="glyphicon glyphicon-tasks"></i>Tasks <b class="caret"></b></a>
                 <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+                    %{--<li>--}%
+                        %{--<g:link controller="task" action="index">All Tasks</g:link>--}%
+                    %{--</li>--}%
                     <li>
-                        <g:link controller="task" action="index">All Tasks</g:link>
+                        <g:link controller="detailerTask" action="index" params="${[status: Task.STATUS_NEW]}">Detailer</g:link>
                     </li>
                     <li>
-                        <g:link controller="detailerTask" action="index">Detailer</g:link>
-                    </li>
-                    <li>
-                        <g:link controller="call" action="index">Calls</g:link>
+                        <g:link controller="call" action="index" params="${[status: Task.STATUS_NEW]}">Calls</g:link>
                     </li>
                     <li>
                         <g:link controller="sale" action="index">Sales</g:link>

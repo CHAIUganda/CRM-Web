@@ -35,17 +35,17 @@
             </li>
 
         %{-- COMPLETE OR NEW MENUS --}%
-            <g:if test="${['detailerTask','call','task'].contains(params.controller)}">
+            <g:if test="${['detailerTask', 'call', 'task'].contains(params.controller)}">
                 <li>
                     <a data-toggle="dropdown" href="#"><i
-                            class="glyphicon glyphicon-filter"></i>${params.status?.toUpperCase() ?: 'New'}  ${entityName}s<b
+                            class="glyphicon glyphicon-filter"></i>${params.status?.capitalize() ?: 'All'}  ${entityName}s<b
                             class="caret"></b></a>
                     <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
                         <g:if test="${params.user != null}">
                             <li>
                                 <g:link action="index"
                                         params="${[status: Task.STATUS_NEW, user: params.user]}">
-                                    <i class="glyphicon glyphicon-list"></i>Active
+                                    <i class="glyphicon glyphicon-list"></i>New
                                 </g:link>
                             </li>
                             <li>
@@ -54,18 +54,26 @@
                                     <i class="glyphicon glyphicon-list"></i>Complete
                                 </g:link>
                             </li>
+                            <li>
+                                <g:link action="index" params="${[user: params.user]}">
+                                    <i class="glyphicon glyphicon-list"></i>All
+                                </g:link>
+                            </li>
 
                         </g:if>
                         <g:else>
                             <li>
-
-                                <g:link action="index"
-                                        params="${[status: Task.STATUS_NEW]}">
-                                    <i class="glyphicon glyphicon-list"></i>Active</g:link></li>
+                                <g:link action="index" params="${[status: Task.STATUS_NEW]}">
+                                    <i class="glyphicon glyphicon-list"></i>Active</g:link>
+                            </li>
                             <li>
-                                <g:link action="index"
-                                        params="${[status: Task.STATUS_COMPLETE]}">
+                                <g:link action="index" params="${[status: Task.STATUS_COMPLETE]}">
                                     <i class="glyphicon glyphicon-list"></i>Complete
+                                </g:link>
+                            </li>
+                            <li>
+                                <g:link action="index">
+                                    <i class="glyphicon glyphicon-list"></i>All
                                 </g:link>
                             </li>
                         </g:else>
