@@ -6,9 +6,7 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.type.filter.AnnotationTypeFilter
 import org.springframework.data.neo4j.annotation.NodeEntity
 
-import static com.omnitech.chai.model.Role.DETAILER_ROLE_NAME
-import static com.omnitech.chai.model.Role.SALES_ROLE_NAME
-import static com.omnitech.chai.model.Role.SUPERVISOR_ROLE_NAME
+import static com.omnitech.chai.model.Role.*
 
 class BootStrap {
 
@@ -87,22 +85,17 @@ class BootStrap {
 
     private insertEssentialRoles() {
         txHelperService.doInTransaction {
-            def salesRole = userService.findRoleByAuthority(SALES_ROLE_NAME)
-            if (!salesRole) {
-                println("Inserting essential role [$SALES_ROLE_NAME]...")
-                userService.saveRole(new Role(authority: SALES_ROLE_NAME))
-            }
 
-            def detailerRole = userService.findRoleByAuthority(DETAILER_ROLE_NAME)
-            if (!detailerRole) {
-                println("Inserting essential role [$DETAILER_ROLE_NAME]...")
-                userService.saveRole(new Role(authority: DETAILER_ROLE_NAME))
-            }
-
-            def superVisorRole = userService.findRoleByAuthority(SUPERVISOR_ROLE_NAME)
-            if (!superVisorRole) {
-                println("Inserting essential role [$SUPERVISOR_ROLE_NAME]...")
-                userService.saveRole(new Role(authority: SUPERVISOR_ROLE_NAME))
+            [SALES_ROLE_NAME,
+             DETAILER_ROLE_NAME,
+             DETAILING_SUPERVISOR_ROLE_NAME,
+             SALES_SUPERVISOR_ROLE_NAME,
+             ADMIN_ROLE_NAME].each {
+                def role = userService.findRoleByAuthority(it)
+                if (!role) {
+                    println("Inserting essential role [$it]...")
+                    userService.saveRole(new Role(authority: it))
+                }
             }
         }
     }

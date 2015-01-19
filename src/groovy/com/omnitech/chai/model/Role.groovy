@@ -12,7 +12,8 @@ class Role extends AbstractEntity {
     final static String SUPER_ADMIN_ROLE_NAME = 'ROLE_SUPER_ADMIN'
     final static String ADMIN_ROLE_NAME = 'ROLE_ADMIN'
     final static String SALES_ROLE_NAME = 'ROLE_SALES'
-    final static String SUPERVISOR_ROLE_NAME = 'ROLE_SUPERVISOR'
+    final static String DETAILING_SUPERVISOR_ROLE_NAME = 'ROLE_DETAILING_SUPERVISOR'
+    final static String SALES_SUPERVISOR_ROLE_NAME = 'ROLE_SALES_SUPERVISOR'
 
     @Indexed(unique = true)
     String authority
