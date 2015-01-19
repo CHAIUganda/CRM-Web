@@ -32,4 +32,10 @@ modules = {
         resource url: 'js/lib/jquery.fileDownload.js'
         resource url: 'js/lib/reportWiz/styles.css'
     }
+
+    dataTable {
+        dependsOn('jquery')
+        resource url: 'js/lib/dataTables/jquery.dataTables_min.js'
+        resource url: 'js/lib/dataTables/jquery.dataTables.css'
+    }
 }

@@ -13,22 +13,23 @@ class HomeController {
     def index(Integer max) {
 
         def user = neoSecurityService.currentUser
-        def reportInfo = Collections.EMPTY_LIST
+        def detailingInfo = Collections.EMPTY_LIST
         def salesInfo = Collections.EMPTY_LIST
 
         //admins
-        if (user.hasRole(ADMIN_ROLE_NAME,
-                SUPER_ADMIN_ROLE_NAME)) {
-            reportInfo = dashBoardService.detailingReport()
+        if (user.hasRole(ADMIN_ROLE_NAME, SUPER_ADMIN_ROLE_NAME)) {
+            detailingInfo = dashBoardService.detailingReport()
+            salesInfo = dashBoardService.salesReport()
         }
 
-        if (!reportInfo && user.hasRole(DETAILER_ROLE_NAME,
-                DETAILING_SUPERVISOR_ROLE_NAME)) {
-            reportInfo = dashBoardService.detailingReport(user.id)
+        if (!detailingInfo && user.hasRole(DETAILER_ROLE_NAME, DETAILING_SUPERVISOR_ROLE_NAME)) {
+            detailingInfo = dashBoardService.detailingReport(user.id)
         }
 
+        if (!salesInfo && user.hasRole(SALES_SUPERVISOR_ROLE_NAME, SALES_ROLE_NAME)) {
+            salesInfo = dashBoardService.salesReport(user.id)
+        }
 
-
-        [reportInfo: reportInfo, salesInfo: salesInfo]
+        [detailingInfo: detailingInfo, salesInfo: salesInfo]
     }
 }
