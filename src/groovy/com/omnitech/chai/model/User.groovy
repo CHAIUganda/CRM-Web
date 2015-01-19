@@ -56,8 +56,8 @@ class User extends AbstractEntity {
         return roles?.any { r.authority == it.authority }
     }
 
-    boolean hasRole(String authority) {
-        return roles?.any { authority == it.authority }
+    boolean hasRole(String... authorities) {
+        authorities.any { authority -> roles?.any { authority == it.authority } }
     }
 
     @PreUpdate
