@@ -98,7 +98,7 @@
         %{-- User Dropdown--}%
         <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
-                <a data-toggle="dropdown" class="dropdown-toggle glyphicon glyphicon-user" href="#">User <b
+                <a data-toggle="dropdown" class="dropdown-toggle glyphicon glyphicon-user" href="#">Users(<sec:username/>) <b
                         class="caret"></b></a>
                 <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
                     <li>
