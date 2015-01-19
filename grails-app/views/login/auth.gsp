@@ -17,7 +17,7 @@
 <body>
 <div class=" col-lg-12 header-wrapper">
     <div class="col-lg-12 col-lg-offset-5" style="top: 30px;">
-       <h3 style="color: #ffffff;font-weight: bold;">International Alert</h3>
+       <h3 style="color: #ffffff;font-weight: bold;">CHAI</h3>
     </div>
 </div>
 

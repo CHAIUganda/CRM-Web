@@ -75,7 +75,7 @@ class BootStrap {
                 neo.save new RequestMap(url: '/**', configAttribute: 'ROLE_SUPER_ADMIN')
                 neo.save new RequestMap(url: '/**', configAttribute: 'ROLE_SUPER_ADMIN,ROLE_ADMIN')
                 for (String url in [
-                        '/login/auth', '/**/js/**', '/**/css/**',
+                        '/login/auth', '/login/authfail', '/**/js/**', '/**/css/**',
                         '/**/images/**', '/**/favicon.ico']) {
                     neo.save new RequestMap(url: url, configAttribute: 'permitAll')
                 }
