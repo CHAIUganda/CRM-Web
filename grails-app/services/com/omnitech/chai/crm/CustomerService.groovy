@@ -38,6 +38,19 @@ class CustomerService {
 
     List<Customer> listAllCustomers() { customerRepository.findAll().collect() }
 
+    Page<Customer> listCustomersInCtx(Long userId, Map params) {
+        def customer = Customer.simpleName.toLowerCase()
+        def startQuery = {
+            start(nodesById('u', userId))
+                    .match(node('u').out(USER_TERRITORY, SUPERVISES_TERRITORY)
+                    .node('t').in(SC_IN_TERRITORY)
+                    .node('sc').in(CUST_IN_SC).node(customer))
+        }
+        def q = startQuery().returns(distinct(identifier(customer)))
+        def cq = startQuery().returns(count(distinct(identifier(customer))))
+        ModelFunctions.query(neo, q, cq, params, Customer)
+    }
+
     Customer findCustomer(Long id) { customerRepository.findOne(id) }
 
     Customer saveCustomer(Customer customer) {
@@ -55,8 +68,8 @@ class CustomerService {
         def customerFields = ReflectFunctions.findAllBasicFields(Customer)
         customerFields.add('village')
         def filters = [allow: [
-                [class: Customer.simpleName, patterns: ['outletName','keyWholeSalerName','descriptionOfOutletLocation','split','subCounty','village','parish']],
-                [class: Village.simpleName, patterns: ['name'] ],
+                [class: Customer.simpleName, patterns: ['outletName', 'keyWholeSalerName', 'descriptionOfOutletLocation', 'split', 'subCounty', 'village', 'parish']],
+                [class: Village.simpleName, patterns: ['name']],
                 [class: Parish.simpleName, patterns: ['name']],
                 [class: SubCounty.simpleName, patterns: ['name', 'district']],
                 [class: District.simpleName, patterns: ['name']]

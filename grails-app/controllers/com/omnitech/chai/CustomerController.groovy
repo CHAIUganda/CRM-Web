@@ -2,6 +2,7 @@ package com.omnitech.chai
 
 import com.omnitech.chai.model.Customer
 import com.omnitech.chai.model.CustomerContact
+import com.omnitech.chai.model.Role
 import com.omnitech.chai.util.GroupFlattener
 import com.omnitech.chai.util.ModelFunctions
 import grails.converters.JSON
@@ -23,10 +24,16 @@ class CustomerController {
     def regionService
     def segmentationService
     def taskService
+    def neoSecurityService
 
     def index(Integer max) {
         params.max = Math.min(max ?: 50, 100)
-        def page = customerService.listCustomers(params)
+        def page
+        if (neoSecurityService.currentUser.hasRole(Role.SUPER_ADMIN_ROLE_NAME))
+            page = customerService.listCustomers(params)
+        else
+            page = customerService.listCustomersInCtx(neoSecurityService.currentUser.id, params)
+
         def content = new GroupFlattener(leaves: page.content).normalize()
         [customerInstanceList: content, customerInstanceCount: page.totalElements]
     }

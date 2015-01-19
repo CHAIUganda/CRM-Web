@@ -9,6 +9,8 @@ import org.springframework.data.neo4j.annotation.NodeEntity
 class Role extends AbstractEntity {
 
     final static String DETAILER_ROLE_NAME = 'ROLE_DETAILER'
+    final static String SUPER_ADMIN_ROLE_NAME = 'ROLE_SUPER_ADMIN'
+    final static String ADMIN_ROLE_NAME = 'ROLE_ADMIN'
     final static String SALES_ROLE_NAME = 'ROLE_SALES'
     final static String SUPERVISOR_ROLE_NAME = 'ROLE_SUPERVISOR'
 
