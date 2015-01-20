@@ -26,6 +26,7 @@ class TaskService {
     def directSaleRepository
     def orderRepository
     def neoSecurityService
+    def userService
 
     /* Tasks */
 
@@ -80,6 +81,11 @@ class TaskService {
         }
 
         def user = params.user ? userRepository.findByUsername(params.user) : null
+
+        if (!isAllowedToViewUserTasks(user)) {
+            user = null
+        }
+
         String status = params.status
 
         Page<T> page
@@ -92,6 +98,31 @@ class TaskService {
         page.content.each { neo.fetch(it.territoryUser()) }
 
         return page as Page<T>
+    }
+
+    //todo optimise this with query
+    private boolean isAllowedToViewUserTasks(User otherUser) {
+        def currentUser = neoSecurityService.currentUser
+
+        if(currentUser.hasRole(Role.SUPER_ADMIN_ROLE_NAME,Role.ADMIN_ROLE_NAME)){
+            return true
+        }
+
+        if (currentUser.hasRole(Role.DETAILER_ROLE_NAME)) {
+            return userService.listUsersForUser(currentUser.id, Role.DETAILING_SUPERVISOR_ROLE_NAME).any {
+                otherUser.id == it.id
+            }
+        }
+
+        if (currentUser.hasRole(Role.SALES_ROLE_NAME)) {
+            return userService.listUsersForUser(currentUser.id, Role.SALES_ROLE_NAME).any {
+                otherUser.id == it.id
+            }
+        }
+
+
+        return false;
+
     }
 
     private static getTaskQuery(String status, Class<? extends Task> taskType) {
