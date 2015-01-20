@@ -29,7 +29,7 @@ class User extends AbstractEntity {
     }
 
 
-    @RelatedTo(type = 'HAS_ROLE')
+    @RelatedTo(type = Relations.HAS_ROLE)
     @Fetch
     Set<Role> roles
 

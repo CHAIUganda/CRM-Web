@@ -44,6 +44,9 @@ interface Relations {
     //User -> Task
     final static COMPLETED_TASK = 'COMPLETED_TASK'
 
+    // User -> Role
+    final static HAS_ROLE = 'HAS_ROLE'
+
     //Task -> Customer
     final static CUST_TASK = 'CUST_TASK'
 

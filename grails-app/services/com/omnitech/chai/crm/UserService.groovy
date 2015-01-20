@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.data.neo4j.transaction.Neo4jTransactional
 
+import static com.omnitech.chai.model.Relations.HAS_ROLE
 import static com.omnitech.chai.model.Relations.SUPERVISES_TERRITORY
 import static com.omnitech.chai.model.Relations.USER_TERRITORY
 import static org.neo4j.cypherdsl.CypherQuery.*
@@ -38,10 +39,13 @@ class UserService {
         ModelFunctions.listAll(neo, User, params, User)
     }
 
-    Page<User> listUsersForUser(Long supervisorId, Map params) {
+    Page<User> listUsersForUser(Long supervisorId, Map params, String role) {
         def _query = {
             start(nodesById('sup', supervisorId))
-                    .match(node('sup').out(SUPERVISES_TERRITORY).node('tr').in(USER_TERRITORY).node('u'))
+                    .match(node('sup').out(SUPERVISES_TERRITORY)
+                    .node('tr').in(USER_TERRITORY)
+                    .node('u').out(HAS_ROLE)
+                    .node('r').values(value('authority',role)))
         }
         def q = _query().returns(distinct(identifier('u')))
         def cq = _query().returns(count(distinct(identifier('u'))))
