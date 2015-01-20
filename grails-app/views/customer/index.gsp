@@ -21,7 +21,7 @@
 
             <g:sortableColumn property="outletType" title="${message(code: 'customer.outletType.label', default: 'Outlet Type')}" />
 
-            <g:sortableColumn property="openingHours" title="${message(code: 'customer.openingHours.label', default: 'Opening Hours')}" />
+            <g:sortableColumn property="outletSize" title="${message(code: 'customer.outletSize.label', default: 'Outlet Size')}" />
 
             <th>${message(code: 'district.label', default: 'District')}</th>
 
@@ -57,7 +57,7 @@
 
                 <td>${fieldValue(bean: customerInstance, field: "outletType")}</td>
 
-                <td>${fieldValue(bean: customerInstance, field: "openingHours")}</td>
+                <td>${fieldValue(bean: customerInstance, field: "outletSize")}</td>
 
                 <td>${customerInstance?.element?.subCounty?.district}</td>
 
