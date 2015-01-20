@@ -11,11 +11,11 @@ import grails.util.GrailsNameUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
+import org.springframework.security.access.AccessDeniedException
 
 import static com.omnitech.chai.util.ControllerUtils.taskToJsonMap
 import static com.omnitech.chai.util.ModelFunctions.extractId
-import static org.springframework.http.HttpStatus.NOT_FOUND
-import static org.springframework.http.HttpStatus.NO_CONTENT
+import static org.springframework.http.HttpStatus.*
 
 /**
  * DetailerTaskController
@@ -44,9 +44,9 @@ class DetailerTaskController {
         if (user.hasRole(Role.ADMIN_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME)) {
             page = taskService.loadPageData(max, params, DetailerTask)
         } else {
-            page = taskService.loadSuperVisorUserData(max, params, DetailerTask,user.id)
+            page = taskService.loadSuperVisorUserData(max, params, DetailerTask, user.id)
         }
-        render(view: '/task/index', model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: userService.listUsersForUser(user.id,Role.DETAILER_ROLE_NAME)])
+        render(view: '/task/index', model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: userService.listUsersForUser(user.id, Role.DETAILER_ROLE_NAME)])
     }
 
     def indexSales(Integer max) {
@@ -160,6 +160,10 @@ class DetailerTaskController {
             }
             '*' { render status: NO_CONTENT }
         }
+    }
+
+    def handleException(AccessDeniedException ex) {
+        render view: '/login/denied', status: FORBIDDEN
     }
 
     private Class<Task> resolveType() {

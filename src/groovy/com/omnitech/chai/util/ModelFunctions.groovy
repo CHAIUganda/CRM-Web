@@ -160,9 +160,9 @@ class ModelFunctions {
     }
 
     static <T> Page<T> query(Neo4jTemplate neo, Execute query, Execute countQuery, Map params, Class<T> container) {
-        log.trace("ModelFx.query: $query")
+        log.trace("ModelFx.query List: $query")
         def data = neo.query(query.toString(), EMPTY_MAP).to(container).as(List)
-        log.trace("ModelFx.query Query: $countQuery")
+        log.trace("ModelFx.query Count: $countQuery")
         def size = neo.query(countQuery.toString(), EMPTY_MAP).to(Long).single()
 
         return new PageImpl<T>(data, PageUtils.create(params), size)

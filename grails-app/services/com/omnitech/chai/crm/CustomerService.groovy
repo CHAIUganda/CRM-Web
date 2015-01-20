@@ -3,6 +3,7 @@ package com.omnitech.chai.crm
 import com.omnitech.chai.exception.ImportException
 import com.omnitech.chai.model.*
 import com.omnitech.chai.util.ModelFunctions
+import com.omnitech.chai.util.PageUtils
 import com.omnitech.chai.util.ReflectFunctions
 import fuzzycsv.FuzzyCSV
 import fuzzycsv.Record
@@ -47,6 +48,7 @@ class CustomerService {
                     .node('sc').in(CUST_IN_SC).node(customer))
         }
         def q = startQuery().returns(distinct(identifier(customer)))
+        PageUtils.addPagination(q, params, Customer)
         def cq = startQuery().returns(count(distinct(identifier(customer))))
         ModelFunctions.query(neo, q, cq, params, Customer)
     }

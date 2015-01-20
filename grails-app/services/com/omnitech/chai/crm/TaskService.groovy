@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.data.neo4j.transaction.Neo4jTransactional
+import org.springframework.security.access.AccessDeniedException
 
 import static com.omnitech.chai.model.Relations.*
 import static grails.util.GrailsNameUtils.getNaturalName
@@ -82,8 +83,8 @@ class TaskService {
 
         def user = params.user ? userRepository.findByUsername(params.user) : null
 
-        if (!isAllowedToViewUserTasks(user)) {
-            user = null
+        if (user && !isAllowedToViewUserTasks(user)) {
+            throw new AccessDeniedException('You Cannot View This Users Tasks')
         }
 
         String status = params.status
@@ -109,7 +110,7 @@ class TaskService {
         }
 
         if (currentUser.hasRole(Role.DETAILER_ROLE_NAME)) {
-            return userService.listUsersForUser(currentUser.id, Role.DETAILING_SUPERVISOR_ROLE_NAME).any {
+            return userService.listUsersForUser(currentUser.id, Role.DETAILER_ROLE_NAME).any {
                 otherUser.id == it.id
             }
         }
