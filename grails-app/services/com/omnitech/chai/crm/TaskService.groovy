@@ -7,7 +7,6 @@ import com.omnitech.chai.util.PageUtils
 import com.omnitech.chai.util.ReflectFunctions
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.data.neo4j.transaction.Neo4jTransactional
 
@@ -54,14 +53,13 @@ class TaskService {
             params.sort = 'dueDate'
         }
 
-        Page<T> page = null
+        Page<T> page
 
         def user = params.user ? userRepository.findByUsername(params.user) : null
         if (user) {
             def status = params.status ?: Task.STATUS_NEW
             params.status = status
-            def tasks = findAllTasksForUser(user.id, status, params, taskType)
-            page = new PageImpl<T>(tasks)
+            page = findAllTasksForUser(user.id, status, params, taskType)
         } else {
             if (params.status) {
                 page = listTasksByStatus(params.status as String, params, taskType)
@@ -75,26 +73,20 @@ class TaskService {
         return page as Page<T>
     }
 
-    def <T extends Task> Page<T> loadPageData(Integer max, Map params, Class<T> taskType, Long userId) {
+    def <T extends Task> Page<T> loadSuperVisorUserData(Integer max, Map params, Class<T> taskType, Long supervisorUserId) {
         params.max = Math.min(max ?: 50, 100)
         if (!params.sort) {
             params.sort = 'dueDate'
         }
 
-        Page<T> page = null
-
         def user = params.user ? userRepository.findByUsername(params.user) : null
+        String status = params.status
+
+        Page<T> page
         if (user) {
-            def status = params.status ?: Task.STATUS_NEW
-            params.status = status
-            def tasks = findAllTasksForUser(user.id, status, params, taskType)
-            page = new PageImpl<T>(tasks)
+            page = findAllTasksForUser(user.id, status, params, taskType)
         } else {
-            if (params.status) {
-                page = listTasksByStatus(params.status as String, params, taskType)
-            } else {
-                page = listTasks(taskType, params)
-            }
+            page = findAllTasksForUser(supervisorUserId, status, params, taskType)
         }
 
         page.content.each { neo.fetch(it.territoryUser()) }
@@ -124,11 +116,13 @@ class TaskService {
 
     DetailerTask findDetailerTask(Long id) { neo.findOne(id, DetailerTask) }
 
-    def <T extends Task> List<T> findAllTasksForUser(Long userId, String status, Map params, Class<T> taskType) {
-        def query = TaskQuery.userTasksQuery(userId,status, taskType)
+    //todo add optimisation to remove count
+    def <T extends Task> Page<T> findAllTasksForUser(Long userId, String status, Map params, Class<T> taskType) {
+        def query = TaskQuery.userTasksQuery(userId, status, taskType)
+        def countQuery = TaskQuery.userTasksCountQuery(userId, status, taskType)
         query = PageUtils.addPagination(query, params, taskType)
         log.trace("Tasks for user: [$query]")
-        taskRepository.query(query, [:]).collect()
+        ModelFunctions.query(neo, query, countQuery, params, taskType)
     }
 
     void updateTaskDate(Long taskId, Date date) {

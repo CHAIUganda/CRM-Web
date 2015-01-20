@@ -44,7 +44,7 @@ class DetailerTaskController {
         if (user.hasRole(Role.ADMIN_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME)) {
             page = taskService.loadPageData(max, params, DetailerTask)
         } else {
-            page = taskService.loadPageData(max, params, DetailerTask)
+            page = taskService.loadSuperVisorUserData(max, params, DetailerTask,user.id)
         }
         render(view: '/task/index', model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: userService.listAllUsers([:])])
     }
