@@ -1,9 +1,6 @@
 package com.omnitech.chai
 
-import com.omnitech.chai.model.DetailerTask
-import com.omnitech.chai.model.Order
-import com.omnitech.chai.model.Sale
-import com.omnitech.chai.model.Task
+import com.omnitech.chai.model.*
 import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.ReflectFunctions
 import com.omnitech.chai.util.ServletUtil
@@ -11,7 +8,6 @@ import fuzzycsv.FuzzyCSV
 import grails.converters.JSON
 import grails.transaction.Transactional
 import grails.util.GrailsNameUtils
-import org.neo4j.cypher.internal.compiler.v2_1.renderAsTree
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
@@ -34,15 +30,22 @@ class DetailerTaskController {
     def regionService
     def customerService
     def txHelperService
+    def neoSecurityService
     @Autowired
     Neo4jTemplate neo
 
     def index(Integer max) {
+        def user = neoSecurityService.currentUser
         if (params.remove('ui') == 'map') {
             redirect(action: 'map', params: params)
             return
         }
-        Page<Task> page = taskService.loadPageData(max, params, DetailerTask)
+        Page<Task> page
+        if (user.hasRole(Role.ADMIN_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME)) {
+            page = taskService.loadPageData(max, params, DetailerTask)
+        } else {
+            page = taskService.loadPageData(max, params, DetailerTask)
+        }
         render(view: '/task/index', model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: userService.listAllUsers([:])])
     }
 

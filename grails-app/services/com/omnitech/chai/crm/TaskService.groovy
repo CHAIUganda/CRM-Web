@@ -1,10 +1,10 @@
 package com.omnitech.chai.crm
 
 import com.omnitech.chai.model.*
+import com.omnitech.chai.queries.TaskQuery
 import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.PageUtils
 import com.omnitech.chai.util.ReflectFunctions
-import org.neo4j.cypherdsl.grammar.Match
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
@@ -75,6 +75,33 @@ class TaskService {
         return page as Page<T>
     }
 
+    def <T extends Task> Page<T> loadPageData(Integer max, Map params, Class<T> taskType, Long userId) {
+        params.max = Math.min(max ?: 50, 100)
+        if (!params.sort) {
+            params.sort = 'dueDate'
+        }
+
+        Page<T> page = null
+
+        def user = params.user ? userRepository.findByUsername(params.user) : null
+        if (user) {
+            def status = params.status ?: Task.STATUS_NEW
+            params.status = status
+            def tasks = findAllTasksForUser(user.id, status, params, taskType)
+            page = new PageImpl<T>(tasks)
+        } else {
+            if (params.status) {
+                page = listTasksByStatus(params.status as String, params, taskType)
+            } else {
+                page = listTasks(taskType, params)
+            }
+        }
+
+        page.content.each { neo.fetch(it.territoryUser()) }
+
+        return page as Page<T>
+    }
+
     private static getTaskQuery(String status, Class<? extends Task> taskType) {
         def query = match(node('task').label(taskType.simpleName))
                 .where(identifier('task').string('status').eq(status))
@@ -98,16 +125,8 @@ class TaskService {
     DetailerTask findDetailerTask(Long id) { neo.findOne(id, DetailerTask) }
 
     def <T extends Task> List<T> findAllTasksForUser(Long userId, String status, Map params, Class<T> taskType) {
-        def task = 'task'
-        def query = mathQueryForUserTasks(userId, taskType)
-                .where(
-                identifier(task).property('status').eq(status)
-                        .and(node('u').out(ASSIGNED_TASK).node(task)
-                        .or(not(node(task).in(ASSIGNED_TASK).node())
-                ))).returns(distinct(identifier(task)))
-
-        query = PageUtils.addPagination(query, params, Task)
-
+        def query = TaskQuery.userTasksQuery(userId,status, taskType)
+        query = PageUtils.addPagination(query, params, taskType)
         log.trace("Tasks for user: [$query]")
         taskRepository.query(query, [:]).collect()
     }
@@ -120,7 +139,7 @@ class TaskService {
 
     List<Map> exportTasksForUser(Long userId) {
         def task = 'task'
-        def query = mathQueryForUserTasks(userId, Task)
+        def query = TaskQuery.mathQueryForUserTasks(userId, Task)
                 .match(node('sc').in(HAS_SUB_COUNTY).node('d')).optional()
                 .match(node('c').out(CUST_IN_VILLAGE).node('v')).optional()
                 .match(node('c').out(CUST_IN_PARISH).node('p')).optional()
@@ -171,16 +190,6 @@ class TaskService {
         log.trace("exportAllTasks(): [$query]")
 
         neo.query(query.toString(), [:]).collect()
-    }
-
-
-    def <T extends Task> Match mathQueryForUserTasks(Long userId, Class<T> taskType) {
-        start(nodesById('u', userId))
-                .match(node('u').out(USER_TERRITORY).node('ut')
-                .in(SC_IN_TERRITORY).node('sc')
-                .in(CUST_IN_SC).node('c')
-                .out(CUST_TASK).node('task').label(taskType.simpleName))
-
     }
 
     def autoGenerateTasks() {
@@ -244,7 +253,7 @@ class TaskService {
         saveTask(neoTask)
     }
 
-    void generateSalesTasks(Territory territory){
+    void generateSalesTasks(Territory territory) {
         customerRepository.findByTerritory(territory.id).each {
             def newTask = new Order(customer: it, dueDate: new Date())
             if (newTask) taskRepository.save(newTask)
