@@ -15,6 +15,7 @@ class RequestMapController {
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
     def userService
+    def neoSecurityService
 
     def index() {
         def maps = userService.listAllRequestMaps()
@@ -53,6 +54,7 @@ class RequestMapController {
         }
 
         userService.saveRequestMap requestMapInstance
+        neoSecurityService.clearCachedRequestmaps()
 
         request.withFormat {
             form {
@@ -86,6 +88,7 @@ class RequestMapController {
         }
 
         userService.saveRequestMap requestMapInstance
+        neoSecurityService.clearCachedRequestmaps()
 
         request.withFormat {
             form {
