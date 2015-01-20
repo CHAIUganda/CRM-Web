@@ -14,6 +14,10 @@ import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.data.neo4j.transaction.Neo4jTransactional
 
+import static com.omnitech.chai.model.Relations.SUPERVISES_TERRITORY
+import static com.omnitech.chai.model.Relations.USER_TERRITORY
+import static org.neo4j.cypherdsl.CypherQuery.*
+
 /**
  * UserService
  * A service class encapsulates the core business logic of a Grails application
@@ -31,7 +35,18 @@ class UserService {
     Neo4jTemplate neo
 
     Page<User> list(Map params) {
-        ModelFunctions.listAll(neo,User, params,User)
+        ModelFunctions.listAll(neo, User, params, User)
+    }
+
+    Page<User> listUsersForUser(Long supervisorId, Map params) {
+        def _query = {
+            start(nodesById('sup', supervisorId))
+                    .match(node('sup').out(SUPERVISES_TERRITORY).node('tr').in(USER_TERRITORY).node('u'))
+        }
+        def q = _query().returns(distinct(identifier('u')))
+        def cq = _query().returns(count(distinct(identifier('u'))))
+
+        ModelFunctions.query(neo,q,cq,params,User)
     }
 
     List<User> listAllUsers(Map params) { userRepository.findAll().collect() }
@@ -139,11 +154,11 @@ class UserService {
         userRepository.save(neoUser)
     }
 
-    User mapUserToTerritories(Long userId, List territoryIds){
+    User mapUserToTerritories(Long userId, List territoryIds) {
 
         def user = findUser(userId)
 
-        def territories =  territoryIds.collect{territoryRepository.findOne(it as Long)}
+        def territories = territoryIds.collect { territoryRepository.findOne(it as Long) }
 
         //first delete old references
         territories.each {

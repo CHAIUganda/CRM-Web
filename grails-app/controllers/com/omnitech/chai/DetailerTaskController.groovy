@@ -46,7 +46,7 @@ class DetailerTaskController {
         } else {
             page = taskService.loadSuperVisorUserData(max, params, DetailerTask,user.id)
         }
-        render(view: '/task/index', model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: userService.listAllUsers([:])])
+        render(view: '/task/index', model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: userService.listUsersForUser(user.id,[max:2000])])
     }
 
     def indexSales(Integer max) {

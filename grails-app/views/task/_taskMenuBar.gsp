@@ -54,12 +54,6 @@
                                     <i class="glyphicon glyphicon-list"></i>Complete
                                 </g:link>
                             </li>
-                            <li>
-                                <g:link action="index" params="${[user: params.user]}">
-                                    <i class="glyphicon glyphicon-list"></i>All
-                                </g:link>
-                            </li>
-
                         </g:if>
                         <g:else>
                             <li>
@@ -69,11 +63,6 @@
                             <li>
                                 <g:link action="index" params="${[status: Task.STATUS_COMPLETE]}">
                                     <i class="glyphicon glyphicon-list"></i>Complete
-                                </g:link>
-                            </li>
-                            <li>
-                                <g:link action="index">
-                                    <i class="glyphicon glyphicon-list"></i>All
                                 </g:link>
                             </li>
                         </g:else>
