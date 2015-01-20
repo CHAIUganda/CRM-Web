@@ -24,7 +24,8 @@
                               title="${message(code: 'task.description.label', default: 'Description')}"/>
 
             <g:if test="${params.controller == 'call'}">
-                <th>Origin</th>
+                <g:sortableColumn property="dateCreated" params="${params}"
+                                  title="${message(code: 'task.dateCreated.label', default: 'Date Created')}"/>
             </g:if>
 
             <g:if test="${params.status == Task.STATUS_COMPLETE || params.controller == 'sale'}">
@@ -42,18 +43,25 @@
             <th>Customer</th>
             <th>Assigned User</th>
 
-            <th>Action</th>
+            %{--<th>Action</th>--}%
         </tr>
         </thead>
         <tbody>
         <g:each in="${taskInstanceList}" status="i" var="taskInstance">
             <tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
 
-                <td><g:link action="show"
-                            id="${taskInstance.id}">${fieldValue(bean: taskInstance, field: "description")}</g:link></td>
+                <td>
+
+                    <g:link action="show" id="${taskInstance.id}">
+                      <g:if test="${taskInstance?.takenBy}">
+                          <i class="glyphicon glyphicon-star"></i>
+                      </g:if>
+                        ${fieldValue(bean: taskInstance, field: "description")}
+                    </g:link>
+                </td>
 
                 <g:if test="${params.controller == 'call'}">
-                    <td>${taskInstance?.takenBy ?: 'system'}</td>
+                    <td><g:formatDate date="${taskInstance.dateCreated}" format="dd-MMM-yyyy"/></td>
                 </g:if>
 
                 <td>
@@ -75,10 +83,10 @@
 
                 <td>${taskInstance.territoryUser()}</td>
 
-                <td>
-                    <g:link action="edit" id="${taskInstance.id}" title="Edit/Schedule"><i
-                            class="glyphicon glyphicon-calendar"></i></g:link>
-                </td>
+                %{--<td>--}%
+                %{--<g:link action="edit" id="${taskInstance.id}" title="Edit/Schedule"><i--}%
+                %{--class="glyphicon glyphicon-calendar"></i></g:link>--}%
+                %{--</td>--}%
             </tr>
         </g:each>
         </tbody>
