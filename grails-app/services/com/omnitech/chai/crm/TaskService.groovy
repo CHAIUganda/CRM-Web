@@ -62,7 +62,7 @@ class TaskService {
         if (user) {
             def status = params.status ?: Task.STATUS_NEW
             params.status = status
-            page = findAllTasksForUser(user.id, status, params, taskType)
+            page = findAllTasksForUser(user.id, status, params, taskType, null)
         } else {
             if (params.status) {
                 page = listTasksByStatus(params.status as String, params, taskType)
@@ -76,7 +76,7 @@ class TaskService {
         return page as Page<T>
     }
 
-    def <T extends Task> Page<T> loadSuperVisorUserData(Integer max, Map params, Class<T> taskType, Long supervisorUserId) {
+    def <T extends Task> Page<T> loadSuperVisorUserData(Integer max, Map params, Class<T> taskType, Long supervisorUserId, String filter) {
         params.max = Math.min(max ?: 50, 100)
         if (!params.sort) {
             params.sort = 'dueDate'
@@ -92,9 +92,9 @@ class TaskService {
 
         Page<T> page
         if (user) {
-            page = findAllTasksForUser(user.id, status, params, taskType)
+            page = findAllTasksForUser(user.id, status, params, taskType, filter)
         } else {
-            page = findAllTasksForUser(supervisorUserId, status, params, taskType)
+            page = findAllTasksForUser(supervisorUserId, status, params, taskType, filter)
         }
 
         page.content.each { neo.fetch(it.territoryUser()) }
@@ -110,20 +110,20 @@ class TaskService {
      * @param max
      * @return
      */
-    def List loadPageDataForUser(User user, Class taskType, Map params, Integer max) {
+    def List loadPageDataForUser(User user, Class taskType, Map params, Integer max, String filter) {
 
-        def roleNeeded = taskType ==  DetailerTask ? Role.DETAILER_ROLE_NAME : Role.SALES_ROLE_NAME
+        def roleNeeded = taskType == DetailerTask ? Role.DETAILER_ROLE_NAME : Role.SALES_ROLE_NAME
         Page page
         def users
         if (user.hasRole(Role.ADMIN_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME)) {
             page = loadPageData(max, params, taskType)
             users = userService.listUsersByRole(roleNeeded)
         } else {
-            page = loadSuperVisorUserData(max, params, taskType, user.id)
-            users = userService.listUsersForUser(user.id, roleNeeded)
+            page = loadSuperVisorUserData(max, params, taskType, user.id, filter)
+            users = userService.listUsersSupervisedBy(user.id, roleNeeded)
         }
 
-        return [page,users]
+        return [page, users]
     }
 
     //todo optimise this with query
@@ -135,13 +135,13 @@ class TaskService {
         }
 
         if (currentUser.hasRole(Role.DETAILING_SUPERVISOR_ROLE_NAME)) {
-            return userService.listUsersForUser(currentUser.id, Role.DETAILER_ROLE_NAME).any {
+            return userService.listUsersSupervisedBy(currentUser.id, Role.DETAILER_ROLE_NAME).any {
                 otherUser.id == it.id
             }
         }
 
         if (currentUser.hasRole(Role.SALES_SUPERVISOR_ROLE_NAME)) {
-            return userService.listUsersForUser(currentUser.id, Role.SALES_ROLE_NAME).any {
+            return userService.listUsersSupervisedBy(currentUser.id, Role.SALES_ROLE_NAME).any {
                 otherUser.id == it.id
             }
         }
@@ -174,9 +174,9 @@ class TaskService {
     DetailerTask findDetailerTask(Long id) { neo.findOne(id, DetailerTask) }
 
     //todo add option to remove count
-    def <T extends Task> Page<T> findAllTasksForUser(Long userId, String status, Map params, Class<T> taskType) {
-        def query = TaskQuery.userTasksQuery(userId, status, taskType)
-        def countQuery = TaskQuery.userTasksCountQuery(userId, status, taskType)
+    def <T extends Task> Page<T> findAllTasksForUser(Long userId, String status, Map params, Class<T> taskType, String filter) {
+        def query = TaskQuery.userTasksQuery(userId, status, taskType, filter)
+        def countQuery = TaskQuery.userTasksCountQuery(userId, status, taskType, filter)
         query = PageUtils.addSorting(query, params, taskType)
         log.trace("Tasks for user: [$query]")
 

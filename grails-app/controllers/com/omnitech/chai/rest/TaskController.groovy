@@ -41,7 +41,7 @@ class TaskController {
             return
         }
 
-        def tasks = taskService.findAllTasksForUser(user.id, Task.STATUS_NEW, params, taskType).content
+        def tasks = taskService.findAllTasksForUser(user.id, Task.STATUS_NEW, params, taskType, null).content
         def taskMaps = tasks.collect {
             def map = ReflectFunctions.extractProperties(it)
             map['customerId'] = it.customer.id

@@ -37,7 +37,7 @@ class UserService {
         ModelFunctions.listAll(neo, User, params, User)
     }
 
-    Page<User> listUsersForUser(Long supervisorId, String role, Map params = [max: 2000]) {
+    Page<User> listUsersSupervisedBy(Long supervisorId, String role, Map params = [max: 2000]) {
         def _query = {
             start(nodesById('sup', supervisorId))
                     .match(node('sup').out(SUPERVISES_TERRITORY)

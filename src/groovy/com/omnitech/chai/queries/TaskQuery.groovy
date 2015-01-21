@@ -1,6 +1,7 @@
 package com.omnitech.chai.queries
 
 import com.omnitech.chai.model.Task
+import groovy.transform.CompileStatic
 import org.neo4j.cypherdsl.grammar.Match
 import org.neo4j.cypherdsl.grammar.ReturnNext
 import org.slf4j.LoggerFactory
@@ -11,28 +12,45 @@ import static org.neo4j.cypherdsl.CypherQuery.*
 /**
  * Created by kay on 11/12/14.
  */
+//@CompileStatic
 class TaskQuery {
 
     private static def log = LoggerFactory.getLogger(TaskQuery)
 
-    static ReturnNext userTasksQuery(Long userId, String status, Class taskType) {
+    static ReturnNext userTasksQuery(Long userId, String status, Class taskType, String filter) {
         def task = taskType.simpleName.toLowerCase()
-        def query = _userTasksQuery(userId, status, taskType).returns(distinct(identifier(task)))
+        def query = _userTasksQuery(userId, status, taskType, filter).returns(distinct(identifier(task)))
         return query
     }
 
-    static ReturnNext userTasksCountQuery(Long userId, String status, Class taskType) {
+    static ReturnNext userTasksCountQuery(Long userId, String status, Class taskType, String filter) {
         def task = taskType.simpleName.toLowerCase()
-        def query = _userTasksQuery(userId, status, taskType)
+        def query = _userTasksQuery(userId, status, taskType, filter)
                 .returns(count(distinct(identifier(task))))
         return query
     }
 
-    private static Match _userTasksQuery(Long userId, String status, Class taskType) {
+    private static Match _userTasksQuery(Long userId, String status, Class taskType, String search) {
         def task = taskType.simpleName.toLowerCase()
         def query = mathQueryForUserTasks(userId, taskType)
+
+        def searchFilter = {
+            identifier(task).string('description').regexp(search)
+                    .or(identifier('customer').string('outletName').regexp(search))
+                    .or(identifier('customer').string('tradingCenter').regexp(search))
+        }
+
         if (status) {
-            query.where(identifier(task).property('status').eq(status))
+
+            def statusFilter = identifier(task).property('status').eq(status)
+
+            if (search) {
+               statusFilter = statusFilter.and(searchFilter())
+            }
+
+            query.where(statusFilter)
+        } else if (search) {
+            query.where(searchFilter())
         }
         return query
     }
@@ -42,11 +60,10 @@ class TaskQuery {
         start(nodesById('u', userId))
                 .match(node('u').out(USER_TERRITORY, SUPERVISES_TERRITORY).node('ut')
                 .in(SC_IN_TERRITORY).node('sc')
-                .in(CUST_IN_SC).node('c')
+                .in(CUST_IN_SC).node('customer')
                 .out(CUST_TASK).node(varName).label(taskType.simpleName))
 
     }
-
 
 
 }

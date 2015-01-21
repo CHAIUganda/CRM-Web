@@ -40,14 +40,14 @@ class DetailerTaskController {
             redirect(action: 'map', params: params)
             return
         }
-        def (page, users) = taskService.loadPageDataForUser(user, DetailerTask, params, max)
+        def (page, users) = taskService.loadPageDataForUser(user, DetailerTask, params, max,null)
         render(view: '/task/index', model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: users])
     }
 
     def map(Integer max) {
 
         def user = neoSecurityService.currentUser
-        def (page, users) = taskService.loadPageDataForUser(user, DetailerTask, params, max)
+        def (page, users) = taskService.loadPageDataForUser(user, DetailerTask, params, max,null)
         def mapData = page.content.collect { Task task ->
             return taskToJsonMap(task)
         } as JSON
@@ -73,6 +73,7 @@ class DetailerTaskController {
     }
 
     def search(Integer max) {
+        def user = neoSecurityService.currentUser
         params.max = Math.min(max ?: 50, 100)
         if (params.term) {
             redirect(action: 'search', id: params.term)
@@ -84,11 +85,9 @@ class DetailerTaskController {
             return
         }
 
-        def page = taskService.searchTasks(params.id, params)
-        txHelperService.doInTransaction {
-            page.content.each { neo.fetch(it.territoryUser()) }
-        }
-        respond page.content, view: '/task/index', model: [taskInstanceCount: page.totalElements, users: userService.listAllUsers([:])]
+        def searchTerm = ModelFunctions.getWildCardRegex(params.id as String)
+        def (page, users) = taskService.loadPageDataForUser(user, DetailerTask, params, max,searchTerm)
+        render  view: '/task/index', model: [taskInstanceList: page, taskInstanceCount: page.totalElements, users: users]
     }
 
     def searchMap(Integer max) {
