@@ -1,15 +1,12 @@
 package com.omnitech.chai
 
 import com.omnitech.chai.model.DetailerTask
-import com.omnitech.chai.model.Order
-import com.omnitech.chai.model.Role
 import com.omnitech.chai.model.Sale
 import com.omnitech.chai.model.Task
 import com.omnitech.chai.util.ReflectFunctions
 import grails.converters.JSON
 import grails.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.security.access.AccessDeniedException
 
@@ -40,7 +37,7 @@ class SaleController {
             redirect(action: 'map', params: params)
             return
         }
-       def (page, users) = taskService.loadPageDataForUser(user, Sale, params, max)
+        def (page, users) = taskService.loadPageDataForUser(user, Sale, params, max)
         render(view: '/call/index', model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: users])
     }
 

@@ -1,8 +1,6 @@
 package com.omnitech.chai
 
 import com.omnitech.chai.model.DetailerTask
-import com.omnitech.chai.model.Order
-import com.omnitech.chai.model.Sale
 import com.omnitech.chai.model.Task
 import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.ReflectFunctions
@@ -12,7 +10,6 @@ import grails.converters.JSON
 import grails.transaction.Transactional
 import grails.util.GrailsNameUtils
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.security.access.AccessDeniedException
 
@@ -155,13 +152,6 @@ class DetailerTaskController {
 
     def handleException(AccessDeniedException ex) {
         render view: '/login/denied', status: FORBIDDEN
-    }
-
-    private Class<Task> resolveType() {
-        if (params.lType == 'Sales') {
-            return Sale
-        }
-        return Order
     }
 
     protected void notFound() {

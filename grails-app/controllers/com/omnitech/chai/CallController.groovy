@@ -1,6 +1,9 @@
 package com.omnitech.chai
 
-import com.omnitech.chai.model.*
+import com.omnitech.chai.model.DetailerTask
+import com.omnitech.chai.model.LineItem
+import com.omnitech.chai.model.Order
+import com.omnitech.chai.model.Task
 import com.omnitech.chai.util.ChaiUtils
 import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.ReflectFunctions
@@ -9,7 +12,6 @@ import fuzzycsv.FuzzyCSV
 import grails.converters.JSON
 import grails.util.GrailsNameUtils
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.security.access.AccessDeniedException
 
@@ -44,15 +46,6 @@ class CallController {
         }
         def (page, users) = taskService.loadPageDataForUser(user, Order, params, max)
         [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: users]
-    }
-
-    def indexSales(Integer max) {
-        if (params.remove('ui') == 'map') {
-            redirect(action: 'map', params: params)
-            return
-        }
-        Page<Task> page = taskService.loadPageData(max, params, resolveType())
-        [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: userService.listAllUsers([:])]
     }
 
     def map(Integer max) {
@@ -237,14 +230,6 @@ class CallController {
             '*' { render status: NO_CONTENT }
         }
     }
-
-    private Class<Task> resolveType() {
-        if (params.lType == 'Sales') {
-            return Sale
-        }
-        return Order
-    }
-
 
     def handleException(AccessDeniedException ex) {
         render view: '/login/denied', status: FORBIDDEN
