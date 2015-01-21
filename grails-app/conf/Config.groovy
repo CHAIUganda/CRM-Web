@@ -175,6 +175,7 @@ grails.plugin.springsecurity.securityConfigType = 'Requestmap'
 grails.plugin.springsecurity.logout.postOnly = false
 grails.plugin.springsecurity.useBasicAuth = true
 grails.plugin.springsecurity.basic.realmName = "CHAI CRM"
+grails.plugin.springsecurity.adh.errorPage = null
 grails.plugin.springsecurity.filterChain.chainMap = [
         '/rest/**': 'JOINED_FILTERS,-exceptionTranslationFilter',
         '/**': 'JOINED_FILTERS,-basicAuthenticationFilter,-basicExceptionTranslationFilter'
