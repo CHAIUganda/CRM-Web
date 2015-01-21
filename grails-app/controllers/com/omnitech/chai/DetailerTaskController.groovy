@@ -47,22 +47,15 @@ class DetailerTaskController {
         render(view: '/task/index', model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: users])
     }
 
-    def indexSales(Integer max) {
-        if (params.remove('ui') == 'map') {
-            redirect(action: 'map', params: params)
-            return
-        }
-        Page<Task> page = taskService.loadPageData(max, params, resolveType())
-        [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: userService.listAllUsers([:])]
-    }
-
     def map(Integer max) {
-        def page = taskService.loadPageData(max, params, DetailerTask)
+
+        def user = neoSecurityService.currentUser
+        def (page, users) = taskService.loadPageDataForUser(user, DetailerTask, params, max)
         def mapData = page.content.collect { Task task ->
             return taskToJsonMap(task)
         } as JSON
         def jsonMapString = mapData.toString(true)
-        render(view: '/task/map', model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: userService.listAllUsers([:]), mapData: jsonMapString])
+        render(view: '/task/map', model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: users, mapData: jsonMapString])
     }
 
     def export() {
