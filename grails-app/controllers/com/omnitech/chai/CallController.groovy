@@ -7,7 +7,6 @@ import com.omnitech.chai.util.ReflectFunctions
 import com.omnitech.chai.util.ServletUtil
 import fuzzycsv.FuzzyCSV
 import grails.converters.JSON
-import grails.transaction.Transactional
 import grails.util.GrailsNameUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -43,12 +42,15 @@ class CallController {
             return
         }
         Page<Task> page
+        def users
         if (user.hasRole(Role.ADMIN_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME)) {
             page = taskService.loadPageData(max, params, Order)
+            users = userService.listUsersByRole(Role.SALES_ROLE_NAME)
         } else {
             page = taskService.loadSuperVisorUserData(max, params, Order, user.id)
+            users = userService.listUsersForUser(user.id, Role.SALES_ROLE_NAME)
         }
-        [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: userService.listUsersForUser(user.id, Role.SALES_ROLE_NAME)]
+        [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: users]
     }
 
     def indexSales(Integer max) {
@@ -220,7 +222,7 @@ class CallController {
             notFound(); return
         }
         def taskInstance = taskService.findOrder(id)
-        render  (view: 'create', model: [taskInstance: taskInstance])
+        render(view: 'create', model: [taskInstance: taskInstance])
     }
 
     def delete() {

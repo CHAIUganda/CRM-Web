@@ -139,6 +139,9 @@ interface UserRepository extends GraphRepository<User> {
     User findByUuid(String uuid)
 
     User findByUsername(String username)
+
+    @Query('match (u:User)-[:HAS_ROLE]-> (r {authority: {role}}) return u')
+    Iterable<User> listAllByRole (@Param('role') String role)
 }
 
 interface DeviceRepository extends GraphRepository<Device> {

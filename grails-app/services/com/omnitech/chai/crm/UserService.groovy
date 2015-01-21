@@ -50,6 +50,9 @@ class UserService {
 
         ModelFunctions.query(neo, q, cq, params, User)
     }
+    List<User> listUsersByRole(String role){
+        userRepository.listAllByRole(role).collect()
+    }
 
     List<User> listAllUsers(Map params) { userRepository.findAll().collect() }
 

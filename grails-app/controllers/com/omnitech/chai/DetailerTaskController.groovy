@@ -41,12 +41,15 @@ class DetailerTaskController {
             return
         }
         Page<Task> page
+        def users
         if (user.hasRole(Role.ADMIN_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME)) {
             page = taskService.loadPageData(max, params, DetailerTask)
+            users = userService.listUsersByRole(Role.DETAILER_ROLE_NAME)
         } else {
+            users = userService.listUsersForUser(user.id, Role.DETAILER_ROLE_NAME)
             page = taskService.loadSuperVisorUserData(max, params, DetailerTask, user.id)
         }
-        render(view: '/task/index', model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: userService.listUsersForUser(user.id, Role.DETAILER_ROLE_NAME)])
+        render(view: '/task/index', model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: users])
     }
 
     def indexSales(Integer max) {

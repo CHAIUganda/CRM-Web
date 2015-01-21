@@ -39,12 +39,16 @@ class SaleController {
             return
         }
         Page<Sale> page
+        def users
         if (user.hasRole(Role.ADMIN_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME)) {
             page = taskService.loadPageData(max, params, Sale)
+            users = userService.listUsersByRole(Role.SALES_ROLE_NAME)
+
         } else {
             page = taskService.loadSuperVisorUserData(max, params, Sale, user.id)
+            users = userService.listUsersForUser(user.id, Role.SALES_ROLE_NAME)
         }
-        render(view: '/call/index', model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: userService.listUsersForUser(user.id, Role.SALES_ROLE_NAME)])
+        render(view: '/call/index', model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: users])
     }
 
     def map(Integer max) {
