@@ -110,13 +110,13 @@ class TaskService {
             return true
         }
 
-        if (currentUser.hasRole(Role.DETAILER_ROLE_NAME)) {
+        if (currentUser.hasRole(Role.DETAILING_SUPERVISOR_ROLE_NAME)) {
             return userService.listUsersForUser(currentUser.id, Role.DETAILER_ROLE_NAME).any {
                 otherUser.id == it.id
             }
         }
 
-        if (currentUser.hasRole(Role.SALES_ROLE_NAME)) {
+        if (currentUser.hasRole(Role.SALES_SUPERVISOR_ROLE_NAME)) {
             return userService.listUsersForUser(currentUser.id, Role.SALES_ROLE_NAME).any {
                 otherUser.id == it.id
             }

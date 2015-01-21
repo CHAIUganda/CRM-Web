@@ -12,6 +12,7 @@ import grails.util.GrailsNameUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
+import org.springframework.security.access.AccessDeniedException
 
 import static com.omnitech.chai.util.ControllerUtils.taskToJsonMap
 import static com.omnitech.chai.util.ModelFunctions.extractId
@@ -246,6 +247,11 @@ class CallController {
             return Sale
         }
         return Order
+    }
+
+
+    def handleException(AccessDeniedException ex) {
+        render view: '/login/denied', status: FORBIDDEN
     }
 
     protected void notFound() {

@@ -10,6 +10,7 @@ import grails.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
+import org.springframework.security.access.AccessDeniedException
 
 import static com.omnitech.chai.util.ControllerUtils.taskToJsonMap
 import static com.omnitech.chai.util.ModelFunctions.extractId
@@ -118,6 +119,11 @@ class SaleController {
             neo.fetch(taskInstance.territoryUser())
         }
         respond taskInstance, model: [users: userService.listAllUsers(), customers: customerService.listAllCustomers()]
+    }
+
+
+    def handleException(AccessDeniedException ex) {
+        render view: '/login/denied', status: FORBIDDEN
     }
 
     @Transactional
