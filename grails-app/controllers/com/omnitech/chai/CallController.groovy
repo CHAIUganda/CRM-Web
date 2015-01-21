@@ -36,20 +36,13 @@ class CallController {
     Neo4jTemplate neo
 
     def index(Integer max) {
+
         def user = neoSecurityService.currentUser
         if (params.remove('ui') == 'map') {
             redirect(action: 'map', params: params)
             return
         }
-        Page<Task> page
-        def users
-        if (user.hasRole(Role.ADMIN_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME)) {
-            page = taskService.loadPageData(max, params, Order)
-            users = userService.listUsersByRole(Role.SALES_ROLE_NAME)
-        } else {
-            page = taskService.loadSuperVisorUserData(max, params, Order, user.id)
-            users = userService.listUsersForUser(user.id, Role.SALES_ROLE_NAME)
-        }
+        def (page, users) = taskService.loadPageDataForUser(user, Order, params, max)
         [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: users]
     }
 

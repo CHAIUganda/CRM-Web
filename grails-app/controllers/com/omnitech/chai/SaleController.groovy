@@ -1,6 +1,7 @@
 package com.omnitech.chai
 
 import com.omnitech.chai.model.DetailerTask
+import com.omnitech.chai.model.Order
 import com.omnitech.chai.model.Role
 import com.omnitech.chai.model.Sale
 import com.omnitech.chai.model.Task
@@ -39,16 +40,7 @@ class SaleController {
             redirect(action: 'map', params: params)
             return
         }
-        Page<Sale> page
-        def users
-        if (user.hasRole(Role.ADMIN_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME)) {
-            page = taskService.loadPageData(max, params, Sale)
-            users = userService.listUsersByRole(Role.SALES_ROLE_NAME)
-
-        } else {
-            page = taskService.loadSuperVisorUserData(max, params, Sale, user.id)
-            users = userService.listUsersForUser(user.id, Role.SALES_ROLE_NAME)
-        }
+       def (page, users) = taskService.loadPageDataForUser(user, Sale, params, max)
         render(view: '/call/index', model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: users])
     }
 

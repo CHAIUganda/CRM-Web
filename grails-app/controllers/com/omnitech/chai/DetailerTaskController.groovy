@@ -1,6 +1,9 @@
 package com.omnitech.chai
 
-import com.omnitech.chai.model.*
+import com.omnitech.chai.model.DetailerTask
+import com.omnitech.chai.model.Order
+import com.omnitech.chai.model.Sale
+import com.omnitech.chai.model.Task
 import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.ReflectFunctions
 import com.omnitech.chai.util.ServletUtil
@@ -40,15 +43,7 @@ class DetailerTaskController {
             redirect(action: 'map', params: params)
             return
         }
-        Page<Task> page
-        def users
-        if (user.hasRole(Role.ADMIN_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME)) {
-            page = taskService.loadPageData(max, params, DetailerTask)
-            users = userService.listUsersByRole(Role.DETAILER_ROLE_NAME)
-        } else {
-            users = userService.listUsersForUser(user.id, Role.DETAILER_ROLE_NAME)
-            page = taskService.loadSuperVisorUserData(max, params, DetailerTask, user.id)
-        }
+        def (page, users) = taskService.loadPageDataForUser(user, DetailerTask, params, max)
         render(view: '/task/index', model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: users])
     }
 

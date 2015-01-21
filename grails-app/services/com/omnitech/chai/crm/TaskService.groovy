@@ -47,7 +47,7 @@ class TaskService {
         log.trace("listTasksByStatus: countQuery: $countyQuery")
         log.trace("listTasksByStatus: dataQuery: $resultQuery")
 
-        taskRepository.query(resultQuery,countyQuery,EMPTY_MAP,PageUtils.create(params))
+        taskRepository.query(resultQuery, countyQuery, EMPTY_MAP, PageUtils.create(params))
     }
 
     def <T extends Task> Page<T> loadPageData(Integer max, Map params, Class<T> taskType) {
@@ -102,6 +102,30 @@ class TaskService {
         return page as Page<T>
     }
 
+    /**
+     * Used by task controllers to load page data
+     * @param user
+     * @param taskType
+     * @param params
+     * @param max
+     * @return
+     */
+    def List loadPageDataForUser(User user, Class taskType, Map params, Integer max) {
+
+        def roleNeeded = taskType ==  DetailerTask ? Role.DETAILER_ROLE_NAME : Role.SALES_ROLE_NAME
+        Page page
+        def users
+        if (user.hasRole(Role.ADMIN_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME)) {
+            page = loadPageData(max, params, taskType)
+            users = userService.listUsersByRole(roleNeeded)
+        } else {
+            page = loadSuperVisorUserData(max, params, taskType, user.id)
+            users = userService.listUsersForUser(user.id, roleNeeded)
+        }
+
+        return [page,users]
+    }
+
     //todo optimise this with query
     private boolean isAllowedToViewUserTasks(User otherUser) {
         def currentUser = neoSecurityService.currentUser
@@ -149,18 +173,14 @@ class TaskService {
 
     DetailerTask findDetailerTask(Long id) { neo.findOne(id, DetailerTask) }
 
-    //todo add optimisation to remove count
+    //todo add option to remove count
     def <T extends Task> Page<T> findAllTasksForUser(Long userId, String status, Map params, Class<T> taskType) {
         def query = TaskQuery.userTasksQuery(userId, status, taskType)
         def countQuery = TaskQuery.userTasksCountQuery(userId, status, taskType)
         query = PageUtils.addSorting(query, params, taskType)
         log.trace("Tasks for user: [$query]")
 
-        taskRepository.query(query,countQuery,EMPTY_MAP,PageUtils.create(params))
-//        if (taskType == Sale)
-//            ModelFunctions.query(neo, query, countQuery, params, Task)
-//        else
-//            ModelFunctions.query(neo, query, countQuery, params, taskType)
+        taskRepository.query(query, countQuery, EMPTY_MAP, PageUtils.create(params))
     }
 
     void updateTaskDate(Long taskId, Date date) {
