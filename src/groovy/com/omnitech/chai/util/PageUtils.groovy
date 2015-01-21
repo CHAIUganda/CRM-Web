@@ -48,6 +48,14 @@ class PageUtils {
     }
 
     static ReturnNext addPagination(ReturnNext next, Map param, Class returnClass) {
+        def pageParams = create(param)
+        addSorting(next, param, returnClass)
+                .skip(pageParams.offset)
+                .limit(pageParams.pageSize)
+        return next
+    }
+
+    static ReturnNext addSorting(ReturnNext next, Map param, Class returnClass) {
         def entityName = returnClass.simpleName.toLowerCase()
 
         def pageParams = create(param)
@@ -62,8 +70,6 @@ class PageUtils {
             direction = order.direction == Sort.Direction.ASC ? Order.ASCENDING : Order.DESCENDING
         }
         next.orderBy(order(identifier(entityName).property(sort ? sort : 'id'), direction))
-                .skip(pageParams.offset)
-                .limit(pageParams.pageSize)
         return next
     }
 

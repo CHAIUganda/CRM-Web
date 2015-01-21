@@ -1,6 +1,7 @@
 package com.omnitech.chai
 
 import com.omnitech.chai.model.DetailerTask
+import com.omnitech.chai.model.Role
 import com.omnitech.chai.model.Sale
 import com.omnitech.chai.model.Task
 import com.omnitech.chai.util.ReflectFunctions
@@ -22,21 +23,27 @@ class SaleController {
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
     def taskService
-    def productService
     def userService
     def regionService
     def customerService
     def txHelperService
+    def neoSecurityService
     @Autowired
     Neo4jTemplate neo
 
     def index(Integer max) {
+        def user = neoSecurityService.currentUser
         if (params.remove('ui') == 'map') {
             redirect(action: 'map', params: params)
             return
         }
-        Page<Sale> page = taskService.loadPageData(max, params, Sale)
-        render(view: '/call/index', model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: userService.listAllUsers([:])])
+        Page<Sale> page
+        if (user.hasRole(Role.ADMIN_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME)) {
+            page = taskService.loadPageData(max, params, Sale)
+        } else {
+            page = taskService.loadSuperVisorUserData(max, params, Sale, user.id)
+        }
+        render(view: '/call/index', model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: userService.listUsersForUser(user.id, Role.SALES_ROLE_NAME)])
     }
 
     def map(Integer max) {

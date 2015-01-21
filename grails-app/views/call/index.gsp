@@ -53,7 +53,7 @@
                 <td>
 
                     <g:link action="show" id="${taskInstance.id}">
-                      <g:if test="${taskInstance?.takenBy}">
+                      <g:if test="${taskInstance?.respondsTo('takenBy') && taskInstance?.takenBy  }">
                           <i class="glyphicon glyphicon-star"></i>
                       </g:if>
                         ${fieldValue(bean: taskInstance, field: "description")}

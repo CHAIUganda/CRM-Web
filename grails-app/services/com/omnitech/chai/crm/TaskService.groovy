@@ -13,6 +13,7 @@ import org.springframework.security.access.AccessDeniedException
 
 import static com.omnitech.chai.model.Relations.*
 import static grails.util.GrailsNameUtils.getNaturalName
+import static java.util.Collections.EMPTY_MAP
 import static org.neo4j.cypherdsl.CypherQuery.*
 import static org.neo4j.cypherdsl.CypherQuery.as as az
 
@@ -40,13 +41,13 @@ class TaskService {
     def <T extends Task> Page<T> listTasksByStatus(String status, Map params, Class<T> taskType) {
 
         def resultQuery = getTaskQuery(status, taskType).returns(identifier('task'))
-        PageUtils.addPagination(resultQuery, params, Task)
+        PageUtils.addSorting(resultQuery, params, Task)
 
         def countyQuery = getTaskQuery(status, taskType).returns(count(identifier('task')))
         log.trace("listTasksByStatus: countQuery: $countyQuery")
         log.trace("listTasksByStatus: dataQuery: $resultQuery")
 
-        ModelFunctions.query(neo, resultQuery, countyQuery, params, Task)
+        taskRepository.query(resultQuery,countyQuery,EMPTY_MAP,PageUtils.create(params))
     }
 
     def <T extends Task> Page<T> loadPageData(Integer max, Map params, Class<T> taskType) {
@@ -105,7 +106,7 @@ class TaskService {
     private boolean isAllowedToViewUserTasks(User otherUser) {
         def currentUser = neoSecurityService.currentUser
 
-        if(currentUser.hasRole(Role.SUPER_ADMIN_ROLE_NAME,Role.ADMIN_ROLE_NAME)){
+        if (currentUser.hasRole(Role.SUPER_ADMIN_ROLE_NAME, Role.ADMIN_ROLE_NAME)) {
             return true
         }
 
@@ -152,9 +153,14 @@ class TaskService {
     def <T extends Task> Page<T> findAllTasksForUser(Long userId, String status, Map params, Class<T> taskType) {
         def query = TaskQuery.userTasksQuery(userId, status, taskType)
         def countQuery = TaskQuery.userTasksCountQuery(userId, status, taskType)
-        query = PageUtils.addPagination(query, params, taskType)
+        query = PageUtils.addSorting(query, params, taskType)
         log.trace("Tasks for user: [$query]")
-        ModelFunctions.query(neo, query, countQuery, params, taskType)
+
+        taskRepository.query(query,countQuery,EMPTY_MAP,PageUtils.create(params))
+//        if (taskType == Sale)
+//            ModelFunctions.query(neo, query, countQuery, params, Task)
+//        else
+//            ModelFunctions.query(neo, query, countQuery, params, taskType)
     }
 
     void updateTaskDate(Long taskId, Date date) {
