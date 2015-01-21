@@ -34,6 +34,7 @@ class SaleController {
 
     def index(Integer max) {
         def user = neoSecurityService.currentUser
+        params.status = Task.STATUS_COMPLETE
         if (params.remove('ui') == 'map') {
             redirect(action: 'map', params: params)
             return
