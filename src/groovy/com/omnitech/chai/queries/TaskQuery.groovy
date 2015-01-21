@@ -1,7 +1,6 @@
 package com.omnitech.chai.queries
 
 import com.omnitech.chai.model.Task
-import groovy.transform.CompileStatic
 import org.neo4j.cypherdsl.grammar.Match
 import org.neo4j.cypherdsl.grammar.ReturnNext
 import org.slf4j.LoggerFactory
@@ -45,7 +44,7 @@ class TaskQuery {
             def statusFilter = identifier(task).property('status').eq(status)
 
             if (search) {
-               statusFilter = statusFilter.and(searchFilter())
+                statusFilter = statusFilter.and(searchFilter())
             }
 
             query.where(statusFilter)
