@@ -101,7 +101,7 @@ class CallController {
         def (page, users) = taskService.loadPageDataForUser(user, Order, params, max, ModelFunctions.getWildCardRegex(params.id as String))
         def mapData = page.content.collect {  taskToJsonMap(it) } as JSON
         def jsonMapString = mapData.toString(true)
-        respond page.content, view: 'map', model: [taskInstanceCount: page.totalElements, users: users, mapData: jsonMapString]
+        respond page.content, view: '/task/map', model: [taskInstanceCount: page.totalElements, users: users, mapData: jsonMapString]
     }
 
     def show() {

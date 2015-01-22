@@ -3,7 +3,7 @@ package com.omnitech.chai
 import com.omnitech.chai.model.DetailerTask
 import com.omnitech.chai.model.Sale
 import com.omnitech.chai.model.Task
-import com.omnitech.chai.util.ReflectFunctions
+import com.omnitech.chai.util.ModelFunctions
 import grails.converters.JSON
 import grails.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
@@ -37,13 +37,13 @@ class SaleController {
             redirect(action: 'map', params: params)
             return
         }
-        def (page, users) = taskService.loadPageDataForUser(user, Sale, params, max)
+        def (page, users) = taskService.loadPageDataForUser(user, Sale, params, max, null)
         render(view: '/call/index', model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: users])
     }
 
     def map(Integer max) {
         def user = neoSecurityService.currentUser
-        def (page, users) = taskService.loadPageDataForUser(user, Sale, params, max)
+        def (page, users) = taskService.loadPageDataForUser(user, Sale, params, max, null)
         def mapData = page.content.collect { Task task ->
             return taskToJsonMap(task)
         } as JSON
@@ -56,6 +56,7 @@ class SaleController {
     }
 
     def search(Integer max) {
+        def user = neoSecurityService.currentUser
         params.max = Math.min(max ?: 50, 100)
         if (params.term) {
             redirect(action: 'search', id: params.term)
@@ -67,22 +68,17 @@ class SaleController {
             return
         }
 
-        def page = taskService.searchTasks(params.id, params)
-        txHelperService.doInTransaction {
-            page.content.each { neo.fetch(it.territoryUser()) }
-        }
-        respond page.content, view: 'index', model: [taskInstanceCount: page.totalElements, users: userService.listAllUsers([:])]
+        def (page, users) = taskService.loadPageDataForUser(user, Sale, params, max, ModelFunctions.getWildCardRegex(params.id as String))
+        render view: '/call/index', model: [taskInstanceList: page, taskInstanceCount: page.totalElements, users: users]
     }
 
     def searchMap(Integer max) {
-        def page = taskService.searchTasks(params.id, params)
-        txHelperService.doInTransaction {
-            page.content.each { neo.fetch(it.territoryUser()) }
-        }
+        def user = neoSecurityService.currentUser
 
-        def mapData = page.content.collect { ReflectFunctions.extractProperties(it) } as JSON
+        def (page, users) = taskService.loadPageDataForUser(user, Sale, params, max, ModelFunctions.getWildCardRegex(params.id as String))
+        def mapData = page.content.collect { taskToJsonMap(it) } as JSON
         def jsonMapString = mapData.toString(true)
-        respond page.content, view: 'map', model: [taskInstanceCount: page.totalElements, users: userService.listAllUsers([:]), mapData: jsonMapString]
+        render view: '/task/map', model: [taskInstanceList: page, taskInstanceCount: page.totalElements, users: users, mapData: jsonMapString]
     }
 
     def show() {
