@@ -173,6 +173,8 @@ interface DistrictRepository extends GraphRepository<District> {
 interface RequestMapRepository extends GraphRepository<RequestMap> {
     @Query("match (a:Role) where a.configAttribute = {attrib} return a")
     RequestMap findByConfigAtrribLike(@Param('attrib') String attrib)
+
+    RequestMap findByUrl(String url)
 }
 
 interface WholeSalerRepository extends GraphRepository<WholeSaler> {

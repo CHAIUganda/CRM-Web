@@ -7,6 +7,7 @@ import org.springframework.core.type.filter.AnnotationTypeFilter
 import org.springframework.data.neo4j.annotation.NodeEntity
 
 import static com.omnitech.chai.model.Role.*
+import static com.omnitech.chai.util.ModelFunctions.getOrCreate
 
 class BootStrap {
 
@@ -73,15 +74,16 @@ class BootStrap {
                 )
 
                 neo.save new RequestMap(url: '/**', configAttribute: 'ROLE_SUPER_ADMIN')
-                neo.save new RequestMap(url: '/**', configAttribute: 'ROLE_SUPER_ADMIN,ROLE_ADMIN')
                 for (String url in [
-                        '/login/*','/logout/*', '/**/js/**', '/**/css/**',
+                        '/login/*', '/logout/*', '/**/js/**', '/**/css/**',
                         '/**/images/**', '/**/favicon.ico']) {
                     neo.save new RequestMap(url: url, configAttribute: 'permitAll')
                 }
             }
         }
     }
+
+    def requestMapRepository
 
     private insertEssentialRoles() {
         txHelperService.doInTransaction {
@@ -96,6 +98,64 @@ class BootStrap {
                     println("Inserting essential role [$it]...")
                     userService.saveRole(new Role(authority: it))
                 }
+            }
+        }
+
+        //Inserting default mapping
+
+        def mappings = [
+                //Mobile
+                '/rest/**'                  : [DETAILER_ROLE_NAME, SALES_ROLE_NAME],
+
+                //Detailing
+                '/detailerTask/index'       : [DETAILER_ROLE_NAME, DETAILING_SUPERVISOR_ROLE_NAME],
+                '/detailerTask/show/*'      : [DETAILER_ROLE_NAME, DETAILING_SUPERVISOR_ROLE_NAME],
+                '/detailerTask/map'         : [DETAILER_ROLE_NAME, DETAILING_SUPERVISOR_ROLE_NAME],
+                '/detailerTask/search/**'   : [DETAILER_ROLE_NAME, DETAILING_SUPERVISOR_ROLE_NAME],
+                '/detailerTask/searchMap/**': [DETAILER_ROLE_NAME, DETAILING_SUPERVISOR_ROLE_NAME],
+                '/detailerTask/**'          : [DETAILING_SUPERVISOR_ROLE_NAME],
+
+                // Orders
+                '/order/index'              : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
+                '/order/show/*'             : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
+                '/order/map'                : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
+                '/order/search/**'          : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
+                '/order/searchMap/**'       : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
+                '/order/**'                 : [SALES_SUPERVISOR_ROLE_NAME],
+
+                //Sales
+                '/sale/index'               : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
+                '/sale/show/*'              : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
+                '/sale/map'                 : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
+                '/sale/search'              : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
+                '/sale/searchMap'           : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
+                '/sale/**'                  : [SALES_SUPERVISOR_ROLE_NAME],
+
+                //Customers
+                '/customer/**'              : [SALES_SUPERVISOR_ROLE_NAME, DETAILING_SUPERVISOR_ROLE_NAME],
+
+                //Reports
+                '/report/index'             : [SALES_SUPERVISOR_ROLE_NAME],
+                '/report/getReport'         : [SALES_SUPERVISOR_ROLE_NAME],
+
+                //HomePages
+                '/home/**'                  : ['IS_AUTHENTICATED_FULLY'],
+                '/'                         : ['IS_AUTHENTICATED_FULLY']
+
+        ]
+
+        txHelperService.doInTransaction {
+            mappings.each { url, config ->
+                def requestMap = getOrCreate(
+                        { requestMapRepository.findByUrl(url) },
+                        { new RequestMap(url: url) }
+                )
+
+                def oldConfig = requestMap.configAttribute
+                requestMap.addConfigValue(*config)
+                requestMapRepository.save(requestMap)
+                if (oldConfig != requestMap.configAttribute)
+                    println("Added RequestMap: $requestMap")
             }
         }
     }

@@ -35,17 +35,27 @@ class RequestMap extends AbstractEntity {
     }
 
     def beforeSave() {
-
-        if(!configAttribute.contains('ROLE_')){
+        if (!configAttribute.contains('ROLE_')) {
             return
         }
-        def attribs = configAttribute?.split(',') as List
+        addConfigValue(Role.SUPER_ADMIN_ROLE_NAME)
+    }
 
-        [Role.SUPER_ADMIN_ROLE_NAME].each{ role ->
-            if(!attribs.contains(role)){
-                attribs.add(role)
+    void addConfigValue(String... values) {
+        def attribs = configAttribute?.split(',') as List ?: []
+
+        for (value in values) {
+            if (!attribs.contains(value)) {
+                attribs.add(value)
             }
         }
-        configAttribute = attribs.join(',')
+
+        configAttribute = attribs.collect{it.trim()}.join(',')
     }
+
+    String toString(){
+        "$url -> $configAttribute"
+    }
+
+
 }
