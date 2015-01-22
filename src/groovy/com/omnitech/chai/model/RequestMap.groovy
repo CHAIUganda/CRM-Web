@@ -33,4 +33,19 @@ class RequestMap extends AbstractEntity {
         }
         maps
     }
+
+    def beforeSave() {
+
+        if(!configAttribute.contains('ROLE_')){
+            return
+        }
+        def attribs = configAttribute?.split(',') as List
+
+        [Role.SUPER_ADMIN_ROLE_NAME].each{ role ->
+            if(!attribs.contains(role)){
+                attribs.add(role)
+            }
+        }
+        configAttribute = attribs.join(',')
+    }
 }

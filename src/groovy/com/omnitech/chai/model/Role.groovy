@@ -22,8 +22,10 @@ class Role extends AbstractEntity {
         authority blank: false, unique: true
     }
 
-    @Override    // Override toString for a nicer / more descriptive UI
+    @Override
     public String toString() {
         return "${authority}";
     }
+
+
 }
