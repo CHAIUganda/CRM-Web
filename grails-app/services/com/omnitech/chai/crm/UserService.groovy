@@ -40,7 +40,7 @@ class UserService {
     Page<User> listUsersSupervisedBy(Long supervisorId, String role, Map params = [max: 2000]) {
         def _query = {
             start(nodesById('sup', supervisorId))
-                    .match(node('sup').out(SUPERVISES_TERRITORY)
+                    .match(node('sup').out(SUPERVISES_TERRITORY,USER_TERRITORY)
                     .node('tr').in(USER_TERRITORY)
                     .node('user').out(HAS_ROLE)
                     .node('r').values(value('authority', role)))

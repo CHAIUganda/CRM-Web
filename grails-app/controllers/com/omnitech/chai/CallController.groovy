@@ -44,13 +44,13 @@ class CallController {
             redirect(action: 'map', params: params)
             return
         }
-        def (page, users) = taskService.loadPageDataForUser(user, Order, params, max)
+        def (page, users) = taskService.loadPageDataForUser(user, Order, params, max, null)
         [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: users]
     }
 
     def map(Integer max) {
         def user = neoSecurityService.currentUser
-        def (page, users) = taskService.loadPageDataForUser(user, Order, params, max)
+        def (page, users) = taskService.loadPageDataForUser(user, Order, params, max, null)
         def mapData = page.content.collect { Task task ->
             return taskToJsonMap(task)
         } as JSON
@@ -78,6 +78,7 @@ class CallController {
     }
 
     def search(Integer max) {
+        def user = neoSecurityService.currentUser
         params.max = Math.min(max ?: 50, 100)
         if (params.term) {
             redirect(action: 'search', id: params.term)
@@ -89,22 +90,18 @@ class CallController {
             return
         }
 
-        def page = taskService.searchTasks(params.id, params)
-        txHelperService.doInTransaction {
-            page.content.each { neo.fetch(it.territoryUser()) }
-        }
-        respond page.content, view: 'index', model: [taskInstanceCount: page.totalElements, users: userService.listAllUsers([:])]
+        def (page, users) = taskService.loadPageDataForUser(user, Order, params, max, ModelFunctions.getWildCardRegex(params.id as String))
+        render  view: 'index', model: [taskInstanceList: page,taskInstanceCount: page.totalElements, users: users]
     }
 
     def searchMap(Integer max) {
-        def page = taskService.searchTasks(params.id, params)
-        txHelperService.doInTransaction {
-            page.content.each { neo.fetch(it.territoryUser()) }
-        }
 
-        def mapData = page.content.collect { ReflectFunctions.extractProperties(it) } as JSON
+        def user = neoSecurityService.currentUser
+
+        def (page, users) = taskService.loadPageDataForUser(user, Order, params, max, ModelFunctions.getWildCardRegex(params.id as String))
+        def mapData = page.content.collect {  taskToJsonMap(it) } as JSON
         def jsonMapString = mapData.toString(true)
-        respond page.content, view: 'map', model: [taskInstanceCount: page.totalElements, users: userService.listAllUsers([:]), mapData: jsonMapString]
+        respond page.content, view: 'map', model: [taskInstanceCount: page.totalElements, users: users, mapData: jsonMapString]
     }
 
     def show() {
