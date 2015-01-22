@@ -1,6 +1,7 @@
 package com.omnitech.chai.queries
 
 import com.omnitech.chai.model.Task
+import org.neo4j.cypherdsl.grammar.Execute
 import org.neo4j.cypherdsl.grammar.Match
 import org.neo4j.cypherdsl.grammar.ReturnNext
 import org.slf4j.LoggerFactory
@@ -29,19 +30,33 @@ class TaskQuery {
         return query
     }
 
+    static List allTasksQuery(String filter, Class taskType) {
+        def varName = taskType.simpleName.toLowerCase()
+        def query = {
+            match(node(varName).label(taskType.simpleName).in(CUST_TASK).node('customer'))
+                    .where(identifier(varName).string('description').regexp(filter)
+                    .or(identifier('customer').string('outletName').regexp(filter))
+                    .or(identifier('customer').string('tradingCenter').regexp(filter)))
+        }
+
+        Execute cq = query().returns(count(distinct(identifier(varName))))
+        Execute q = query().returns(distinct(identifier(varName)))
+        [q, cq]
+    }
+
     private static Match _userTasksQuery(Long userId, String status, Class taskType, String search) {
-        def task = taskType.simpleName.toLowerCase()
+        def varName = taskType.simpleName.toLowerCase()
         def query = mathQueryForUserTasks(userId, taskType)
 
         def searchFilter = {
-            identifier(task).string('description').regexp(search)
+            identifier(varName).string('description').regexp(search)
                     .or(identifier('customer').string('outletName').regexp(search))
                     .or(identifier('customer').string('tradingCenter').regexp(search))
         }
 
         if (status) {
 
-            def statusFilter = identifier(task).property('status').eq(status)
+            def statusFilter = identifier(varName).property('status').eq(status)
 
             if (search) {
                 statusFilter = statusFilter.and(searchFilter())

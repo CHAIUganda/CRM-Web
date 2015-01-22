@@ -321,7 +321,7 @@ class SaleControllerSpec extends Specification {
         then:
         1 * productService.findProductByUuid('xxxx-xxxx') >> new Product()
         1 * productService.findProductByUuid('yyyy-yyyyy') >> new Product()
-        0 * securityService.currentUser >> new User()
+        1 * securityService.currentUser >> new User()
         1 * taskService.findOrderByClientRefId('clientRefId1') >> null
         1 * customerService.findCustomer('cccc') >> new Customer()
         1 * taskService.saveTask({ validateOrder(it) })

@@ -5,6 +5,7 @@ import com.omnitech.chai.queries.TaskQuery
 import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.PageUtils
 import com.omnitech.chai.util.ReflectFunctions
+import org.neo4j.cypherdsl.grammar.ReturnNext
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
@@ -50,16 +51,17 @@ class TaskService {
         taskRepository.query(resultQuery, countyQuery, EMPTY_MAP, PageUtils.create(params))
     }
 
-    def <T extends Task> Page<T> loadPageData(Integer max, Map params, Class<T> taskType) {
+    def <T extends Task> Page<T> loadPageData(Integer max, Map params, Class<T> taskType, String filter) {
         params.max = Math.min(max ?: 50, 100)
         if (!params.sort) {
             params.sort = 'dueDate'
         }
 
         Page<T> page
-
         def user = params.user ? userRepository.findByUsername(params.user) : null
-        if (user) {
+        if (filter) {
+            page = searchTasks(filter, params, taskType)
+        } else if (user) {
             def status = params.status ?: Task.STATUS_NEW
             params.status = status
             page = findAllTasksForUser(user.id, status, params, taskType, null)
@@ -116,7 +118,7 @@ class TaskService {
         Page page
         def users
         if (user.hasRole(Role.ADMIN_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME)) {
-            page = loadPageData(max, params, taskType)
+            page = loadPageData(max, params, taskType, filter)
             users = userService.listUsersByRole(roleNeeded)
         } else {
             page = loadSuperVisorUserData(max, params, taskType, user.id, filter)
@@ -165,8 +167,10 @@ class TaskService {
 
     void deleteTask(Long id) { taskRepository.delete(id) }
 
-    Page<Task> searchTasks(String search, Map params) {
-        ModelFunctions.searchAll(neo, Task, ModelFunctions.getWildCardRegex(search), params)
+    def <T extends Task> Page<T> searchTasks(String search, Map params, Class<T> taskType) {
+        def (ReturnNext q, ReturnNext cq) = TaskQuery.allTasksQuery(search, taskType)
+        PageUtils.addSorting(q, params, taskType)
+        taskRepository.query(q, cq, EMPTY_MAP, PageUtils.create(params))
     }
 
     /* Detailer Tasks*/

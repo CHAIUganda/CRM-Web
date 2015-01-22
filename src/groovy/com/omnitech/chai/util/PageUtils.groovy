@@ -55,6 +55,9 @@ class PageUtils {
         return next
     }
 
+    /**
+     * Use this instead of addPagination if u intend to use CypherDSLRepo
+     */
     static ReturnNext addSorting(ReturnNext next, Map param, Class returnClass) {
         def entityName = returnClass.simpleName.toLowerCase()
 
