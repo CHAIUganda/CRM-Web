@@ -1,5 +1,6 @@
 package com.omnitech.chai.scripts
 
+import com.omnitech.chai.model.Customer
 import com.omnitech.chai.util.ChaiUtils
 
 import static com.omnitech.chai.model.Customer.*
@@ -7,6 +8,7 @@ import static com.omnitech.chai.scripts.ScripHelpers.*
 
 //Customer cust =  customer as Customer
 //remove this in lower IDEA version <property name="dynamic.classpath" value="true" />
+println("*************Segmenting: ************** $customer")
 ChaiUtils.injectUtilityMethods()
 //Customer customer = new Customer(
 //        numberOfCustomersPerDay: 50000,
@@ -32,7 +34,9 @@ def visibleEquipment = customer.visibleEquipment?.split(',')?.size() ?: 0
 def footFallScore = calcScore(customer, 0.05, [
         "$TYPE_CLINIC"       : { intRangeScore footFall, [200000, 100000, 0] },
         "$TYPE_HEALTH_CENTER": { intRangeScore footFall, [200000, 100000, 0] },
+        "$TYPE_HOSPITAL"     : { intRangeScore footFall, [200000, 100000, 0] },
         "$TYPE_PHARMACY"     : { intRangeScore footFall, [100000, 50000, 0] },
+        "Wholesale Pharmacy" : { intRangeScore footFall, [100000, 50000, 0] },
         "$TYPE_DRUG_SHOP"    : { intRangeScore footFall, [75000, 25000, 0] },
 ])
 println("$customer.outletType FOOTFALL: $footFall : Weighted Score = $footFallScore : Raw = ${footFallScore / 0.05}")
@@ -43,8 +47,10 @@ println("$customer.outletType FOOTFALL: $footFall : Weighted Score = $footFallSc
 def childrenScore = calcScore(customer, 0.05, [
         "$TYPE_CLINIC"       : { intRangeScore childrenServed, [100, 50, 0] },
         "$TYPE_HEALTH_CENTER": { intRangeScore childrenServed, [100, 50, 0] },
+        "$TYPE_HOSPITAL"     : { intRangeScore footFall, [200000, 100000, 0] },
         "$TYPE_PHARMACY"     : { intRangeScore childrenServed, [50, 25, 0] },
-        "$TYPE_DRUG_SHOP"    : { intRangeScore childrenServed, [38, 12, 0] },
+        "Wholesale Pharmacy"     : { intRangeScore childrenServed, [50, 25, 0] },
+        "$TYPE_DRUG_SHOP"    : { intRangeScore childrenServed, [38, 12, 0] }
 ])
 println("$customer.outletType CHILDREN SERVED: $childrenServed : Weighted Score = $childrenScore : RealScore = ${childrenScore / 0.05}")
 
@@ -54,7 +60,9 @@ println("$customer.outletType CHILDREN SERVED: $childrenServed : Weighted Score 
 def turnOverScore = calcScore(customer, 0.05, [
         "$TYPE_CLINIC"       : { intRangeScore turnOver, [10460, 5080, 0] },
         "$TYPE_HEALTH_CENTER": { intRangeScore turnOver, [10460, 5080, 0] },
+        "$TYPE_HOSPITAL"     : { intRangeScore footFall, [200000, 100000, 0] },
         "$TYPE_PHARMACY"     : { intRangeScore turnOver, [31680, 13825, 0] },
+        "Wholesale Pharmacy"     : { intRangeScore turnOver, [31680, 13825, 0] },
         "$TYPE_DRUG_SHOP"    : { intRangeScore turnOver, [5630, 2750, 0] },
 ])
 println("$customer.outletType TURNOVER: $turnOver : Weighted Score = $turnOverScore : RealScore = ${turnOverScore / 0.05}")
@@ -65,6 +73,7 @@ println("$customer.outletType TURNOVER: $turnOver : Weighted Score = $turnOverSc
 def productScore = calcScore(customer, 0.05, [
         "$TYPE_CLINIC"       : { intRangeScore products, [30, 10, 0] },
         "$TYPE_HEALTH_CENTER": { intRangeScore products, [30, 10, 0] },
+        "$TYPE_HOSPITAL"     : { intRangeScore footFall, [200000, 100000, 0] },
         "$TYPE_PHARMACY"     : { intRangeScore products, [30, 10, 0] },
         "$TYPE_DRUG_SHOP"    : { intRangeScore products, [30, 10, 0] }
 ])

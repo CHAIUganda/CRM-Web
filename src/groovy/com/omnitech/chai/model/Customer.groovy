@@ -24,6 +24,7 @@ public class Customer extends AbstractEntity implements LeafNode {
     final static TYPE_PHARMACY = 'Pharmacy'
     final static TYPE_DRUG_SHOP = 'Drug Shop'
     final static TYPE_HEALTH_CENTER = 'Health Centre'
+    final static TYPE_HOSPITAL = 'Hospital'
     final static STRUCT_SEMI_PERMANENT = 'semi-permanent'
     final static STRUCT_PERMANENT = 'permanent'
     final static STRUCT_NON_PERMANENT = 'non-permanent'
