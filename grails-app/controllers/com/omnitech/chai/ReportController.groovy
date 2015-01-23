@@ -5,7 +5,6 @@ import com.omnitech.chai.util.GroupFlattener
 import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.ServletUtil
 import grails.transaction.Transactional
-import net.sf.dynamicreports.jasper.builder.JasperReportBuilder
 
 import static com.omnitech.chai.util.ModelFunctions.extractId
 import static org.springframework.http.HttpStatus.*
@@ -63,7 +62,7 @@ class ReportController {
         def filter = params.filter ? params.filter : 'true'
         def report = reportService.findReport(id)
         def reportBuilder = reportService.buildReport(id, columns, filter)
-        ServletUtil.setAttachment(response,"${report.name}.pdf")
+        ServletUtil.setAttachment(response, "${report.name}.pdf")
         reportBuilder.toPdf(response.outputStream)
     }
 
