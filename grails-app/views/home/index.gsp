@@ -98,37 +98,38 @@
         </div>
     </sec:ifAnyGranted>
 
-    <div class="panel panel-success">
-        <div class="panel-heading">Sales Call Plans</div>
+    <sec:ifAnyGranted
+            roles="${[Role.SALES_SUPERVISOR_ROLE_NAME, Role.SALES_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME, Role.ADMIN_ROLE_NAME].join(',')}">
+        <div class="panel panel-success">
+            <div class="panel-heading">Sales Call Plans</div>
 
-        <div class="panel-body">
+            <div class="panel-body">
 
-        %{--<div class="row">--}%
-        %{--<div class="col-md-12">--}%
-        %{--<div class="form-inline">--}%
+                %{--<div class="row">--}%
+                %{--<div class="col-md-12">--}%
+                %{--<div class="form-inline">--}%
 
-        %{--<div class="form-group">--}%
-        %{--<label>Type</label>--}%
-        %{--<g:select name="type" from="${['Detailing', 'Sales']}" class="form-control"/>--}%
-        %{--</div>--}%
+                %{--<div class="form-group">--}%
+                %{--<label>Type</label>--}%
+                %{--<g:select name="type" from="${['Detailing', 'Sales']}" class="form-control"/>--}%
+                %{--</div>--}%
 
-        %{--<div class="form-group">--}%
-        %{--<label>Start Date</label>--}%
-        %{--<bs:datePicker name="startDate" class="form-control"/>--}%
-        %{--</div>--}%
+                %{--<div class="form-group">--}%
+                %{--<label>Start Date</label>--}%
+                %{--<bs:datePicker name="startDate" class="form-control"/>--}%
+                %{--</div>--}%
 
-        %{--<div class="form-group">--}%
-        %{--<label>End Date</label>--}%
-        %{--<input id="dueDateText" name="dueDate" class=" form-control" type="text"--}%
-        %{--data-date-format="yyyy-mm-dd" ng-model="text.dueDateText">--}%
-        %{--</div>--}%
-        %{--</div>--}%
-        %{--</div>--}%
-        %{--</div>--}%
+                %{--<div class="form-group">--}%
+                %{--<label>End Date</label>--}%
+                %{--<input id="dueDateText" name="dueDate" class=" form-control" type="text"--}%
+                %{--data-date-format="yyyy-mm-dd" ng-model="text.dueDateText">--}%
+                %{--</div>--}%
+                %{--</div>--}%
+                %{--</div>--}%
+                %{--</div>--}%
 
-        %{-- For Detailers --}%
-            <sec:ifAnyGranted
-                    roles="${[Role.SALES_SUPERVISOR_ROLE_NAME, Role.SALES_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME, Role.ADMIN_ROLE_NAME].join(',')}">
+                %{-- For Detailers --}%
+
                 <div class="row">
                     <div class="col-md-12">
                         <table class="pageableTable">
@@ -179,11 +180,10 @@
                     </div>
                 </div>
 
-            </sec:ifAnyGranted>
+            </div>
 
         </div>
-
-    </div>
+    </sec:ifAnyGranted>
 
 </section>
 

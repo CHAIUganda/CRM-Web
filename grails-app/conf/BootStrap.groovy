@@ -116,12 +116,12 @@ class BootStrap {
                 '/detailerTask/**'          : [DETAILING_SUPERVISOR_ROLE_NAME],
 
                 // Orders
-                '/order/index'              : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
-                '/order/show/*'             : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
-                '/order/map'                : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
-                '/order/search/**'          : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
-                '/order/searchMap/**'       : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
-                '/order/**'                 : [SALES_SUPERVISOR_ROLE_NAME],
+                '/call/index'              : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
+                '/call/show/*'             : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
+                '/call/map'                : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
+                '/call/search/**'          : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
+                '/call/searchMap/**'       : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
+                '/call/**'                 : [SALES_SUPERVISOR_ROLE_NAME],
 
                 //Sales
                 '/sale/index'               : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
