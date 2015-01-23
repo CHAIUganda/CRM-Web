@@ -31,7 +31,7 @@ class PlaceController {
     def districts() {
         log.debug("Req:${neoSecurityService.currentUser}-DistrictList")
         def districts = regionService.findAllDistrictsForUser(neoSecurityService.currentUser.id).collect {
-            [id: it.id, name: it.name, uuid: it.uuid, 'regionId': it.region.id]
+            [id: it.id, name: it.name, uuid: it.uuid, 'regionId': it.region.uuid]
         }
         log.debug("Resp:${neoSecurityService.currentUser}-${districts?.size()} Districts")
         respond districts
@@ -41,7 +41,7 @@ class PlaceController {
     def subCounties() {
         log.debug("Req:${neoSecurityService.currentUser}-SubCountyList")
         def subCounties = regionService.findAllSubCountiesForUser(neoSecurityService.currentUser.id).collect {
-            [id: it.id, name: it.name, uuid: it.uuid, 'districtId': it.district.id]
+            [id: it.id, name: it.name, uuid: it.uuid, 'districtId': it.district.uuid]
         }
         log.debug("Resp:${neoSecurityService.currentUser}-${subCounties?.size()} SubCounties")
         respond subCounties

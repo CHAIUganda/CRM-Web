@@ -44,7 +44,7 @@ class TaskController {
         def tasks = taskService.findAllTasksForUser(user.id, Task.STATUS_NEW, params, taskType, null).content
         def taskMaps = tasks.collect {
             def map = ReflectFunctions.extractProperties(it)
-            map['customerId'] = it.customer.id
+            map['customerId'] = it.customer.uuid
             if (Order.isAssignableFrom(it.getClass())) {
                 map['lineItems'] = ((Order) it).lineItems.collect {
                     ['productId': it.product.uuid,
