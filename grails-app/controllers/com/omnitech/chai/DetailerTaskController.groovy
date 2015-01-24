@@ -114,7 +114,29 @@ class DetailerTaskController {
     }
 
     def create() {
-        render(view: '/task/create', model: [taskInstance: ModelFunctions.createObj(DetailerTask, params)])
+        render(view: '/task/create', model: [taskInstance: ModelFunctions.createObj(DetailerTask, params),customers: customerService.listAllCustomers()])
+    }
+
+    def save(DetailerTask taskInstance) {
+        if (taskInstance == null) {
+            notFound()
+            return
+        }
+
+        if (taskInstance.hasErrors()) {
+            respond taskInstance.errors, view: 'create'
+            return
+        }
+
+        taskService.saveTask taskInstance
+
+        request.withFormat {
+            form {
+                flash.message = message(code: 'default.created.message', args: [message(code: 'Task.label', default: 'Task'), taskInstance.id])
+                redirect action: 'show', id: taskInstance.id
+            }
+            '*' { respond taskInstance, [status: CREATED] }
+        }
     }
 
     def edit() {
