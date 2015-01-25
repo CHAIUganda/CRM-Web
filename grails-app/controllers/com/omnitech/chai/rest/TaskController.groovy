@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus
 
 import static com.omnitech.chai.model.Role.DETAILER_ROLE_NAME
 import static com.omnitech.chai.model.Role.SALES_ROLE_NAME
+import static org.springframework.http.HttpStatus.BAD_REQUEST
+import static org.springframework.http.HttpStatus.BAD_REQUEST
 
 /**
  * Created by kay on 10/29/14.
@@ -74,8 +76,8 @@ class TaskController {
 
     private void doDetailerUpdate(User user) {
         def json = request.JSON as Map
-        def detailerInfo = (json.get('detailers') as List)?.get(0) as Map
         println(json.inspect())
+        def detailerInfo = (json.get('detailers') as List)?.get(0) as Map
         def task = ModelFunctions.createObj(DetailerTask, json)
         if (detailerInfo) {
             detailerInfo.remove('id')
@@ -101,5 +103,10 @@ class TaskController {
     private def renderError(String error, HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR) {
         response.status = status.value()
         render([status: 'error', message: error] as JSON)
+    }
+
+    def handleException(Exception x){
+        log.error("Error while handling request: \n $params", x)
+        render(status: BAD_REQUEST, text: [status: BAD_REQUEST.reasonPhrase, message: ChaiUtils.getBestMessage(x)] as JSON)
     }
 }

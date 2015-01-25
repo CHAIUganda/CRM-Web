@@ -5,6 +5,7 @@ import com.omnitech.chai.queries.TaskQuery
 import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.PageUtils
 import com.omnitech.chai.util.ReflectFunctions
+import org.apache.commons.math3.ml.clustering.CentroidCluster
 import org.neo4j.cypherdsl.grammar.ReturnNext
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -30,10 +31,9 @@ class TaskService {
     def orderRepository
     def neoSecurityService
     def userService
+    def clusterService
 
     /* Tasks */
-
-    List<Task> listAllTasks() { taskRepository.findAll().collect() }
 
     def <T extends Task> Page<T> listTasks(Class<T> taskType, Map params) {
         ModelFunctions.listAll(neo, taskType, params, Task)
@@ -316,11 +316,43 @@ class TaskService {
         }
     }
 
+    void generateTasks(List<Territory> territories, List<CustomerSegment> segments, Date startDate, List<Integer> workDays, int tasksPerday) {
+
+
+        territories.each { t ->
+            def tasks = []
+
+            segments.each { s ->
+                log.info("Generating Tasks for: Territory[$t] and Segment[$s]")
+                tasks.addAll generateTasks(t, s, startDate, workDays)
+            }
+
+            if (tasks) {
+                log.info "***** Clustering: Territory[$t] Tasks[${tasks.size()}]"
+                def cluster = clusterService.assignDueDates(tasks, startDate, workDays, 15)
+
+                taskRepository.save(tasks)
+            } else {
+                log.warn "***WARNING:***No Tasks Generated for Territory[$t]"
+            }
+        }
+
+
+    }
+
+    List<Task> generateTasks(Territory t, CustomerSegment s, Date startDate, List<Integer> workDays) {
+
+        def customers = customerRepository.findAllWithoutNewTasks(t.id, s.id, s.numberOfTasks)
+
+        def tasks = customers.collect { customer ->
+            new DetailerTask(customer: customer, description: "Go Check on [$customer.outletName]", dueDate: new Date())
+        }
+        log.info("Generated [${tasks.size()}] Tasks for Territory[$t],Segment[$s]")
+
+        return tasks
+    }
+
     /* Orders */
-
-    List<Order> listAllOrders() { orderRepository.findAll().collect() }
-
-    Page<Order> listOrders(Map params) { ModelFunctions.listAll(neo, Order, params, Order) }
 
     Order findOrder(Long id) { orderRepository.findOne(id) }
 
@@ -335,12 +367,6 @@ class TaskService {
 
     DirectSale findDirectSaleByClientRefId(String refId) {
         directSaleRepository.findByClientRefId(refId)
-    }
-
-    void deleteOrder(Long id) { orderRepository.delete(id) }
-
-    Page<Order> searchOrders(String search, Map params) {
-        ModelFunctions.searchAll(neo, Order, ModelFunctions.getWildCardRegex(search), params)
     }
 
 }

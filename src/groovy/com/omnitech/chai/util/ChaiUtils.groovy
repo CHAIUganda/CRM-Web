@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 
+import static java.util.Calendar.DAY_OF_WEEK
+
 /**
  * Created by kay on 9/29/14.
  */
@@ -130,6 +132,13 @@ class ChaiUtils {
                 ),
                 " "
         );
+    }
+
+    static Date getNextWorkDay(List<Integer> workDays, Date startDate) {
+        while (!workDays.contains(startDate[DAY_OF_WEEK])) {
+            startDate = ++startDate
+        }
+        return startDate
     }
 
     static String getBestMessage(Throwable x) {

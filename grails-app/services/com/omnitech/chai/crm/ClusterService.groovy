@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.data.neo4j.transaction.Neo4jTransactional
 
+import static com.omnitech.chai.util.ChaiUtils.getNextWorkDay
 import static java.util.Calendar.*
 
 /**
@@ -64,19 +65,40 @@ class ClusterService {
         if (!locatableTasks) return []
         def clusters = getClusters(locatableTasks, tasksPerDay, numberOfUsers)
 
-        def nowDate = new Date(), pad = 0
-        clusters.eachWithIndex { CentroidCluster<LocatableTask> entry, int i ->
+        assignDueDateToClusters(clusters, new Date(), [MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY])
 
-            def dateToSet = nowDate + i
-            def dayOfWeek = dateToSet[DAY_OF_WEEK]
-            if (dayOfWeek == SATURDAY || dayOfWeek == SUNDAY) {
-                dateToSet = dateToSet + (++pad)
-            }
+        clusters.each { c -> c.getPoints().each { lt -> taskRepository.save(lt) } }
+        return clusters
+    }
+
+
+    static assignDueDateToClusters(List<CentroidCluster<LocatableTask>> clusters, Date startDate, List<Integer> workDays) {
+        def nextDate = startDate
+        for (CentroidCluster<LocatableTask> entry in clusters) {
+
+            nextDate = getNextWorkDay(workDays, nextDate)
+
             entry.getPoints().each { locatableTask ->
-                locatableTask.task.setDueDate(dateToSet)
-                taskRepository.save(locatableTask.task)
+                locatableTask.task.setDueDate(nextDate)
             }
+
+            nextDate = ++nextDate
         }
+    }
+
+
+    List<CentroidCluster<LocatableTask>> assignDueDates(List<Task> tasks, Date startDate, List<Integer> allowedDays, int tasksPerDay) {
+
+        List<LocatableTask> locatableTasks = tasks.findResults { Task t ->
+            if (t.isLocatable()) {
+                return new LocatableTask(task: t)
+            }
+            return null
+        } as List<LocatableTask>
+
+        def clusters = getClusters(locatableTasks, tasksPerDay, 1)
+
+        assignDueDateToClusters(clusters, startDate, allowedDays)
         return clusters
     }
 

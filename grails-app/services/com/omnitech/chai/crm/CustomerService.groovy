@@ -7,6 +7,7 @@ import com.omnitech.chai.util.PageUtils
 import com.omnitech.chai.util.ReflectFunctions
 import fuzzycsv.FuzzyCSV
 import fuzzycsv.Record
+import org.neo4j.cypherdsl.grammar.ReturnNext
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
@@ -87,6 +88,16 @@ class CustomerService {
         ).returns(distinct(identifier(customer)))
         log.trace("findAllCustomersByUser $exec")
         ModelFunctions.query(customerRepository, exec, params, Customer).collect()
+    }
+
+    Page<Customer> findCustomersBySegment(Long segmentId, Map params) {
+
+        def customers = start(nodesById('segment', segmentId))
+                .match(node('segment').out(IN_SEGMENT).node('customer'))
+                .returns(identifier('customer'))
+
+        customerRepository.query(customers,Collections.EMPTY_MAP)
+
     }
 
     /* CustomerSegments */

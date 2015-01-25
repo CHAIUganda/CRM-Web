@@ -2,6 +2,7 @@ package com.omnitech.chai.model
 
 import com.omnitech.chai.util.GroupNode
 import grails.validation.Validateable
+import org.springframework.data.annotation.Transient
 import org.springframework.data.neo4j.annotation.Indexed
 import org.springframework.data.neo4j.annotation.NodeEntity
 
@@ -18,6 +19,9 @@ class CustomerSegment extends AbstractEntity implements GroupNode {
     String taskGeneratorScript
     Integer callFrequency
 
+    @Transient
+    Integer numberOfTasks
+
 
     static constraints = {
         name blank: false
@@ -28,4 +32,6 @@ class CustomerSegment extends AbstractEntity implements GroupNode {
     GroupNode getParent() { return null }
 
     int getSpaceBetweenVisits() { callFrequency == 0 ? 0 : 60 / callFrequency }
+
+    String toString(){name}
 }

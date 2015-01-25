@@ -71,6 +71,14 @@ interface CustomerRepository extends GraphRepository<Customer>, CypherDslReposit
     @Query('start t=node({territoryId}) MATCH (t)<-[:`SC_IN_TERRITORY`]-(sc)<-[:CUST_IN_SC]-(c) RETURN c')
     Iterable<Customer> findByTerritory(@Param('territoryId') Long territoryId)
 
+    @Query("""start t = node({territoryId}), cs = node({segmentId})
+match (cs)<-[:IN_SEGMENT]-(c)-[:CUST_IN_SC]->(sc)-[:SC_IN_TERRITORY]->(t)
+where not(c-[:CUST_TASK]->(:DetailerTask{status:'new'}))
+with c optional match c-[:CUST_TASK]-(dt:DetailerTask)
+return c order by dt.completionDate desc
+limit {limit}""")
+    Iterable<Customer> findAllWithoutNewTasks(@Param('territoryId') Long territoryId, @Param('segmentId') Long segmentId, @Param('limit') Integer limit)
+
 }
 
 interface CustomerContactRepository extends GraphRepository<CustomerContact> {
@@ -79,6 +87,7 @@ interface CustomerContactRepository extends GraphRepository<CustomerContact> {
 
 interface TerritoryRepository extends GraphRepository<Territory> {
     Territory findByUuid(String uuid)
+
     Territory findByName(String name)
 }
 
@@ -91,6 +100,8 @@ interface TaskRepository extends GraphRepository<Task>, CypherDslRepository<Task
 
     @Query('start t=node({territoryId}) MATCH (t)<-[:`SC_IN_TERRITORY`]-(sc)<-[:CUST_IN_SC]-(c)-[:CUST_TASK]->(ts) RETURN ts')
     Iterable<Task> findAllTasksInTerritory(@Param('territoryId') Long territoryId)
+
+
 
 }
 
@@ -141,7 +152,7 @@ interface UserRepository extends GraphRepository<User> {
     User findByUsername(String username)
 
     @Query('match (u:User)-[:HAS_ROLE]-> (r {authority: {role}}) return u')
-    Iterable<User> listAllByRole (@Param('role') String role)
+    Iterable<User> listAllByRole(@Param('role') String role)
 }
 
 interface DeviceRepository extends GraphRepository<Device> {

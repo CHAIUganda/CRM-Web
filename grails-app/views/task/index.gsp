@@ -50,12 +50,12 @@
 
                 <td>
                     <g:if test="${params.status == Task.STATUS_COMPLETE}">
-                            <g:formatDate date="${taskInstance.completionDate}" format="dd-MMM-yyyy"/>
+                            <g:formatDate date="${taskInstance.completionDate}" format="EE,dd-MMM-yyyy"/>
                     </g:if>
                     <g:else>
                         <g:if test="${taskInstance.dueDate}">
                             <span class="${taskInstance.isOverDue() ? 'alert-danger' : ''}">
-                                <g:formatDate date="${taskInstance.dueDate}" format="dd-MMM-yyyy"/>
+                                <g:formatDate date="${taskInstance.dueDate}" format="EE,dd-MMM-yyyy"/>
                             </span>
                         </g:if>
                     </g:else>
