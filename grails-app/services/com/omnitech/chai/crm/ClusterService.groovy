@@ -67,7 +67,7 @@ class ClusterService {
 
         assignDueDateToClusters(clusters, new Date(), [MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY])
 
-        clusters.each { c -> c.getPoints().each { lt -> taskRepository.save(lt) } }
+        clusters.each { c -> c.getPoints().each { lt -> taskRepository.save(lt.task) } }
         return clusters
     }
 
