@@ -4,6 +4,7 @@ import com.omnitech.chai.exception.ImportException
 import com.omnitech.chai.model.*
 import com.omnitech.chai.util.ChaiUtils
 import com.omnitech.chai.util.ModelFunctions
+import com.omnitech.chai.util.PageUtils
 import fuzzycsv.FuzzyCSV
 import fuzzycsv.Record
 import org.springframework.beans.factory.annotation.Autowired
@@ -12,8 +13,11 @@ import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.data.neo4j.transaction.Neo4jTransactional
 import secondstring.PhraseHelper
 
+import static com.omnitech.chai.model.Relations.SUPERVISES_TERRITORY
+import static com.omnitech.chai.model.Relations.USER_TERRITORY
 import static com.omnitech.chai.util.ModelFunctions.getOrCreate
 import static fuzzycsv.RecordFx.fn
+import static org.neo4j.cypherdsl.CypherQuery.*
 
 /**
  * Created by kay on 9/29/14.
@@ -27,6 +31,7 @@ class RegionService {
     def parishRepository
     def villageRepository
     def territoryRepository
+    def userRepository
     @Autowired
     Neo4jTemplate neo
 
@@ -109,6 +114,7 @@ class RegionService {
     List<SubCounty> listAllSubCountys() { subCountyRepository.findAll().collect() }
 
     SubCounty findSubCounty(Long id) { subCountyRepository.findOne(id) }
+
     SubCounty findSubCounty(String uuid) { subCountyRepository.findByUuid(uuid) }
 
     SubCounty saveSubCounty(SubCounty subCounty) { ModelFunctions.saveEntity(subCountyRepository, subCounty) }
@@ -154,6 +160,24 @@ class RegionService {
     Page<Territory> listTerritorys(Map params) { ModelFunctions.listAll(territoryRepository, params) }
 
     List<Territory> listAllTerritorys() { territoryRepository.findAll().collect() }
+
+    Page<Territory> findTerritoriesForUser(User user, Map params) {
+
+        if (user.hasRole(Role.ADMIN_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME)) {
+            return listTerritorys(params)
+        }
+
+        def query = {
+            start(nodesById('user', user.id))
+                    .match(node('user').out(SUPERVISES_TERRITORY, USER_TERRITORY).node('territory'))
+
+        }
+
+        def q = query().returns(distinct(identifier('territory')))
+        def cq = query().returns(count(distinct(identifier('territory'))))
+        PageUtils.addPagination(q, params, Territory)
+        ModelFunctions.query(neo, q, cq, params, Territory)
+    }
 
     Territory findTerritory(Long id) { territoryRepository.findOne(id) }
 

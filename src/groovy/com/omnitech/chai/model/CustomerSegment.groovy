@@ -34,4 +34,11 @@ class CustomerSegment extends AbstractEntity implements GroupNode {
     int getSpaceBetweenVisits() { callFrequency == 0 ? 0 : 60 / callFrequency }
 
     String toString(){name}
+
+    boolean shouldGenerateTask(Date lastTaskDate){
+        if (!lastTaskDate) return true
+        def daysBetweenVisits = getSpaceBetweenVisits()
+        def daysSinceLastVisit = new Date() - lastTaskDate
+        return daysSinceLastVisit < daysBetweenVisits
+    }
 }

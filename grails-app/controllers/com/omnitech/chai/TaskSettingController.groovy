@@ -13,20 +13,48 @@ class TaskSettingController {
     def regionService
     def customerService
     def taskService
+    def neoSecurityService
 
-    def generation() {
-        def territories = regionService.listAllTerritorys()
-        def segments = customerService.listAllCustomerSegments()
-        render view: 'generation', model: [territories: territories, segments: segments]
+    def generationDetailer() {
+        def (territories, segments) = getPageModel()
+        render view: 'generationDetailer', model: [territories: territories, segments: segments]
     }
 
-    def generateTasks() {
+    def generationOrder() {
+        def (territories, segments) = getPageModel()
+        render view: 'generationDetailer', model: [territories: territories, segments: segments]
+    }
+
+    def generateDetailerTasks() {
+        generateTasks(DetailerTask)
+        flash.message = "Generation Is Done"
+        redirect action: 'generationDetailer'
+    }
+
+    def generateOrderTasks() {
+        generateTasks(Order)
+        flash.message = "Generation Is Done"
+        redirect action: 'generationOrder'
+    }
+
+    def handleException(IllegalArgumentException ex) {
+        flash.error = ex.message
+        if (actionName == 'generateDetailerTasks')
+            redirect action: 'generationDetailer'
+        else
+            redirect action: 'generationOrder'
+    }
+
+    private def getPageModel() {
+        def user = neoSecurityService.currentUser
+        def territories = regionService.findTerritoriesForUser(user, [max: 2000])
+        def segments = customerService.listAllCustomerSegments()
+        [territories, segments]
+    }
+
+    private def generateTasks(Class taskType) {
 
         println(params)
-
-
-        def taskType = params.taskType == 'Detailing' ? DetailerTask : Order
-
         def workDays = params.workDays instanceof String ? [params.workDays] : params.workDays
         workDays = workDays.collect { it as Integer }
         Assert.notNull workDays, 'Please Set Work Days'
@@ -36,24 +64,16 @@ class TaskSettingController {
         def startDate = Date.parse('yyyy-MM-dd', params.startDate as String)
         Assert.isTrue((startDate - new Date()) >= 0, "Start Date[$params.startDate] Should Be Greater Than Today")
 
-        def segments = getSegments()
+        def segments = extractSegments()
 
-        def territories = getTerritories()
+        def territories = extractTerritories()
 
-
-
-
-        taskService.generateTasks(territories, segments, startDate, workDays, 15)
-
-        flash.message = "Generation Is Done"
-
-        redirect action: 'generation'
-
+        taskService.generateTasks(territories, segments, startDate, workDays, 15,taskType)
     }
 
-    private def getTerritories() {
+    private def extractTerritories() {
 
-        def territoryIds = getTerritoryIds()
+        def territoryIds = extractTerritoryIds()
 
         if (!territoryIds) {
             throw new IllegalArgumentException('Please Select Territories')
@@ -64,11 +84,11 @@ class TaskSettingController {
         return territories
     }
 
-    private def getTerritoryIds() {
+    private def extractTerritoryIds() {
         params.territories instanceof String ? [params.territories] : params.territories
     }
 
-    private List<CustomerSegment> getSegments() {
+    private List<CustomerSegment> extractSegments() {
         def segments = params.segments as Map
 
         if (!segments || segments.every { !it.value }) {
@@ -87,15 +107,5 @@ class TaskSettingController {
         }
 
         return neoSegments
-    }
-
-    def handleException(IllegalArgumentException ex) {
-        flash.error = ex.message
-        redirect action: 'generation'
-    }
-
-    def handleException(AssertionError ex) {
-        flash.error = ex.message
-        redirect action: 'generation'
     }
 }

@@ -16,7 +16,7 @@
 
 <body>
 
-<g:form action="generateTasks">
+<g:form action="${actionName =='generationDetailer' ? 'generateDetailerTasks' : 'generateOrderTasks'}">
     <div class="form-horizontal">
 
         <div class="form-group">

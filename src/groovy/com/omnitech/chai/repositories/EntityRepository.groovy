@@ -1,7 +1,10 @@
 package com.omnitech.chai.repositories
 
 import com.omnitech.chai.model.*
+import groovy.transform.CompileStatic
 import org.springframework.data.neo4j.annotation.Query
+import org.springframework.data.neo4j.annotation.QueryResult
+import org.springframework.data.neo4j.annotation.ResultColumn
 import org.springframework.data.neo4j.repository.CypherDslRepository
 import org.springframework.data.neo4j.repository.GraphRepository
 import org.springframework.data.repository.query.Param
@@ -72,14 +75,43 @@ interface CustomerRepository extends GraphRepository<Customer>, CypherDslReposit
     Iterable<Customer> findByTerritory(@Param('territoryId') Long territoryId)
 
     @Query("""start t = node({territoryId}), cs = node({segmentId})
-match (cs)<-[:IN_SEGMENT]-(c)-[:CUST_IN_SC]->(sc)-[:SC_IN_TERRITORY]->(t)
-where not(c-[:CUST_TASK]->(:DetailerTask{status:'new'}))
-with c optional match c-[:CUST_TASK]-(dt:DetailerTask)
-return c order by dt.completionDate desc
+match (cs)<-[:IN_SEGMENT]-(customer)-[:CUST_IN_SC]->(sc)-[:SC_IN_TERRITORY]->(t)
+where not(customer-[:CUST_TASK]->(:DetailerTask{status:'new'}))
+with customer optional match customer-[:CUST_TASK]-(o:DetailerTask)
+return customer,max(o.completionDate) as completionDate
+order by completionDate desc
 limit {limit}""")
-    Iterable<Customer> findAllWithoutNewTasks(@Param('territoryId') Long territoryId, @Param('segmentId') Long segmentId, @Param('limit') Integer limit)
+    Iterable<CustomerWithLastTaskDate> findAllWithoutNewDetailingTasks(
+            @Param('territoryId') Long territoryId,
+            @Param('segmentId') Long segmentId,
+            @Param('limit') Integer limit)
+
+    @Query("""start t = node({territoryId}), cs = node({segmentId})
+match (cs)<-[:IN_SEGMENT]-(customer)-[:CUST_IN_SC]->(sc)-[:SC_IN_TERRITORY]->(t)
+where not(customer-[:CUST_TASK]->(:Order{status:'new'}))
+with customer optional match customer-[:CUST_TASK]-(o:Order)
+return customer,max(o.completionDate) as completionDate
+order by completionDate desc
+limit {limit}""")
+    Iterable<CustomerWithLastTaskDate> findAllWithoutNewOrderTasks(
+            @Param('territoryId') Long territoryId,
+            @Param('segmentId') Long segmentId,
+            @Param('limit') Integer limit)
+
+
 
 }
+@QueryResult
+@CompileStatic
+class CustomerWithLastTaskDate {
+
+    @ResultColumn('customer')
+    Customer customer
+    @ResultColumn('completionDate')
+    Date completionDate
+
+}
+
 
 interface CustomerContactRepository extends GraphRepository<CustomerContact> {
     CustomerContact findByUuid(String uuid)
@@ -100,7 +132,6 @@ interface TaskRepository extends GraphRepository<Task>, CypherDslRepository<Task
 
     @Query('start t=node({territoryId}) MATCH (t)<-[:`SC_IN_TERRITORY`]-(sc)<-[:CUST_IN_SC]-(c)-[:CUST_TASK]->(ts) RETURN ts')
     Iterable<Task> findAllTasksInTerritory(@Param('territoryId') Long territoryId)
-
 
 
 }

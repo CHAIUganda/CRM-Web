@@ -5,7 +5,6 @@ import com.omnitech.chai.queries.TaskQuery
 import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.PageUtils
 import com.omnitech.chai.util.ReflectFunctions
-import org.apache.commons.math3.ml.clustering.CentroidCluster
 import org.neo4j.cypherdsl.grammar.ReturnNext
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -14,6 +13,7 @@ import org.springframework.data.neo4j.transaction.Neo4jTransactional
 import org.springframework.security.access.AccessDeniedException
 
 import static com.omnitech.chai.model.Relations.*
+import static com.omnitech.chai.util.ChaiUtils.getNextWorkDay
 import static grails.util.GrailsNameUtils.getNaturalName
 import static java.util.Collections.EMPTY_MAP
 import static org.neo4j.cypherdsl.CypherQuery.*
@@ -316,7 +316,12 @@ class TaskService {
         }
     }
 
-    void generateTasks(List<Territory> territories, List<CustomerSegment> segments, Date startDate, List<Integer> workDays, int tasksPerday) {
+    void generateTasks(List<Territory> territories,
+                       List<CustomerSegment> segments,
+                       Date startDate,
+                       List<Integer> workDays,
+                       int tasksPerDay,
+                       Class<? extends Task> taskType) {
 
 
         territories.each { t ->
@@ -324,12 +329,12 @@ class TaskService {
 
             segments.each { s ->
                 log.info("Generating Tasks for: Territory[$t] and Segment[$s]")
-                tasks.addAll generateTasks(t, s, startDate, workDays)
+                tasks.addAll generateTasks(t, s, startDate, workDays, taskType)
             }
 
             if (tasks) {
                 log.info "***** Clustering: Territory[$t] Tasks[${tasks.size()}]"
-                def cluster = clusterService.assignDueDates(tasks, startDate, workDays, 15)
+                def cluster = clusterService.assignDueDates(tasks, startDate, workDays, tasksPerDay)
 
                 taskRepository.save(tasks)
             } else {
@@ -340,12 +345,24 @@ class TaskService {
 
     }
 
-    List<Task> generateTasks(Territory t, CustomerSegment s, Date startDate, List<Integer> workDays) {
+    List<Task> generateTasks(Territory t, CustomerSegment s, Date startDate, List<Integer> workDays, Class<? extends Task> taskType) {
 
-        def customers = customerRepository.findAllWithoutNewTasks(t.id, s.id, s.numberOfTasks)
+        def results
+        if (taskType == DetailerTask)
+            results = customerRepository.findAllWithoutNewDetailingTasks(t.id, s.id, s.numberOfTasks)
+        else
+            results = customerRepository.findAllWithoutNewOrderTasks(t.id, s.id, s.numberOfTasks)
 
-        def tasks = customers.collect { customer ->
-            new DetailerTask(customer: customer, description: "Go Check on [$customer.outletName]", dueDate: new Date())
+
+        def tasks = []
+        results.each { r ->
+            if (s.shouldGenerateTask(r.completionDate)) {
+                if (taskType == DetailerTask)
+                    tasks << new DetailerTask(customer: r.customer, description: "Go Check on [$r.customer.outletName]", dueDate: getNextWorkDay(workDays, startDate))
+                else
+                    tasks << new Order(customer: r.customer, dueDate: getNextWorkDay(workDays, startDate))
+
+            }
         }
         log.info("Generated [${tasks.size()}] Tasks for Territory[$t],Segment[$s]")
 

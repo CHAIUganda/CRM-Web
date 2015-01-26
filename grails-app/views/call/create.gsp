@@ -11,6 +11,11 @@
             _orderCustomer = {id: ${taskInstance.customer?.id},outletName:'${taskInstance?.customer?.outletName}'};
         </g:javascript>
     </g:if>
+    <g:else>
+        <g:javascript>
+            _orderCustomer = null;
+        </g:javascript>
+    </g:else>
 </head>
 
 <body>

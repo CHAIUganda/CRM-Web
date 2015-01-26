@@ -25,10 +25,10 @@
 				</p>
 				
 				<div class="actions">
-					<a href="${createLink(uri: '/')}" class="btn btn-large btn-primary">
+					<g:link controller="home" class="btn btn-large btn-primary" >
 						<i class="glyphicon glyphicon-chevron-left icon-white"></i>
 						<g:message code="error.button.backToHome"/>
-					</a>
+					</g:link>
 					%{--<a  href="${createLink(uri: '/login/auth')}" class="btn btn-large btn-success">--}%
 						%{--<i class="glyphicon glyphicon-log-in"></i> Back to Login--}%
 					%{--</a>--}%

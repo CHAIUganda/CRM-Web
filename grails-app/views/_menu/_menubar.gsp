@@ -45,6 +45,12 @@
                     <li>
                         <g:link controller="sale" action="index">Sales</g:link>
                     </li>
+                    <li>
+                        <g:link controller="taskSetting" action="generationDetailer">Generate Detailing Tasks</g:link>
+                    </li>
+                    <li>
+                        <g:link controller="taskSetting" action="generationOrder">Generate Calls</g:link>
+                    </li>
                 </ul>
 
             </li>
