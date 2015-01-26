@@ -16,6 +16,7 @@ import static com.omnitech.chai.model.Relations.*
 import static com.omnitech.chai.util.ChaiUtils.getNextWorkDay
 import static grails.util.GrailsNameUtils.getNaturalName
 import static java.util.Collections.EMPTY_MAP
+import static java.util.Collections.max
 import static org.neo4j.cypherdsl.CypherQuery.*
 import static org.neo4j.cypherdsl.CypherQuery.as as az
 
@@ -316,13 +317,17 @@ class TaskService {
         }
     }
 
-    void generateTasks(List<Territory> territories,
+    def generateTasks(List<Territory> territories,
                        List<CustomerSegment> segments,
                        Date startDate,
                        List<Integer> workDays,
                        int tasksPerDay,
                        Class<? extends Task> taskType) {
 
+
+
+
+        def messages = []
 
         territories.each { t ->
             def tasks = []
@@ -334,6 +339,7 @@ class TaskService {
 
             if (tasks) {
                 log.info "***** Clustering: Territory[$t] Tasks[${tasks.size()}]"
+                messages << "$t(${tasks.size()})"
                 def cluster = clusterService.assignDueDates(tasks, startDate, workDays, tasksPerDay)
 
                 taskRepository.save(tasks)
@@ -342,6 +348,7 @@ class TaskService {
             }
         }
 
+        return messages
 
     }
 

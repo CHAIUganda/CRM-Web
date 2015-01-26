@@ -16,15 +16,18 @@
 
 <body>
 
-<g:form action="${actionName =='generationDetailer' ? 'generateDetailerTasks' : 'generateOrderTasks'}">
+<h1>
+    Generate ${taskType}
+</h1>
+
+<g:form action="${actionName == 'generationDetailer' ? 'generateDetailerTasks' : 'generateOrderTasks'}">
     <div class="form-horizontal">
 
-        <div class="form-group">
-            <label for="taskType" class="col-md-2 control-label">Task Type</label>
-
-            <div class="col-md-5"><g:select class="form-control" name="taskType"
-                                            from="${['Detailing', 'Sales']}"/></div>
-        </div>
+        %{--<div class="form-group">--}%
+            %{--<label for="numberOfTasks" class="col-md-2 control-label">Average Number Of Task Per Day</label>--}%
+%{----}%
+            %{--<div class="col-md-5"><g:field type="number" name="numberOfTasks" class="form-control"/></div>--}%
+        %{--</div>--}%
 
         %{--<div class="form-group">--}%
         %{--<label for="numberOfTasks" class="col-md-2 control-label">Tasks Per Territory</label>--}%
@@ -67,8 +70,6 @@
                     <label for="workDays">${day.value}</label>
                 </g:each>
             </div>
-
-
 
         </div>
 

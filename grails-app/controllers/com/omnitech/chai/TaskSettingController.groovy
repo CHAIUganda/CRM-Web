@@ -17,23 +17,23 @@ class TaskSettingController {
 
     def generationDetailer() {
         def (territories, segments) = getPageModel()
-        render view: 'generationDetailer', model: [territories: territories, segments: segments]
+        render view: 'generationDetailer', model: [territories: territories, segments: segments, taskType: 'Detailing Tasks']
     }
 
     def generationOrder() {
         def (territories, segments) = getPageModel()
-        render view: 'generationDetailer', model: [territories: territories, segments: segments]
+        render view: 'generationDetailer', model: [territories: territories, segments: segments, taskType: 'Sale Calls']
     }
 
     def generateDetailerTasks() {
-        generateTasks(DetailerTask)
-        flash.message = "Generation Is Done"
+        def msgs = generateTasks(DetailerTask)
+        flash.message = "Generated Tasks ${msgs.join(',')}"
         redirect action: 'generationDetailer'
     }
 
     def generateOrderTasks() {
-        generateTasks(Order)
-        flash.message = "Generation Is Done"
+        def msgs = generateTasks(Order)
+        flash.message = "Generated Tasks ${msgs.join(',')}"
         redirect action: 'generationOrder'
     }
 
@@ -68,7 +68,7 @@ class TaskSettingController {
 
         def territories = extractTerritories()
 
-        taskService.generateTasks(territories, segments, startDate, workDays, 15,taskType)
+        taskService.generateTasks(territories, segments, startDate, workDays, 15, taskType)
     }
 
     private def extractTerritories() {
