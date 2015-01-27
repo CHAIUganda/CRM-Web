@@ -52,6 +52,25 @@
 				
 			</tr>
 
+		%{--<g:if test="${userInstance?.hasRole(com.omnitech.chai.model.Role.SUPERVISOR_ROLE_NAME)}">--}%
+		<tr class="prop">
+			<td valign="top" class="name"><g:message code="product.territories.label"
+													 default="Territories Where Sold"/></td>
+
+			<td valign="top" class="value">
+				<g:each in="${productInstance?.territories}" var="t">
+					<div class="col-md-3">
+						<g:link controller="territory" action="show" id="${t.id}">
+							<i class="glyphicon glyphicon-arrow-right"></i> ${t}
+						</g:link>
+
+					</div>
+				</g:each>
+			</td>
+
+		</tr>
+		%{--</g:if>--}%
+
         </tbody>
 	</table>
 </section>

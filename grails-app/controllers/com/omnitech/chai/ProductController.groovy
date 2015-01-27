@@ -4,6 +4,7 @@ import com.omnitech.chai.model.Product
 import com.omnitech.chai.util.GroupFlattener
 import com.omnitech.chai.util.ModelFunctions
 import grails.transaction.Transactional
+import org.springframework.data.neo4j.transaction.Neo4jTransactional
 
 import static ModelFunctions.extractId
 import static org.springframework.http.HttpStatus.*
@@ -17,12 +18,14 @@ class ProductController {
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
     def productService
+    def regionService
+    def txHelperService
 
     def index(Integer max) {
         params.max = Math.min(max ?: 100, 100)
         def products = productService.listAllProducts()
         def content = new GroupFlattener(leaves: products).normalize()
-        [productInstanceList: content, productInstanceCount: products.size(),layout_nosearchtext:true]
+        [productInstanceList: content, productInstanceCount: products.size(), layout_nosearchtext: true]
     }
 
     def show() {
@@ -30,13 +33,17 @@ class ProductController {
         if (id == -1) {
             notFound(); return
         }
-        respond productService.findProduct(id)
+
+        def product = productService.findProduct(id)
+        txHelperService.doInTransaction { neo.fetch(product.territories) }
+        respond product
     }
 
     def create() {
         respond ModelFunctions.bind(new Product(), params), model: getPageModel()
     }
 
+    @Neo4jTransactional
     def save(Product productInstance) {
         if (productInstance == null) {
             notFound()
@@ -44,11 +51,11 @@ class ProductController {
         }
 
         if (productInstance.hasErrors()) {
-            respond productInstance.errors, view: 'create'
+            respond productInstance.errors, view: 'create', model: getPageModel()
             return
         }
 
-        productService.saveProduct productInstance
+        productService.saveProduct productInstance, getTerritoryIds()
 
         request.withFormat {
             form {
@@ -66,10 +73,13 @@ class ProductController {
             notFound(); return
         }
         def productInstance = productService.findProduct(id)
+        txHelperService.doInTransaction {
+            neo.fetch(productInstance.territories)
+        }
         respond productInstance, model: getPageModel()
     }
 
-    @Transactional
+    @Neo4jTransactional
     def update(Product productInstance) {
         if (productInstance == null) {
             notFound()
@@ -77,11 +87,11 @@ class ProductController {
         }
 
         if (productInstance.hasErrors()) {
-            respond productInstance.errors, view: 'edit'
+            respond productInstance.errors, view: 'edit', model: getPageModel()
             return
         }
 
-        productService.saveProduct productInstance
+        productService.saveProduct productInstance, getTerritoryIds()
 
         request.withFormat {
             form {
@@ -122,5 +132,11 @@ class ProductController {
         }
     }
 
-    private Map getPageModel() { [productGroups: productService.listAllProductGroups()] }
+    private Map getPageModel() {
+        [productGroups: productService.listAllProductGroups(), territories: regionService.listAllTerritorys()]
+    }
+
+    private List getTerritoryIds() {
+        params.territoriz instanceof String ? [params.territoriz] : params.territoriz
+    }
 }

@@ -24,6 +24,9 @@ class Product extends AbstractEntity implements LeafNode {
     @RelatedTo(type = Relations.GRP_HAS_PRD, direction = Direction.INCOMING)
     ProductGroup group
 
+    @RelatedTo(type = Relations.PROD_IN_TERRITORY)
+    Set<Territory> territories
+
     static constraints = {
         name blank: false
         unitOfMeasure blank: false
@@ -33,6 +36,10 @@ class Product extends AbstractEntity implements LeafNode {
     }
 
     String toString() { name }
+
+    boolean isSoldInTerritory(Territory t) {
+        return territories?.any { it.id == t.id }
+    }
 
     @Override
     GroupNode getParent() { return group }

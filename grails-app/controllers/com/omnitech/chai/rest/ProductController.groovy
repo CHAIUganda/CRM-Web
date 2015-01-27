@@ -12,6 +12,7 @@ class ProductController {
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
     def productService
+    def neoSecurityService
 
     def listProductGroups() {
         def groups = productService.listAllProductGroups().collect { ReflectFunctions.extractProperties(it) }
@@ -19,7 +20,8 @@ class ProductController {
     }
 
     def listProducts() {
-        def products = productService.listAllProducts().collect {
+        def user = neoSecurityService.currentUser
+        def products = productService.findAllProductsForUser(user).collect {
             def map = ReflectFunctions.extractProperties(it)
             map.groupId = it?.group?.id
             return map

@@ -16,6 +16,9 @@ interface UuidRepository<T> {
 
 interface ProductRepository extends GraphRepository<Product> {
     Product findByUuid(String uuid)
+
+    @Query('start u = node({userId}) match u-[:USER_TERRITORY|SUPERVISES_TERRITORY]->(t)<-[:PROD_IN_TERRITORY]-(p) return distinct p')
+    Iterable<Product> findAllByUser(@Param('userId') Long userId)
 }
 
 interface RoleRepository extends GraphRepository<Role> {

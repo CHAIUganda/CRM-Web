@@ -43,3 +43,24 @@
 				</div>
 			</div>
 
+%{--SELECT TERRITORIES--}%
+<div class="row">
+    <div class="row">
+        <legend class="text-center">In Which Territories Should This Product Be Sold?</legend>
+    </div>
+
+    <div class="row">
+
+        <g:each in="${territories}" var="territory" status="i">
+            <div class="col-md-4  ${productInstance?.isSoldInTerritory(territory)? 'alert-info' : ''}">
+                <g:checkBox name="territoriz" value="${territory.id}"
+                            checked="${productInstance?.isSoldInTerritory(territory)}"/>
+                <label for="territories">${territory}</label>
+            </div>
+
+        </g:each>
+
+
+    </div>
+</div>
+

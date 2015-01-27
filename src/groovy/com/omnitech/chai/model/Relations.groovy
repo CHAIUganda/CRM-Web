@@ -53,6 +53,8 @@ interface Relations {
     //ProductGroup -> Product
     final static GRP_HAS_PRD = 'GRP_HAS_PRD'
 
+    final static PROD_IN_TERRITORY = 'PROD_IN_TERRITORY'
+
     //Group -> Group
     final static GRP_HAS_GRP = 'GRP_HAS_GRP'
 
