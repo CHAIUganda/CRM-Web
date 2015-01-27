@@ -1,8 +1,6 @@
 package com.omnitech.chai
 
 import com.omnitech.chai.crm.TxHelperService
-import com.omnitech.chai.model.District
-import com.omnitech.chai.model.SubCounty
 import com.omnitech.chai.model.Territory
 import com.omnitech.chai.util.ModelFunctions
 import grails.converters.JSON
@@ -21,7 +19,7 @@ class TerritoryController {
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE", mapTerritoryToSubCounties: 'POST']
 
-    def  regionService
+    def regionService
     @Autowired
     TxHelperService tx
 
@@ -32,7 +30,7 @@ class TerritoryController {
     }
 
     private Map pageModel(Page<Territory> page) {
-        def districts = regionService.listAllDistrictWithSubCounties()?.sort{it.name}
+        def districts = regionService.listAllDistrictWithSubCounties()?.sort { it.name }
         return [territoryInstanceCount: page.totalElements, districts: districts]
     }
 
@@ -43,7 +41,7 @@ class TerritoryController {
             return
         }
         def page = regionService.searchTerritorys(params.id, params)
-        respond page.content, view: 'index', model: [territoryInstanceCount: page.totalElements]
+        respond page.content, view: 'index', model: pageModel(page)
     }
 
     def show() {
@@ -54,12 +52,12 @@ class TerritoryController {
 
         def territory = regionService.findTerritory(id)
 
-        if(!territory) {
-            notFound();return
+        if (!territory) {
+            notFound(); return
         }
 
         tx.doInTransaction { neo.fetch(territory.subCounties) }
-        respond territory, model: [subCounties:  territory.subCounties?.sort { it?.district?.id }]
+        respond territory, model: [subCounties: territory.subCounties?.sort { it?.district?.id }]
     }
 
     def create() {
@@ -73,7 +71,7 @@ class TerritoryController {
         }
 
         if (territoryInstance.hasErrors()) {
-            respond territoryInstance.errors, view:'create'
+            respond territoryInstance.errors, view: 'create'
             return
         }
 
@@ -106,7 +104,7 @@ class TerritoryController {
         }
 
         if (territoryInstance.hasErrors()) {
-            respond territoryInstance.errors, view:'edit'
+            respond territoryInstance.errors, view: 'edit'
             return
         }
 
@@ -117,7 +115,7 @@ class TerritoryController {
                 flash.message = message(code: 'default.updated.message', args: [message(code: 'Territory.label', default: 'Territory'), territoryInstance.id])
                 redirect action: 'show', id: territoryInstance.id
             }
-            '*'{ respond territoryInstance, [status: OK] }
+            '*' { respond territoryInstance, [status: OK] }
         }
     }
 
@@ -135,9 +133,9 @@ class TerritoryController {
         request.withFormat {
             form {
                 flash.message = message(code: 'default.deleted.message', args: [message(code: 'Territory.label', default: 'Territory'), id])
-                redirect action:"index", method:"GET"
+                redirect action: "index", method: "GET"
             }
-            '*'{ render status: NO_CONTENT }
+            '*' { render status: NO_CONTENT }
         }
     }
 
@@ -147,7 +145,7 @@ class TerritoryController {
                 flash.message = message(code: 'default.not.found.message', args: [message(code: 'Territory.label', default: 'Territory'), params.id])
                 redirect action: "index", method: "GET"
             }
-            '*'{ render status: NOT_FOUND }
+            '*' { render status: NOT_FOUND }
         }
     }
 
@@ -177,9 +175,9 @@ class TerritoryController {
             neo.fetch(territory.subCounties)
         }
         def subcouties = district.subCounties.collect { sc ->
-            [id: sc.id, name: sc.name,
-                    mapped: territory.subCounties.any { sc.id == it.id },
-                    territory: sc.territory?.name]
+            [id       : sc.id, name: sc.name,
+             mapped   : territory.subCounties.any { sc.id == it.id },
+             territory: sc.territory?.name]
         }
 
         render subcouties as JSON
