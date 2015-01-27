@@ -105,42 +105,50 @@ class BootStrap {
 
         def mappings = [
                 //Mobile
-                '/rest/**'                  : [DETAILER_ROLE_NAME, SALES_ROLE_NAME],
+                '/rest/**'                          : [DETAILER_ROLE_NAME, SALES_ROLE_NAME],
 
                 //Detailing
-                '/detailerTask/index'       : [DETAILER_ROLE_NAME, DETAILING_SUPERVISOR_ROLE_NAME],
-                '/detailerTask/show/*'      : [DETAILER_ROLE_NAME, DETAILING_SUPERVISOR_ROLE_NAME],
-                '/detailerTask/map'         : [DETAILER_ROLE_NAME, DETAILING_SUPERVISOR_ROLE_NAME],
-                '/detailerTask/search/**'   : [DETAILER_ROLE_NAME, DETAILING_SUPERVISOR_ROLE_NAME],
-                '/detailerTask/searchMap/**': [DETAILER_ROLE_NAME, DETAILING_SUPERVISOR_ROLE_NAME],
-                '/detailerTask/**'          : [DETAILING_SUPERVISOR_ROLE_NAME],
+                '/detailerTask/index'               : [DETAILER_ROLE_NAME, DETAILING_SUPERVISOR_ROLE_NAME],
+                '/detailerTask/show/*'              : [DETAILER_ROLE_NAME, DETAILING_SUPERVISOR_ROLE_NAME],
+                '/detailerTask/map'                 : [DETAILER_ROLE_NAME, DETAILING_SUPERVISOR_ROLE_NAME],
+                '/detailerTask/search/**'           : [DETAILER_ROLE_NAME, DETAILING_SUPERVISOR_ROLE_NAME],
+                '/detailerTask/searchMap/**'        : [DETAILER_ROLE_NAME, DETAILING_SUPERVISOR_ROLE_NAME],
+                '/detailerTask/**'                  : [DETAILING_SUPERVISOR_ROLE_NAME],
 
                 // Orders
-                '/call/index'              : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
-                '/call/show/*'             : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
-                '/call/map'                : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
-                '/call/search/**'          : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
-                '/call/searchMap/**'       : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
-                '/call/**'                 : [SALES_SUPERVISOR_ROLE_NAME],
+                '/call/index'                       : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
+                '/call/show/*'                      : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
+                '/call/map'                         : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
+                '/call/search/**'                   : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
+                '/call/searchMap/**'                : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
+                '/call/**'                          : [SALES_SUPERVISOR_ROLE_NAME],
 
                 //Sales
-                '/sale/index'               : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
-                '/sale/show/*'              : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
-                '/sale/map'                 : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
-                '/sale/search'              : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
-                '/sale/searchMap'           : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
-                '/sale/**'                  : [SALES_SUPERVISOR_ROLE_NAME],
+                '/sale/index'                       : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
+                '/sale/show/*'                      : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
+                '/sale/map'                         : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
+                '/sale/search'                      : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
+                '/sale/searchMap'                   : [SALES_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
+                '/sale/**'                          : [SALES_SUPERVISOR_ROLE_NAME],
 
                 //Customers
-                '/customer/**'              : [SALES_SUPERVISOR_ROLE_NAME, DETAILING_SUPERVISOR_ROLE_NAME],
+                '/customer/**'                      : [SALES_SUPERVISOR_ROLE_NAME, DETAILING_SUPERVISOR_ROLE_NAME],
+
+                //Task Generation
+                '/taskSetting/generationDetailer'   : [DETAILING_SUPERVISOR_ROLE_NAME],
+                '/taskSetting/generateDetailerTasks': [DETAILING_SUPERVISOR_ROLE_NAME],
+
+                //sales
+                '/taskSetting/generationOrder'      : [DETAILING_SUPERVISOR_ROLE_NAME],
+                '/taskSetting/generateOrderTasks'   : [DETAILING_SUPERVISOR_ROLE_NAME],
 
                 //Reports
-                '/report/index'             : [SALES_SUPERVISOR_ROLE_NAME],
-                '/report/getReport'         : [SALES_SUPERVISOR_ROLE_NAME],
+                '/report/index'                     : [SALES_SUPERVISOR_ROLE_NAME],
+                '/report/getReport'                 : [SALES_SUPERVISOR_ROLE_NAME],
 
                 //HomePages
-                '/home/**'                  : ['IS_AUTHENTICATED_FULLY'],
-                '/'                         : ['IS_AUTHENTICATED_FULLY']
+                '/home/**'                          : ['IS_AUTHENTICATED_REMEMBERED'],
+                '/'                                 : ['IS_AUTHENTICATED_REMEMBERED']
 
         ]
 
@@ -196,7 +204,8 @@ class BootStrap {
             def setting = settingRepository.findByName(Setting.SEGMENTATION_SCRIPT)
             if (!setting) {
                 println "Inserting default setting into DB..."
-                setting = new Setting(name: Setting.SEGMENTATION_SCRIPT, value: '2.5')
+                setting = new Setting(name: Setting.SEGMENTATION_SCRIPT, value: 'def scores = [0.5,1,1.5,2]\n' +
+                        'return scores[(int)(Math.random() *scores.size()-1)]')
                 neo.save(setting)
             }
 
