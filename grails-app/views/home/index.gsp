@@ -10,36 +10,28 @@
 <body>
 
 <section id="intro" class="first">
-%{--<h1>Welcome !!!</h1>--}%
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <g:form action="index" class="form-inline">
+                <div class="form-group"><label class="">Start Date</label></div>
+
+                <div class="form-group"><bs:datePicker name="startDate" class="form-control" value="${startDate}"/></div>
+
+                <div class="form-group"><label class="">End Date</label></div>
+
+                <div class="form-group"><bs:datePicker name="endDate" class="form-control" value="${endDate}"/></div>
+
+                <div class="form-group"><g:submitButton name="submit" value="Submit" class="btn btn-mini"/></div>
+            </g:form>
+        </div>
+
+    </div>
     <sec:ifAnyGranted
             roles="${[Role.ADMIN_ROLE_NAME, Role.DETAILER_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME, Role.DETAILING_SUPERVISOR_ROLE_NAME].join(',')}">
         <div class="panel panel-success">
             <div class="panel-heading">Detailing Call Plans</div>
 
             <div class="panel-body">
-
-                %{--<div class="row">--}%
-                %{--<div class="col-md-12">--}%
-                %{--<div class="form-inline">--}%
-
-                %{--<div class="form-group">--}%
-                %{--<label>Type</label>--}%
-                %{--<g:select name="type" from="${['Detailing', 'Sales']}" class="form-control"/>--}%
-                %{--</div>--}%
-
-                %{--<div class="form-group">--}%
-                %{--<label>Start Date</label>--}%
-                %{--<bs:datePicker name="startDate" class="form-control"/>--}%
-                %{--</div>--}%
-
-                %{--<div class="form-group">--}%
-                %{--<label>End Date</label>--}%
-                %{--<input id="dueDateText" name="dueDate" class=" form-control" type="text"--}%
-                %{--data-date-format="yyyy-mm-dd" ng-model="text.dueDateText">--}%
-                %{--</div>--}%
-                %{--</div>--}%
-                %{--</div>--}%
-                %{--</div>--}%
 
                 %{-- For Detailers --}%
 
@@ -104,30 +96,6 @@
             <div class="panel-heading">Sales Call Plans</div>
 
             <div class="panel-body">
-
-                %{--<div class="row">--}%
-                %{--<div class="col-md-12">--}%
-                %{--<div class="form-inline">--}%
-
-                %{--<div class="form-group">--}%
-                %{--<label>Type</label>--}%
-                %{--<g:select name="type" from="${['Detailing', 'Sales']}" class="form-control"/>--}%
-                %{--</div>--}%
-
-                %{--<div class="form-group">--}%
-                %{--<label>Start Date</label>--}%
-                %{--<bs:datePicker name="startDate" class="form-control"/>--}%
-                %{--</div>--}%
-
-                %{--<div class="form-group">--}%
-                %{--<label>End Date</label>--}%
-                %{--<input id="dueDateText" name="dueDate" class=" form-control" type="text"--}%
-                %{--data-date-format="yyyy-mm-dd" ng-model="text.dueDateText">--}%
-                %{--</div>--}%
-                %{--</div>--}%
-                %{--</div>--}%
-                %{--</div>--}%
-
                 %{-- For Detailers --}%
 
                 <div class="row">
