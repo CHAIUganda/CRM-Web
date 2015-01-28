@@ -52,10 +52,13 @@
 
                 <td>
 
+
+
                     <g:link action="show" id="${taskInstance.id}">
-                      <g:if test="${taskInstance?.respondsTo('takenBy') && taskInstance?.takenBy  }">
-                          <i class="glyphicon glyphicon-star"></i>
-                      </g:if>
+                        ${(params.offset ? (params.offset as Long) + 1 : 1) + i}.
+                        <g:if test="${taskInstance?.respondsTo('takenBy') && taskInstance?.takenBy}">
+                            <i class="glyphicon glyphicon-star"></i>
+                        </g:if>
                         ${fieldValue(bean: taskInstance, field: "description")}
                     </g:link>
                 </td>

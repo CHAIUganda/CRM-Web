@@ -46,7 +46,10 @@
             <tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
 
                 <td><g:link action="show"
-                            id="${taskInstance.id}">${ChaiUtils.truncateString(taskInstance.description, 50)}</g:link></td>
+                            id="${taskInstance.id}">
+                    ${(params.offset ? (params.offset as Long) + 1 : 1) + i}.
+                    ${ChaiUtils.truncateString(taskInstance.description, 50)}
+                </g:link></td>
 
                 <td>
                     <g:if test="${params.status == Task.STATUS_COMPLETE}">
