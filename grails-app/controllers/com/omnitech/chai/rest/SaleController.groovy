@@ -28,6 +28,8 @@ class SaleController {
 
         handleSafely {
             def json = request.JSON as Map
+            //todo fixme
+            json.clientRefId = json.uuid
 
             assert json.clientRefId, 'ClientRefId Should exist in the request'
             def dupeSale = taskService.findDirectSaleByClientRefId(json.clientRefId)
@@ -62,6 +64,7 @@ class SaleController {
     def placeOrder() {
         handleSafely {
             def json = request.JSON as Map
+            json.clientRefId = json.uuid
             json.remove('id')
 
             assert json.clientRefId, 'ClientRefId Should exist in the request'
