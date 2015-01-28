@@ -41,7 +41,7 @@ var omnitech;
                 });
             };
             DataLoader.prototype.searchForCustomers = function (searchParam) {
-                var url = omnitechBase + '/rest/customer/searchByName';
+                var url = omnitechBase + '/customer/searchByName';
                 return this.http.get(url, { params: { term: searchParam } }).then(function (res) { return res.data; });
             };
             DataLoader.prototype.persistOrder = function (order) {

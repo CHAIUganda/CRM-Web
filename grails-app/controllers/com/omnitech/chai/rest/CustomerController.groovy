@@ -96,27 +96,6 @@ class CustomerController {
         ModelFunctions.bind(neoCustomer, customer.properties, whiteList)
     }
 
-    def searchByName(String id) {
-
-        String term = id ?: params.term
-        if (!term) {
-            respond([])
-            return
-        }
-
-        respond customerService
-                .searchCustomers(term, [sort: 'outletName'])
-                .content
-                .collect {
-            [id        : it.id,
-             district  : it.subCounty.district.name,
-             outletName: it.outletName,
-             contact   : it.customerContacts?.iterator()?.next()?.contact
-            ]
-        }
-    }
-
-
     private def handleSafely(def func) {
         try {
             func()

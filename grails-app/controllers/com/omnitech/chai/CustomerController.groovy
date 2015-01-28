@@ -182,6 +182,26 @@ class CustomerController {
         redirect action: 'index'
     }
 
+    def searchByName(String id) {
+
+        String term = id ?: params.term
+        if (!term) {
+            respond([])
+            return
+        }
+
+        render  customerService
+                .searchCustomers(term, [sort: 'outletName',max:10])
+                .content
+                .collect {
+            [id        : it.id,
+             district  : it.subCounty.district.name,
+             outletName: it.outletName,
+             contact   : it.customerContacts?.iterator()?.next()?.contact
+            ]
+        }       as JSON
+    }
+
     protected void notFound() {
         request.withFormat {
             form {
