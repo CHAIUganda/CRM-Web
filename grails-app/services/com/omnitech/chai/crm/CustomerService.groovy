@@ -7,7 +7,6 @@ import com.omnitech.chai.util.PageUtils
 import com.omnitech.chai.util.ReflectFunctions
 import fuzzycsv.FuzzyCSV
 import fuzzycsv.Record
-import org.neo4j.cypherdsl.grammar.ReturnNext
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
@@ -81,10 +80,12 @@ class CustomerService {
     }
 
     @Neo4jTransactional
-    List<Customer> findAllCustomersByUser(long userId, Map params) {
+    List<Customer> findAllCustomersByUser(long userId, Boolean isActive, Map params) {
         def customer = Customer.simpleName.toLowerCase()
         def exec = start(nodesById('u', userId))
-                .match(node('u').out(USER_TERRITORY).node('t').in(SC_IN_TERRITORY).node('sc').in(CUST_IN_SC).node(customer)
+                .match(node('u').out(USER_TERRITORY).node('t').in(SC_IN_TERRITORY).node('sc').in(CUST_IN_SC).node(customer))
+                .where(identifier('u').property('isActive').eq(isActive)
+                .or(not(has(identifier('u').property('isActive'))))
         ).returns(distinct(identifier(customer)))
         log.trace("findAllCustomersByUser $exec")
         ModelFunctions.query(customerRepository, exec, params, Customer).collect()
@@ -96,7 +97,7 @@ class CustomerService {
                 .match(node('segment').out(IN_SEGMENT).node('customer'))
                 .returns(identifier('customer'))
 
-        customerRepository.query(customers,Collections.EMPTY_MAP)
+        customerRepository.query(customers, Collections.EMPTY_MAP)
 
     }
 
