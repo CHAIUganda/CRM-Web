@@ -13,7 +13,7 @@
             </li>
 
         %{-- CREATE MENU --}%
-            <g:if test="${params.controller != 'sale'}">
+            <g:if test="${params.controller != 'sale' && params.controller != 'detailerTask'}">
                 <li class="${params.action == "create" ? 'active' : ''}">
                     <g:link action="create"><i class="glyphicon glyphicon-plus"></i> <g:message code="default.new.label"
                                                                                                 args="[entityName]"/></g:link>
@@ -38,8 +38,10 @@
             <g:if test="${['detailerTask', 'call', 'task'].contains(params.controller)}">
                 <li>
                     <a data-toggle="dropdown" href="#"><i
-                            class="glyphicon glyphicon-filter"></i>${params.status?.capitalize() ?: 'All'}  ${entityName}s<b
-                            class="caret"></b></a>
+                            class="glyphicon glyphicon-filter"></i>
+                        ${(params.status?.capitalize() == 'New' ? 'Active' : params.status?.capitalize()) ?: 'All'}  ${entityName}s
+                        <b class="caret"></b>
+                    </a>
                     <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
                         <g:if test="${params.user != null}">
                             <li>
