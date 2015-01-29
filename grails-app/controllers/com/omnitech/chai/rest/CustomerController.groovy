@@ -60,6 +60,7 @@ class CustomerController {
 
     def update() {
         handleSafely {
+            log.debug("updating ")
             def json = request.JSON as Map
 
             println(json.inspect())
@@ -67,7 +68,7 @@ class CustomerController {
             //todo maybe validate
             def customer = ModelFunctions.createObj(Customer, json) as Customer
 
-            def subCountyUuid = json['subcountyUuid'] as String
+            def subCountyUuid = json['subcountyId'] as String
             assert subCountyUuid, "You did not supply a subcounty uuid"
             def subCounty = regionService.findSubCounty(subCountyUuid)
 
