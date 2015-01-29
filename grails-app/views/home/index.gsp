@@ -12,7 +12,7 @@
 <section id="intro" class="first">
     <div class="panel panel-success">
         <div class="panel-heading">
-            <g:form action="index" class="form-inline">
+            <g:form action="index" class="form-inline" method="get">
                 <div class="form-group"><label class="">Start Date</label></div>
 
                 <div class="form-group"><bs:datePicker name="startDate" class="form-control" value="${startDate}"/></div>
@@ -45,8 +45,8 @@
                                 <th>No. Tasks</th>
                                 <th>% Complete</th>
                                 <th>% Productivity</th>
-                                %{--<td>Orders</td>--}%
-                                %{--<td>New Customers</td>--}%
+                                <th>Orders</th>
+                                <th>New Customers</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -76,8 +76,8 @@
                                             </div>
                                         </div>
                                     </td>
-                                    %{--<td>5</td>--}%
-                                    %{--<td>5</td>--}%
+                                    <td>${item.orders}</td>
+                                    <td>${item.numCustomers}</td>
                                 </tr>
                             </g:each>
                             </tbody>
@@ -108,8 +108,8 @@
                                 <th>No. Tasks</th>
                                 <th>% Complete</th>
                                 <th>% Productivity</th>
-                                %{--<td>Orders</td>--}%
-                                %{--<td>New Customers</td>--}%
+                                <th>Orders</th>
+                                <th>New Customers</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -139,8 +139,8 @@
                                             </div>
                                         </div>
                                     </td>
-                                    %{--<td>5</td>--}%
-                                    %{--<td>5</td>--}%
+                                    <td>${item.orders}</td>
+                                    <td>${item.numCustomers}</td>
                                 </tr>
                             </g:each>
                             </tbody>

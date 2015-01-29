@@ -21,16 +21,16 @@ class HomeController {
 
         //admins
         if (user.hasRole(ADMIN_ROLE_NAME, SUPER_ADMIN_ROLE_NAME)) {
-            detailingInfo = dashBoardService.detailingReport(startDate, endDate)
-            salesInfo = dashBoardService.salesReport(startDate, endDate)
+            detailingInfo = dashBoardService.detailingReport(startDate, endDate+1)
+            salesInfo = dashBoardService.salesReport(startDate, endDate+1)
         }
 
         if (!detailingInfo && user.hasRole(DETAILER_ROLE_NAME, DETAILING_SUPERVISOR_ROLE_NAME)) {
-            detailingInfo = dashBoardService.detailingReport(user.id,startDate, endDate)
+            detailingInfo = dashBoardService.detailingReport(user.id, startDate, endDate+1)
         }
 
         if (!salesInfo && user.hasRole(SALES_SUPERVISOR_ROLE_NAME, SALES_ROLE_NAME)) {
-            salesInfo = dashBoardService.salesReport(user.id,startDate, endDate)
+            salesInfo = dashBoardService.salesReport(user.id, startDate, endDate+1)
         }
 
         [detailingInfo: detailingInfo, salesInfo: salesInfo, startDate: startDate, endDate: endDate]
