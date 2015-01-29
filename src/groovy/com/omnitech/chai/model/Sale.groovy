@@ -1,6 +1,8 @@
 package com.omnitech.chai.model
 
+import org.springframework.core.convert.converter.ConverterFactory
 import org.springframework.data.neo4j.annotation.Fetch
+import org.springframework.data.neo4j.annotation.GraphProperty
 import org.springframework.data.neo4j.annotation.MapResult
 import org.springframework.data.neo4j.annotation.NodeEntity
 import org.springframework.data.neo4j.annotation.QueryResult
@@ -25,6 +27,7 @@ class DirectSale extends Task implements Sale {
     String recommendationNextStep;
     String recommendationLevel;
     Boolean governmentApproval;
+    @GraphProperty(propertyType  = Long.class)
     Date dateOfSale;
 
     @Fetch
@@ -67,6 +70,7 @@ class SaleOrder extends Order implements Sale {
     String recommendationNextStep;
     String recommendationLevel;
     Boolean governmentApproval;
+    @GraphProperty(propertyType = Long.class)
     Date dateOfSale;
 
     def beforeSave() {

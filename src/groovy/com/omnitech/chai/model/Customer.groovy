@@ -7,6 +7,7 @@ import org.apache.commons.collections.FactoryUtils
 import org.apache.commons.collections.list.LazyList
 import org.springframework.data.annotation.Transient
 import org.springframework.data.neo4j.annotation.Fetch
+import org.springframework.data.neo4j.annotation.GraphProperty
 import org.springframework.data.neo4j.annotation.Indexed
 import org.springframework.data.neo4j.annotation.NodeEntity
 import org.springframework.data.neo4j.annotation.RelatedTo
@@ -62,6 +63,7 @@ public class Customer extends AbstractEntity implements LeafNode {
     //todo add hasSisterBranch
     Boolean hasSisterBranch
     //todo add dateOutletOpened
+    @GraphProperty(propertyType = Long.class)
     Date dateOutletOpened
 
 

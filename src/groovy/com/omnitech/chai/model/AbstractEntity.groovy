@@ -1,6 +1,7 @@
 package com.omnitech.chai.model
 
 import org.springframework.data.neo4j.annotation.GraphId
+import org.springframework.data.neo4j.annotation.GraphProperty
 
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -14,7 +15,9 @@ class AbstractEntity {
     @GraphId
     Long id
     String uuid
+    @GraphProperty(propertyType = Long.class)
     Date dateCreated
+    @GraphProperty(propertyType = Long.class)
     Date lastUpdated
     String _dateCreated
     String _dateLastUpdated
