@@ -37,6 +37,8 @@ class SaleController {
             assert !dupeSale, 'Duplicate Sale'
 
             def sale = toDirectSale(json)
+            sale.lng = ChaiUtils.execSilently('Converting long to float') { json['longitude'] as Float }
+            sale.lat = ChaiUtils.execSilently('Converting lat to float') { json['latitude'] as Float }
             //explicitly remove the id
             sale.id = null
             sale.completedBy(neoSecurityService.currentUser)
@@ -57,6 +59,8 @@ class SaleController {
             def saleOrder = toOrder(json, SaleOrder)
             bindSaleOrderToDbInstance(saleOrder, order)
             saleOrder.completedBy(neoSecurityService.currentUser)
+            saleOrder.lng = ChaiUtils.execSilently('Converting long to float') { json['longitude'] as Float }
+            saleOrder.lat = ChaiUtils.execSilently('Converting lat to float') { json['latitude'] as Float }
             taskService.saveTask(saleOrder)
         }
     }
