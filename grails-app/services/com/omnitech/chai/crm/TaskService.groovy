@@ -365,7 +365,7 @@ class TaskService {
         results.each { r ->
             if (s.shouldGenerateTask(r.completionDate)) {
                 if (taskType == DetailerTask)
-                    tasks << new DetailerTask(customer: r.customer, description: "Go Check on [$r.customer.outletName]", dueDate: getNextWorkDay(workDays, startDate))
+                    tasks << new DetailerTask(customer: r.customer, description: "Detailing [$r.customer.outletName]", dueDate: getNextWorkDay(workDays, startDate))
                 else
                     tasks << new Order(customer: r.customer, dueDate: getNextWorkDay(workDays, startDate))
 
