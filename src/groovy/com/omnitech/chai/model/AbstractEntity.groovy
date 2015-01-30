@@ -26,6 +26,25 @@ class AbstractEntity {
         return dateCreated
     }
 
+    boolean leaveUuidIntact = false
+
+    void setUuid(String uuid) {
+        if (leaveUuidIntact && this.uuid != null) {
+            return
+        }
+        this.uuid = uuid
+    }
+
+    def denyUuidAlter() {
+        leaveUuidIntact = true
+        return this
+    }
+
+    def allowUuidAlter() {
+        leaveUuidIntact = false
+        return this
+    }
+
     void setDateCreated(Date dateCreated) {
         this.dateCreated = dateCreated
         if (dateCreated)

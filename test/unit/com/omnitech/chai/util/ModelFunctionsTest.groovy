@@ -6,8 +6,6 @@ import org.neo4j.graphdb.DynamicLabel
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import spock.lang.Specification
 
-import static com.omnitech.chai.util.ModelFunctions.getSearchQuery
-
 /**
  * Created by kay on 9/29/14.
  */
@@ -69,6 +67,22 @@ class ModelFunctionsTest extends Specification {
         when: 'a non existent property is set'
         ModelFunctions.setProperty(u, 'fakeProperty', 'value')
         then: noExceptionThrown()
+
+        when: 'leave uuid intact is true and uuid is set do not alter the uuid'
+        u.uuid = 'xxPP'
+        u.denyUuidAlter()
+        ModelFunctions.setPropertyIfNull(u,'uuid','NewValue')
+        then:
+        u.uuid == 'xxPP'
+
+        when: 'leave uuid intact is true and uuid is null alter the uuid'
+        u.allowUuidAlter()
+        u.uuid = null
+        u.denyUuidAlter()
+        ModelFunctions.setPropertyIfNull(u,'uuid','NewValue')
+        then:
+        u.uuid == 'NewValue'
+
     }
 
     def 'test addDynamicLabels() adds Labels when a node exists in the DB'() {
