@@ -94,6 +94,7 @@ class CustomerController {
         }
         def whiteList = ReflectFunctions.findAllBasicFields(Customer)
         whiteList.removeAll(ModelFunctions.META_FIELDS)
+        whiteList.remove('id')
         ModelFunctions.bind(neoCustomer, customer.properties, whiteList)
     }
 

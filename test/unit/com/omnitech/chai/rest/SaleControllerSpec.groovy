@@ -30,7 +30,7 @@ class SaleControllerSpec extends Specification {
 
         def data = '''{
   "customerId" : "cccc",
-   "clientRefId":"clientRefId1",
+   "uuid":"clientRefId1",
   "howManyZincInStock": 5,
   "howManyOrsInStock": 3,
   "pointOfSaleMaterial": "counting,ors",
@@ -105,7 +105,7 @@ class SaleControllerSpec extends Specification {
 
         def data = '''{
   "howManyZincInStock": 5,
-   "clientRefId":"clientRefId1",
+   "uuid":"clientRefId1",
   "howManyOrsInStock": 3,
   "pointOfSaleMaterial": "counting,ors",
   "recommendationNextStep": "start recommending ors",
@@ -151,7 +151,7 @@ class SaleControllerSpec extends Specification {
 
         def data = '''{
   "howManyZincInStock": 5,
-   "clientRefId":"clientRefId1",
+   "uuid":"clientRefId1",
   "howManyOrsInStock": 3,
   "pointOfSaleMaterial": "counting,ors",
   "recommendationNextStep": "start recommending ors",
@@ -269,7 +269,7 @@ class SaleControllerSpec extends Specification {
         def data = '''{
   "customerId" : "cccc",
   "orderId":"oooo",
-  "clientRefId":"clientRefId1",
+  "uuid":"clientRefId1",
   "dateOfSale": "2013-01-3 04:05:40",
   "comment":"Some weird comment",
   "orderDatas": [
@@ -332,7 +332,7 @@ class SaleControllerSpec extends Specification {
         def data = '''{
   "customerId" : "cccc",
   "orderId":"oooo",
-  "clientRefId":"clientRefId1",
+  "uuid":"clientRefId1",
   "dateOfSale": "2013-01-3 04:05:40",
   "comment":"Some weird comment",
   "salesDatas": [
