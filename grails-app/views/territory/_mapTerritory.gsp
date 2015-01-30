@@ -50,7 +50,10 @@
                             <div class="panel-body">
                                 <div class="col-md-6" ng-repeat="sc in subCounties">
                                     <g:checkBox name="subCounty" ng-model="sc.mapped"/>
-                                    <label>{{sc.name}}<span ng-show="sc.territory && !sc.mapped" class="glyphicon glyphicon-transfer">{{sc.territory}}</span></label>
+                                    <label>{{sc.name}}
+                                        %{--<span ng-show="sc.territory && !sc.mapped"--}%
+                                              %{--class="glyphicon glyphicon-transfer">{{sc.territory}}</span>--}%
+                                    </label>
                                 </div>
                             </div>
                         </div>
