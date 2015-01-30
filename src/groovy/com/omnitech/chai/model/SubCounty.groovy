@@ -23,7 +23,7 @@ class SubCounty extends AbstractEntity {
 
     @Fetch
     @RelatedTo(type = Relations.SC_IN_TERRITORY)
-    Territory territory
+    Set<Territory> territory
 
     @Fetch
     @RelatedTo(type = Relations.WHOLE_SALER_SC,direction = Direction.INCOMING)

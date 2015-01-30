@@ -3,11 +3,7 @@ package com.omnitech.chai.model
 import com.omnitech.chai.util.ChaiUtils
 import grails.validation.Validateable
 import org.neo4j.graphdb.Direction
-import org.springframework.data.neo4j.annotation.Fetch
-import org.springframework.data.neo4j.annotation.GraphProperty
-import org.springframework.data.neo4j.annotation.Indexed
-import org.springframework.data.neo4j.annotation.NodeEntity
-import org.springframework.data.neo4j.annotation.RelatedTo
+import org.springframework.data.neo4j.annotation.*
 import org.springframework.data.neo4j.support.index.IndexType
 
 /**
@@ -86,7 +82,7 @@ class Task extends AbstractEntity {
     }
 
     Set<User> territoryUser() {
-        this.customer?.subCounty?.territory?.territoryUsers
+        this.customer?.subCounty?.territory?.collect { it.territoryUsers }?.flatten() as Set
     }
 
     static constraints = {

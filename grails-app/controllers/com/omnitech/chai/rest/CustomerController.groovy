@@ -90,6 +90,8 @@ class CustomerController {
         if (!neoCustomer) {
             customer.subCounty = subCounty
             customer.id = null
+            customer.denyUuidAlter()
+            log.debug("adding new customer with uuid [$customer.uuid] Customer [$customer.outletName]")
             return customer
         }
         def whiteList = ReflectFunctions.findAllBasicFields(Customer)

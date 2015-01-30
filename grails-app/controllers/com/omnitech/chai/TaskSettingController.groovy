@@ -79,7 +79,10 @@ class TaskSettingController {
             throw new IllegalArgumentException('Please Select Territories')
         }
 
-        def territories = territoryIds.collect { regionService.findTerritory(it as Long) }
+        def territories = territoryIds.collect {
+            def tId = it as Long
+            regionService.findTerritory(tId)
+        }
 
         return territories
     }
