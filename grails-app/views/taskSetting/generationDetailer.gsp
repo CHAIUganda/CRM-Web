@@ -24,9 +24,9 @@
     <div class="form-horizontal">
 
         %{--<div class="form-group">--}%
-            %{--<label for="numberOfTasks" class="col-md-2 control-label">Average Number Of Task Per Day</label>--}%
-%{----}%
-            %{--<div class="col-md-5"><g:field type="number" name="numberOfTasks" class="form-control"/></div>--}%
+        %{--<label for="numberOfTasks" class="col-md-2 control-label">Average Number Of Task Per Day</label>--}%
+        %{----}%
+        %{--<div class="col-md-5"><g:field type="number" name="numberOfTasks" class="form-control"/></div>--}%
         %{--</div>--}%
 
         %{--<div class="form-group">--}%
@@ -63,6 +63,7 @@
                 <g:each in="${["$Calendar.MONDAY"   : 'Mon',
                                "$Calendar.TUESDAY"  : 'Tue',
                                "$Calendar.WEDNESDAY": 'Wed',
+                               "$Calendar.THURSDAY" : 'Thu',
                                "$Calendar.FRIDAY"   : 'Fri',
                                "$Calendar.SATURDAY" : 'Sat',
                                "$Calendar.SUNDAY"   : 'Sun']}" var="day" status="i">
