@@ -133,6 +133,7 @@ class BootStrap {
 
                 //Customers
                 '/customer/**'                      : [SALES_SUPERVISOR_ROLE_NAME, DETAILING_SUPERVISOR_ROLE_NAME],
+                '/task/updateTaskDate'              : [SALES_SUPERVISOR_ROLE_NAME, DETAILING_SUPERVISOR_ROLE_NAME],
 
                 //Task Generation
                 '/taskSetting/generationDetailer'   : [DETAILING_SUPERVISOR_ROLE_NAME],
