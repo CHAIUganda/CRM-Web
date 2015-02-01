@@ -48,7 +48,7 @@
                 <g:each in="${segments}" var="s" status="i">
                     <div class="col-md-3">
                         <label for="segments.${s.id}">${s.name}</label>
-                        <g:field name="segments.${s.id}" type="number"/>
+                        <g:field name="segments.${s.id}" type="number" value="10" />
                     </div>
 
                 </g:each>
