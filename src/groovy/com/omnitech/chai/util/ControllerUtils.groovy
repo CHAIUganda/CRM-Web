@@ -1,8 +1,6 @@
 package com.omnitech.chai.util
 
 import com.omnitech.chai.model.Task
-import com.omnitech.chai.util.ChaiUtils
-import com.omnitech.chai.util.ReflectFunctions
 
 /**
  * Created by kay on 12/28/2014.
@@ -18,7 +16,7 @@ class ControllerUtils {
         }
         map.description = "$task.description - (${ChaiUtils.fromNow(task.dueDate)})"
         if (task.dueDate) {
-            map.dueDays = task.dueDate - new Date()
+            map.dueDays = task.dueDate - new Date() - 1
             map.dueDateText = ChaiUtils.formatDate(task.dueDate)
         }
 
