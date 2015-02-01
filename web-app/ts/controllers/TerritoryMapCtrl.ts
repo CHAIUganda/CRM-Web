@@ -30,7 +30,7 @@ module omnitech.chai {
 
             scope.onToggleAll = ()=> {
                 this.checkAll();
-            }
+            };
 
             scope.$watch('districtId', ()=>this.onDistrictChanged());
             scope.$watch('territory.id', ()=>this.onDistrictChanged());

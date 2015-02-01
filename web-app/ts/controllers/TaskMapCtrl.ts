@@ -33,7 +33,7 @@ module omnitech.chai {
 
             scope.persistDueDate = () => {
                 var date = moment(scope.task.dueDate).format('YYYY-MM-DD');
-                dataLoader.persistTaskDate(scope.task,date)
+                dataLoader.persistTaskDate(scope.task, date)
                     .success(()=>Utils.postError(scope, 'Success'))
                     .error((msg)=>Utils.postError(scope, msg));
             };

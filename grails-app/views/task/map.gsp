@@ -16,7 +16,7 @@
 <body>
 
 %{-- THE SUBMENU BAR --}%
-        <g:render template="/task/taskMenuBar"/>
+<g:render template="/task/taskMenuBar"/>
 %{-- END SUBMENU BAR --}%
 
 <section id="index-task" class="first">
@@ -33,8 +33,7 @@
                 <bs:paginate total="${taskInstanceCount}" params="${params}"
                              id="${params.action == 'search' ? (params.term ?: params.id) : null}"/>
             </div>
-            %{--<div id="map" class="col-lg-12"--}%
-            %{--style=" margin: 5px 10px 10px 10px;  height: 300px; width: 300px; border: 1px solid #ccc;">dsddsd</div>--}%
+
         </div>
 
         <div class="col-lg-4" ng-controller="TaskMapCtrl">
@@ -80,9 +79,11 @@
                         <div class="col-md-9">
 
                             <div class="input-group">
-                                <input id="dueDateText" name="dueDate" class="datepicker form-control" size="16" type="text" data-date-format="yyyy-mm-dd" ng-model="text.dueDateText">
+                                <input id="dueDateText" name="dueDate" class="datepicker form-control" size="16"
+                                       type="text" data-date-format="yyyy-mm-dd" ng-model="text.dueDateText">
                                 <span class="input-group-btn">
-                                    <button class="btn btn-default" type="button" ng-click="persistDueDate()">Save!</button>
+                                    <button class="btn btn-default" type="button"
+                                            ng-click="persistDueDate()">Save!</button>
                                 </span>
                             </div>
 
@@ -92,12 +93,79 @@
                     <div class="form-group">
                         <div class="col-md-offset-3 col-md-9"><g:render template="/_common/ngError"/></div>
                     </div>
+
                 </div>
             </div>
 
         </div>
-
     </div>
+
+     <div>
+         <div id="legend" class="col-md-2" style="background: #ffffff;">
+
+             <div class="row">
+                 <div class="col-sm-1" style="background: #e41a1c; height: 20px;"></div>
+
+                 <div class="col-sm-8" style="padding-left: 0;padding-right: 0;" >Outstanding</div>
+             </div>
+
+             <div class="row">
+                 <div class="col-sm-1" style="background: #377eb8; height: 20px"></div>
+
+                 <div class="col-sm-8" style="padding-left: 0;padding-right: 0;">Today</div>
+             </div>
+
+             <div class="row">
+                 <div class="col-sm-1" style="background: #4daf4a; height: 20px"></div>
+
+                 <div class="col-sm-8" style="padding-left: 0;padding-right: 0;">Tomorrow</div>
+             </div>
+
+             <div class="row">
+                 <div class="col-sm-1" style="background: #984ea3; height: 20px"></div>
+
+                 <div class="col-sm-8" style="padding-left: 0;padding-right: 0;">1 daygit g</div>
+             </div>
+
+             <div class="row">
+                 <div class="col-sm-1" style="background: #ff7f00; height: 20px"></div>
+
+                 <div class="col-sm-8" style="padding-left: 0;padding-right: 0;">2 days</div>
+             </div>
+
+             <div class="row">
+                 <div class="col-sm-1" style="background: #ffff33; height: 20px"></div>
+
+                 <div class="col-sm-8" style="padding-left: 0;padding-right: 0;">3 days</div>
+             </div>
+
+             <div class="row">
+                 <div class="col-sm-1" style="background: #a65628; height: 20px"></div>
+
+                 <div class="col-sm-8" style="padding-left: 0;padding-right: 0;">4 days</div>
+             </div>
+
+             <div class="row">
+                 <div class="col-sm-1" style="background: #f781bf; height: 20px"></div>
+
+                 <div class="col-sm-8" style="padding-left: 0;padding-right: 0;">5 days</div>
+             </div>
+
+             <div class="row">
+                 <div class="col-sm-1" style="background: #999999; height: 20px"></div>
+
+                 <div class="col-sm-8" style="padding-left: 0;padding-right: 0;">6 days</div>
+             </div>
+
+             <div class="row">
+                 <div class="col-sm-1" style="background: #000000; height: 20px"></div>
+
+                 <div class="col-sm-8" style="padding-left: 0;padding-right: 0;">7 days or more</div>
+             </div>
+         </div>
+     </div>
+
+</div>
 
 </section>
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>

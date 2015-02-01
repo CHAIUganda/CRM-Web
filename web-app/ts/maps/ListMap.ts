@@ -36,28 +36,34 @@ module omnitech.chai {
             });
 
             this.gmap.map.fitBounds(this.latLngBounds);
+
+            this.gmap.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('legend'))
         }
 
         static getMapIconOptions(item:Task):any {
+            var color = MapContainer.getColor(item.dueDays);
             return {
                 path: google.maps.SymbolPath.CIRCLE,
                 scale: 4,
-                fillColor: MapContainer.getColor(item.dueDays),
-                strokeColor: MapContainer.getColor(item.dueDays)
+                fillColor: color,
+                strokeColor: color
             };
         }
 
         static getColor(days:number):string {
             //http://colorbrewer2.org/
-            if (days == 1) return '#e41a1c';
-            if (days == 2) return '#377eb8';
-            if (days == 3) return '#4daf4a';
-            if (days == 4) return '#984ea3';
-            if (days >= 30) return '#ff7f00';
-            if (days >= 14) return '#ffff33';
-            if (days >= 11) return '#a65628';
-            if (days >= 8) return '#f781bf';
-            if (days >= 5) return '#999999';
+            if (days < -1) return '#e41a1c';
+            if (days === -1) return '#377eb8';
+            if (days === 0) return '#4daf4a';
+            if (days === 1) return '#984ea3';
+            if (days === 2) return '#ff7f00';
+            if (days === 3) return '#ffff33';
+            if (days === 4) return '#a65628';
+            if (days === 5) return '#f781bf';
+            if (days === 6) return '#999999';
+            if (days >= 7) return '#000000';
+
+
         }
 
     }
