@@ -25,6 +25,8 @@ class Task extends AbstractEntity {
     @GraphProperty(propertyType = Long.class)
     Date systemDueDate
 
+    Boolean isAdhock
+
     @Fetch
     @RelatedTo(type = Relations.ASSIGNED_TASK, direction = Direction.INCOMING)
     User assignedTo

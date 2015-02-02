@@ -310,6 +310,26 @@ class TaskService {
         saveTask(neoTask)
     }
 
+    DetailerTask completeAdhocDetailTask(DetailerTask detailerTask, String customerUuid) {
+
+
+        def customer =   customerRepository.findByUuid(customerUuid)
+
+        if(!customer){
+            log.warn("AdhocDetailCustomer Not Found: [$customerUuid]")
+            //customer could have been deleted
+            return
+        }
+
+        detailerTask.customer = customer
+
+        detailerTask.completedBy(neoSecurityService.currentUser)
+
+        saveTask(detailerTask)
+    }
+
+
+
     void generateSalesTasks(Territory territory) {
         customerRepository.findByTerritory(territory.id).each {
             def newTask = new Order(customer: it, dueDate: new Date())

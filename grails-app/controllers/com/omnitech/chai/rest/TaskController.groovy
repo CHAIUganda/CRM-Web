@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus
 import static com.omnitech.chai.model.Role.DETAILER_ROLE_NAME
 import static com.omnitech.chai.model.Role.SALES_ROLE_NAME
 import static org.springframework.http.HttpStatus.BAD_REQUEST
-import static org.springframework.http.HttpStatus.BAD_REQUEST
 
 /**
  * Created by kay on 10/29/14.
@@ -91,7 +90,12 @@ class TaskController {
             render { [status: HttpStatus.BAD_REQUEST.reasonPhrase, message: "You Did Not Provide The Task ID"] }
             return
         }
-        taskService.completeDetailTask(task)
+        if (task.isAdhock) {
+            assert json.customerId, 'Please make sure you specify your customerId'
+            taskService.completeAdhocDetailTask(task, json.customerId)
+        } else {
+            taskService.completeDetailTask(task)
+        }
         log.debug("Resp:${user}   - OK")
         render([status: HttpStatus.OK.reasonPhrase, message: 'Success'] as JSON)
     }
@@ -105,7 +109,7 @@ class TaskController {
         render([status: 'error', message: error] as JSON)
     }
 
-    def handleException(Exception x){
+    def handleException(Exception x) {
         log.error("Error while handling request: \n $params", x)
         render(status: BAD_REQUEST, text: [status: BAD_REQUEST.reasonPhrase, message: ChaiUtils.getBestMessage(x)] as JSON)
     }
