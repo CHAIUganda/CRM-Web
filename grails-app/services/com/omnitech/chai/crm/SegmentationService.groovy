@@ -27,31 +27,33 @@ class SegmentationService {
         def segmentScript = compileScript(segmentSetting.value)
 
         customerRepository.findAll().each { c ->
-            segments.each { s ->
-                gradeCustomer(segmentScript, c, s)
-            }
+            gradeCustomer(segmentScript, c, segments)
         }
 
     }
 
-    def gradeCustomer(Script segmentScript, Customer c, CustomerSegment cs) {
-
+    def gradeCustomer(Script segmentScript, Customer c, List<CustomerSegment> cSs) {
 
         def customerScore = getCustomerScore(segmentScript, c)
-        def script = cs.getSegmentationScript()
+        log.info("CustomerScore[$c] = $customerScore")
+        cSs.each { cs ->
+            def script = cs.getSegmentationScript()
 
-        if (script) {
-            def result = ChaiUtils.execSilently("Failed to execute segmentation script on customer") {
-                evaluateScript(script,[customer: c, segment: cs, customerScore: customerScore])
+
+            if (script) {
+                def result = ChaiUtils.execSilently("Failed to execute segmentation script on customer") {
+                    evaluateScript(script, [customer: c, segment: cs, customerScore: customerScore])
+                }
+
+                if (result == true) {
+                    log.info("CustomerScore[$c]Score[$customerScore] ---> $cs.name")
+                    c.segment = cs
+                    c.segmentScore = customerScore
+                    customerRepository.save(c)
+                }
             }
-
-            if (result == true) {
-                c.segment = cs
-                c.segmentScore = customerScore
-                customerRepository.save(c)
-            }
-
         }
+
 
     }
 
