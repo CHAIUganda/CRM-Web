@@ -100,7 +100,7 @@
         </div>
     </div>
 
-     <div>
+     <div class="ng-hide">
          <div id="legend" class="col-md-2" style="background: #ffffff;">
 
              <div class="row">
@@ -124,7 +124,7 @@
              <div class="row">
                  <div class="col-sm-1" style="background: #984ea3; height: 20px"></div>
 
-                 <div class="col-sm-8" style="padding-left: 0;padding-right: 0;">1 daygit g</div>
+                 <div class="col-sm-8" style="padding-left: 0;padding-right: 0;">1 day</div>
              </div>
 
              <div class="row">

@@ -207,6 +207,7 @@ class UserService {
         def username = prop(record, 'username')
         def repName = prop(record, 'repName', false)
         def territoryName = prop(record, 'territory')
+        def password = prop(record,'password')
 
         def user = findUserByName(username)
         assert !user, "[$username] already exists in the system"
@@ -219,19 +220,19 @@ class UserService {
 
         List<Role> roles = getRoles(roleNames)
 
-        def newUser = new User(username: username, name: repName, territory: territory, roles: roles as Set)
+        def newUser = new User(username: username, name: repName, password: neoSecurityService.encodePassword(password), territory: territory, roles: roles as Set)
 
         saveUser(newUser)
 
         def supervisorUsername = prop(record, 'supervisorUsername', false)
         if (supervisorUsername) {
-            def password = prop(record, 'supervisorPassword')
+            def supPass = prop(record, 'supervisorPassword')
             def supervisorName = prop(record, 'supervisor')
             def supervisorRole = prop(record, 'supervisorRole')
             def supRoles = getRoles(supervisorRole)
 
 
-            createOrUpdateSuperVisor(supervisorUsername, supervisorName, password, supRoles, [territory])
+            createOrUpdateSuperVisor(supervisorUsername, supervisorName, supPass, supRoles, [territory])
         }
     }
 
@@ -240,7 +241,7 @@ class UserService {
         def sup = findUserByName(supUsername)
 
         if (!sup) {
-            sup = new User(username: supUsername, name: supName, password: password, roles: roles as Set, supervisedTerritories: territories)
+            sup = new User(username: supUsername, name: supName, password: neoSecurityService.encodePassword(password), roles: roles as Set, supervisedTerritories: territories)
         } else {
             for (t in territories) {
                 if (sup.supervisedTerritories.every { it.id != t.id }) {

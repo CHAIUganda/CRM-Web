@@ -159,7 +159,7 @@ class RegionService {
 
     Page<Territory> listTerritorys(Map params) { ModelFunctions.listAll(territoryRepository, params) }
 
-    List<Territory> listAllTerritorys() { territoryRepository.findAll().collect() }
+    List<Territory> listAllTerritorys() { territoryRepository.findAll().collect()?.sort { it.name } }
 
     Page<Territory> findTerritoriesForUser(User user, Map params) {
 
@@ -196,17 +196,20 @@ class RegionService {
         assert scToBeMapped.every { it.district.id == districtId }
 
         neo.fetch(territory.subCounties)
-        territory.subCounties.each {
-            if (it.district.id == districtId && !scIds.contains(it.id)) {
-                it.territory = null
-                subCountyRepository.save(it)
-            }
+//        territory.subCounties.each {
+//            if (it.district.id == districtId && !scIds.contains(it.id)) {
+//                it.territory = null
+//                subCountyRepository.save(it)
+//            }
+//        }
+
+        if (!territory.subCounties) {
+            territory.subCounties = new HashSet<SubCounty>()
         }
 
-        scToBeMapped.each {
-            it.territory = territory
-            subCountyRepository.save(it)
-        }
+        territory.subCounties.removeAll { territory.subCounties.findAll { it.district?.id == districtId } }
+        territory.subCounties.addAll(scToBeMapped)
+        territoryRepository.save(territory)
     }
 
     void importTerritories(String s) {
@@ -228,7 +231,7 @@ class RegionService {
                 def e = new ImportException("Error on Record[${record.idx()}]: $ex.message".toString())
                 e.stackTrace = ex.stackTrace
                 log.error("Error:..... $e.message")
-//                throw e
+                throw e
             }
         })
     }
@@ -236,7 +239,7 @@ class RegionService {
     void processRecord(Record record, PhraseHelper fuzzyEngine, List<District> districts) {
 
         def modified = false
-        def name = ChaiUtils.prop(record, 'name')
+        def name = ChaiUtils.prop(record, 'territory')
         def territory = getOrCreateTerrioty(name)
         if (territory.id) {
             neo.fetch territory.subCounties
@@ -291,6 +294,8 @@ class RegionService {
 
 
     }
+
+
 
     def getFuzzyEngine = { District district ->
         PhraseHelper.train(district.subCounties.collect { it.name })

@@ -27,7 +27,7 @@
                         class="caret"></b></a>
                 <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
                     <g:each in="${users}" var="u">
-                        <li><g:link action="index" params="${[user: u, status: params.status]}">
+                        <li><g:link action="${params.action}" params="${[user: u, status: params.status]}">
                             <i class="glyphicon glyphicon-user"></i>${u}
                         </g:link></li>
                     </g:each>
@@ -45,13 +45,13 @@
                     <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
                         <g:if test="${params.user != null}">
                             <li>
-                                <g:link action="index"
+                                <g:link action="${params.action}"
                                         params="${[status: Task.STATUS_NEW, user: params.user]}">
-                                    <i class="glyphicon glyphicon-list"></i>New
+                                    <i class="glyphicon glyphicon-list"></i>Active
                                 </g:link>
                             </li>
                             <li>
-                                <g:link action="index"
+                                <g:link action="${params.action}"
                                         params="${[status: Task.STATUS_COMPLETE, user: params.user]}">
                                     <i class="glyphicon glyphicon-list"></i>Complete
                                 </g:link>
@@ -59,11 +59,11 @@
                         </g:if>
                         <g:else>
                             <li>
-                                <g:link action="index" params="${[status: Task.STATUS_NEW]}">
+                                <g:link action="${params.action}" params="${[status: Task.STATUS_NEW]}">
                                     <i class="glyphicon glyphicon-list"></i>Active</g:link>
                             </li>
                             <li>
-                                <g:link action="index" params="${[status: Task.STATUS_COMPLETE]}">
+                                <g:link action="${params.action}" params="${[status: Task.STATUS_COMPLETE]}">
                                     <i class="glyphicon glyphicon-list"></i>Complete
                                 </g:link>
                             </li>
