@@ -13,7 +13,7 @@
 			<div class="${hasErrors(bean: productGroupInstance, field: 'parent', 'error')} ">
 				<label for="parent" class="control-label"><g:message code="productGroup.parent.label" default="Parent" /></label>
 				<div>
-					<g:select class="form-control" style="width: 50%;" id="parent" name="parent.id" from="${otherGroups}" optionKey="id" value="${productGroupInstance?.parent?.id}" noSelection="['null': '']"/>
+					<g:select class="form-control" style="width: 50%;" id="parent" name="parent.id" from="${otherGroups}" optionKey="id" value="${productGroupInstance?.parent?.id}" noSelection="['': '']"/>
 					<span class="help-inline">${hasErrors(bean: productGroupInstance, field: 'parent', 'error')}</span>
 				</div>
 			</div>

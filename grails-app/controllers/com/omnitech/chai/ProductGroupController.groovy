@@ -51,6 +51,10 @@ class ProductGroupController {
             return
         }
 
+        if(!params.'parent.id' ){
+            productGroupInstance.parent = null
+        }
+
         if (productGroupInstance.hasErrors()) {
             respond productGroupInstance.errors, view: 'create'
             return
