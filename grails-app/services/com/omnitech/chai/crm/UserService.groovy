@@ -1,20 +1,22 @@
 package com.omnitech.chai.crm
 
-import com.omnitech.chai.model.Device
-import com.omnitech.chai.model.RequestMap
-import com.omnitech.chai.model.Role
-import com.omnitech.chai.model.User
+import com.omnitech.chai.exception.ImportException
+import com.omnitech.chai.model.*
 import com.omnitech.chai.repositories.DeviceRepository
 import com.omnitech.chai.repositories.RequestMapRepository
 import com.omnitech.chai.repositories.RoleRepository
 import com.omnitech.chai.repositories.UserRepository
 import com.omnitech.chai.util.ModelFunctions
+import fuzzycsv.FuzzyCSV
+import fuzzycsv.Record
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.data.neo4j.transaction.Neo4jTransactional
 
 import static com.omnitech.chai.model.Relations.*
+import static com.omnitech.chai.util.ChaiUtils.prop
+import static fuzzycsv.RecordFx.fn
 import static org.neo4j.cypherdsl.CypherQuery.*
 
 /**
@@ -40,7 +42,7 @@ class UserService {
     Page<User> listUsersSupervisedBy(Long supervisorId, String role, Map params = [max: 2000]) {
         def _query = {
             start(nodesById('sup', supervisorId))
-                    .match(node('sup').out(SUPERVISES_TERRITORY,USER_TERRITORY)
+                    .match(node('sup').out(SUPERVISES_TERRITORY, USER_TERRITORY)
                     .node('tr').in(USER_TERRITORY)
                     .node('user').out(HAS_ROLE)
                     .node('r').values(value('authority', role)))
@@ -50,7 +52,8 @@ class UserService {
 
         ModelFunctions.query(neo, q, cq, params, User)
     }
-    List<User> listUsersByRole(String role){
+
+    List<User> listUsersByRole(String role) {
         userRepository.listAllByRole(role).collect()
     }
 
@@ -181,4 +184,81 @@ class UserService {
     Page<Device> searchDevices(String search, Map params) {
         ModelFunctions.searchAll(neo, Device, ModelFunctions.getWildCardRegex(search), params)
     }
+
+    def importUsers(String s) {
+        def csv = FuzzyCSV.parseCsv(s)
+        csv = csv.collect { it as List<String> }
+        FuzzyCSV.map(csv, fn { Record record ->
+            try {
+                processUserRecord(record)
+            } catch (Throwable ex) {
+                def e = new ImportException("Error on Record[${record.idx()}]: $ex.message".toString())
+                e.stackTrace = ex.stackTrace
+                log.error("Error:..... $e.message")
+//                throw e
+            }
+        })
+    }
+
+    def processUserRecord(Record record) {
+        //username	repName	territory	password	roles	supervisedTerritories	districts	supervisor	supervisorUsername	supervisorPassword
+
+
+        def username = prop(record, 'username')
+        def repName = prop(record, 'repName', false)
+        def territoryName = prop(record, 'territory')
+
+        def user = findUserByName(username)
+        assert !user, "[$username] already exists in the system"
+
+        def territory = territoryRepository.findByName(territoryName)
+        assert territory, "Territory [$territoryName] Does not exist in the system"
+
+
+        def roleNames = prop(record, 'roles')
+
+        List<Role> roles = getRoles(roleNames)
+
+        def newUser = new User(username: username, name: repName, territory: territory, roles: roles as Set)
+
+        saveUser(newUser)
+
+        def supervisorUsername = prop(record, 'supervisorUsername', false)
+        if (supervisorUsername) {
+            def password = prop(record, 'supervisorPassword')
+            def supervisorName = prop(record, 'supervisor')
+            def supervisorRole = prop(record, 'supervisorRole')
+            def supRoles = getRoles(supervisorRole)
+
+
+            createOrUpdateSuperVisor(supervisorUsername, supervisorName, password, supRoles, [territory])
+        }
+    }
+
+    def createOrUpdateSuperVisor(String supUsername, String supName, String password, List<Role> roles, List<Territory> territories) {
+
+        def sup = findUserByName(supUsername)
+
+        if (!sup) {
+            sup = new User(username: supUsername, name: supName, password: password, roles: roles as Set, supervisedTerritories: territories)
+        } else {
+            for (t in territories) {
+                if (sup.supervisedTerritories.every { it.id != t.id }) {
+                    sup.supervisedTerritories.add(t)
+                }
+            }
+        }
+        saveUser(sup)
+    }
+
+    private List<Role> getRoles(String roleNames) {
+        def roles = roleNames.split(',').collect {
+            def role = roleRepository.findByAuthority(it.trim())
+            assert role, "Role[$it] does not exist in the system"
+            return role
+        }
+        return roles
+    }
+
+
 }

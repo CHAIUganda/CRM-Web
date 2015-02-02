@@ -31,7 +31,7 @@ This menu is used to show function that can be triggered on the content (an obje
                 </li>
             </g:if>
 
-            <sec:ifAnyGranted roles="${['ROLE_SUPER_ROOT']}">
+            <sec:ifAnyGranted roles="ROLE_SUPER_ROOT">
                 <g:if test="${params.controller == 'customer' && ['index', '', null].contains(params.action)}">
                     <li class="active">
                         <a class="btn btn-primary" data-toggle="modal" data-target="#importCustomers">

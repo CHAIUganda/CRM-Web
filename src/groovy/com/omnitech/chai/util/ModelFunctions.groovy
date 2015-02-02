@@ -187,6 +187,14 @@ class ModelFunctions {
         return item
     }
 
+    static def addItemIfNotExists(Collection e, def item, Closure equals) {
+
+        if (e.any { equals.call(it) }) {
+            e.add(item)
+        }
+
+    }
+
     static <T> T extractAndLoadParent(String parentAttr, Map params, Closure<T> getParent) {
         def id = extractId(params, parentAttr)
         if (id == -1) {

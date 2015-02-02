@@ -15,11 +15,11 @@
     <table class="table">
         <tbody>
 
+        <c:renderProperty label="Name" value="${userInstance?.name}"/>
+
         <tr class="prop">
             <td valign="top" class="name"><g:message code="user.username.label" default="Username"/></td>
-
             <td valign="top" class="value">${fieldValue(bean: userInstance, field: "username")}</td>
-
         </tr>
 
         <tr class="prop">

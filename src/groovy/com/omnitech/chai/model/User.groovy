@@ -17,6 +17,7 @@ class User extends AbstractEntity {
     @Indexed(unique = true)
     String username
     String password
+    String name
     boolean enabled = true
     boolean accountExpired
     boolean accountLocked
