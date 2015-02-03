@@ -27,7 +27,8 @@
                         class="caret"></b></a>
                 <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
                     <g:each in="${users}" var="u">
-                        <li><g:link action="${params.action}" params="${[user: u, status: params.status]}">
+                        <li><g:link action="${params.action == 'map' ? 'map' : 'index'}"
+                                    params="${[user: u, status: params.status]}">
                             <i class="glyphicon glyphicon-user"></i>${u}
                         </g:link></li>
                     </g:each>
@@ -45,13 +46,13 @@
                     <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
                         <g:if test="${params.user != null}">
                             <li>
-                                <g:link action="${params.action}"
+                                <g:link action="${params.action == 'map' ? 'map' : 'index'}"
                                         params="${[status: Task.STATUS_NEW, user: params.user]}">
                                     <i class="glyphicon glyphicon-list"></i>Active
                                 </g:link>
                             </li>
                             <li>
-                                <g:link action="${params.action}"
+                                <g:link action="${params.action == 'map' ? 'map' : 'index'}"
                                         params="${[status: Task.STATUS_COMPLETE, user: params.user]}">
                                     <i class="glyphicon glyphicon-list"></i>Complete
                                 </g:link>
@@ -59,11 +60,13 @@
                         </g:if>
                         <g:else>
                             <li>
-                                <g:link action="${params.action}" params="${[status: Task.STATUS_NEW]}">
+                                <g:link action="${params.action == 'map' ? 'map' : 'index'}"
+                                        params="${[status: Task.STATUS_NEW]}">
                                     <i class="glyphicon glyphicon-list"></i>Active</g:link>
                             </li>
                             <li>
-                                <g:link action="${params.action}" params="${[status: Task.STATUS_COMPLETE]}">
+                                <g:link action="${params.action == 'map' ? 'map' : 'index'}"
+                                        params="${[status: Task.STATUS_COMPLETE]}">
                                     <i class="glyphicon glyphicon-list"></i>Complete
                                 </g:link>
                             </li>
@@ -93,9 +96,27 @@
                 <%
                     def newParams = [ui: 'map']
                     newParams.putAll(params)
+                    def searchAction = params.action
+                    switch (params.action) {
+                        case 'map':
+                            searchAction = 'index'
+                            newParams.remove('ui')
+                            break
+                        case 'searchMap':
+                            searchAction = 'search'
+                            newParams.remove('ui')
+                            break
+                    }
                 %>
-                <g:link action="${params.action}" params="${newParams}">
-                    <i class="glyphicon glyphicon-map-marker"></i>Show Map
+
+                <g:link action="${searchAction}" params="${newParams}">
+                    <i class="glyphicon glyphicon-map-marker"></i>
+                    <g:if test="${params.action?.toLowerCase()?.contains('map')}">
+                        Show List
+                    </g:if>
+                    <g:else>
+                        Show Map
+                    </g:else>
                 </g:link>
             </li>
             %{--<li>--}%
