@@ -33,9 +33,16 @@ var omnitech;
                 this.gmap.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('legend'));
             };
             MapContainer.getMapIconOptions = function (item) {
-                var segment = item.segment != null ? item.segment : 'Z';
-                var color = MapContainer.getColor(item.dueDays).replace('#', '');
-                return 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=' + segment + '|' + color + '|FFFFFF';
+                if (item.type == 'task') {
+                    var segment = item.segment != null ? item.segment : 'Z';
+                    var iconFillColor = MapContainer.getColor(item.dueDays).replace('#', '');
+                    return 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=' + segment + '|' + iconFillColor + '|FFFFFF';
+                }
+                else {
+                    var segment = item.segment != null ? item.segment : 'Z';
+                    var iconFillColor = '4B0082';
+                    return 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=' + segment + '|' + iconFillColor + '|FFFFFF';
+                }
             };
             MapContainer.getColor = function (days) {
                 //http://colorbrewer2.org/

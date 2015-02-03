@@ -1,5 +1,6 @@
 package com.omnitech.chai.util
 
+import com.omnitech.chai.model.Customer
 import com.omnitech.chai.model.Task
 
 /**
@@ -29,7 +30,18 @@ class ControllerUtils {
         }
 
         map.assignedUser = task.territoryUser()?.collect { it.username }?.toString();
+        map.type = 'task'
 
         return map
+    }
+
+    static Map customerToJsonMap(Customer customer) {
+        def map = ReflectFunctions.extractProperties(customer)
+        map.description = customer.outletName
+        map.type = 'customer'
+        map.segment = customer.segment?.name
+        map.dueDays = 100
+        return map
+
     }
 }

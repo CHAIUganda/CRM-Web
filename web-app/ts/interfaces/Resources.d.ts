@@ -80,6 +80,7 @@ declare module omnitech.chai {
         assignedUser:string
         customer: string
         customerDescription:string
+        type: string
     }
 
     interface CallModel {

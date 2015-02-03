@@ -162,6 +162,11 @@
 
                  <div class="col-sm-8" style="padding-left: 0;padding-right: 0;">7 days or more</div>
              </div>
+             <div class="row">
+                 <div class="col-sm-1" style="background: #4B0082; height: 20px"></div>
+
+                 <div class="col-sm-8" style="padding-left: 0;padding-right: 0;">Other Customers</div>
+             </div>
          </div>
      </div>
 
