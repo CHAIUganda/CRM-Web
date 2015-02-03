@@ -14,7 +14,7 @@ module omnitech.chai {
         }
 
         private createMap() {
-            this.gmap = new GMaps({lat: 1.354255, lng: 32.314228, div: "#map",zoom : 3});
+            this.gmap = new GMaps({lat: 1.354255, lng: 32.314228, div: "#map", zoom: 3});
             this.data.forEach((item)=> {
                 if (item.lat && item.lng) {
                     this.gmap.addMarker({
@@ -41,13 +41,9 @@ module omnitech.chai {
         }
 
         static getMapIconOptions(item:Task):any {
-            var color = MapContainer.getColor(item.dueDays);
-            return {
-                path: google.maps.SymbolPath.CIRCLE,
-                scale: 4,
-                fillColor: color,
-                strokeColor: color
-            };
+            var segment = item.segment != null ? item.segment : 'Z'
+            var color = MapContainer.getColor(item.dueDays).replace('#','');
+            return 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=' + segment + '|' + color + '|FFFFFF';
         }
 
         static getColor(days:number):string {
@@ -62,8 +58,6 @@ module omnitech.chai {
             if (days === 5) return '#f781bf';
             if (days === 6) return '#999999';
             if (days >= 7) return '#000000';
-
-
         }
 
     }
