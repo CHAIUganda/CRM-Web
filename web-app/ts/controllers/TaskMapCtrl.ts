@@ -3,9 +3,12 @@ module omnitech.chai {
 
     interface ITaskScope extends HasError,ng.IScope {
         task: Task
+        newTask: Task
         marker : MarkerWithLabel
-        momentFromNow : () => string
+        momentFromNow : (date:Date) => string
         persistDueDate : () => void
+        onCreateNewTask : () => void
+        persistNewTask : () => void
     }
 
     class TaskMapCtrl {
@@ -23,38 +26,73 @@ module omnitech.chai {
             this.mapC = new MapContainer(chaiMapData, (task, marker)=> {
                 scope.task = task;
                 scope.marker = marker;
+                //marker.setMap(null);
                 scope.$apply();
             });
 
-            scope.momentFromNow = () => {
-                if (!scope.task || !scope.task.dueDate) return "";
-                return moment(scope.task.dueDate).fromNow()
+            scope.momentFromNow = (date:Date) => {
+                if (!date) return "";
+                return moment(date).fromNow()
             };
 
             scope.persistDueDate = () => {
-                var date = moment(scope.task.dueDate).format('YYYY-MM-DD');
-                dataLoader.persistTaskDate(scope.task, date)
-                    .success(()=>Utils.postError(scope, 'Success'))
-                    .error((msg)=>Utils.postError(scope, msg));
+                this.persistDateTask(scope, dataLoader);
+                Utils.postError(scope, 'Success')
             };
 
 
             $('#dueDateText').datepicker().on('changeDate', (ev:any)=> {
-                this.updateTaskDate(ev.date);
+                TaskMapCtrl.updateTaskDate(ev.date, scope.task);
+                this.scope.marker.setOptions({icon: MapContainer.getMapIconOptions(scope.task)});
+                scope.$apply()
+            });
+
+            scope.onCreateNewTask = () => {
+                scope.newTask = TaskMapCtrl.createTask(<Customer><any>scope.task);
+            };
+
+            scope.persistNewTask = () => {
+                this.saveNewTask();
+            };
+
+            $('#newTaskDate').datepicker().on('changeDate', (ev:any)=> {
+                TaskMapCtrl.updateTaskDate(ev.date, scope.newTask);
                 scope.$apply()
             });
 
 
         }
 
-        private updateTaskDate(date:Date):void {
-            var task = this.scope.task;
-            task.dueDate = date;
-            task.dueDays = Utils.dayDiff(new Date(), date);
-            this.scope.marker.setOptions({icon: MapContainer.getMapIconOptions(task)});
+        private persistDateTask(scope, dataLoader) {
+            var date = moment(scope.task.dueDate).format('YYYY-MM-DD');
+            dataLoader.persistTaskDate(scope.task, date)
+                .success(()=>Utils.postError(scope, 'Success'))
+                .error((msg)=>Utils.postError(scope, msg));
         }
 
 
+        private saveNewTask() {
+            this.mapC.removeElement(this.scope.task);
+            this.mapC.addElement(this.scope.newTask);
+        }
+
+        private static updateTaskDate(date:Date, task:Task):void {
+            task.dueDate = date;
+            task.dueDays = Utils.dayDiff(new Date(), date);
+        }
+
+        private static createTask(c:Customer):Task {
+            return {
+                customerId: c.id,
+                lng: c.lng,
+                lat: c.lat,
+                title: c.outletName,
+                description: c.outletName,
+                dueDate: new Date(),
+                type: 'task',
+                segment: c.segment
+            }
+        }
     }
 
     angular.module('omnitechApp', ['ngResource'])

@@ -246,4 +246,6 @@ a:link, a:active, a:visited {
 
 .datepicker{
     margin-top: 0px !important;
+    /*Just about the one of bootstrap model*/
+    z-index: 2000 !important;;
 }

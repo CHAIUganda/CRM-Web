@@ -37,8 +37,12 @@
         </div>
 
         <div class="col-lg-4" ng-controller="TaskMapCtrl">
-            <div ng-show="task" class="ng-hide">
+            <div ng-show="task.type == 'task'" class="ng-hide">
                 <g:render template="/task/mapTaskView"/>
+            </div>
+
+            <div ng-show="task.type == 'customer'" class="ng-hide">
+                <g:render template="/task/mapCustomerView"/>
             </div>
         </div>
     </div>

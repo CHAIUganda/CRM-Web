@@ -15,25 +15,8 @@ module omnitech.chai {
 
         private createMap() {
             this.gmap = new GMaps({lat: 1.354255, lng: 32.314228, div: "#map", zoom: 7});
-            this.data.forEach((item)=> {
-                if (item.lat && item.lng) {
-                    this.gmap.addMarker({
-                        lat: item.lat,
-                        lng: item.lng,
-                        icon: MapContainer.getMapIconOptions(item),
 
-                        infoWindow: {
-                            content: '<div>' + item.description + '</div>'
-                        },
-                        click: (marker)=> {
-                            this.onClickCallBack(item, marker);
-                        }
-
-                    });
-
-                    this.latLngBounds.extend(new google.maps.LatLng(item.lat, item.lng))
-                }
-            });
+            this.refresh();
 
             setTimeout(()=> {
                 this.gmap.map.fitBounds(this.latLngBounds);
@@ -43,11 +26,62 @@ module omnitech.chai {
             this.gmap.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('legend'))
         }
 
+        private renderItem(item:Task):void {
+            if (item.lat && item.lng) {
+                item.marker = this.gmap.addMarker({
+                    lat: item.lat,
+                    lng: item.lng,
+                    icon: MapContainer.getMapIconOptions(item),
+                    infoWindow: {
+                        content: '<div>' + item.description + '</div>'
+                    },
+                    click: (marker)=> {
+                        this.onClickCallBack(item, marker);
+                    }
+                });
+                this.latLngBounds.extend(new google.maps.LatLng(item.lat, item.lng))
+            }
+        }
+
+        refresh() {
+            this.data.forEach((item)=> {
+                this.renderItem(item);
+            });
+        }
+
+        clear() {
+            this.data.forEach((item)=> {
+                if (item.marker) {
+                    item.marker.setMap(null);
+                    item.marker = null;
+                }
+            });
+        }
+
+        removeElement(item:Task):void {
+            var i = this.data.indexOf(item);
+            if (i > -1) {
+                this.data.splice(i, 1);
+                if (item.marker) {
+                    item.marker.setMap(null);
+                    item.marker = null;
+                }
+            }
+        }
+
+        addElement(item:Task):void {
+            this.data.push(item);
+            this.renderItem(item);
+            $('#CreateTaskModal').modal('hide')
+        }
+
         static getMapIconOptions(item:Task):any {
-            if (item.type == 'task') {
+            if (item.type === 'task') {
                 var segment = item.segment != null ? item.segment : 'Z';
 
-                if(item.status === 'complete'){
+                if (item.status === 'complete') {
+                    console.log('Complete Tasks');
+                    console.log(item);
                     var iconFillColor = '4daf4a';
                     return 'http://chart.apis.google.com/chart?chst=d_map_xpin_letter&chld=pin_star|' + segment + '|' + iconFillColor + '|FFFFFF|ffff33';
                 }

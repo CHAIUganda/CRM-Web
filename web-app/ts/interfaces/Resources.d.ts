@@ -20,11 +20,12 @@ declare module omnitech.chai {
         territory: string;
     }
 
-    interface Customer {
+    interface Customer extends HasCoords{
         id : number;
         outletName: string;
         contact: string;
         district: string;
+        segment?: string
     }
 
     interface Product {
@@ -58,30 +59,29 @@ declare module omnitech.chai {
     interface HasCoords {
         lat: number
         lng: number
-        title: string
-        dueDays: number
         description: string
+        marker?:google.maps.Marker
     }
 
 
     interface Task extends HasCoords {
-        id : string
-        description:string
-        dueDate:Date
-        dueDateText:string
-        completionDate:Date
-        systemDueDate:Date
-        assignedTo:string
-        completedBy:string
-        lat:number
-        lng:number
-        wkt:string
-        segment: string
-        assignedUser:string
-        customer: string
-        customerDescription:string
+        id ?: string
+        dueDate?:Date
+        dueDateText?:string
+        completionDate?:Date
+        systemDueDate?:Date
+        assignedTo?:string
+        completedBy?:string
+        wkt?:string
+        segment?: string
+        assignedUser?:string
+        customer?: string
+        customerDescription?:string
         type: string
-        status:string
+        status?:string
+        customerId:number
+        dueDays?: number
+        title: string
     }
 
     interface CallModel {
@@ -90,7 +90,7 @@ declare module omnitech.chai {
         dueDate : string
     }
 
-    interface User{
+    interface User {
         id : number
         username: string
 

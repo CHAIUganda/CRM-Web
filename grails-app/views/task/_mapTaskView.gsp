@@ -30,7 +30,7 @@
     <div class="form-group">
         <label class="col-md-3 control-label">Moment From Now</label>
 
-        <div class="col-md-9"><p class="form-control-static">{{momentFromNow()}}</p></div>
+        <div class="col-md-9"><p class="form-control-static">{{momentFromNow(task.dueDate)}}</p></div>
     </div>
 
     <div class="form-group">
