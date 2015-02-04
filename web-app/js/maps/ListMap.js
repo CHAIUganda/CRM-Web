@@ -22,6 +22,7 @@ var omnitech;
             MapContainer.prototype.renderItem = function (item) {
                 var _this = this;
                 if (item.lat && item.lng) {
+                    MapContainer.clearTaskMarker(item);
                     item.marker = this.gmap.addMarker({
                         lat: item.lat,
                         lng: item.lng,
@@ -44,20 +45,20 @@ var omnitech;
             };
             MapContainer.prototype.clear = function () {
                 this.data.forEach(function (item) {
-                    if (item.marker) {
-                        item.marker.setMap(null);
-                        item.marker = null;
-                    }
+                    MapContainer.clearTaskMarker(item);
                 });
             };
             MapContainer.prototype.removeElement = function (item) {
                 var i = this.data.indexOf(item);
                 if (i > -1) {
                     this.data.splice(i, 1);
-                    if (item.marker) {
-                        item.marker.setMap(null);
-                        item.marker = null;
-                    }
+                    MapContainer.clearTaskMarker(item);
+                }
+            };
+            MapContainer.clearTaskMarker = function (item) {
+                if (item.marker) {
+                    item.marker.setMap(null);
+                    item.marker = null;
                 }
             };
             MapContainer.prototype.addElement = function (item) {

@@ -26,7 +26,6 @@ module omnitech.chai {
             this.mapC = new MapContainer(chaiMapData, (task, marker)=> {
                 scope.task = task;
                 scope.marker = marker;
-                //marker.setMap(null);
                 scope.$apply();
             });
 
@@ -43,8 +42,8 @@ module omnitech.chai {
 
             $('#dueDateText').datepicker().on('changeDate', (ev:any)=> {
                 TaskMapCtrl.updateTaskDate(ev.date, scope.task);
-                this.scope.marker.setOptions({icon: MapContainer.getMapIconOptions(scope.task)});
-                scope.$apply()
+                this.mapC.renderItem(scope.task);
+                scope.$apply();
             });
 
             scope.onCreateNewTask = () => {

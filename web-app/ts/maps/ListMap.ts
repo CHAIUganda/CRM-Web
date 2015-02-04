@@ -26,8 +26,9 @@ module omnitech.chai {
             this.gmap.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('legend'))
         }
 
-        private renderItem(item:Task):void {
+        renderItem(item:Task):void {
             if (item.lat && item.lng) {
+                MapContainer.clearTaskMarker(item);
                 item.marker = this.gmap.addMarker({
                     lat: item.lat,
                     lng: item.lng,
@@ -51,10 +52,7 @@ module omnitech.chai {
 
         clear() {
             this.data.forEach((item)=> {
-                if (item.marker) {
-                    item.marker.setMap(null);
-                    item.marker = null;
-                }
+                MapContainer.clearTaskMarker(item);
             });
         }
 
@@ -62,10 +60,14 @@ module omnitech.chai {
             var i = this.data.indexOf(item);
             if (i > -1) {
                 this.data.splice(i, 1);
-                if (item.marker) {
-                    item.marker.setMap(null);
-                    item.marker = null;
-                }
+                MapContainer.clearTaskMarker(item);
+            }
+        }
+
+        private static clearTaskMarker(item) {
+            if (item.marker) {
+                item.marker.setMap(null);
+                item.marker = null;
             }
         }
 

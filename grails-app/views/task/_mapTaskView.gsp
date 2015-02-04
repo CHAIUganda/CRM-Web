@@ -21,11 +21,13 @@
         <div class="col-md-9"><p class="form-control-static">{{task.lat }},{{ task.lng}}</p></div>
     </div>
 
-    <div class="form-group">
-        <label class="col-md-3 control-label">Assigned User(s)</label>
+    <g:if test="${!params.user}">
+        <div class="form-group">
+            <label class="col-md-3 control-label">Assigned User(s)</label>
 
-        <div class="col-md-9"><p class="form-control-static">{{task.assignedUser}}</p></div>
-    </div>
+            <div class="col-md-9"><p class="form-control-static">{{task.assignedUser}}</p></div>
+        </div>
+    </g:if>
 
     <div class="form-group">
         <label class="col-md-3 control-label">Moment From Now</label>

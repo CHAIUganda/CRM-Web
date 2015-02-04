@@ -12,7 +12,6 @@ var omnitech;
                 this.mapC = new chai.MapContainer(chaiMapData, function (task, marker) {
                     scope.task = task;
                     scope.marker = marker;
-                    //marker.setMap(null);
                     scope.$apply();
                 });
                 scope.momentFromNow = function (date) {
@@ -26,7 +25,7 @@ var omnitech;
                 };
                 $('#dueDateText').datepicker().on('changeDate', function (ev) {
                     TaskMapCtrl.updateTaskDate(ev.date, scope.task);
-                    _this.scope.marker.setOptions({ icon: chai.MapContainer.getMapIconOptions(scope.task) });
+                    _this.mapC.renderItem(scope.task);
                     scope.$apply();
                 });
                 scope.onCreateNewTask = function () {
