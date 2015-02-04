@@ -53,7 +53,7 @@ class TaskService {
     }
 
     def <T extends Task> Page<T> loadPageData(Integer max, Map params, Class<T> taskType, String filter) {
-        params.max = Math.min(max ?: 50, 100)
+        params.max = max ?: 50
         if (!params.sort) {
             params.sort = 'dueDate'
         }
@@ -80,7 +80,7 @@ class TaskService {
     }
 
     def <T extends Task> Page<T> loadSuperVisorUserData(Integer max, Map params, Class<T> taskType, Long supervisorUserId, String filter) {
-        params.max = Math.min(max ?: 50, 100)
+        params.max = max ?: 50
         if (!params.sort) {
             params.sort = 'dueDate'
         }
@@ -313,9 +313,9 @@ class TaskService {
     DetailerTask completeAdhocDetailTask(DetailerTask detailerTask, String customerUuid) {
 
 
-        def customer =   customerRepository.findByUuid(customerUuid)
+        def customer = customerRepository.findByUuid(customerUuid)
 
-        if(!customer){
+        if (!customer) {
             log.warn("AdhocDetailCustomer Not Found: [$customerUuid]")
             //customer could have been deleted
             return
@@ -329,7 +329,6 @@ class TaskService {
     }
 
 
-
     void generateSalesTasks(Territory territory) {
         customerRepository.findByTerritory(territory.id).each {
             def newTask = new Order(customer: it, dueDate: new Date())
@@ -338,13 +337,11 @@ class TaskService {
     }
 
     def generateTasks(List<Territory> territories,
-                       List<CustomerSegment> segments,
-                       Date startDate,
-                       List<Integer> workDays,
-                       int tasksPerDay,
-                       Class<? extends Task> taskType) {
-
-
+                      List<CustomerSegment> segments,
+                      Date startDate,
+                      List<Integer> workDays,
+                      int tasksPerDay,
+                      Class<? extends Task> taskType) {
 
 
         def messages = []
