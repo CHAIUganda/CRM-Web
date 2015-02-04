@@ -58,7 +58,7 @@ module omnitech.chai {
             } else {
                 var segment = item.segment != null ? item.segment : 'Z';
                 var iconFillColor = '4B0082';
-                return 'http://chart.apis.google.com/chart?chst=d_map_xpin_letter&chld=pin_star|' + segment + '|' + iconFillColor + '|FFFFFF|ff7f00';
+                return 'http://chart.apis.google.com/chart?chst=d_map_xpin_letter&chld=pin_star|' + segment + '|' + iconFillColor + '|FFFFFF|ffff33';
             }
         }
 
