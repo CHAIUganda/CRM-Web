@@ -163,9 +163,16 @@
                  <div class="col-sm-8" style="padding-left: 0;padding-right: 0;">7 days or more</div>
              </div>
              <div class="row">
-                 <div class="col-sm-1" style="background: #4B0082; height: 20px"></div>
-
-                 <div class="col-sm-8" style="padding-left: 0;padding-right: 0;">Other Customers</div>
+                 <div class="col-sm-1" style="height: 50px;padding-left: 0;">
+                     <g:img uri="http://chart.apis.google.com/chart?chst=d_map_xpin_letter&chld=pin_star|O|4B0082|FFFFFF|ff7f00"/>
+                 </div>
+                 <div class="col-sm-8" style="padding-right: 0;">Other Customers</div>
+             </div>
+             <div class="row">
+                 <div class="col-sm-1" style="height: 50px;padding-left: 0;">
+                     <g:img uri="http://chart.apis.google.com/chart?chst=d_map_xpin_letter&chld=pin_star|O|4daf4a|FFFFFF|ffff33"/>
+                 </div>
+                 <div class="col-sm-8" style="padding-right: 0;">Complete</div>
              </div>
          </div>
      </div>

@@ -318,7 +318,7 @@ class TaskService {
         if (!customer) {
             log.warn("AdhocDetailCustomer Not Found: [$customerUuid]")
             //customer could have been deleted
-            return
+            return  null
         }
 
         detailerTask.customer = customer

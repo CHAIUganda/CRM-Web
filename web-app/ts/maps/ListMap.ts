@@ -14,7 +14,7 @@ module omnitech.chai {
         }
 
         private createMap() {
-            this.gmap = new GMaps({lat: 1.354255, lng: 32.314228, div: "#map", zoom: 3});
+            this.gmap = new GMaps({lat: 1.354255, lng: 32.314228, div: "#map", zoom: 7});
             this.data.forEach((item)=> {
                 if (item.lat && item.lng) {
                     this.gmap.addMarker({
@@ -35,7 +35,10 @@ module omnitech.chai {
                 }
             });
 
-            this.gmap.map.fitBounds(this.latLngBounds);
+            setTimeout(()=> {
+                this.gmap.map.fitBounds(this.latLngBounds);
+            }, 3000);
+
 
             this.gmap.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('legend'))
         }
@@ -43,12 +46,19 @@ module omnitech.chai {
         static getMapIconOptions(item:Task):any {
             if (item.type == 'task') {
                 var segment = item.segment != null ? item.segment : 'Z';
+
+                if(item.status === 'complete'){
+                    var iconFillColor = '4daf4a';
+                    return 'http://chart.apis.google.com/chart?chst=d_map_xpin_letter&chld=pin_star|' + segment + '|' + iconFillColor + '|FFFFFF|ffff33';
+                }
+
+                //new tasks
                 var iconFillColor = MapContainer.getColor(item.dueDays).replace('#', '');
                 return 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=' + segment + '|' + iconFillColor + '|FFFFFF';
-            }else{
+            } else {
                 var segment = item.segment != null ? item.segment : 'Z';
                 var iconFillColor = '4B0082';
-                return 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=' + segment + '|' + iconFillColor + '|FFFFFF';
+                return 'http://chart.apis.google.com/chart?chst=d_map_xpin_letter&chld=pin_star|' + segment + '|' + iconFillColor + '|FFFFFF|ff7f00';
             }
         }
 
