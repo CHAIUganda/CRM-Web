@@ -14,6 +14,7 @@ var omnitech;
                     scope.marker = marker;
                     scope.$apply();
                 });
+                this.mapC.showFiltered(function (t) { return t.type == 'task'; });
                 scope.momentFromNow = function (date) {
                     if (!date)
                         return "";
@@ -38,14 +39,16 @@ var omnitech;
                     TaskMapCtrl.updateTaskDate(ev.date, scope.newTask);
                     scope.$apply();
                 });
-                scope.$watch('showCustomers', function () {
-                    if (scope.showCustomers) {
-                        _this.mapC.refresh();
-                    }
-                    else {
-                        _this.mapC.renderFilter(function (t) { return t.type === 'task'; });
-                    }
-                });
+                scope.onShowCustomers = function () {
+                    setTimeout(function () {
+                        if (scope.showCustomers) {
+                            _this.mapC.showAll();
+                        }
+                        else {
+                            _this.mapC.showFiltered(function (t) { return t.type == 'task'; });
+                        }
+                    }, 1);
+                };
             }
             TaskMapCtrl.injection = function () {
                 return ['$scope', 'dataLoader', 'filterFilter', TaskMapCtrl];

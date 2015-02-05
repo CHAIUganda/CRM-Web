@@ -10,6 +10,7 @@ module omnitech.chai {
         onCreateNewTask : () => void
         persistNewTask : () => void
         showCustomers : boolean
+        onShowCustomers : () => void
     }
 
     class TaskMapCtrl {
@@ -29,6 +30,7 @@ module omnitech.chai {
                 scope.marker = marker;
                 scope.$apply();
             });
+            this.mapC.showFiltered((t)=>t.type == 'task');
 
             scope.momentFromNow = (date:Date) => {
                 if (!date) return "";
@@ -60,13 +62,16 @@ module omnitech.chai {
                 scope.$apply()
             });
 
-            scope.$watch('showCustomers', ()=> {
-                if (scope.showCustomers) {
-                    this.mapC.refresh();
-                } else {
-                    this.mapC.renderFilter((t)=>t.type === 'task')
-                }
-            });
+            scope.onShowCustomers = () => {
+                setTimeout(() => {
+                    if (scope.showCustomers) {
+                        this.mapC.showAll();
+                    } else {
+                        this.mapC.showFiltered((t)=>t.type == 'task')
+                    }
+                }, 1);
+
+            };
 
         }
 

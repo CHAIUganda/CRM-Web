@@ -40,7 +40,7 @@
 
             <div class="ng-hide">
                 <div id="showCustomers" class="thumbnail ${params.user ?: 'ng-hide'}">
-                    <g:checkBox name="showCustomers" ng-model="showCustomers"/>
+                    <g:checkBox name="showCustomers" ng-model="showCustomers" ng-click="onShowCustomers()"/>
                     <label for="showCustomers">Show Customers</label>
                 </div>
             </div>

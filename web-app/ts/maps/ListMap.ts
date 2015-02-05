@@ -23,24 +23,28 @@ module omnitech.chai {
             }, 3000);
 
 
-            this.gmap.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('legend'))
+            this.gmap.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('legend'));
             this.gmap.map.controls[google.maps.ControlPosition.TOP_CENTER].push(document.getElementById('showCustomers'))
         }
 
         renderItem(item:Task):void {
             if (item.lat && item.lng) {
-                MapContainer.clearTaskMarker(item);
-                item.marker = this.gmap.addMarker({
-                    lat: item.lat,
-                    lng: item.lng,
-                    icon: MapContainer.getMapIconOptions(item),
-                    infoWindow: {
-                        content: '<div>' + item.description + '</div>'
-                    },
-                    click: (marker)=> {
-                        this.onClickCallBack(item, marker);
-                    }
-                });
+                //MapContainer.clearTaskMarker(item);
+                if (item.marker) {
+                    item.marker.setOptions(MapContainer.getMapIconOptions(item))
+                } else {
+                    item.marker = this.gmap.addMarker({
+                        lat: item.lat,
+                        lng: item.lng,
+                        icon: MapContainer.getMapIconOptions(item),
+                        infoWindow: {
+                            content: '<div>' + item.description + '</div>'
+                        },
+                        click: (marker)=> {
+                            this.onClickCallBack(item, marker);
+                        }
+                    });
+                }
                 this.latLngBounds.extend(new google.maps.LatLng(item.lat, item.lng))
             }
         }
@@ -50,6 +54,7 @@ module omnitech.chai {
                 this.renderItem(item);
             });
         }
+
 
         clear() {
             this.data.forEach((item)=> {
@@ -72,14 +77,26 @@ module omnitech.chai {
             }
         }
 
-        renderFilter(fun:(item:Task) => boolean) {
-            this.clear();
+        showFiltered(fun:(item:Task) => boolean) {
             this.data.forEach((element) => {
                 if (fun(element)) {
-                    this.renderItem(element);
+                    this.showItem(element);
+                } else {
+                    element.marker.setMap(null);
                 }
             });
+        }
 
+        private showItem(element) {
+            if (element.marker && !element.marker.getMap()) {
+                element.marker.setMap(this.gmap.map);
+            }
+        }
+
+        showAll() {
+            this.data.forEach((item)=> {
+                this.showItem(item)
+            });
         }
 
         addElement(item:Task):void {
@@ -89,7 +106,7 @@ module omnitech.chai {
         }
 
         static getMapIconOptions(item:Task):any {
-            if (item.type === 'task') {
+            if (item.type == 'task') {
                 var segment = item.segment != null ? item.segment : 'Z';
 
                 if (item.status === 'complete') {

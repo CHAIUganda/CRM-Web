@@ -23,18 +23,23 @@ var omnitech;
             MapContainer.prototype.renderItem = function (item) {
                 var _this = this;
                 if (item.lat && item.lng) {
-                    MapContainer.clearTaskMarker(item);
-                    item.marker = this.gmap.addMarker({
-                        lat: item.lat,
-                        lng: item.lng,
-                        icon: MapContainer.getMapIconOptions(item),
-                        infoWindow: {
-                            content: '<div>' + item.description + '</div>'
-                        },
-                        click: function (marker) {
-                            _this.onClickCallBack(item, marker);
-                        }
-                    });
+                    //MapContainer.clearTaskMarker(item);
+                    if (item.marker) {
+                        item.marker.setOptions(MapContainer.getMapIconOptions(item));
+                    }
+                    else {
+                        item.marker = this.gmap.addMarker({
+                            lat: item.lat,
+                            lng: item.lng,
+                            icon: MapContainer.getMapIconOptions(item),
+                            infoWindow: {
+                                content: '<div>' + item.description + '</div>'
+                            },
+                            click: function (marker) {
+                                _this.onClickCallBack(item, marker);
+                            }
+                        });
+                    }
                     this.latLngBounds.extend(new google.maps.LatLng(item.lat, item.lng));
                 }
             };
@@ -62,13 +67,26 @@ var omnitech;
                     item.marker = null;
                 }
             };
-            MapContainer.prototype.renderFilter = function (fun) {
+            MapContainer.prototype.showFiltered = function (fun) {
                 var _this = this;
-                this.clear();
                 this.data.forEach(function (element) {
                     if (fun(element)) {
-                        _this.renderItem(element);
+                        _this.showItem(element);
                     }
+                    else {
+                        element.marker.setMap(null);
+                    }
+                });
+            };
+            MapContainer.prototype.showItem = function (element) {
+                if (element.marker && !element.marker.getMap()) {
+                    element.marker.setMap(this.gmap.map);
+                }
+            };
+            MapContainer.prototype.showAll = function () {
+                var _this = this;
+                this.data.forEach(function (item) {
+                    _this.showItem(item);
                 });
             };
             MapContainer.prototype.addElement = function (item) {
@@ -77,7 +95,7 @@ var omnitech;
                 $('#CreateTaskModal').modal('hide');
             };
             MapContainer.getMapIconOptions = function (item) {
-                if (item.type === 'task') {
+                if (item.type == 'task') {
                     var segment = item.segment != null ? item.segment : 'Z';
                     if (item.status === 'complete') {
                         console.log('Complete Tasks');
