@@ -53,12 +53,16 @@
             <div ng-show="task.type == 'customer'" class="ng-hide">
                 <g:render template="/task/mapCustomerView"/>
             </div>
+
+            <div class="ng-hide">
+                <g:render template="/task/mapLegend"/>
+            </div>
         </div>
+
+
     </div>
 
-    <div class="ng-hide">
-        <g:render template="/task/mapLegend"/>
-    </div>
+
 
 </div>
 

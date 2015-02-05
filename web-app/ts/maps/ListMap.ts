@@ -31,21 +31,25 @@ module omnitech.chai {
             if (item.lat && item.lng) {
                 //MapContainer.clearTaskMarker(item);
                 if (item.marker) {
-                    item.marker.setOptions(MapContainer.getMapIconOptions(item))
+                    item.marker.setOptions(this.getMarkerOptions(item))
                 } else {
-                    item.marker = this.gmap.addMarker({
-                        lat: item.lat,
-                        lng: item.lng,
-                        icon: MapContainer.getMapIconOptions(item),
-                        infoWindow: {
-                            content: '<div>' + item.description + '</div>'
-                        },
-                        click: (marker)=> {
-                            this.onClickCallBack(item, marker);
-                        }
-                    });
+                    item.marker = this.gmap.addMarker(this.getMarkerOptions(item));
                 }
                 this.latLngBounds.extend(new google.maps.LatLng(item.lat, item.lng))
+            }
+        }
+
+        private getMarkerOptions(item:Task):GMarkerOptions {
+            return {
+                lat: item.lat,
+                lng: item.lng,
+                icon: MapContainer.getIcon(item),
+                infoWindow: {
+                    content: '<div>' + item.description + '</div>'
+                },
+                click: (marker)=> {
+                    this.onClickCallBack(item, marker);
+                }
             }
         }
 
@@ -105,7 +109,7 @@ module omnitech.chai {
             $('#CreateTaskModal').modal('hide')
         }
 
-        static getMapIconOptions(item:Task):any {
+        static getIcon(item:Task):string {
             if (item.type == 'task') {
                 var segment = item.segment != null ? item.segment : 'Z';
 

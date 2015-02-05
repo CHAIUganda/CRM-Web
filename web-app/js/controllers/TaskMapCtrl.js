@@ -14,6 +14,7 @@ var omnitech;
                     scope.marker = marker;
                     scope.$apply();
                 });
+                scope.showCustomers = false;
                 this.mapC.showFiltered(function (t) { return t.type == 'task'; });
                 scope.momentFromNow = function (date) {
                     if (!date)
@@ -38,16 +39,23 @@ var omnitech;
                 $('#newTaskDate').datepicker().on('changeDate', function (ev) {
                     TaskMapCtrl.updateTaskDate(ev.date, scope.newTask);
                     scope.$apply();
+                    $('#newTaskDate').val('');
                 });
                 scope.onShowCustomers = function () {
-                    setTimeout(function () {
-                        if (scope.showCustomers) {
-                            _this.mapC.showAll();
-                        }
-                        else {
-                            _this.mapC.showFiltered(function (t) { return t.type == 'task'; });
-                        }
-                    }, 1);
+                    //invert coz the show customers flag is not yet updated
+                    if (!scope.showCustomers) {
+                        _this.mapC.showAll();
+                    }
+                    else {
+                        _this.mapC.showFiltered(function (t) { return t.type == 'task'; });
+                    }
+                };
+                scope.onLegendFilter = function (expr) {
+                    _this.mapC.showFiltered(function (t) {
+                        if (scope.showCustomers)
+                            return eval(expr) || (t.type == 'customer');
+                        return eval(expr);
+                    });
                 };
             }
             TaskMapCtrl.injection = function () {

@@ -11,6 +11,7 @@ module omnitech.chai {
         persistNewTask : () => void
         showCustomers : boolean
         onShowCustomers : () => void
+        onLegendFilter : (expr:string) => void
     }
 
     class TaskMapCtrl {
@@ -30,6 +31,7 @@ module omnitech.chai {
                 scope.marker = marker;
                 scope.$apply();
             });
+            scope.showCustomers = false;
             this.mapC.showFiltered((t)=>t.type == 'task');
 
             scope.momentFromNow = (date:Date) => {
@@ -59,19 +61,26 @@ module omnitech.chai {
 
             $('#newTaskDate').datepicker().on('changeDate', (ev:any)=> {
                 TaskMapCtrl.updateTaskDate(ev.date, scope.newTask);
-                scope.$apply()
+                scope.$apply();
+                $('#newTaskDate').val('');
             });
 
             scope.onShowCustomers = () => {
-                setTimeout(() => {
-                    if (scope.showCustomers) {
-                        this.mapC.showAll();
-                    } else {
-                        this.mapC.showFiltered((t)=>t.type == 'task')
-                    }
-                }, 1);
-
+                //invert coz the show customers flag is not yet updated
+                if (!scope.showCustomers) {
+                    this.mapC.showAll();
+                } else {
+                    this.mapC.showFiltered((t)=>t.type == 'task')
+                }
             };
+
+            scope.onLegendFilter = (expr) => {
+                this.mapC.showFiltered((t) => {
+                    if (scope.showCustomers)
+                        return (<boolean>eval(expr)) || (t.type == 'customer');
+                    return <boolean>eval(expr)
+                });
+            }
 
         }
 
