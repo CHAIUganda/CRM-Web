@@ -37,6 +37,15 @@
         </div>
 
         <div class="col-lg-4" ng-controller="TaskMapCtrl">
+
+            <div class="ng-hide">
+                <div id="showCustomers" class="thumbnail ${params.user ?: 'ng-hide'}">
+                    <g:checkBox name="showCustomers" ng-model="showCustomers"/>
+                    <label for="showCustomers">Show Customers</label>
+                </div>
+            </div>
+
+
             <div ng-show="task.type == 'task'" class="ng-hide">
                 <g:render template="/task/mapTaskView"/>
             </div>

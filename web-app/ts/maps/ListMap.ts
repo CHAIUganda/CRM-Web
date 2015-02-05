@@ -24,6 +24,7 @@ module omnitech.chai {
 
 
             this.gmap.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('legend'))
+            this.gmap.map.controls[google.maps.ControlPosition.TOP_CENTER].push(document.getElementById('showCustomers'))
         }
 
         renderItem(item:Task):void {
@@ -69,6 +70,16 @@ module omnitech.chai {
                 item.marker.setMap(null);
                 item.marker = null;
             }
+        }
+
+        renderFilter(fun:(item:Task) => boolean) {
+            this.clear();
+            this.data.forEach((element) => {
+                if (fun(element)) {
+                    this.renderItem(element);
+                }
+            });
+
         }
 
         addElement(item:Task):void {

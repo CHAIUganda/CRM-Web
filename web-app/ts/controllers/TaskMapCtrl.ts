@@ -9,6 +9,7 @@ module omnitech.chai {
         persistDueDate : () => void
         onCreateNewTask : () => void
         persistNewTask : () => void
+        showCustomers : boolean
     }
 
     class TaskMapCtrl {
@@ -59,6 +60,13 @@ module omnitech.chai {
                 scope.$apply()
             });
 
+            scope.$watch('showCustomers', ()=> {
+                if (scope.showCustomers) {
+                    this.mapC.refresh();
+                } else {
+                    this.mapC.renderFilter((t)=>t.type === 'task')
+                }
+            });
 
         }
 

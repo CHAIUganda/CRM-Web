@@ -18,6 +18,7 @@ var omnitech;
                     _this.gmap.map.fitBounds(_this.latLngBounds);
                 }, 3000);
                 this.gmap.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('legend'));
+                this.gmap.map.controls[google.maps.ControlPosition.TOP_CENTER].push(document.getElementById('showCustomers'));
             };
             MapContainer.prototype.renderItem = function (item) {
                 var _this = this;
@@ -60,6 +61,15 @@ var omnitech;
                     item.marker.setMap(null);
                     item.marker = null;
                 }
+            };
+            MapContainer.prototype.renderFilter = function (fun) {
+                var _this = this;
+                this.clear();
+                this.data.forEach(function (element) {
+                    if (fun(element)) {
+                        _this.renderItem(element);
+                    }
+                });
             };
             MapContainer.prototype.addElement = function (item) {
                 this.data.push(item);

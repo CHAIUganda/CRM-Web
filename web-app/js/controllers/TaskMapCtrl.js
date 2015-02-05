@@ -38,6 +38,14 @@ var omnitech;
                     TaskMapCtrl.updateTaskDate(ev.date, scope.newTask);
                     scope.$apply();
                 });
+                scope.$watch('showCustomers', function () {
+                    if (scope.showCustomers) {
+                        _this.mapC.refresh();
+                    }
+                    else {
+                        _this.mapC.renderFilter(function (t) { return t.type === 'task'; });
+                    }
+                });
             }
             TaskMapCtrl.injection = function () {
                 return ['$scope', 'dataLoader', 'filterFilter', TaskMapCtrl];
