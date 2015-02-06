@@ -22,7 +22,7 @@ import static org.springframework.http.HttpStatus.*
  * DetailerTaskController
  * A controller class handles incoming web requests and performs actions such as redirects, rendering views and so on.
  */
-class DetailerTaskController {
+class DetailerTaskController extends BaseController {
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
@@ -152,6 +152,24 @@ class DetailerTaskController {
                 redirect action: 'show', id: taskInstance.id
             }
             '*' { respond taskInstance, [status: CREATED] }
+        }
+    }
+
+
+    def createTaskJson() {
+        handleSafely {
+            def json = request.JSON as Map
+
+            assert json.customerId, 'Please specify Customer Id'
+            def cid = json.customerId as Long
+            def customer = customerService.findCustomer(cid)
+            assert customer, 'Customer Should Exist In DB'
+
+            def dueDate = Date.parse('yyyy-MM-dd', json.dueDate as String)
+
+            def detailerTask = DetailerTask.create(customer, dueDate)
+            taskService.saveTask(detailerTask)
+            return detailerTask.id
         }
     }
 

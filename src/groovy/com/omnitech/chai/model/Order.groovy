@@ -25,8 +25,8 @@ class Order extends Task implements HasLineItem {
 
     def beforeSave() {
         super.beforeSave()
-        if(!description)
-        description = "Call [$customer.outletName]"
+        if (!description)
+            description = "Call [$customer.outletName]"
     }
 
     static constraints = {
@@ -36,6 +36,10 @@ class Order extends Task implements HasLineItem {
     @Override
     Double totalCost() {
         return lineItems?.sum { it.lineCost } as Double
+    }
+
+    static Order create(Customer customer, Date date) {
+        new Order(customer: customer, dueDate: date)
     }
 
 

@@ -23,7 +23,6 @@ var omnitech;
                 };
                 scope.persistDueDate = function () {
                     _this.persistDateTask(scope, dataLoader);
-                    chai.Utils.postError(scope, 'Success');
                 };
                 $('#dueDateText').datepicker().on('changeDate', function (ev) {
                     TaskMapCtrl.updateTaskDate(ev.date, scope.task);
@@ -32,6 +31,7 @@ var omnitech;
                 });
                 scope.onCreateNewTask = function () {
                     scope.newTask = TaskMapCtrl.createTask(scope.task);
+                    $('#newTaskDate').val('');
                 };
                 scope.persistNewTask = function () {
                     _this.saveNewTask();
@@ -39,7 +39,6 @@ var omnitech;
                 $('#newTaskDate').datepicker().on('changeDate', function (ev) {
                     TaskMapCtrl.updateTaskDate(ev.date, scope.newTask);
                     scope.$apply();
-                    $('#newTaskDate').val('');
                 });
                 scope.onShowCustomers = function () {
                     //invert coz the show customers flag is not yet updated
@@ -66,8 +65,16 @@ var omnitech;
                 dataLoader.persistTaskDate(scope.task, date).success(function () { return chai.Utils.postError(scope, 'Success'); }).error(function (msg) { return chai.Utils.postError(scope, msg); });
             };
             TaskMapCtrl.prototype.saveNewTask = function () {
-                this.mapC.removeElement(this.scope.task);
-                this.mapC.addElement(this.scope.newTask);
+                var _this = this;
+                var task = this.scope.newTask;
+                var date = moment(task.dueDate).format('YYYY-MM-DD');
+                this.dataLoader.persistNewTask(task, date).error(function (msg) {
+                    chai.Utils.postError(_this.scope, msg);
+                }).success(function (msg) {
+                    _this.mapC.removeElement(_this.scope.task);
+                    _this.mapC.addElement(_this.scope.newTask);
+                    _this.scope.newTask.id = msg;
+                });
             };
             TaskMapCtrl.updateTaskDate = function (date, task) {
                 task.dueDate = date;

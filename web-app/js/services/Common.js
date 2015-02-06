@@ -60,6 +60,14 @@ var omnitech;
                 var url = omnitechBase + '/task/updateTaskDate';
                 return this.http.post(url, { taskId: task.id, date: date });
             };
+            DataLoader.prototype.persistNewTask = function (task, date) {
+                var url;
+                if (window.location.pathname.match('.*/detailerTask/map'))
+                    url = omnitechBase + '/detailerTask/createTaskJson';
+                else if (window.location.pathname.match('.*/call/map'))
+                    url = omnitechBase + '/call/createTaskJson';
+                return this.http.post(url, { customerId: task.customerId, dueDate: date });
+            };
             return DataLoader;
         })();
         chai.DataLoader = DataLoader;

@@ -20,7 +20,7 @@ module omnitech.chai {
 
             setTimeout(()=> {
                 this.gmap.map.fitBounds(this.latLngBounds);
-            }, 3000);
+            }, 2000);
 
 
             this.gmap.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('legend'));

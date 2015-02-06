@@ -41,7 +41,6 @@ module omnitech.chai {
 
             scope.persistDueDate = () => {
                 this.persistDateTask(scope, dataLoader);
-                Utils.postError(scope, 'Success')
             };
 
 
@@ -53,6 +52,7 @@ module omnitech.chai {
 
             scope.onCreateNewTask = () => {
                 scope.newTask = TaskMapCtrl.createTask(<Customer><any>scope.task);
+                $('#newTaskDate').val('');
             };
 
             scope.persistNewTask = () => {
@@ -62,7 +62,7 @@ module omnitech.chai {
             $('#newTaskDate').datepicker().on('changeDate', (ev:any)=> {
                 TaskMapCtrl.updateTaskDate(ev.date, scope.newTask);
                 scope.$apply();
-                $('#newTaskDate').val('');
+
             });
 
             scope.onShowCustomers = () => {
@@ -93,8 +93,16 @@ module omnitech.chai {
 
 
         private saveNewTask() {
-            this.mapC.removeElement(this.scope.task);
-            this.mapC.addElement(this.scope.newTask);
+            var task = this.scope.newTask;
+            var date = moment(task.dueDate).format('YYYY-MM-DD')
+            this.dataLoader.persistNewTask(task, date)
+                .error((msg)=> {
+                    Utils.postError(this.scope, msg);
+                }).success((msg:string) => {
+                    this.mapC.removeElement(this.scope.task);
+                    this.mapC.addElement(this.scope.newTask);
+                    this.scope.newTask.id = msg;
+                });
         }
 
         private static updateTaskDate(date:Date, task:Task):void {

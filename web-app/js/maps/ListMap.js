@@ -16,7 +16,7 @@ var omnitech;
                 this.refresh();
                 setTimeout(function () {
                     _this.gmap.map.fitBounds(_this.latLngBounds);
-                }, 3000);
+                }, 2000);
                 this.gmap.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById('legend'));
                 this.gmap.map.controls[google.maps.ControlPosition.TOP_CENTER].push(document.getElementById('showCustomers'));
             };

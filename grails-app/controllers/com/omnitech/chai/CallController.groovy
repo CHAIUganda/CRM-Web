@@ -192,6 +192,24 @@ class CallController {
         return order
     }
 
+    def createTaskJson() {
+        handleSafely {
+            def json = request.JSON as Map
+
+            assert json.customerId, 'Please specify Customer Id'
+            def cid = json.customerId as Long
+            def customer = customerService.findCustomer(cid)
+            assert customer, 'Customer Should Exist In DB'
+
+            def dueDate = Date.parse('yyyy-MM-dd', json.dueDate as String)
+
+            def detailerTask = Order.create(customer, dueDate)
+            taskService.saveTask(detailerTask)
+            return detailerTask.id
+        }
+    }
+
+
     private LineItem toLineItem(Map map, Order order) {
         def product = productService.findProduct(map.productId as Long)
         assert product, 'product should exist in data base'

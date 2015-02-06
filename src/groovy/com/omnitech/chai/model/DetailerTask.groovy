@@ -1,8 +1,6 @@
 package com.omnitech.chai.model
 
-import org.springframework.data.neo4j.annotation.Indexed
 import org.springframework.data.neo4j.annotation.NodeEntity
-import org.springframework.data.neo4j.support.index.IndexType
 
 /**
  * Created by kay on 11/7/14.
@@ -32,5 +30,15 @@ class DetailerTask extends Task {
     String pointOfsaleMaterial
     String recommendationNextStep
     String recommendationLevel
+
+    def beforeSave() {
+        super.beforeSave()
+        if (!description)
+            description = "Detailing [$customer.outletName]"
+    }
+
+    static create(Customer c, Date d) {
+        new DetailerTask(customer: c, description: "Detailing [$c.outletName]", dueDate: d)
+    }
 
 }

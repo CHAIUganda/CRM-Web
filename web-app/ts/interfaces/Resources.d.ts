@@ -52,7 +52,7 @@ declare module omnitech.chai {
     }
 
     interface HttPromise {
-        success(func:() => void):HttPromise ;
+        success(func:(msg?:any) => void):HttPromise ;
         error (func:(data:string) => void):HttPromise;
     }
 

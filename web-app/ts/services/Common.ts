@@ -64,9 +64,20 @@ module omnitech.chai {
             return this.http.post(url, JSON.stringify(jsonFriendlyOrder));
         }
 
-        persistTaskDate(task:Task,date:string):HttPromise {
+        persistTaskDate(task:Task, date:string):HttPromise {
             var url = omnitechBase + '/task/updateTaskDate';
             return this.http.post(url, {taskId: task.id, date: date});
+
+        }
+
+        persistNewTask(task:Task, date:string):HttPromise {
+            var url;
+            if (window.location.pathname.match('.*/detailerTask/map'))
+                url = omnitechBase + '/detailerTask/createTaskJson';
+            else if (window.location.pathname.match('.*/call/map'))
+                url = omnitechBase + '/call/createTaskJson';
+
+            return this.http.post(url, {customerId: task.customerId, dueDate: date,});
 
         }
 
