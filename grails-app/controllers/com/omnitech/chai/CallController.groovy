@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.security.access.AccessDeniedException
 
+import static com.omnitech.chai.util.ControllerUtils.customerToJsonMap
 import static com.omnitech.chai.util.ControllerUtils.taskToJsonMap
 import static com.omnitech.chai.util.ModelFunctions.extractId
 import static org.springframework.http.HttpStatus.*
@@ -22,7 +23,7 @@ import static org.springframework.http.HttpStatus.*
 /**
  * Created by kay on 12/10/2014.
  */
-class CallController {
+class CallController extends BaseController {
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
@@ -51,9 +52,22 @@ class CallController {
     def map(Integer max) {
         def user = neoSecurityService.currentUser
         def (page, users) = taskService.loadPageDataForUser(user, Order, params, max, null)
-        def mapData = page.content.collect { Task task ->
+        def taskData = page.content.collect { Task task ->
             return taskToJsonMap(task)
-        } as JSON
+        }
+
+        if (params.user) {
+            def userInContext = userService.findUserByName(params.user)
+            //todo use a query for this section to improve performance
+            def customers = customerService.findAllCustomersByUser(userInContext.id, true, [max: 2000])
+            customers.removeAll { c ->
+                page.any { it?.customer?.id == c.id }
+            }
+            def customerData = customers.findAll { it.wkt != null }.collect { customerToJsonMap(it) }
+            taskData.addAll(customerData)
+        }
+
+        def mapData = taskData as JSON
         def jsonMapString = mapData.toString(true)
         render(view: '/task/map', model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: users, mapData: jsonMapString])
     }
@@ -91,7 +105,7 @@ class CallController {
         }
 
         def (page, users) = taskService.loadPageDataForUser(user, Order, params, max, ModelFunctions.getWildCardRegex(params.id as String))
-        render  view: 'index', model: [taskInstanceList: page,taskInstanceCount: page.totalElements, users: users]
+        render view: 'index', model: [taskInstanceList: page, taskInstanceCount: page.totalElements, users: users]
     }
 
     def searchMap(Integer max) {
@@ -99,7 +113,7 @@ class CallController {
         def user = neoSecurityService.currentUser
 
         def (page, users) = taskService.loadPageDataForUser(user, Order, params, max, ModelFunctions.getWildCardRegex(params.id as String))
-        def mapData = page.content.collect {  taskToJsonMap(it) } as JSON
+        def mapData = page.content.collect { taskToJsonMap(it) } as JSON
         def jsonMapString = mapData.toString(true)
         respond page.content, view: '/task/map', model: [taskInstanceCount: page.totalElements, users: users, mapData: jsonMapString]
     }

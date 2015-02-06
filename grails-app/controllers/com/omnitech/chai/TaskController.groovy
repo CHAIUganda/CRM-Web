@@ -8,7 +8,6 @@ import com.omnitech.chai.util.ReflectFunctions
 import com.omnitech.chai.util.ServletUtil
 import fuzzycsv.FuzzyCSV
 import grails.converters.JSON
-import grails.transaction.Transactional
 import grails.util.GrailsNameUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -66,13 +65,11 @@ class TaskController {
             render "Success"
         } catch (Exception x) {
             log.error("Error Updating Task Date:", x)
-            render status: HttpStatus.INTERNAL_SERVER_ERROR, text: ChaiUtils.getBestMessage(x)
+            render([status: HttpStatus.INTERNAL_SERVER_ERROR, text: ChaiUtils.getBestMessage(x)] as JSON)
         }
 
 
     }
-
-
 
 
     def export() {

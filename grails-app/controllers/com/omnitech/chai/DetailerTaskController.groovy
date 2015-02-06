@@ -157,7 +157,7 @@ class DetailerTaskController extends BaseController {
 
 
     def createTaskJson() {
-        handleSafely {
+        handleSafely({
             def json = request.JSON as Map
 
             assert json.customerId, 'Please specify Customer Id'
@@ -170,7 +170,7 @@ class DetailerTaskController extends BaseController {
             def detailerTask = DetailerTask.create(customer, dueDate)
             taskService.saveTask(detailerTask)
             return detailerTask.id
-        }
+        })
     }
 
     def edit() {
