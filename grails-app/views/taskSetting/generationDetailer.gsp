@@ -5,7 +5,7 @@
   Time: 11:43 AM
 --%>
 
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page import="com.omnitech.chai.util.ChaiUtils" contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
     <meta name="layout" content="kickstart"/>
@@ -32,7 +32,7 @@
         <div class="form-group">
             <label for="avgTasksPerDay" class="col-md-2 control-label">Average No.Task Per Day</label>
 
-            <div class="col-md-5"><g:field type="number" name="avgTasksPerDay" class="form-control" value="${params.avgTasksPerDay ?: 8}"/></div>
+            <div class="col-md-5"><g:field type="number" name="avgTasksPerDay" class="form-control" value="${params.avgTasksPerDay ?: 8}" required="true"/></div>
         </div>
 
         <div class="form-group">
@@ -75,15 +75,18 @@
         </div>
 
         <div class="form-group">
-            <label for="territories" class="col-md-2 control-label">Territories</label>
+            <label for="territories" class="col-md-2 control-label">Territories: </label>
+        </div>
+        <div class="form-group">
 
-            <div class="col-md-10">
+
+            <div class="col-md-12">
                 <div class="row">
 
                     <g:each in="${territories}" var="t">
                         <div class="col-md-3">
                             <g:checkBox id="territories" type="checkbox" name="territories" value="${t.id}" checked="${params.territories == "$t.id" || params.territories?.contains("$t.id")}"/>
-                            <label for="territories">${t}</label>
+                            <label for="territories">${ChaiUtils.truncateString(t.toString(),25)}</label>
                         </div>
                     </g:each>
                 </div>

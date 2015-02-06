@@ -19,9 +19,8 @@
 			
 				<g:sortableColumn property="username" title="${message(code: 'user.username.label', default: 'Username')}" />
 
-                <th> ${message(code: 'Device.label', default: 'Device')}</th>
-
-                <g:sortableColumn property="dateCreated" title="${message(code: 'user.territory.label', default: 'Territory')}" />
+                %{--<th> ${message(code: 'Device.label', default: 'Device')}</th>--}%
+                <th> ${message(code: 'Territory.label', default: 'Territory')}</th>
 
 				<g:sortableColumn property="accountExpired" title="${message(code: 'user.accountExpired.label', default: 'Account Expired')}" />
 			
@@ -37,7 +36,7 @@
 			
 				<td><g:link action="show" id="${userInstance.id}">${fieldValue(bean: userInstance, field: "username")}</g:link></td>
 
-                <td>${fieldValue(bean: userInstance, field: "device")}</td>
+                %{--<td>${fieldValue(bean: userInstance, field: "device")}</td>--}%
 
                 <td>${fieldValue(bean: userInstance, field: "territory")}</td>
 

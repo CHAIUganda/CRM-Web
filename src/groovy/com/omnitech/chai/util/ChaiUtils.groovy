@@ -172,7 +172,7 @@ class ChaiUtils {
             if (defaultValue) return defaultValue
             throw new ImportException("Record [${mapper.idx()}] has an Empty Cell[$name] that is Required")
         }
-        return value
+        return value.removeExtraSpace()
     }
 
 

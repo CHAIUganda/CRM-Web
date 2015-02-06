@@ -239,8 +239,8 @@ class RegionService {
     void processRecord(Record record, PhraseHelper fuzzyEngine, List<District> districts) {
 
         def modified = false
-        def name = ChaiUtils.prop(record, 'territory')
-        def territory = getOrCreateTerrioty(name)
+        def territoryName = ChaiUtils.prop(record, 'territory').trim()
+        def territory = getOrCreateTerrioty(territoryName)
         if (territory.id) {
             neo.fetch territory.subCounties
         }
@@ -249,7 +249,7 @@ class RegionService {
 
         assert commaSeparatedDistrictNames, 'You Should Provide Districts'
 
-        def districtNames = commaSeparatedDistrictNames.split(',')
+        def districtNames = commaSeparatedDistrictNames.split(',').collect {it.removeExtraSpace()}
         for (unVerifiedDistrict in districtNames) {
 
             def districtName = fuzzyEngine.bestInternalHit(unVerifiedDistrict, 90)
