@@ -40,9 +40,9 @@ class TaskSettingController {
     def handleException(IllegalArgumentException ex) {
         flash.error = ex.message
         if (actionName == 'generateDetailerTasks')
-            redirect action: 'generationDetailer'
+            redirect action: 'generationDetailer', params: params
         else
-            redirect action: 'generationOrder'
+            redirect action: 'generationOrder', params: params
     }
 
     private def getPageModel() {
@@ -64,11 +64,15 @@ class TaskSettingController {
         def startDate = Date.parse('yyyy-MM-dd', params.startDate as String)
         Assert.isTrue((startDate - new Date()) >= 0, "Start Date[$params.startDate] Should Be Greater Than Today")
 
+        Assert.notNull params.avgTasksPerDay, 'Please Set Avg Number Of Tasks Per Day'
+        def tasksPerDay = params.avgTasksPerDay as Integer
+        Assert.isTrue tasksPerDay <= 30, 'Average Number Of Tasks Is To High(above 30)'
+
         def segments = extractSegments()
 
         def territories = extractTerritories()
 
-        taskService.generateTasks(territories, segments, startDate, workDays, 15, taskType)
+        taskService.generateTasks(territories, segments, startDate, workDays, tasksPerDay, taskType)
     }
 
     private def extractTerritories() {

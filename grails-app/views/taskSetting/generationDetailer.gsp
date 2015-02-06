@@ -29,16 +29,16 @@
         %{--<div class="col-md-5"><g:field type="number" name="numberOfTasks" class="form-control"/></div>--}%
         %{--</div>--}%
 
-        %{--<div class="form-group">--}%
-        %{--<label for="numberOfTasks" class="col-md-2 control-label">Tasks Per Territory</label>--}%
+        <div class="form-group">
+            <label for="avgTasksPerDay" class="col-md-2 control-label">Average No.Task Per Day</label>
 
-        %{--<div class="col-md-5"><g:field type="number" name="numberOfTasks" class="form-control"/></div>--}%
-        %{--</div>--}%
+            <div class="col-md-5"><g:field type="number" name="avgTasksPerDay" class="form-control" value="${params.avgTasksPerDay ?: 8}"/></div>
+        </div>
 
         <div class="form-group">
             <label for="startDate" class="col-md-2 control-label">Start Date</label>
 
-            <div class="col-md-5"><bs:datePicker class="form-control" name="startDate"/></div>
+            <div class="col-md-5"><bs:datePicker class="form-control" name="startDate" value="${params.startDate ? Date.parse('yyyy-MM-dd', params.startDate): new Date()}"/></div>
         </div>
 
         <div class="form-group">
@@ -48,7 +48,7 @@
                 <g:each in="${segments}" var="s" status="i">
                     <div class="col-md-3">
                         <label for="segments.${s.id}">${s.name}</label>
-                        <g:field name="segments.${s.id}" type="number" value="10" />
+                        <g:field name="segments.${s.id}" type="number" value="${params."segments.$s.id" ?: 10}"/>
                     </div>
 
                 </g:each>
@@ -67,7 +67,7 @@
                                "$Calendar.FRIDAY"   : 'Fri',
                                "$Calendar.SATURDAY" : 'Sat',
                                "$Calendar.SUNDAY"   : 'Sun']}" var="day" status="i">
-                    <input id="workDays" type="checkbox" name="workDays" value="${day.key}">
+                    <g:checkBox name="workDays"  value="${day.key}" checked="${params.workDays == "$day.key" || params.workDays?.contains("$day.key")}"/>
                     <label for="workDays">${day.value}</label>
                 </g:each>
             </div>
@@ -82,7 +82,7 @@
 
                     <g:each in="${territories}" var="t">
                         <div class="col-md-3">
-                            <input id="territories" type="checkbox" name="territories" value="${t.id}">
+                            <g:checkBox id="territories" type="checkbox" name="territories" value="${t.id}" checked="${params.territories == "$t.id" || params.territories?.contains("$t.id")}"/>
                             <label for="territories">${t}</label>
                         </div>
                     </g:each>
