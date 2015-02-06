@@ -1,4 +1,4 @@
-<%@ page import="com.omnitech.chai.model.User" %>
+<%@ page import="com.omnitech.chai.util.ChaiUtils; com.omnitech.chai.model.User" %>
 <div>
     <div class="row ">
         <div class="col-md-6 thumbnail">
@@ -98,7 +98,7 @@
                     <div class="col-md-4  ${userInstance?.id && userInstance?.id == territory.supervisor?.id ? 'alert-info' : ''}">
                         <g:checkBox name="territories" value="${territory.id}"
                                  checked="${userInstance?.id && userInstance?.id == territory.supervisor?.id}"/>
-                        <label for="territories">${territory} ${territory.supervisor ? "<>($territory.supervisor)" : ''}</label>
+                        <label for="territories">${ChaiUtils.truncateString(territory.toString(),35)} ${territory.supervisor ? "<>($territory.supervisor)" : ''}</label>
                     </div>
 
                 </g:each>

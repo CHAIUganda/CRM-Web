@@ -1,4 +1,4 @@
-<%@ page import="com.omnitech.chai.model.Product" %>
+<%@ page import="com.omnitech.chai.util.ChaiUtils; com.omnitech.chai.model.Product" %>
 
 
             <div class="${hasErrors(bean: productInstance, field: 'group', 'error')} ">
@@ -55,7 +55,7 @@
             <div class="col-md-4  ${productInstance?.isSoldInTerritory(territory)? 'alert-info' : ''}">
                 <g:checkBox name="territoriz" value="${territory.id}"
                             checked="${productInstance?.isSoldInTerritory(territory)}"/>
-                <label for="territories">${territory}</label>
+                <label for="territoriz">${ChaiUtils.truncateString(territory.toString(),35)}</label>
             </div>
 
         </g:each>
