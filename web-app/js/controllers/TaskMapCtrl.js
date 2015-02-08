@@ -33,6 +33,7 @@ var omnitech;
                     scope.newTask = TaskMapCtrl.createTask(scope.task);
                     $('#newTaskDate').val('');
                 };
+                scope.onTaskSelected = function (t) { return _this.mapC.centerTask(t); };
                 scope.persistNewTask = function () {
                     _this.saveNewTask();
                 };
@@ -56,6 +57,7 @@ var omnitech;
                         return eval(expr);
                     });
                 };
+                scope.allTasks = chaiMapData;
             }
             TaskMapCtrl.injection = function () {
                 return ['$scope', 'dataLoader', 'filterFilter', TaskMapCtrl];
@@ -83,6 +85,8 @@ var omnitech;
             TaskMapCtrl.createTask = function (c) {
                 return {
                     customerId: c.id,
+                    customer: c.outletName,
+                    customerDescription: c.descriptionOfOutletLocation,
                     lng: c.lng,
                     lat: c.lat,
                     title: c.outletName,
@@ -94,7 +98,7 @@ var omnitech;
             };
             return TaskMapCtrl;
         })();
-        angular.module('omnitechApp', ['ngResource']).controller('TaskMapCtrl', TaskMapCtrl.injection()).service('dataLoader', chai.DataLoader.prototype.injection());
+        angular.module('omnitechApp', ['ngResource', 'ui.bootstrap']).controller('TaskMapCtrl', TaskMapCtrl.injection()).service('dataLoader', chai.DataLoader.prototype.injection());
     })(chai = omnitech.chai || (omnitech.chai = {}));
 })(omnitech || (omnitech = {}));
 //# sourceMappingURL=TaskMapCtrl.js.map

@@ -12,6 +12,8 @@ module omnitech.chai {
         showCustomers : boolean
         onShowCustomers : () => void
         onLegendFilter : (expr:string) => void
+        onTaskSelected : (t:Task) => void
+        allTasks: Task[]
     }
 
     class TaskMapCtrl {
@@ -55,6 +57,9 @@ module omnitech.chai {
                 $('#newTaskDate').val('');
             };
 
+            scope.onTaskSelected = (t)=>this.mapC.centerTask(t);
+
+
             scope.persistNewTask = () => {
                 this.saveNewTask();
             };
@@ -80,7 +85,9 @@ module omnitech.chai {
                         return (<boolean>eval(expr)) || (t.type == 'customer');
                     return <boolean>eval(expr)
                 });
-            }
+            };
+
+            scope.allTasks = chaiMapData
 
         }
 
@@ -113,6 +120,8 @@ module omnitech.chai {
         private static createTask(c:Customer):Task {
             return {
                 customerId: c.id,
+                customer: c.outletName,
+                customerDescription: c.descriptionOfOutletLocation,
                 lng: c.lng,
                 lat: c.lat,
                 title: c.outletName,
@@ -124,7 +133,7 @@ module omnitech.chai {
         }
     }
 
-    angular.module('omnitechApp', ['ngResource'])
+    angular.module('omnitechApp', ['ngResource', 'ui.bootstrap'])
         .controller('TaskMapCtrl', TaskMapCtrl.injection())
         .service('dataLoader', DataLoader.prototype.injection())
 

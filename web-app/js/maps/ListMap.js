@@ -139,6 +139,14 @@ var omnitech;
                 if (days >= 7)
                     return '#000000';
             };
+            MapContainer.prototype.centerTask = function (t) {
+                var zoom = this.gmap.map.getZoom();
+                if (Math.abs(18 - zoom) >= 2) {
+                    this.gmap.map.setZoom(18);
+                }
+                this.gmap.map.panTo(t.marker.getPosition());
+                google.maps.event.trigger(t.marker, 'click');
+            };
             return MapContainer;
         })();
         chai.MapContainer = MapContainer;

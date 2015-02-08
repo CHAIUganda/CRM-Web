@@ -26,6 +26,7 @@ declare module omnitech.chai {
         contact: string;
         district: string;
         segment?: string
+        descriptionOfOutletLocation?:string
     }
 
     interface Product {
