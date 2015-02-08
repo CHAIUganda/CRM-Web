@@ -8,9 +8,6 @@ interface Relations {
     //District -> SubCounty
     final static String HAS_SUB_COUNTY = 'HAS_SUB_COUNTY'
 
-    //SubCount -> Parish
-    final static String HAS_PARISH = 'HAS_PARISH'
-
     //Region -> District
     final static String HAS_DISTRICT = 'HAS_DISTRICT'
 

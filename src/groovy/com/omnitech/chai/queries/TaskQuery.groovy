@@ -1,13 +1,16 @@
 package com.omnitech.chai.queries
 
 import com.omnitech.chai.model.Task
+import com.omnitech.chai.util.ReflectFunctions
 import org.neo4j.cypherdsl.grammar.Execute
 import org.neo4j.cypherdsl.grammar.Match
 import org.neo4j.cypherdsl.grammar.ReturnNext
 import org.slf4j.LoggerFactory
 
 import static com.omnitech.chai.model.Relations.*
+import static grails.util.GrailsNameUtils.getNaturalName
 import static org.neo4j.cypherdsl.CypherQuery.*
+import static org.neo4j.cypherdsl.CypherQuery.as as az
 
 /**
  * Created by kay on 11/12/14.
@@ -77,6 +80,33 @@ class TaskQuery {
                 .in(CUST_IN_SC).node('customer')
                 .out(CUST_TASK).node(varName).label(taskType.simpleName))
 
+    }
+
+    static def exportTasks(Long userId, Class type) {
+        def varName = type.simpleName.toLowerCase()
+        def query = mathQueryForUserTasks(userId, type)
+                .with(distinct(identifier(varName)))
+                .match(node(varName).in(CUST_TASK).node('c').out(CUST_IN_SC).node('sc'))
+                .match(node('sc').in(HAS_SUB_COUNTY).node('d')).optional()
+                .match(node('c').out(CUST_IN_VILLAGE).node('v')).optional()
+                .match(node('c').out(CUST_IN_PARISH).node('p')).optional()
+
+        def fields = [az(identifier('d').property('name'), 'DISTRICT'),
+                      az(identifier('sc').property('name'), 'SUBCOUNTY'),
+                      az(identifier('v').property('name'), 'VILLAGE'),
+                      az(identifier('c').property('outletName'), 'OUTLET NAME'),
+                      az(identifier('c').property('outletType'), 'OUTLET TYPE')]
+
+        ReflectFunctions.findAllBasicFields(type).each {
+            if (['lastUpdated', 'dateCreated', 'id'].contains(it)) return
+            fields << az(identifier(varName).property(it), getNaturalName(it).toUpperCase())
+        }
+
+        query.returns(*fields)
+
+        log.trace("Query: exportTasksForUser(): [$query]")
+
+        return query
     }
 
 

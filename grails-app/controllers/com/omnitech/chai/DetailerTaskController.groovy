@@ -75,7 +75,7 @@ class DetailerTaskController extends BaseController {
         def user = params.user ? userService.findUserByName(params.user) : null
         def exportFields = ['DISTRICT', 'SUBCOUNTY', 'VILLAGE', 'OUTLET NAME', 'OUTLET TYPE']
         def fields = ReflectFunctions.findAllBasicFields(DetailerTask).reverse()
-        fields.removeAll('_dateLastUpdated', '_dateCreated')
+        fields.removeAll('lastUpdated', 'dateCreated')
         exportFields.addAll(fields.collect { GrailsNameUtils.getNaturalName(it).toUpperCase() })
         if (user) {
             def data = taskService.exportTasksForUser(user.id)

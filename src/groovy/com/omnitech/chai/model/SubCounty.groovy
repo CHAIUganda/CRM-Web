@@ -18,9 +18,6 @@ class SubCounty extends AbstractEntity {
     @RelatedTo(type = Relations.HAS_SUB_COUNTY, direction = Direction.INCOMING)
     District district
 
-    @RelatedTo(type = Relations.HAS_PARISH)
-    Set<Parish> parishes
-
     @Fetch
     @RelatedTo(type = Relations.SC_IN_TERRITORY)
     Set<Territory> territory
