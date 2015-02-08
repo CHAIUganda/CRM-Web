@@ -122,7 +122,6 @@ class CallController extends TaskController {
         super.createTaskJson { Customer c, Date dueDate -> return Order.create(c, dueDate) }
     }
 
-
     private LineItem toLineItem(Map map, Order order) {
         def product = productService.findProduct(map.productId as Long)
         assert product, 'product should exist in data base'
