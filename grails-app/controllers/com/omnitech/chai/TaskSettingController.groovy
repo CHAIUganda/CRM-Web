@@ -3,6 +3,9 @@ package com.omnitech.chai
 import com.omnitech.chai.model.CustomerSegment
 import com.omnitech.chai.model.DetailerTask
 import com.omnitech.chai.model.Order
+import com.omnitech.chai.model.Task
+import com.omnitech.chai.util.ControllerUtils
+import grails.converters.JSON
 import org.springframework.util.Assert
 
 /**
@@ -14,6 +17,7 @@ class TaskSettingController {
     def customerService
     def taskService
     def neoSecurityService
+    def txHelperService
 
     def generationDetailer() {
         def (territories, segments) = getPageModel()
@@ -26,15 +30,39 @@ class TaskSettingController {
     }
 
     def generateDetailerTasks() {
-        def msgs = generateTasks(DetailerTask)
+        def (msgs, tasks) = generateTasks(DetailerTask)
         flash.message = "Generated Tasks ${msgs.join(',')}"
-        redirect action: 'generationDetailer'
+        renderOnMap(tasks)
     }
 
     def generateOrderTasks() {
-        def msgs = generateTasks(Order)
+        def (msgs, tasks) = generateTasks(Order)
         flash.message = "Generated Tasks ${msgs.join(',')}"
-        redirect action: 'generationOrder'
+        renderOnMap(tasks)
+
+    }
+
+    private def renderOnMap(List<Task> tasks) {
+
+        def taskData = txHelperService.doInTransaction {
+            tasks.collect {
+                it.territoryUser()
+                ControllerUtils.taskToJsonMap(it)
+            }
+        }
+
+
+        def mapData = taskData as JSON
+        def jsonMapString = mapData.toString(true)
+
+        //for pagination
+        params.max = Integer.MAX_VALUE
+        render(view: '/task/map', model: [taskInstanceList : tasks,
+                                          taskInstanceCount: tasks.size(),
+                                          users            : [],
+                                          mapData          : jsonMapString,
+                                          no_mapsubmenu    : true,
+                                          no_pagination    : true])
     }
 
     def handleException(IllegalArgumentException ex) {

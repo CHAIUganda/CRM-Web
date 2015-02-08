@@ -16,7 +16,9 @@
 <body>
 
 %{-- THE SUBMENU BAR --}%
-<g:render template="/task/taskMenuBar"/>
+<g:if test="${!no_mapsubmenu}">
+    <g:render template="/task/taskMenuBar"/>
+</g:if>
 %{-- END SUBMENU BAR --}%
 
 <section id="index-task" class="first">
@@ -30,8 +32,10 @@
             background-color: rgb(229, 227, 223);"></div>
 
             <div>
+                <g:if test="${!no_pagination}">
                 <bs:paginate total="${taskInstanceCount}" params="${params}"
                              id="${params.action == 'search' ? (params.term ?: params.id) : null}"/>
+                </g:if>
             </div>
 
         </div>
@@ -58,7 +62,6 @@
                 <g:render template="/task/mapLegend"/>
             </div>
         </div>
-
 
     </div>
 

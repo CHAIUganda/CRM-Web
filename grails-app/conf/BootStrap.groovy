@@ -1,5 +1,6 @@
 import com.omnitech.chai.model.*
 import com.omnitech.chai.util.ChaiUtils
+import fuzzycsv.FuzzyCSV
 import grails.plugin.springsecurity.ReflectionUtils
 import org.springframework.beans.factory.config.BeanDefinition
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider
@@ -27,10 +28,8 @@ class BootStrap {
 
         //Test Data
         println("Inserting test Data....")
-        //        insertTerritories()
-        //insertProductsAndGroups()
-        //override this so that a proper request map is loaded by spring security
-        ReflectionUtils.metaClass.static.getRequestMapClass = { RequestMap }
+//                insertTerritories()
+//        insertProductsAndGroups()
     }
 
 
@@ -278,11 +277,13 @@ class BootStrap {
     def regionService
 
     void insertTerritories() {
-        def text = new File(/C:\var\code\omni\m4w\waterpoint-importer\src\main\groovy\chai\ImportTerritories.csv/).text
+//        def text = new File(/C:\var\code\omni\m4w\waterpoint-importer\src\main\groovy\chai\ImportTerritories.csv/).text
+        def text = new File(/C:\Users\kay\Dropbox\Ongoing Projects\Clinton Health\ImportTemplates\ImportTerritories2.csv/).text
         println("Importing territories...")
-//        regionService.importTerritories(text)
+        regionService.importTerritories(text)
         println('Importing users')
-//        generateUsers()
+        def users = new File(/C:\Users\kay\Dropbox\Ongoing Projects\Clinton Health\ImportTemplates\ImportTerritories-withSalesReps.csv/).text
+        userService.importUsers(users)
 
     }
 
