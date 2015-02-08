@@ -125,7 +125,7 @@ module omnitech.chai {
                 lng: c.lng,
                 lat: c.lat,
                 title: c.outletName,
-                description: c.outletName,
+                description: 'Detailing ['+c.outletName+']',
                 dueDate: new Date(),
                 type: 'task',
                 segment: c.segment
