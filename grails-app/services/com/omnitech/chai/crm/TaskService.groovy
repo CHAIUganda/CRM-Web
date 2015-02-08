@@ -194,30 +194,8 @@ class TaskService {
         saveTask(task)
     }
 
-    List<Map> exportTasksForUser(Long userId) {
-        def task = 'task'
-        def query = TaskQuery.mathQueryForUserTasks(userId, Task)
-                .match(node('sc').in(HAS_SUB_COUNTY).node('d')).optional()
-                .match(node('c').out(CUST_IN_VILLAGE).node('v')).optional()
-                .match(node('c').out(CUST_IN_PARISH).node('p')).optional()
-
-
-        def fields = [az(identifier('d').property('name'), 'DISTRICT'),
-                      az(identifier('sc').property('name'), 'SUBCOUNTY'),
-                      az(identifier('v').property('name'), 'VILLAGE'),
-                      az(identifier('c').property('outletName'), 'OUTLET NAME'),
-                      az(identifier('c').property('outletType'), 'OUTLET TYPE')]
-
-        ReflectFunctions.findAllBasicFields(DetailerTask).each {
-            if ('_dateLastUpdated' == it || it == '_dateCreated') return
-            fields << az(identifier(task).property(it), getNaturalName(it).toUpperCase())
-        }
-        query.returns(*fields)
-
-        //District,Subcounty,Village,Customer Name, outletType,
-        // All other fields
-        log.trace("findAllTasksForUser(): [$query]")
-
+    List<Map> exportTasksForUser(Long userId, Class taskTpe) {
+        def query = TaskQuery.exportTasks(userId,taskTpe)
         neo.query(query.toString(), [:]).collect()
     }
 
@@ -345,6 +323,7 @@ class TaskService {
 
 
         def messages = []
+        def allTasks = []
 
         territories.each { t ->
             def tasks = []
@@ -360,12 +339,13 @@ class TaskService {
                 def cluster = clusterService.assignDueDates(tasks, startDate, workDays, tasksPerDay)
 
                 taskRepository.save(tasks)
+                allTasks.addAll(tasks)
             } else {
                 log.warn "***WARNING:***No Tasks Generated for Territory[$t]"
             }
         }
 
-        return messages
+        return [messages,allTasks]
 
     }
 

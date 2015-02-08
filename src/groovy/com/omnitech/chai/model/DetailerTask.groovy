@@ -1,11 +1,13 @@
 package com.omnitech.chai.model
 
+import grails.validation.Validateable
 import org.springframework.data.neo4j.annotation.NodeEntity
 
 /**
  * Created by kay on 11/7/14.
  */
 @NodeEntity
+@Validateable
 class DetailerTask extends Task {
 
 
