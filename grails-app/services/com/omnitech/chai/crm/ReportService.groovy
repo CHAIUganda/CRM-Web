@@ -3,6 +3,7 @@ package com.omnitech.chai.crm
 import com.omnitech.chai.model.Report
 import com.omnitech.chai.model.ReportGroup
 import com.omnitech.chai.util.ModelFunctions
+import filterreport.Filter
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
@@ -51,6 +52,10 @@ class ReportService {
         return scriptService.buildReport(newScript, [columns: cols, filters: filters])
 
 
+    }
+
+    List<Filter> extractReportFilters(Report r) {
+        return scriptService.evaluate(r.script, [action: 'p_get_filter']) as List
     }
 
     /* ReportGroups */

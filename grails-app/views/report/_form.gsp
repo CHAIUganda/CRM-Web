@@ -6,8 +6,8 @@
 
     <div>
         <g:select class="form-control" id="group" name="group.id" from="${reportGroups}"
-                  noSelection="${[null: 'No Group']}"
-                  optionKey="id" required="" value="${reportInstance?.group?.id}"/>
+                  noSelection="['': '']"
+                  optionKey="id" value="${reportInstance?.group?.id}" />
         <span class="help-inline">${hasErrors(bean: reportInstance, field: 'group', 'error')}</span>
     </div>
 </div>
@@ -25,7 +25,7 @@
     <label for="type" class="control-label"><g:message code="report.type.label" default="Type"/></label>
 
     <div>
-        <g:textField class='form-control' name="type" value="${reportInstance?.type}"/>
+        <g:select name="type" from="${['dynamic','simpleFiltered','static']}" class="form-control" value="${reportInstance?.type}"/>
         <span class="help-inline">${hasErrors(bean: reportInstance, field: 'type', 'error')}</span>
     </div>
 </div>

@@ -48,8 +48,23 @@
             </g:if>
             <g:else>
 
-                <td><g:link action="reportWiz"
-                            id="${reportInstance.id}">${fieldValue(bean: reportInstance, field: "name")}</g:link></td>
+                <td>
+                    <g:if test="${reportInstance.element.type == Report.TYPE_DYNAMIC}">
+                        <g:link action="reportWiz"
+                                id="${reportInstance.id}">${fieldValue(bean: reportInstance, field: "name")}</g:link>
+                    </g:if>
+
+                    <g:elseif test="${reportInstance.element.type == Report.TYPE_SIMPLE_FILTER}">
+                        <g:link action="simpleFilterWiz"
+                                id="${reportInstance.id}">${fieldValue(bean: reportInstance, field: "name")}</g:link>
+                    </g:elseif>
+
+                    <g:elseif test="${reportInstance.element.type == Report.TYPE_STATIC}">
+                        <g:link action="report"
+                                id="${reportInstance.id}">${fieldValue(bean: reportInstance, field: "name")}</g:link>
+                    </g:elseif>
+
+                </td>
 
                 <td><g:formatDate date="${reportInstance.dateCreated}" format="dd-MMM-yyyy"/></td>
 

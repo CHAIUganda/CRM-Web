@@ -5,6 +5,7 @@ import com.omnitech.chai.util.GroupFlattener
 import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.ServletUtil
 import grails.transaction.Transactional
+import net.sf.dynamicreports.jasper.builder.JasperReportBuilder
 
 import static com.omnitech.chai.util.ModelFunctions.extractId
 import static org.springframework.http.HttpStatus.*
@@ -16,8 +17,10 @@ import static org.springframework.http.HttpStatus.*
 class ReportController {
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
+    def ACTION_GET_DATA = "p_get_data"
 
     def reportService
+    def scriptService
 
     def index(Integer max) {
         params.max = Math.min(max ?: 10, 100)
@@ -77,6 +80,11 @@ class ReportController {
             return
         }
 
+        if(!params.'group.id'){
+            reportInstance.group = null
+        }
+
+
         if (reportInstance.hasErrors()) {
             respond reportInstance.errors, view: 'create', model: [reportGroups: reportService.listAllReportGroups()]
             return
@@ -108,6 +116,10 @@ class ReportController {
         if (reportInstance == null) {
             notFound()
             return
+        }
+
+        if(!params.'group.id'){
+            reportInstance.group = null
         }
 
         if (reportInstance.hasErrors()) {
@@ -155,4 +167,52 @@ class ReportController {
             '*' { render status: NOT_FOUND }
         }
     }
+
+
+    def simpleFilterWiz() {
+
+        def id = extractId(params)
+        if (id == -1) {
+            notFound(); return
+        }
+
+        def report = reportService.findReport(id)
+
+        if (!report) {
+            notFound(); return
+        }
+
+        def filters = reportService.extractReportFilters(report)
+
+        [filters: filters]
+    }
+
+    def getReport() {
+        def id = extractId(params)
+        if (id == -1) {
+            notFound(); return
+        }
+
+        def report = reportService.findReport(id)
+
+        log.info("Generating Report [$report.name]: $params")
+
+        switch (report.type) {
+            case Report.TYPE_STATIC:
+                renderReport(scriptService.buildReport(report.script), report.name)
+                break
+            case Report.TYPE_SIMPLE_FILTER:
+                def reportBuilder = scriptService.buildReport(report.script, params)
+                renderReport(reportBuilder, report.name)
+                break
+
+        }
+    }
+
+    def renderReport(JasperReportBuilder rb, String name) {
+        ServletUtil.setAttachment(response, "${name}.pdf")
+        rb.toPdf(response.outputStream)
+    }
+
+
 }
