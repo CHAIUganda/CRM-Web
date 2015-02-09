@@ -1,12 +1,6 @@
 package com.omnitech.chai.model
 
-import org.springframework.core.convert.converter.ConverterFactory
-import org.springframework.data.neo4j.annotation.Fetch
-import org.springframework.data.neo4j.annotation.GraphProperty
-import org.springframework.data.neo4j.annotation.MapResult
-import org.springframework.data.neo4j.annotation.NodeEntity
-import org.springframework.data.neo4j.annotation.QueryResult
-import org.springframework.data.neo4j.annotation.RelatedToVia
+import org.springframework.data.neo4j.annotation.*
 
 /**
  * Created by kay on 12/23/2014.
@@ -27,7 +21,7 @@ class DirectSale extends Task implements Sale {
     String recommendationNextStep;
     String recommendationLevel;
     Boolean governmentApproval;
-    @GraphProperty(propertyType  = Long.class)
+    @GraphProperty(propertyType = Long.class)
     Date dateOfSale;
 
     @Fetch
@@ -57,8 +51,14 @@ class DirectSale extends Task implements Sale {
 
     @Override
     Double totalCost() {
-        return lineItems?.sum {it.lineCost} as Double
+        return lineItems?.sum { it.lineCost } as Double
     }
+}
+
+class DirectSaleWithStock extends DirectSale implements StockInfo {
+    @Fetch
+    @RelatedToVia
+    Set<StockLine> stockLines = new HashSet()
 }
 
 @NodeEntity
@@ -81,8 +81,12 @@ class SaleOrder extends Order implements Sale {
     static constraints = {
         importFrom(Task)
     }
+}
 
-
+class SaleOrderWithStock extends SaleOrder implements StockInfo {
+    @Fetch
+    @RelatedToVia
+    Set<StockLine> stockLines = new HashSet()
 }
 
 

@@ -24,7 +24,7 @@ class LineItem extends AbstractEntity {
 
     Double getLineCost() { quantity * (unitPrice ?: product.unitPrice ?: 0) }
 
-    Double getUnitPrice(){unitPrice ?: product.unitPrice}
+    Double getUnitPrice() { unitPrice ?: product.unitPrice }
 
     static constraints = {
         product nullable: false
@@ -34,11 +34,32 @@ class LineItem extends AbstractEntity {
     }
 }
 
+@RelationshipEntity(type = 'STOCK_PRODUCT')
+@Validateable
+class StockLine extends AbstractEntity {
+
+    @StartNode
+    HasLineItem hasLineItem
+
+    @Fetch
+    @EndNode
+    Product product
+
+    Double quantity
+
+    static constraints = {
+        product nullable: false
+        hasLineItem nullable: false
+        quantity min: 1d
+    }
+}
+
 /**
  * Implemented by any class that has LineItems. E.g A sale or an order
  */
 @NodeEntity
 interface HasLineItem {
     Set<LineItem> getLineItems()
+
     Double totalCost()
 }

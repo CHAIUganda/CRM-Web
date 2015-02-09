@@ -14,6 +14,7 @@ class Report extends AbstractEntity implements LeafNode {
 
     final static String TYPE_DYNAMIC = 'dynamic'
     final static String TYPE_STATIC = 'static'
+    final static String TYPE_SIMPLE_FILTER = 'simpleFiltered'
 
     String name
     String script

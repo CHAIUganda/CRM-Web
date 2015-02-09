@@ -17,6 +17,12 @@ interface Relations {
     //Customer -> SubCounty
     final static String CUST_IN_SC = 'CUST_IN_SC'
 
+    //Customer -> Stock
+    final static String CUST_STOCK = 'CUST_STOCK'
+
+    //Product -> Stock
+    final static String PROD_STOCK = 'PROD_STOCK'
+
     //Customer -> Village
     final static String CUST_IN_VILLAGE = 'CUST_IN_VILLAGE'
 
