@@ -98,17 +98,45 @@ class SaleController {
         def dupeMap = new HashMap(map)
         dupeMap.remove('salesDatas')
         dupeMap.remove('adhockSalesDatas')
+        dupeMap.remove('adhockStockDatas')
+
+        // add line items
         def ds = ModelFunctions.createObj(DirectSale, dupeMap)
         ds.lineItems = map.adhockSalesDatas.collect { toLineItem(it, ds) }
+
+        if (map.adhockStockDatas) {
+            ds = ModelFunctions.createObj(DirectSaleWithStock, ds.properties)
+            ds.stockLines = map.adhockStockDatas.collect { toStockLine(it, ds) }
+        }
+
         ds.customer = customerService.findCustomer(map.customerId as String)
         assert ds.customer, "Customer Has To Exist In the System [$map.customerId]"
         return ds
+    }
+
+    private StockLine toStockLine(Map map, StockInfo directSale) {
+
+        def product = productService.findProductByUuid(map.productId as String)
+
+        assert product, "Product with id [$map.productId] Should Exist In the DB"
+
+        def lineItem = new StockLine(
+                product: product,
+                stockInfo: directSale,
+                quantity: map.quantity as Double)
+
+        if (!lineItem.validate())
+            throw new ValidationException("Error Validating LineItem", lineItem.errors)
+
+        return lineItem
+
     }
 
     private <T extends Order> T toOrder(Map map, Class<T> typeOfOrder) {
         def dupeMap = new HashMap(map)
         dupeMap.remove('salesDatas')
         dupeMap.remove('orderDatas')
+        dupeMap.remove('stockDatas')
         def saleOrder = ModelFunctions.createObj(typeOfOrder, dupeMap)
         if (typeOfOrder == Order)
             saleOrder.lineItems = map.orderDatas.collect { toLineItem(it, saleOrder) }
@@ -117,6 +145,11 @@ class SaleController {
 
         if (map.deliveryDate) {
             ChaiUtils.execSilently { saleOrder.dueDate = new Date(map.deliveryDate as Long) }
+        }
+
+        if (map.stockDatas) {
+            saleOrder = ModelFunctions.createObj(SaleOrderWithStock, saleOrder.properties)
+            saleOrder.stockLines = map.stockDatas.collect { toStockLine(it, saleOrder) }
         }
 
         return saleOrder

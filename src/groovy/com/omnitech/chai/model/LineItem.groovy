@@ -39,7 +39,7 @@ class LineItem extends AbstractEntity {
 class StockLine extends AbstractEntity {
 
     @StartNode
-    HasLineItem hasLineItem
+    StockInfo stockInfo
 
     @Fetch
     @EndNode
@@ -49,7 +49,7 @@ class StockLine extends AbstractEntity {
 
     static constraints = {
         product nullable: false
-        hasLineItem nullable: false
+        stockInfo nullable: false
         quantity min: 1d
     }
 }

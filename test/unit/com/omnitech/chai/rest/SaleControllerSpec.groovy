@@ -101,6 +101,101 @@ class SaleControllerSpec extends Specification {
 
     }
 
+    void "test valid JSON Sale Request With Stock"() {
+
+        def data = '''{
+  "customerId" : "cccc",
+   "uuid":"clientRefId1",
+  "howManyZincInStock": 5,
+  "howManyOrsInStock": 3,
+  "pointOfSaleMaterial": "counting,ors",
+  "recommendationNextStep": "start recommending ors",
+  "recommendationLevel": "Level 2",
+  "governmentApproval": true,
+  "dateOfSale": "2013-01-3 04:05:40",
+  "adhockSalesDatas": [
+    {
+      "quantity": 5,
+      "price": 454,
+      "productId": "xxxx-xxxx"
+    },
+    {
+      "quantity": 2,
+      "price": 300,
+      "productId": "yyyy-yyyyy"
+    }
+  ] ,
+   "adhockStockDatas": [
+    {
+      "quantity": 4,
+      "price": 4,
+      "productId": "xxxx-xxxx"
+    },
+    {
+      "quantity": 6,
+      "price": 700,
+      "productId": "yyyy-yyyyy"
+    }
+  ]
+}'''
+
+        def directSaleValidator = { DirectSale ds ->
+            assert ds instanceof DirectSaleWithStock
+
+            assert ds.stockLines.size() == 2
+            assert ds.stockLines.find { it.quantity == 4 }
+            assert ds.stockLines.find { it.quantity == 6 }
+
+            assert ds.stockLines.every { it.stockInfo == ds }
+
+            assert ds.howManyZincInStock == 5
+            assert ds.howManyOrsInStock == 3
+            assert ds.pointOfSaleMaterial == 'counting,ors'
+            assert ds.recommendationNextStep == 'start recommending ors'
+            assert ds.recommendationLevel == 'Level 2'
+            assert ds.governmentApproval
+//            assert ds.dateOfSale != null
+
+            assert ds.lineItems.size() == 2
+            assert ds.lineItems.find { it.quantity == 2 }
+            assert ds.lineItems.find { it.unitPrice == 300 }
+
+            assert ds.lineItems.find { it.quantity == 5 }
+            assert ds.lineItems.find { it.unitPrice == 454 }
+
+            assert ds.isComplete()
+            assert ds.completedBy
+            assert ds.customer
+            assert ds.id == null
+
+            return true
+        }
+
+        ProductService productService = Mock()
+        TaskService taskService = Mock()
+        NeoSecurityService securityService = Mock()
+        CustomerService customerService = Mock()
+
+        controller.productService = productService
+        controller.taskService = taskService
+        controller.neoSecurityService = securityService
+        controller.customerService = customerService
+
+
+        when:
+        request.json = data
+        controller.directSale()
+
+        then:
+        2 * productService.findProductByUuid('xxxx-xxxx') >> new Product()
+        2 * productService.findProductByUuid('yyyy-yyyyy') >> new Product()
+        1 * securityService.currentUser >> new User()
+        1 * taskService.saveTask({ directSaleValidator(it) })
+        1 * customerService.findCustomer('cccc') >> new Customer()
+        response.contentAsString == '{"status":"OK","message":"Success"}'
+
+    }
+
     void "test invalid Line Item Request"() {
 
         def data = '''{
