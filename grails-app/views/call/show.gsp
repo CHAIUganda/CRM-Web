@@ -1,4 +1,4 @@
-<%@ page import="com.omnitech.chai.model.DetailerTask; com.omnitech.chai.util.ChaiUtils; com.omnitech.chai.model.Task" %>
+<%@ page import="com.omnitech.chai.model.StockInfo; com.omnitech.chai.model.DetailerTask; com.omnitech.chai.util.ChaiUtils; com.omnitech.chai.model.Task" %>
 <!DOCTYPE html>
 <html>
 
@@ -26,7 +26,7 @@
             <td valign="top" class="name">Assigned User</td>
 
             <td valign="top" class="value">
-                <g:each in="${taskInstance?.territoryUser()?.findResults {it}}" var="user">
+                <g:each in="${taskInstance?.territoryUser()?.findResults { it }}" var="user">
                     <g:link controller="user" action="show" id="${user?.id}">
                         <i class="glyphicon glyphicon-user"></i>  ${user}
                     </g:link>
@@ -184,7 +184,12 @@
         </tbody>
     </table>
 
+    %{-- Line Items--}%
     <g:render template="/call/lineItemList"/>
+
+    <g:if test="${taskInstance instanceof StockInfo}">
+        <g:render template="/call/stockInfoList"/>
+    </g:if>
 </section>
 
 </body>

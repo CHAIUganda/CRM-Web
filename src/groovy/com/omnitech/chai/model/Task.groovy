@@ -84,7 +84,7 @@ class Task extends AbstractEntity {
     }
 
     Set<User> territoryUser() {
-        this.customer?.subCounty?.territory?.collect { it.territoryUsers }?.flatten() as Set
+        this.customer?.subCounty?.territory?.collect { it.territoryUsers }?.flatten()?.findResults { it } as Set
     }
 
     static constraints = {
