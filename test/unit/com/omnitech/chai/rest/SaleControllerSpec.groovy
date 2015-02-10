@@ -162,6 +162,8 @@ class SaleControllerSpec extends Specification {
 
             assert ds.lineItems.find { it.quantity == 5 }
             assert ds.lineItems.find { it.unitPrice == 454 }
+            assert ds.lineItems.find { it.hasLineItem == ds}
+            assert ds.lineItems.find { it.hasLineItem == ds }
 
             assert ds.isComplete()
             assert ds.completedBy
@@ -422,6 +424,8 @@ class SaleControllerSpec extends Specification {
 
             assert sale.lineItems.find { it.quantity == 5 }
             assert sale.lineItems.find { it.unitPrice == 454 }
+            assert sale.lineItems.find { it.hasLineItem == sale}
+            assert sale.lineItems.find { it.hasLineItem == sale }
 
             assert sale.isComplete()
             assert sale.completedBy

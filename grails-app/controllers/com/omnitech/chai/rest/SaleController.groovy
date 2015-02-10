@@ -51,7 +51,7 @@ class SaleController {
 
         handleSafely {
             def json = request.JSON as Map
-
+            log.debug("A SaleOrder: ${request.JSON}")
             //find original order
             def order = taskService.findOrder(json.orderId as String)
             assert order, "Order should exist in the database"
@@ -68,6 +68,7 @@ class SaleController {
     def placeOrder() {
         handleSafely {
             def json = request.JSON as Map
+            log.debug("A PlaceOrder: ${request.JSON}")
             json.clientRefId = json.uuid
             json.remove('id')
 
@@ -102,12 +103,13 @@ class SaleController {
 
         // add line items
         def ds = ModelFunctions.createObj(DirectSale, dupeMap)
-        ds.lineItems = map.adhockSalesDatas.collect { toLineItem(it, ds) }
 
         if (map.adhockStockDatas) {
             ds = ModelFunctions.createObj(DirectSaleWithStock, ds.properties)
             ds.stockLines = map.adhockStockDatas.collect { toStockLine(it, ds) }
         }
+
+        ds.lineItems = map.adhockSalesDatas.collect { toLineItem(it, ds) }
 
         ds.customer = customerService.findCustomer(map.customerId as String)
         assert ds.customer, "Customer Has To Exist In the System [$map.customerId]"
@@ -138,6 +140,12 @@ class SaleController {
         dupeMap.remove('orderDatas')
         dupeMap.remove('stockDatas')
         def saleOrder = ModelFunctions.createObj(typeOfOrder, dupeMap)
+
+        if (map.stockDatas) {
+            saleOrder = ModelFunctions.createObj(SaleOrderWithStock, saleOrder.properties)
+            saleOrder.stockLines = map.stockDatas.collect { toStockLine(it, saleOrder) }
+        }
+
         if (typeOfOrder == Order)
             saleOrder.lineItems = map.orderDatas.collect { toLineItem(it, saleOrder) }
         else
@@ -145,11 +153,6 @@ class SaleController {
 
         if (map.deliveryDate) {
             ChaiUtils.execSilently { saleOrder.dueDate = new Date(map.deliveryDate as Long) }
-        }
-
-        if (map.stockDatas) {
-            saleOrder = ModelFunctions.createObj(SaleOrderWithStock, saleOrder.properties)
-            saleOrder.stockLines = map.stockDatas.collect { toStockLine(it, saleOrder) }
         }
 
         return saleOrder
