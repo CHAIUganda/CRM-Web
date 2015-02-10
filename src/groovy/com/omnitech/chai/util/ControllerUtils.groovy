@@ -29,7 +29,7 @@ class ControllerUtils {
             map.customerDescription = task.customer.descriptionOfOutletLocation
         }
 
-        map.assignedUser = task.territoryUser()?.collect { it.username }?.toString();
+        map.assignedUser = task.territoryUser()?.findResults {it}?.collect { it.username }?.toString();
         map.type = 'task'
 
         return map
