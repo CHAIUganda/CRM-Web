@@ -110,9 +110,7 @@ class ModelFunctions {
             def tempNeoEntity = repo.findOne(entity.id, entity.getClass())
             if (tempNeoEntity) {
                 beforeBind?.call(tempNeoEntity)
-                neoEntity = tempNeoEntity
                 addInheritanceLabelToNode(repo, entity)
-                bind(neoEntity, DefaultGroovyMethods.getProperties(entity))
             }
         }
         repo.save(neoEntity)
