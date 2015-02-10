@@ -360,6 +360,101 @@ class SaleControllerSpec extends Specification {
 
     }
 
+    void "test valid JSON SaleOrder Request With Stock"() {
+
+        def data = '''{
+  "customerId" : "cccc",
+  "orderId":"oooo",
+  "howManyZincInStock": 5,
+  "howManyOrsInStock": 3,
+  "pointOfSaleMaterial": "counting,ors",
+  "recommendationNextStep": "start recommending ors",
+  "recommendationLevel": "Level 2",
+  "governmentApproval": true,
+  "dateOfSale": "2013-01-3 04:05:40",
+  "salesDatas": [
+    {
+      "quantity": 5,
+      "price": 454,
+      "productId": "xxxx-xxxx"
+    },
+    {
+      "quantity": 2,
+      "price": 300,
+      "productId": "yyyy-yyyyy"
+    }
+  ]  ,
+  "stockDatas": [
+    {
+      "quantity": 6,
+      "price": 454,
+      "productId": "xxxx-xxxx"
+    },
+    {
+      "quantity": 4,
+      "price": 300,
+      "productId": "yyyy-yyyyy"
+    }
+  ]
+}'''
+
+        def directSaleValidator = { SaleOrder sale ->
+
+            assert sale instanceof SaleOrderWithStock
+
+            assert sale.stockLines.size() == 2
+            assert sale.stockLines.find { it.quantity == 4 }
+            assert sale.stockLines.find { it.quantity == 6 }
+
+            assert sale.stockLines.every { it.stockInfo == sale }
+
+            assert sale.howManyZincInStock == 5
+            assert sale.howManyOrsInStock == 3
+            assert sale.pointOfSaleMaterial == 'counting,ors'
+            assert sale.recommendationNextStep == 'start recommending ors'
+            assert sale.recommendationLevel == 'Level 2'
+            assert sale.governmentApproval
+//            assert ds.dateOfSale != null
+
+            assert sale.lineItems.size() == 2
+            assert sale.lineItems.find { it.quantity == 2 }
+            assert sale.lineItems.find { it.unitPrice == 300 }
+
+            assert sale.lineItems.find { it.quantity == 5 }
+            assert sale.lineItems.find { it.unitPrice == 454 }
+
+            assert sale.isComplete()
+            assert sale.completedBy
+            assert sale.customer
+            assert sale.comment
+            assert sale.id == 5
+
+            return true
+        }
+
+        ProductService productService = Mock()
+        TaskService taskService = Mock()
+        NeoSecurityService securityService = Mock()
+
+        controller.productService = productService
+        controller.taskService = taskService
+        controller.neoSecurityService = securityService
+
+
+        when:
+        request.json = data
+        controller.saleOrder()
+
+        then:
+        2 * productService.findProductByUuid('xxxx-xxxx') >> new Product()
+        2 * productService.findProductByUuid('yyyy-yyyyy') >> new Product()
+        1 * securityService.currentUser >> new User()
+        1 * taskService.findOrder('oooo') >> new Order(customer: new Customer(), comment: "SSjj", id: 5)
+        1 * taskService.saveTask({ directSaleValidator(it) })
+        response.contentAsString == '{"status":"OK","message":"Success"}'
+
+    }
+
     void "test valid JSON placeOrder Request"() {
         def data = '''{
   "customerId" : "cccc",
