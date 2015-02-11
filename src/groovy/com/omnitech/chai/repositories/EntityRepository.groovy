@@ -210,6 +210,8 @@ interface DistrictRepository extends GraphRepository<District> {
     @Query('start r=node({regionId}) match r-[:HAS_DISTRICT]->(d) where d.name =~ {name} return d')
     District findByRegionAndName(@Param('regionId') Long regionId, @Param('name') String name)
 
+    District findByName(String name)
+
     @Query('start u = node({userId}) match u-[:USER_TERRITORY]->(t)<-[:SC_IN_TERRITORY]-(sc)<-[:HAS_SUB_COUNTY]-(d) return distinct d')
     Iterable<District> findAllForUser(@Param('userId') Long userId)
 

@@ -18,10 +18,8 @@ interface Relations {
     final static String CUST_IN_SC = 'CUST_IN_SC'
 
     //Customer -> Stock
-    final static String CUST_STOCK = 'CUST_STOCK'
+    final static String STOCK_PRODUCT = 'STOCK_PRODUCT'
 
-    //Product -> Stock
-    final static String PROD_STOCK = 'PROD_STOCK'
 
     //Customer -> Village
     final static String CUST_IN_VILLAGE = 'CUST_IN_VILLAGE'

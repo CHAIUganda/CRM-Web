@@ -5,6 +5,8 @@ import org.springframework.data.neo4j.annotation.*
 
 import javax.validation.constraints.NotNull
 
+import static com.omnitech.chai.model.Relations.STOCK_PRODUCT
+
 @RelationshipEntity(type = 'HAS_PRODUCT')
 @Validateable
 class LineItem extends AbstractEntity {
@@ -22,6 +24,8 @@ class LineItem extends AbstractEntity {
     @NotNull
     Double unitPrice
 
+    Boolean dropSample
+
     Double getLineCost() { quantity * (unitPrice ?: product.unitPrice ?: 0) }
 
     Double getUnitPrice() { unitPrice ?: product.unitPrice }
@@ -34,7 +38,7 @@ class LineItem extends AbstractEntity {
     }
 }
 
-@RelationshipEntity(type = 'STOCK_PRODUCT')
+@RelationshipEntity(type = STOCK_PRODUCT)
 @Validateable
 class StockLine extends AbstractEntity {
 
