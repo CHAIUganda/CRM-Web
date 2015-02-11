@@ -1,7 +1,5 @@
 import com.omnitech.chai.model.*
 import com.omnitech.chai.util.ChaiUtils
-import fuzzycsv.FuzzyCSV
-import grails.plugin.springsecurity.ReflectionUtils
 import org.springframework.beans.factory.config.BeanDefinition
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider
 import org.springframework.core.type.filter.AnnotationTypeFilter
@@ -28,7 +26,10 @@ class BootStrap {
 
         //Test Data
         println("Inserting test Data....")
-//                insertTerritories()
+
+//        def dCsv = new File(/C:\Users\kay\Dropbox\Ongoing Projects\Clinton Health\ImportTemplates\Chai-District-Imports.csv/).text
+//        regionService.importDistricts(dCsv)
+//        insertTerritories()
 //        insertProductsAndGroups()
     }
 
