@@ -29,9 +29,9 @@ class Product extends AbstractEntity implements LeafNode {
 
     static constraints = {
         name blank: false
-        unitOfMeasure blank: false
+        unitOfMeasure nullable: true
         unitPrice nullable: false
-        formulation blank: false
+        formulation nullable: false
         group nullable: false
     }
 
