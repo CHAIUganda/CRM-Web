@@ -123,3 +123,7 @@ grails.project.dependency.resolution = {
         test ":funky-test-load:0.3.9"
     }
 }
+
+//offline mode
+//grails --offline run-app
+grails.offline.mode=true
