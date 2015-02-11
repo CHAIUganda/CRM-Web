@@ -15,6 +15,7 @@ import secondstring.PhraseHelper
 
 import static com.omnitech.chai.model.Relations.SUPERVISES_TERRITORY
 import static com.omnitech.chai.model.Relations.USER_TERRITORY
+import static com.omnitech.chai.util.ChaiUtils.prop
 import static com.omnitech.chai.util.ModelFunctions.getOrCreate
 import static fuzzycsv.RecordFx.fn
 import static org.neo4j.cypherdsl.CypherQuery.*
@@ -249,7 +250,7 @@ class RegionService {
 
         assert commaSeparatedDistrictNames, 'You Should Provide Districts'
 
-        def districtNames = commaSeparatedDistrictNames.split(',').collect {it.removeExtraSpace()}
+        def districtNames = commaSeparatedDistrictNames.split(',').collect { it.removeExtraSpace() }
         for (unVerifiedDistrict in districtNames) {
 
             def districtName = fuzzyEngine.bestInternalHit(unVerifiedDistrict, 90)
@@ -295,6 +296,30 @@ class RegionService {
 
     }
 
+    def importDistricts(String s) {
+        s = s.toUpperCase()
+        def csv = FuzzyCSV.parseCsv(s)
+        csv = csv.collect { it as List<String> }
+
+        FuzzyCSV.map(csv, fn { Record record ->
+            //Processing Regions
+            String regionName = prop(record, 'REGION', false)
+            Region region
+            if (regionName)
+                region = getOrCreateRegion(regionName.toUpperCase())
+            else
+                region = getOrCreateRegion('DEFAULT REGION')
+
+            String districtName = prop(record, 'DISTRICT')
+            def district = getOrCreate(
+                    { districtRepository.findByName(districtName) },
+                    { districtRepository.save(new District(region: region, name: districtName)) })
+
+
+            String subCountyName = prop(record, 'SUBCOUNTY')
+            getOrCreateSubCounty(district, subCountyName)
+        })
+    }
 
 
     def getFuzzyEngine = { District district ->
