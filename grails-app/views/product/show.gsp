@@ -1,5 +1,5 @@
 
-<%@ page import="com.omnitech.chai.model.Product" %>
+<%@ page import="com.omnitech.chai.util.ChaiUtils; com.omnitech.chai.model.Product" %>
 <!DOCTYPE html>
 <html>
 
@@ -59,9 +59,9 @@
 
 			<td valign="top" class="value">
 				<g:each in="${productInstance?.territories}" var="t">
-					<div class="col-md-3">
+					<div class="col-md-4">
 						<g:link controller="territory" action="show" id="${t.id}">
-							<i class="glyphicon glyphicon-arrow-right"></i> ${t}
+							<i class="glyphicon glyphicon-arrow-right"></i> ${ChaiUtils.truncateString(t.toString(),35)}
 						</g:link>
 
 					</div>
