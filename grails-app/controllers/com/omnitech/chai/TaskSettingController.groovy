@@ -75,7 +75,7 @@ class TaskSettingController {
 
     private def getPageModel() {
         def user = neoSecurityService.currentUser
-        def territories = regionService.findTerritoriesForUser(user, [max: 2000])
+        def territories = regionService.findTerritoriesForUser(user, [max: 2000]).collect().sort { it.name }
         def segments = customerService.listAllCustomerSegments()
         [territories, segments]
     }
