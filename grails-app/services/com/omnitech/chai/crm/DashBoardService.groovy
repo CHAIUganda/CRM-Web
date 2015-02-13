@@ -3,6 +3,9 @@ package com.omnitech.chai.crm
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.support.Neo4jTemplate
 
+import static fuzzycsv.FuzzyCSV.*
+import static fuzzycsv.FuzzyCSVTable.tbl
+
 /**
  * Created by kay on 1/15/2015.
  */
@@ -111,6 +114,33 @@ return username,territory,numAll,numComplete,numCancelled,numCustomers,covered,p
 order by covered desc'''
 
         return template.query(query, [userId: userId, startDate: startDate.time, endDate: endDate.time]).collect()
+
+    }
+
+    List<Map> tabletReport(Long userId, Class taskType) {
+
+        def query = """start u = node({userId})
+match u-[:USER_TERRITORY]->tr<-[:SC_IN_TERRITORY]->sc<-[:CUST_IN_SC]-cu-[:CUST_TASK]-(tsk:$taskType.simpleName)
+where (tsk.dateCreated >= {startDate})  and (tsk.dateCreated <= {endDate})
+with u,count(cu) as customers,count(distinct tsk) as tasks
+ optional match u-[:COMPLETED_TASK]->(ct)
+where (ct.dateCreated >= {startDate})  and (ct.dateCreated <= {endDate})
+ optional match u<-[:ORDER_TAKEN_BY]-(od)
+where (od.dateCreated >= {startDate})  and (od.dateCreated <= {endDate})
+return  '{period}' as item, customers as Customers,tasks as Tasks,count(distinct ct) as Complete_Tasks,count(distinct od) as Orders"""
+
+        println(query)
+
+        def now = new Date()
+        println("$userId ${now.time}  ${(now - 30).time}")
+        def weekData = template.query(query.replace('{period}', 'week'), [userId: userId, startDate: (now - 7).time, endDate: now.time, period: 'week']).collect() as List
+        def monthData = template.query(query.replace('{period}', 'month'), [userId: userId, startDate: (now - 30).time, endDate: now.time, period: 'month']).collect() as List
+
+        def weekCsv = toCSV(weekData, 'item', 'Customers', 'Tasks', 'Complete_Tasks', 'Orders')
+        def monthCsv = toCSV(monthData, 'item', 'Customers', 'Tasks', 'Complete_Tasks', 'Orders')
+        def allCsv = tbl(mergeByAppending(weekCsv, monthCsv)).transpose()
+
+        return toMapList(allCsv.csv)
 
     }
 

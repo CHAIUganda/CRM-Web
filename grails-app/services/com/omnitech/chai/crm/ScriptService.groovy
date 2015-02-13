@@ -11,6 +11,7 @@ class ScriptService implements InitializingBean {
 
     @Autowired
     Neo4jTemplate neo
+    def reportContextService
     Binding binding
 
     def evaluate(String script, Map params = [:]) {
@@ -27,7 +28,7 @@ class ScriptService implements InitializingBean {
     }
 
 
-    JasperReportBuilder buildReport(String script,Map params = [:]) {
+    JasperReportBuilder buildReport(String script, Map params = [:]) {
         def shell = getShell(params)
         def result = shell.evaluate(script)
         return result as JasperReportBuilder
@@ -38,6 +39,7 @@ class ScriptService implements InitializingBean {
         binding = new Binding();
         binding.log = log
         binding.neo = neo
+        binding.reportContext = reportContextService
     }
 
     GroovyShell getShell(Map params = [:]) {

@@ -45,5 +45,6 @@ class UrlMappings {
 
         //userInfo
         '/rest/info'(controller: 'place', namespace: 'rest', action: 'info')
+        '/rest/dashboard'(controller: 'place', namespace: 'rest', action: 'dashboard')
     }
 }

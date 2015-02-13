@@ -1,9 +1,13 @@
 package com.omnitech.chai.rest
 
+import com.omnitech.chai.model.DetailerTask
+import com.omnitech.chai.model.Order
 import com.omnitech.chai.model.Role
 import grails.converters.JSON
 import org.springframework.http.HttpStatus
 
+import static com.omnitech.chai.model.Role.DETAILER_ROLE_NAME
+import static com.omnitech.chai.model.Role.SALES_ROLE_NAME
 import static com.omnitech.chai.util.ModelFunctions.extractAndLoadParent
 
 /**
@@ -17,6 +21,7 @@ class PlaceController {
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE", updateSubCounty: 'POST']
     def regionService
     def neoSecurityService
+    def dashBoardService
 
     //id,name,uuid
     def regions() {
@@ -116,12 +121,28 @@ class PlaceController {
     def info() {
         def user = neoSecurityService.currentUser
         def role = 'NONE'
-        if (user.hasRole(Role.DETAILER_ROLE_NAME)) {
-            role = Role.DETAILER_ROLE_NAME
-        } else if (user.hasRole(Role.SALES_ROLE_NAME)) {
-            role = Role.SALES_ROLE_NAME
+        if (user.hasRole(DETAILER_ROLE_NAME)) {
+            role = DETAILER_ROLE_NAME
+        } else if (user.hasRole(SALES_ROLE_NAME)) {
+            role = SALES_ROLE_NAME
         }
         respond([userName: user.username, role: role])
+    }
+
+    def dashboard() {
+        def user = neoSecurityService.currentUser
+        Class type = DetailerTask
+        if (user.hasRole(DETAILER_ROLE_NAME)) {
+            type = DetailerTask
+        } else if (user.hasRole(SALES_ROLE_NAME)) {
+            type = Order
+        }
+
+        def data = dashBoardService.tabletReport(user.id,type)
+
+        data = data.findResults {it}.collect {it.uuid = UUID.randomUUID().toString(); it}
+
+        respond(data)
     }
 
     def renderError(String error) {
