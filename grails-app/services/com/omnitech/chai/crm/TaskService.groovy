@@ -125,7 +125,7 @@ class TaskService {
             page = loadSuperVisorUserData(max, params, taskType, user.id, filter)
             users = userService.listUsersSupervisedBy(user.id, roleNeeded)
         }
-
+        users = users.collect().sort {it.username}
         return [page, users]
     }
 
