@@ -10,6 +10,7 @@
 
 <body>
 <g:form class="form-horizontal" action="getReport" method="get">
+    <g:hiddenField name="id" value="${report.id}"/>
     <g:each in="${filters}" var="f">
         <div class="form-group">
             <label class="col-md-3 control-label">${f.fieldDescription}</label>

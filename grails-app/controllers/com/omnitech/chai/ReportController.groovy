@@ -80,7 +80,7 @@ class ReportController {
             return
         }
 
-        if(!params.'group.id'){
+        if (!params.'group.id') {
             reportInstance.group = null
         }
 
@@ -118,7 +118,7 @@ class ReportController {
             return
         }
 
-        if(!params.'group.id'){
+        if (!params.'group.id') {
             reportInstance.group = null
         }
 
@@ -184,7 +184,7 @@ class ReportController {
 
         def filters = reportService.extractReportFilters(report)
 
-        [filters: filters]
+        [filters: filters, report: report]
     }
 
     def getReport() {
@@ -202,7 +202,7 @@ class ReportController {
                 renderReport(scriptService.buildReport(report.script), report.name)
                 break
             case Report.TYPE_SIMPLE_FILTER:
-                def reportBuilder = scriptService.buildReport(report.script, params)
+                def reportBuilder = scriptService.buildReport(report.script, [action: 'p_get_report', params: params])
                 renderReport(reportBuilder, report.name)
                 break
 
