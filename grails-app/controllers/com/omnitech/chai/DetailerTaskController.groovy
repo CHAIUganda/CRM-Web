@@ -2,7 +2,10 @@ package com.omnitech.chai
 
 import com.omnitech.chai.model.Customer
 import com.omnitech.chai.model.DetailerTask
+import com.omnitech.chai.model.Role
 import com.omnitech.chai.util.ModelFunctions
+
+import static com.omnitech.chai.model.Role.DETAILER_ROLE_NAME
 
 /**
  * DetailerTaskController
@@ -14,7 +17,7 @@ class DetailerTaskController extends TaskController {
 
 
     def index(Integer max) {
-        super.index max, DetailerTask, [view: '/task/index']
+        super.index max, DetailerTask, [view: '/task/index',taskRole: DETAILER_ROLE_NAME]
     }
 
     def map(Integer max) {

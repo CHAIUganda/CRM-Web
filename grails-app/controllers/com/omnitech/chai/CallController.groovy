@@ -3,9 +3,11 @@ package com.omnitech.chai
 import com.omnitech.chai.model.Customer
 import com.omnitech.chai.model.LineItem
 import com.omnitech.chai.model.Order
+import com.omnitech.chai.model.Role
 import com.omnitech.chai.util.ChaiUtils
 import com.omnitech.chai.util.ModelFunctions
 
+import static com.omnitech.chai.model.Role.SALES_ROLE_NAME
 import static com.omnitech.chai.util.ModelFunctions.extractId
 import static org.springframework.http.HttpStatus.BAD_REQUEST
 import static org.springframework.http.HttpStatus.OK
@@ -21,7 +23,7 @@ class CallController extends TaskController {
     def orderService
 
     def index(Integer max) {
-        super.index max, Order, [view: '/call/index']
+        super.index max, Order, [view: '/call/index', taskRole: SALES_ROLE_NAME]
     }
 
     def map(Integer max) {

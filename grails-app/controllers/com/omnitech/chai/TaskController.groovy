@@ -18,9 +18,7 @@ import java.text.SimpleDateFormat
 import static com.omnitech.chai.util.ControllerUtils.customerToJsonMap
 import static com.omnitech.chai.util.ControllerUtils.taskToJsonMap
 import static com.omnitech.chai.util.ModelFunctions.extractId
-import static org.springframework.http.HttpStatus.FORBIDDEN
-import static org.springframework.http.HttpStatus.NOT_FOUND
-import static org.springframework.http.HttpStatus.NO_CONTENT
+import static org.springframework.http.HttpStatus.*
 
 /**
  * TaskController
@@ -47,7 +45,7 @@ class TaskController extends BaseController {
         }
         def (page, users) = taskService.loadPageDataForUser(user, type, params, max, null)
         assert otherParams.view, 'View not specified for this action'
-        render(view: otherParams.view, model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: users])
+        render(view: otherParams.view, model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: users, taskRole: otherParams.taskRole])
     }
 
     protected def map(Integer max, Class<? extends Task> type, Map otherParams) {

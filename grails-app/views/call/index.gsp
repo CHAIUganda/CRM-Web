@@ -84,7 +84,7 @@
 
                 <td>${taskInstance.customer}</td>
 
-                <td>${taskInstance.territoryUser()}</td>
+                <td>${taskInstance.territoryUser(taskRole)}</td>
 
                 %{--<td>--}%
                 %{--<g:link action="edit" id="${taskInstance.id}" title="Edit/Schedule"><i--}%
