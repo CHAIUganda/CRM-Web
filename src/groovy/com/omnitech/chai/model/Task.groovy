@@ -87,6 +87,13 @@ class Task extends AbstractEntity {
         this.customer?.subCounty?.territory?.collect { it.territoryUsers }?.flatten()?.findResults { it } as Set
     }
 
+    def territoryUser(String role) {
+        this.customer?.subCounty?.territory?.collect { it.territoryUsers }?.flatten()?.findAll {
+            it?.hasRole(role)
+        }?.findResults { it }?.join(',')
+    }
+
+
     static constraints = {
         description blank: false
         status blank: false
