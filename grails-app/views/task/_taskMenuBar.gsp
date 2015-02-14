@@ -9,7 +9,7 @@
 
             %{-- TASK LIST--}%
             <li class="${params.action == "index" ? 'active' : ''}">
-                <g:link action="index"><i class="glyphicon glyphicon-th-list"></i> All ${entityName}s</g:link>
+                <g:link action="index" params="${[status: 'new']}"><i class="glyphicon glyphicon-th-list"></i> ${entityName}s</g:link>
             </li>
 
         %{-- CREATE MENU --}%

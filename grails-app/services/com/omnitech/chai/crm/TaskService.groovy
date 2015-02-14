@@ -125,7 +125,7 @@ class TaskService {
             page = loadSuperVisorUserData(max, params, taskType, user.id, filter)
             users = userService.listUsersSupervisedBy(user.id, roleNeeded)
         }
-        users = users.collect().sort {it.username}
+        users = users.collect().sort { it.username }
         return [page, users]
     }
 
@@ -155,8 +155,11 @@ class TaskService {
     }
 
     private static getTaskQuery(String status, Class<? extends Task> taskType) {
-        def query = match(node('task').label(taskType.simpleName))
-                .where(identifier('task').string('status').eq(status))
+        def query = match(node('task').label(taskType.simpleName).values(value('status', status)))
+                .match(node('task').in(CUST_TASK).node('cu')).optional()
+                .match(node('cu').out(CUST_IN_SC).node('sc')).optional()
+                .match(node('sc').in(HAS_SUB_COUNTY).node('di')).optional()
+
         return query
     }
 
@@ -180,7 +183,7 @@ class TaskService {
 
     //todo add option to remove count
     def <T extends Task> Page<T> findAllTasksForUser(Long userId, String status, Map params, Class<T> taskType, String filter) {
-        def query = TaskQuery.userTasksQuery(userId, status, taskType, filter)
+        def query = TaskQuery.userTasksQuery(userId, status, taskType, filter, params)
         def countQuery = TaskQuery.userTasksCountQuery(userId, status, taskType, filter)
         query = PageUtils.addSorting(query, params, taskType)
         log.trace("Tasks for user: [$query]")
@@ -195,7 +198,7 @@ class TaskService {
     }
 
     List<Map> exportTasksForUser(Long userId, Class taskTpe) {
-        def query = TaskQuery.exportTasks(userId,taskTpe)
+        def query = TaskQuery.exportTasks(userId, taskTpe)
         neo.query(query.toString(), [:]).collect()
     }
 
@@ -296,7 +299,7 @@ class TaskService {
         if (!customer) {
             log.warn("AdhocDetailCustomer Not Found: [$customerUuid]")
             //customer could have been deleted
-            return  null
+            return null
         }
 
         detailerTask.customer = customer
@@ -345,7 +348,7 @@ class TaskService {
             }
         }
 
-        return [messages,allTasks]
+        return [messages, allTasks]
 
     }
 
