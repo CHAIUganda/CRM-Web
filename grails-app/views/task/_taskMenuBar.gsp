@@ -29,7 +29,7 @@
                     <g:each in="${users}" var="u">
                         <li><g:link action="${params.action == 'map' ? 'map' : 'index'}"
                                     params="${[user: u, status: params.status,max:2000]}">
-                            <i class="glyphicon glyphicon-user"></i>${u}
+                            <i class="glyphicon glyphicon-user"></i>${u} in ${u.territory}
                         </g:link></li>
                     </g:each>
                 </ul>
