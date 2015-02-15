@@ -1,150 +1,48 @@
 package com.omnitech.chai
 
-import com.omnitech.chai.model.DetailerTask
 import com.omnitech.chai.model.Sale
-import com.omnitech.chai.model.Task
-import com.omnitech.chai.util.ModelFunctions
-import grails.converters.JSON
-import grails.transaction.Transactional
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.security.access.AccessDeniedException
 
-import static com.omnitech.chai.util.ControllerUtils.taskToJsonMap
-import static com.omnitech.chai.util.ModelFunctions.extractId
-import static org.springframework.http.HttpStatus.*
+import static com.omnitech.chai.model.Role.getSALES_ROLE_NAME
+import static org.springframework.http.HttpStatus.FORBIDDEN
 
 /**
  * Created by kay on 12/10/2014.
  */
-class SaleController {
+class SaleController extends TaskController {
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
-    def taskService
-    def userService
-    def regionService
-    def customerService
-    def txHelperService
-    def neoSecurityService
-    @Autowired
-    Neo4jTemplate neo
-
     def index(Integer max) {
-        def user = neoSecurityService.currentUser
-        params.status = Task.STATUS_COMPLETE
-        if (params.remove('ui') == 'map') {
-            redirect(action: 'map', params: params)
-            return
-        }
-        def (page, users) = taskService.loadPageDataForUser(user, Sale, params, max, null)
-        render(view: '/call/index', model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: users])
+        super.index max, Sale, [view: '/call/index', taskRole: SALES_ROLE_NAME]
     }
 
     def map(Integer max) {
-        def user = neoSecurityService.currentUser
-        def (page, users) = taskService.loadPageDataForUser(user, Sale, params, max, null)
-        def mapData = page.content.collect { Task task ->
-            return taskToJsonMap(task)
-        } as JSON
-        def jsonMapString = mapData.toString(true)
-        render(view: '/task/map', model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: users, mapData: jsonMapString])
+        super.map max, Sale, [view: '/task/map']
     }
 
     def export() {
-        render status: INTERNAL_SERVER_ERROR, text: 'Not Implemented Yet'
+        super.export Sale
     }
 
     def search(Integer max) {
-        def user = neoSecurityService.currentUser
-        params.max = Math.min(max ?: 50, 100)
-        if (params.term) {
-            redirect(action: 'search', id: params.term)
-            return
-        }
-
-        if (params.remove('ui') == 'map') {
-            redirect(action: 'searchMap', params: params, id: params.term)
-            return
-        }
-
-        def (page, users) = taskService.loadPageDataForUser(user, Sale, params, max, ModelFunctions.getWildCardRegex(params.id as String))
-        render view: '/call/index', model: [taskInstanceList: page, taskInstanceCount: page.totalElements, users: users]
+        super.search max, Sale, [view: '/call/index', taskRole: SALES_ROLE_NAME]
     }
 
     def searchMap(Integer max) {
-        def user = neoSecurityService.currentUser
-
-        def (page, users) = taskService.loadPageDataForUser(user, Sale, params, max, ModelFunctions.getWildCardRegex(params.id as String))
-        def mapData = page.content.collect { taskToJsonMap(it) } as JSON
-        def jsonMapString = mapData.toString(true)
-        render view: '/task/map', model: [taskInstanceList: page, taskInstanceCount: page.totalElements, users: users, mapData: jsonMapString]
+        super.searchMap max, Sale, [view: '/task/map', taskRole: SALES_ROLE_NAME]
     }
 
     def show() {
-        def id = extractId(params)
-        if (id == -1) {
-            notFound(); return
-        }
-
-        def task = taskService.findTask(id)
-
-        if (task.type == DetailerTask.simpleName) {
-            task = taskService.findDetailerTask(task.id)
-        }
-
-        txHelperService.doInTransaction {
-            neo.fetch(task.territoryUser())
-        }
-        render view: '/call/show', model: [taskInstance: task]
+        super.show view: '/call/show', taskRole: SALES_ROLE_NAME
     }
-
-    def edit() {
-        def id = extractId(params)
-
-        if (id == -1) {
-            notFound(); return
-        }
-        def taskInstance = taskService.findTask(id)
-        txHelperService.doInTransaction {
-            neo.fetch(taskInstance.territoryUser())
-        }
-        respond taskInstance, model: [users: userService.listAllUsers(), customers: customerService.listAllCustomers()]
-    }
-
 
     def handleException(AccessDeniedException ex) {
         render view: '/login/denied', status: FORBIDDEN
     }
 
-    @Transactional
     def delete() {
-
-        def id = extractId(params)
-
-        if (id == -1) {
-            notFound(); return
-        }
-
-        taskService.deleteTask id
-
-        request.withFormat {
-            form {
-                flash.message = message(code: 'default.deleted.message', args: [message(code: 'Task.label', default: 'Task'), id])
-                redirect action: "index", method: "GET"
-            }
-            '*' { render status: NO_CONTENT }
-        }
-    }
-
-    protected void notFound() {
-        request.withFormat {
-            form {
-                flash.message = message(code: 'default.not.found.message', args: [message(code: 'Task.label', default: 'Task'), params.id])
-                redirect action: "index", method: "GET"
-            }
-            '*' { render status: NOT_FOUND }
-        }
+        super.delete()
     }
 
 }

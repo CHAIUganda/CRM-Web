@@ -37,7 +37,7 @@ class TaskController extends BaseController {
     @Autowired
     Neo4jTemplate neo
 
-    protected def index(Integer max, Class<? extends Task> type, Map otherParams) {
+    protected def index(Integer max, Class type, Map otherParams) {
         def user = neoSecurityService.currentUser
         if (params.remove('ui') == 'map') {
             redirect(action: 'map', params: params)
@@ -48,7 +48,7 @@ class TaskController extends BaseController {
         render(view: otherParams.view, model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: users, taskRole: otherParams.taskRole])
     }
 
-    protected def map(Integer max, Class<? extends Task> type, Map otherParams) {
+    protected def map(Integer max, Class type, Map otherParams) {
 
         def user = neoSecurityService.currentUser
         def (page, users) = taskService.loadPageDataForUser(user, type, params, max, null)
@@ -75,7 +75,7 @@ class TaskController extends BaseController {
         render(view: otherParams.view, model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: users, mapData: jsonMapString])
     }
 
-    protected def export(Class<? extends Task> type) {
+    protected def export(Class type) {
         def user = params.user ? userService.findUserByName(params.user) : null
         def exportFields = ['DISTRICT', 'SUBCOUNTY', 'VILLAGE', 'OUTLET NAME', 'OUTLET TYPE']
         def fields = ReflectFunctions.findAllBasicFields(type).reverse()
@@ -92,7 +92,7 @@ class TaskController extends BaseController {
         }
     }
 
-    protected def search(Integer max, Class<? extends Task> taskType, Map otherParams) {
+    protected def search(Integer max, Class taskType, Map otherParams) {
         def user = neoSecurityService.currentUser
         params.max = Math.min(max ?: 50, 100)
         if (params.term) {
@@ -111,7 +111,7 @@ class TaskController extends BaseController {
         render view: otherParams.view, model: [taskInstanceList: page, taskInstanceCount: page.totalElements, users: users,taskRole: otherParams.taskRole]
     }
 
-    protected def searchMap(Integer max, Class<? extends Task> taskType, Map otherParams) {
+    protected def searchMap(Integer max, Class taskType, Map otherParams) {
         def user = neoSecurityService.currentUser
         def searchTerm = ModelFunctions.getWildCardRegex(params.id as String)
         def (page, users) = taskService.loadPageDataForUser(user, taskType, params, max, searchTerm)
@@ -129,10 +129,10 @@ class TaskController extends BaseController {
         def task = taskService.findTask(id)
 
         txHelperService.doInTransaction {
-            neo.fetch(task.territoryUser())
+            neo.fetch(task?.loadTerritoryUsers())
         }
         assert otherParams.view, 'View not specified in action'
-        render view: otherParams.view, model: [taskInstance: task]
+        render view: otherParams.view, model: [taskInstance: task,taskRole: otherParams.taskRole]
     }
 
     protected def save(Task taskInstance) {
