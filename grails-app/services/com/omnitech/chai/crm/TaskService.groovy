@@ -70,14 +70,14 @@ class TaskService {
             page = listTasksByStatus(params.status as String, params, taskType)
         }
 
-        page.content.each { neo.fetch(it.territoryUser()) }
+        page.content.each { neo.fetch(it.customer?.subCounty?.territory?.territoryUsers) }
 
         return page as Page<T>
     }
 
     def <T extends Task> Page<T> loadSuperVisorUserData(Integer max, Map params, Class<T> taskType, Long supervisorUserId, String filter) {
         params.max = max ?: 50
-        if (!params.sort) {
+        if (!params.sortt) {
             params.sort = 'dueDate'
         }
 
@@ -96,7 +96,7 @@ class TaskService {
             page = findAllTasksForUser(supervisorUserId, status, params, taskType, filter)
         }
 
-        page.content.each { neo.fetch(it.territoryUser()) }
+        page.content.each { neo.fetch(it?.loadTerritoryUsers()) }
 
         return page as Page<T>
     }
@@ -152,7 +152,7 @@ class TaskService {
 
     private static getTaskQuery(String status, Class<? extends Task> taskType) {
         def startPath = node('task').label(taskType.simpleName)
-        if (status) startPath.values(value('status', status))
+        if (status) startPath = startPath.values(value('status', status))
 
         def query = match(startPath)
                 .match(node('task').in(CUST_TASK).node('cu')).optional()

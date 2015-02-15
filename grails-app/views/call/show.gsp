@@ -26,7 +26,7 @@
             <td valign="top" class="name">Assigned User</td>
 
             <td valign="top" class="value">
-                <g:each in="${taskInstance?.territoryUser()?.findResults { it }}" var="user">
+                <g:each in="${taskInstance?.territoryUser()}" var="user">
                     <g:link controller="user" action="show" id="${user?.id}">
                         <i class="glyphicon glyphicon-user"></i>  ${user}
                     </g:link>

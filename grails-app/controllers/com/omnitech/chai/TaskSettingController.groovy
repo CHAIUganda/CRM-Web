@@ -46,7 +46,7 @@ class TaskSettingController {
 
         def taskData = txHelperService.doInTransaction {
             tasks.collect {
-                it.territoryUser()
+                neo.fetch(it.loadTerritoryUsers())
                 ControllerUtils.taskToJsonMap(it)
             }
         }

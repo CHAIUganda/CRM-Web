@@ -84,13 +84,26 @@ class Task extends AbstractEntity {
     }
 
     Set<User> territoryUser() {
-        this.customer?.subCounty?.territory?.collect { it.territoryUsers }?.flatten()?.findResults { it } as Set
+
+        String role = Role.SALES_ROLE_NAME
+        if (getClass().isAssignableFrom(DetailerTask)) {
+            role = Role.DETAILER_ROLE_NAME
+        }
+
+        def flatten = this.customer?.subCounty?.territory?.collect { it.territoryUsers }?.flatten()
+        flatten?.findAll {
+            it?.hasRole(role)
+        }?.findResults { it } as Set
+    }
+
+    Set<User> loadTerritoryUsers() {
+        this.customer?.subCounty?.territory?.collect { it.territoryUsers }?.flatten() as Set
     }
 
     def territoryUser(String role) {
         this.customer?.subCounty?.territory?.collect { it.territoryUsers }?.flatten()?.findAll {
             it?.hasRole(role)
-        }?.findResults { it }?.join(',')
+        }?.findResults { it }
     }
 
 
