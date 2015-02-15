@@ -5,7 +5,7 @@ import com.omnitech.chai.model.DetailerTask
 import com.omnitech.chai.util.ModelFunctions
 
 import static com.omnitech.chai.model.Role.DETAILER_ROLE_NAME
-import static com.omnitech.chai.model.Role.getSALES_ROLE_NAME
+import static com.omnitech.chai.model.Role.SALES_ROLE_NAME
 
 /**
  * DetailerTaskController
