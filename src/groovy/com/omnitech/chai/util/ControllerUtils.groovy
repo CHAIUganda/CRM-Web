@@ -2,6 +2,7 @@ package com.omnitech.chai.util
 
 import com.omnitech.chai.model.Customer
 import com.omnitech.chai.model.Task
+import groovy.time.TimeCategory
 
 /**
  * Created by kay on 12/28/2014.
@@ -17,7 +18,8 @@ class ControllerUtils {
         }
         map.description = "$task.description - (${ChaiUtils.fromNow(task.dueDate)})"
         if (task.dueDate) {
-            map.dueDays = task.dueDate - new Date() - 1
+            //used in the js to get the icon color
+            map.dueDays = TimeCategory.minus(task.dueDate, new Date()).days
             map.dueDateText = ChaiUtils.formatDate(task.dueDate)
         }
 
@@ -29,7 +31,7 @@ class ControllerUtils {
             map.customerDescription = task.customer.descriptionOfOutletLocation
         }
 
-        map.assignedUser = task.territoryUser()?.findResults {it}?.collect { it.username }?.toString();
+        map.assignedUser = task.territoryUser()?.findResults { it }?.collect { it.username }?.toString();
         map.type = 'task'
 
         return map
