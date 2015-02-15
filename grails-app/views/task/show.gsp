@@ -1,33 +1,34 @@
-
 <%@ page import="com.omnitech.chai.model.DetailerTask; com.omnitech.chai.util.ChaiUtils; com.omnitech.chai.model.Task" %>
 <!DOCTYPE html>
 <html>
 
 <head>
-	<meta name="layout" content="kickstart" />
-	<g:set var="entityName" value="${message(code: 'task.label', default: 'Task')}" />
-	<title><g:message code="default.show.label" args="[entityName]" /></title>
+    <meta name="layout" content="kickstart"/>
+    <g:set var="entityName" value="${message(code: 'task.label', default: 'Task')}"/>
+    <g:set var="noedit_menu" value="${true}" scope="request"/>
+    <g:set var="nocreate_menu" value="${true}" scope="request"/>
+    <title><g:message code="default.show.label" args="[entityName]"/></title>
 </head>
 
 <body>
 
 <section id="show-task" class="first">
 
-	<table class="table">
-		<tbody>
-		
-			<tr class="prop">
-				<td valign="top" class="name"><g:message code="task.description.label" default="Description" /></td>
-				
-				<td valign="top" class="value">${fieldValue(bean: taskInstance, field: "description")}</td>
+    <table class="table">
+        <tbody>
 
-            </tr>
+        <tr class="prop">
+            <td valign="top" class="name"><g:message code="task.description.label" default="Description"/></td>
+
+            <td valign="top" class="value">${fieldValue(bean: taskInstance, field: "description")}</td>
+
+        </tr>
 
         <tr class="prop">
             <td valign="top" class="name">Assigned User</td>
 
             <td valign="top" class="value">
-                <g:each in="${taskInstance.territoryUser()}" var="user">
+                <g:each in="${taskInstance.territoryUser(Ro)}" var="user">
                     <g:link controller="user" action="show" id="${user.id}">
                         <i class="glyphicon glyphicon-user"></i>  ${user}
                     </g:link>
@@ -40,9 +41,9 @@
             <td valign="top" class="name">Customer</td>
 
             <td valign="top" class="value">
-                    <g:link controller="customer" action="show" id="${taskInstance.customer?.id}">
-                        <i class="glyphicon glyphicon-home"></i>  ${taskInstance.customer}
-                    </g:link>
+                <g:link controller="customer" action="show" id="${taskInstance.customer?.id}">
+                    <i class="glyphicon glyphicon-home"></i>  ${taskInstance.customer}
+                </g:link>
             </td>
 
         </tr>
@@ -80,11 +81,12 @@
         </g:if>
 
         <tr class="prop">
-            <td valign="top" class="name"><g:message code="task.dueDate.label" default="Due Date" /></td>
+            <td valign="top" class="name"><g:message code="task.dueDate.label" default="Due Date"/></td>
 
             <td valign="top" class="value">
                 <g:if test="${taskInstance.dueDate}">
-                    <g:formatDate date="${taskInstance.dueDate}" format="dd-MMM-yyyy" /> <span class="${new Date().after(taskInstance.dueDate) ? 'alert-danger':''}">(${ChaiUtils.fromNow(taskInstance.dueDate)})</span>
+                    <g:formatDate date="${taskInstance.dueDate}" format="dd-MMM-yyyy"/> <span
+                        class="${new Date().after(taskInstance.dueDate) ? 'alert-danger' : ''}">(${ChaiUtils.fromNow(taskInstance.dueDate)})</span>
                 </g:if>
             </td>
 
@@ -102,22 +104,22 @@
             <td valign="top" class="name"><g:message code="task.status.label" default="Status"/></td>
 
             <td valign="top" class="value">${fieldValue(bean: taskInstance, field: "status")}</td>
-				
-	    </tr>
-		
-			<tr class="prop">
-				<td valign="top" class="name"><g:message code="task.uuid.label" default="Uuid" /></td>
-				
-				<td valign="top" class="value">${fieldValue(bean: taskInstance, field: "uuid")}</td>
-				
-			</tr>
+
+        </tr>
+
+        <tr class="prop">
+            <td valign="top" class="name"><g:message code="task.uuid.label" default="Uuid"/></td>
+
+            <td valign="top" class="value">${fieldValue(bean: taskInstance, field: "uuid")}</td>
+
+        </tr>
 
         <g:if test="${taskInstance.getClass() == DetailerTask}">
             <g:render template="/task/showDetailerTask"/>
         </g:if>
-		
-		</tbody>
-	</table>
+
+        </tbody>
+    </table>
 </section>
 
 </body>
