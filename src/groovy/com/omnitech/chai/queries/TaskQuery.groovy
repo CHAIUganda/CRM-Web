@@ -1,10 +1,12 @@
 package com.omnitech.chai.queries
 
 import com.omnitech.chai.model.Task
+import com.omnitech.chai.util.PageUtils
 import com.omnitech.chai.util.ReflectFunctions
 import org.neo4j.cypherdsl.grammar.Execute
 import org.neo4j.cypherdsl.grammar.Match
 import org.neo4j.cypherdsl.grammar.ReturnNext
+import org.neo4j.cypherdsl.grammar.WithNext
 import org.slf4j.LoggerFactory
 
 import static com.omnitech.chai.model.Relations.*
@@ -20,9 +22,12 @@ class TaskQuery {
 
     private static def log = LoggerFactory.getLogger(TaskQuery)
 
-    static ReturnNext userTasksQuery(Long userId, String status, Class taskType, String filter) {
+    static WithNext userTasksQuery(Long userId, String status, Class taskType, String filter, Map sortParams) {
         def task = taskType.simpleName.toLowerCase()
-        def query = _userTasksQuery(userId, status, taskType, filter).returns(distinct(identifier(task)))
+        def query = _userTasksQuery(userId, status, taskType, filter).with(distinct(identifier(task)), identifier('di'))
+        PageUtils.addPagination(query, sortParams, taskType)
+        query.returns(identifier(task))
+
         return query
     }
 
@@ -36,10 +41,13 @@ class TaskQuery {
     static List allTasksQuery(String filter, Class taskType) {
         def varName = taskType.simpleName.toLowerCase()
         def query = {
-            match(node(varName).label(taskType.simpleName).in(CUST_TASK).node('customer'))
-                    .where(identifier(varName).string('description').regexp(filter)
-                    .or(identifier('customer').string('outletName').regexp(filter))
-                    .or(identifier('customer').string('tradingCenter').regexp(filter)))
+            def q = match(node(varName).label(taskType.simpleName).in(CUST_TASK).node('customer'))
+            if (filter)
+                q.where(identifier(varName).string('description').regexp(filter)
+                        .or(identifier('customer').string('outletName').regexp(filter))
+                        .or(identifier('customer').string('tradingCenter').regexp(filter)))
+
+            return q
         }
 
         Execute cq = query().returns(count(distinct(identifier(varName))))
@@ -79,6 +87,7 @@ class TaskQuery {
                 .in(SC_IN_TERRITORY).node('sc')
                 .in(CUST_IN_SC).node('customer')
                 .out(CUST_TASK).node(varName).label(taskType.simpleName))
+                .match(node('sc').in(HAS_SUB_COUNTY).node('di')).optional()
 
     }
 

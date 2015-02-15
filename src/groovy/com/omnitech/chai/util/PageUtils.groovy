@@ -48,7 +48,7 @@ class PageUtils {
         return new PageRequest(pageNumber, size)
     }
 
-    static ReturnNext addPagination(ReturnNext next, Map param, Class returnClass) {
+    static OrderBy addPagination(OrderBy next, Map param, Class returnClass) {
         def pageParams = create(param)
         addSorting(next, param, returnClass)
                 .skip(pageParams.offset)
