@@ -3,7 +3,6 @@ package com.omnitech.chai
 import com.omnitech.chai.model.Customer
 import com.omnitech.chai.model.LineItem
 import com.omnitech.chai.model.Order
-import com.omnitech.chai.model.Role
 import com.omnitech.chai.util.ChaiUtils
 import com.omnitech.chai.util.ModelFunctions
 
@@ -35,15 +34,15 @@ class CallController extends TaskController {
     }
 
     def search(Integer max) {
-        super.search max, Order, [view: '/call/index']
+        super.search max, Order, [view: '/call/index', taskRole: SALES_ROLE_NAME]
     }
 
     def searchMap(Integer max) {
-        super.searchMap max, Order, [view: '/task/map']
+        super.searchMap max, Order, [view: '/task/map', taskRole: SALES_ROLE_NAME]
     }
 
     def show() {
-        super.show view: 'show'
+        super.show view: 'show', taskRole: SALES_ROLE_NAME
     }
 
     def create() {

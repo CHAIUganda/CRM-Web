@@ -67,11 +67,7 @@ class TaskService {
             params.status = status
             page = findAllTasksForUser(user.id, status, params, taskType, null)
         } else {
-            if (params.status) {
-                page = listTasksByStatus(params.status as String, params, taskType)
-            } else {
-                page = listTasks(taskType, params)
-            }
+            page = listTasksByStatus(params.status as String, params, taskType)
         }
 
         page.content.each { neo.fetch(it.territoryUser()) }
@@ -155,7 +151,10 @@ class TaskService {
     }
 
     private static getTaskQuery(String status, Class<? extends Task> taskType) {
-        def query = match(node('task').label(taskType.simpleName).values(value('status', status)))
+        def startPath = node('task').label(taskType.simpleName)
+        if (status) startPath.values(value('status', status))
+
+        def query = match(startPath)
                 .match(node('task').in(CUST_TASK).node('cu')).optional()
                 .match(node('cu').out(CUST_IN_SC).node('sc')).optional()
                 .match(node('sc').in(HAS_SUB_COUNTY).node('di')).optional()
