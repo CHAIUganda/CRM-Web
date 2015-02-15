@@ -108,7 +108,7 @@ class TaskController extends BaseController {
         def searchTerm = ModelFunctions.getWildCardRegex(params.id as String)
         def (page, users) = taskService.loadPageDataForUser(user, taskType, params, max, searchTerm)
         assert otherParams.view, 'View not specified in action'
-        render view: otherParams.view, model: [taskInstanceList: page, taskInstanceCount: page.totalElements, users: users]
+        render view: otherParams.view, model: [taskInstanceList: page, taskInstanceCount: page.totalElements, users: users,taskRole: otherParams.taskRole]
     }
 
     protected def searchMap(Integer max, Class<? extends Task> taskType, Map otherParams) {

@@ -36,6 +36,8 @@
             <g:sortableColumn property="status" params="${params}"
                               title="${message(code: 'task.status.label', default: 'Status')}"/>
 
+            <g:sortableColumn property="di.name" params="${params}"
+                              title="${message(code: 'district.label', default: 'District')}"/>
             <th>Customer</th>
             <th>Assigned User</th>
 
@@ -66,9 +68,11 @@
 
                 <td>${taskInstance.getStatusMessage()}</td>
 
-                <td>${taskInstance.customer}</td>
+                <td>${taskInstance.customer?.subCounty?.district}</td>
 
-                <td>${taskInstance.territoryUser()}</td>
+                <td> ${ChaiUtils.truncateString(taskInstance.customer, 10)}</td>
+
+                <td>${taskInstance.territoryUser(taskRole)}</td>
 
                 %{--<td>--}%
                 %{--<g:link action="edit" id="${taskInstance.id}" title="Edit/Schedule"><i--}%
