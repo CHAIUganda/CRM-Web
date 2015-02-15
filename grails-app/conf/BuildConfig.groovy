@@ -126,4 +126,4 @@ grails.project.dependency.resolution = {
 
 //offline mode
 //grails --offline run-app
-grails.offline.mode=true
+//grails.offline.mode=true
