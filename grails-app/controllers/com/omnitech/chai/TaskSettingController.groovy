@@ -133,11 +133,17 @@ class TaskSettingController {
 
         def neoSegments = []
 
-        segments.each { dbId, v ->
-            if (v) {
+        segments.each { String dbId, v ->
+            if (v && !(params["segments.${dbId}_all"])) {
+                def endsWithAll = dbId.endsWith('all')
+                if (endsWithAll) {
+                    dbId = dbId.split(/_/)[0]
+                }
                 def cs = customerService.findCustomerSegment(dbId as Long)
-                cs.numberOfTasks = v as Integer
-                neoSegments << cs
+                cs.numberOfTasks = endsWithAll ? 2000 : v as Integer
+
+                if (cs.numberOfTasks > 0)
+                    neoSegments << cs
             }
         }
 
