@@ -24,7 +24,7 @@
                               title="${message(code: 'task.description.label', default: 'Description')}"/>
 
             <g:if test="${params.status == Task.STATUS_COMPLETE}">
-                <g:sortableColumn property="dueDate" params="${params}"
+                <g:sortableColumn property="completionDate" params="${params}"
                                   title="${message(code: 'task.completion.label', default: 'Completion Date')}"/>
 
             </g:if>

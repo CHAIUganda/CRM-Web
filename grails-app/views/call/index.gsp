@@ -29,7 +29,7 @@
             </g:if>
 
             <g:if test="${params.status == Task.STATUS_COMPLETE || params.controller == 'sale'}">
-                <g:sortableColumn property="dueDate" params="${params}"
+                <g:sortableColumn property="completionDate" params="${params}"
                                   title="${message(code: 'task.completion.label', default: 'Completion Date')}"/>
 
             </g:if>
