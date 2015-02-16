@@ -69,5 +69,8 @@ interface Relations {
     // Order -> User
     final static ORDER_TAKEN_BY = 'ORDER_TAKEN_BY'
 
+    //Detailing -> DetailerStock
+    final static HAS_DETAILER_STOCK = 'HAS_DETAILER_STOCK'
+
 
 }

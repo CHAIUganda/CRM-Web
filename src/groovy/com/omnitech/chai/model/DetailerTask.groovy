@@ -2,6 +2,9 @@ package com.omnitech.chai.model
 
 import grails.validation.Validateable
 import org.springframework.data.neo4j.annotation.NodeEntity
+import org.springframework.data.neo4j.annotation.RelatedTo
+
+import static com.omnitech.chai.model.Relations.HAS_DETAILER_STOCK
 
 /**
  * Created by kay on 11/7/14.
@@ -33,6 +36,9 @@ class DetailerTask extends Task {
     String recommendationNextStep
     String recommendationLevel
 
+    @RelatedTo(type = HAS_DETAILER_STOCK)
+    Set<DetailerStock> detailerStocks
+
     def beforeSave() {
         super.beforeSave()
         if (!description)
@@ -43,4 +49,14 @@ class DetailerTask extends Task {
         new DetailerTask(customer: c, description: "Detailing [$c.outletName]", dueDate: d)
     }
 
+}
+
+@NodeEntity
+class DetailerStock extends AbstractEntity {
+    private String brand;
+    /** Not-null value. */
+    private String category;
+    private double stockLevel;
+    private Double buyingPrice;
+    private Double sellingPrice;
 }

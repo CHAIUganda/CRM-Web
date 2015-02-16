@@ -75,7 +75,7 @@ class TaskController {
 
     private void doDetailerUpdate(User user) {
         def json = request.JSON as Map
-        println(json.inspect())
+        println(json.toString())
         def detailerInfo = (json.get('detailers') as List)?.get(0) as Map
         def task = ModelFunctions.createObj(DetailerTask, json)
         if (detailerInfo) {
