@@ -18,6 +18,11 @@ class Task extends AbstractEntity {
     String description
     protected String type = Task.simpleName
     String status = STATUS_NEW
+
+
+    //String origin of the task.. can be system or user generated
+    String origin = 'system'
+
     @GraphProperty(propertyType = Long.class)
     Date dueDate
     @GraphProperty(propertyType = Long.class)

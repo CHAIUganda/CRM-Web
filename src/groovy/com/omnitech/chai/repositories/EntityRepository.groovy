@@ -101,6 +101,18 @@ limit {limit}""")
             @Param('segmentId') Long segmentId,
             @Param('limit') Integer limit)
 
+    @Query("""start t = node({territoryId}), cs = node({segmentId})
+match (cs)<-[:IN_SEGMENT]-(customer)-[:CUST_IN_SC]->(sc)-[:SC_IN_TERRITORY]->(t)
+where not(customer-[:CUST_TASK]->(:SalesCall{status:'new'}))
+with customer optional match customer-[:CUST_TASK]-(o:SalesCall)
+return customer,max(o.completionDate) as completionDate
+order by completionDate desc
+limit {limit}""")
+    Iterable<CustomerWithLastTaskDate> findAllWithoutSalesCalls(
+            @Param('territoryId') Long territoryId,
+            @Param('segmentId') Long segmentId,
+            @Param('limit') Integer limit)
+
 
 
 }
@@ -164,6 +176,14 @@ interface OrderRepository extends GraphRepository<Order> {
 
     @Query('start t=node({territoryId}) MATCH (t)<-[:`SC_IN_TERRITORY`]-(sc)<-[:CUST_IN_SC]-(c)-[:CUST_TASK]->(ts:Order) RETURN ts')
     Iterable<Order> findAllInTerritory(@Param('territoryId') Long territoryId)
+}
+
+interface SalesCallRepository extends GraphRepository<SalesCall> {
+    @Query('match (o:SalesCall) where o.uuid = {uuid} return o')
+    SalesCall findByUuidImpl(@Param('uuid') String uuid)
+
+    @Query('start t=node({territoryId}) MATCH (t)<-[:`SC_IN_TERRITORY`]-(sc)<-[:CUST_IN_SC]-(c)-[:CUST_TASK]->(ts:SalesCall) RETURN ts')
+    Iterable<SalesCall> findAllInTerritory(@Param('territoryId') Long territoryId)
 }
 
 interface DirectSaleRepository extends GraphRepository<DirectSale> {

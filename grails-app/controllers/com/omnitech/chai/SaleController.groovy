@@ -3,7 +3,7 @@ package com.omnitech.chai
 import com.omnitech.chai.model.Sale
 import org.springframework.security.access.AccessDeniedException
 
-import static com.omnitech.chai.model.Role.getSALES_ROLE_NAME
+import static com.omnitech.chai.model.Role.SALES_ROLE_NAME
 import static org.springframework.http.HttpStatus.FORBIDDEN
 
 /**

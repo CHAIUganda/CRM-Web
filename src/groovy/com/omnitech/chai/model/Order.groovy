@@ -9,9 +9,20 @@ import org.springframework.data.neo4j.annotation.RelatedToVia
 /**
  * Created by kay on 9/25/14.
  */
+
+class SalesCall extends Task {
+
+    def beforeSave() {
+        super.beforeSave()
+        if (!description && getClass() == SalesCall) {
+            description = "Call [$customer.outletName]"
+        }
+    }
+}
+
 @NodeEntity
 @Validateable
-class Order extends Task implements HasLineItem {
+class Order extends SalesCall implements HasLineItem {
 
     @Fetch
     @RelatedToVia
@@ -25,12 +36,8 @@ class Order extends Task implements HasLineItem {
 
     def beforeSave() {
         super.beforeSave()
-        if (!description) {
-            if (this.lineItems) {
-                description = "Order [$customer.outletName]"
-            } else {
-                description = "Call [$customer.outletName]"
-            }
+        if (!description && getClass() == Order) {
+            description = "Order [$customer.outletName]"
         }
     }
 

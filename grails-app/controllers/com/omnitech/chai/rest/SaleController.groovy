@@ -86,7 +86,7 @@ class SaleController {
         }
     }
 
-    private static void bindSaleOrderToDbInstance(SaleOrder saleOrder, Order order) {
+    private static void bindSaleOrderToDbInstance(SaleOrder saleOrder, SalesCall order) {
         //copy original order props to saleOrder
         def whiteList = ReflectFunctions.findAllFields(Task).collect { it.name }
         whiteList << 'comment'

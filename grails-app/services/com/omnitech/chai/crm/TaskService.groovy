@@ -30,6 +30,7 @@ class TaskService {
     def customerRepository
     def directSaleRepository
     def orderRepository
+    def salesCallRepository
     def neoSecurityService
     def userService
     def clusterService
@@ -42,10 +43,10 @@ class TaskService {
 
     def <T extends Task> Page<T> listTasksByStatus(String status, Map params, Class<T> taskType) {
 
-        def resultQuery = getTaskQuery(status, taskType).returns(identifier('task'))
+        def resultQuery = TaskQuery.getTaskQuery(status, taskType).returns(identifier('task'))
         PageUtils.addSorting(resultQuery, params, Task)
 
-        def countyQuery = getTaskQuery(status, taskType).returns(count(identifier('task')))
+        def countyQuery = TaskQuery.getTaskQuery(status, taskType).returns(count(identifier('task')))
         log.trace("listTasksByStatus: countQuery: $countyQuery")
         log.trace("listTasksByStatus: dataQuery: $resultQuery")
 
@@ -150,17 +151,6 @@ class TaskService {
 
     }
 
-    private static getTaskQuery(String status, Class<? extends Task> taskType) {
-        def startPath = node('task').label(taskType.simpleName)
-        if (status) startPath = startPath.values(value('status', status))
-
-        def query = match(startPath)
-                .match(node('task').in(CUST_TASK).node('cu')).optional()
-                .match(node('cu').out(CUST_IN_SC).node('sc')).optional()
-                .match(node('sc').in(HAS_SUB_COUNTY).node('di')).optional()
-
-        return query
-    }
 
     Task findTask(Long id) { taskRepository.findOne(id) }
 
@@ -171,7 +161,7 @@ class TaskService {
     void deleteTask(Long id) { taskRepository.delete(id) }
 
     def <T extends Task> Page<T> searchTasks(String search, Map params, Class<T> taskType) {
-        def (ReturnNext q, ReturnNext cq) = TaskQuery.allTasksQuery(search, taskType)
+        def (ReturnNext q, ReturnNext cq) = TaskQuery.filterAllTasksQuery(search, taskType)
         PageUtils.addSorting(q, params, taskType)
         taskRepository.query(q, cq, EMPTY_MAP, PageUtils.create(params))
     }
@@ -322,7 +312,8 @@ class TaskService {
                       Date startDate,
                       List<Integer> workDays,
                       int tasksPerDay,
-                      Class<? extends Task> taskType) {
+                      Class<? extends Task> taskType,
+                      boolean clusterTasks) {
 
 
         def messages = []
@@ -339,7 +330,8 @@ class TaskService {
             if (tasks) {
                 log.info "***** Clustering: Territory[$t] Tasks[${tasks.size()}]"
                 messages << "$t(${tasks.size()})"
-                def cluster = clusterService.assignDueDates(tasks, startDate, workDays, tasksPerDay)
+                if (clusterTasks)
+                    def cluster = clusterService.assignDueDates(tasks, startDate, workDays, tasksPerDay)
 
                 taskRepository.save(tasks)
                 allTasks.addAll(tasks)
@@ -358,7 +350,7 @@ class TaskService {
         if (taskType == DetailerTask)
             results = customerRepository.findAllWithoutNewDetailingTasks(t.id, s.id, s.numberOfTasks)
         else
-            results = customerRepository.findAllWithoutNewOrderTasks(t.id, s.id, s.numberOfTasks)
+            results = customerRepository.findAllWithoutSalesCalls(t.id, s.id, s.numberOfTasks)
 
 
         def tasks = []
@@ -367,7 +359,7 @@ class TaskService {
                 if (taskType == DetailerTask)
                     tasks << new DetailerTask(customer: r.customer, description: "Detailing [$r.customer.outletName]", dueDate: getNextWorkDay(workDays, startDate))
                 else
-                    tasks << new Order(customer: r.customer, dueDate: getNextWorkDay(workDays, startDate))
+                    tasks << new SalesCall(customer: r.customer, dueDate: getNextWorkDay(workDays, startDate))
 
             }
         }
@@ -380,8 +372,8 @@ class TaskService {
 
     Order findOrder(Long id) { orderRepository.findOne(id) }
 
-    Order findOrder(String uuid) {
-        orderRepository.findByUuidImpl(uuid)
+    SalesCall findOrder(String uuid) {
+        salesCallRepository.findByUuidImpl(uuid)
     }
 
     Order findOrderByClientRefId(String refId) {

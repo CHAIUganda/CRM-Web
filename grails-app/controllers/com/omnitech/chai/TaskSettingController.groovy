@@ -3,6 +3,7 @@ package com.omnitech.chai
 import com.omnitech.chai.model.CustomerSegment
 import com.omnitech.chai.model.DetailerTask
 import com.omnitech.chai.model.Order
+import com.omnitech.chai.model.SalesCall
 import com.omnitech.chai.model.Task
 import com.omnitech.chai.util.ControllerUtils
 import grails.converters.JSON
@@ -30,13 +31,13 @@ class TaskSettingController {
     }
 
     def generateDetailerTasks() {
-        def (msgs, tasks) = generateTasks(DetailerTask)
+        def (msgs, tasks) = generateTasks(DetailerTask,true)
         flash.message = "Generated Tasks ${msgs.join(',')}"
         renderOnMap(tasks)
     }
 
     def generateOrderTasks() {
-        def (msgs, tasks) = generateTasks(Order)
+        def (msgs, tasks) = generateTasks(SalesCall,false)
         flash.message = "Generated Tasks ${msgs.join(',')}"
         renderOnMap(tasks)
 
@@ -80,7 +81,7 @@ class TaskSettingController {
         [territories, segments]
     }
 
-    private def generateTasks(Class taskType) {
+    private def generateTasks(Class taskType,boolean cluster) {
 
         println(params)
         def workDays = params.workDays instanceof String ? [params.workDays] : params.workDays
@@ -100,7 +101,7 @@ class TaskSettingController {
 
         def territories = extractTerritories()
 
-        taskService.generateTasks(territories, segments, startDate, workDays, tasksPerDay, taskType)
+        taskService.generateTasks(territories, segments, startDate, workDays, tasksPerDay, taskType,cluster)
     }
 
     private def extractTerritories() {

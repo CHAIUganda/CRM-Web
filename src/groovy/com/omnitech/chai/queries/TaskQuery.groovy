@@ -38,7 +38,7 @@ class TaskQuery {
         return query
     }
 
-    static List allTasksQuery(String filter, Class taskType) {
+    static List filterAllTasksQuery(String filter, Class taskType) {
         def varName = taskType.simpleName.toLowerCase()
         def query = {
             def q = match(node(varName).label(taskType.simpleName).in(CUST_TASK).node('customer'))
@@ -89,6 +89,18 @@ class TaskQuery {
                 .out(CUST_TASK).node(varName).label(taskType.simpleName))
                 .match(node('sc').in(HAS_SUB_COUNTY).node('di')).optional()
 
+    }
+
+    static Match getTaskQuery(String status, Class<? extends Task> taskType) {
+        def startPath = node('task').label(taskType.simpleName)
+        if (status) startPath = startPath.values(value('status', status))
+
+        def query = match(startPath)
+                .match(node('task').in(CUST_TASK).node('customer')).optional()
+                .match(node('customer').out(CUST_IN_SC).node('sc')).optional()
+                .match(node('sc').in(HAS_SUB_COUNTY).node('di')).optional()
+
+        return query
     }
 
     static def exportTasks(Long userId, Class type) {

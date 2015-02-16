@@ -5,7 +5,6 @@ import org.springframework.data.neo4j.annotation.Fetch
 import org.springframework.data.neo4j.annotation.NodeEntity
 import org.springframework.data.neo4j.annotation.RelatedTo
 
-import static com.omnitech.chai.model.Relations.HAS_DETAILER_STOCK
 
 /**
  * Created by kay on 11/7/14.
@@ -38,7 +37,7 @@ class DetailerTask extends Task {
     String recommendationLevel
 
     @Fetch
-    @RelatedTo(type = HAS_DETAILER_STOCK)
+    @RelatedTo(type = Relations.HAS_DETAILER_STOCK)
     Set<DetailerStock> detailerStocks
 
     def beforeSave() {
