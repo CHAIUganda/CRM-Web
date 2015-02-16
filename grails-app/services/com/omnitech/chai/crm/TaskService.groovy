@@ -276,6 +276,7 @@ class TaskService {
 
         neoTask = neo.projectTo(neoTask, DetailerTask)
         def detailFields = ReflectFunctions.findAllBasicFields(DetailerTask)
+        detailFields.add('detailerStocks')
         //Do not change original task data
         detailFields.with {
             removeAll(ReflectFunctions.findAllBasicFields(Task))

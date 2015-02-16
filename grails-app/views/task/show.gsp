@@ -120,6 +120,10 @@
 
         </tbody>
     </table>
+
+    <g:if test="${taskInstance?.detailerStocks}">
+        <g:render template="/task/zincStock"/>
+    </g:if>
 </section>
 
 </body>

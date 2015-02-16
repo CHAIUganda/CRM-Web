@@ -1,6 +1,7 @@
 package com.omnitech.chai.model
 
 import grails.validation.Validateable
+import org.springframework.data.neo4j.annotation.Fetch
 import org.springframework.data.neo4j.annotation.NodeEntity
 import org.springframework.data.neo4j.annotation.RelatedTo
 
@@ -36,6 +37,7 @@ class DetailerTask extends Task {
     String recommendationNextStep
     String recommendationLevel
 
+    @Fetch
     @RelatedTo(type = HAS_DETAILER_STOCK)
     Set<DetailerStock> detailerStocks
 
