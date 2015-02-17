@@ -41,7 +41,7 @@ class DirectSale extends Task implements Sale {
             this.dueDate = dateOfSale
 
         this.status = STATUS_COMPLETE
-        description = "Direct Sale [$customer.outletName]"
+        description = "Adhoc Sale [$customer.outletName]"
     }
 
     static constraints = {
