@@ -162,6 +162,7 @@ class TaskService {
 
     def <T extends Task> Page<T> searchTasks(String search, Map params, Class<T> taskType) {
         def (ReturnNext q, ReturnNext cq) = TaskQuery.filterAllTasksQuery(search, taskType)
+        log.trace("Query:Search Tasks: $q")
         PageUtils.addSorting(q, params, taskType)
         taskRepository.query(q, cq, EMPTY_MAP, PageUtils.create(params))
     }

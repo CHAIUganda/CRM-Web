@@ -42,10 +42,13 @@ class TaskQuery {
         def varName = taskType.simpleName.toLowerCase()
         def query = {
             def q = match(node(varName).label(taskType.simpleName).in(CUST_TASK).node('customer'))
-            if (filter)
-                q.where(identifier(varName).string('description').regexp(filter)
+            if (filter) {
+                q.match(node('customer').out(CUST_IN_SC).node('sc').in(HAS_SUB_COUNTY).node('district'))
+                        .where(identifier(varName).string('description').regexp(filter)
                         .or(identifier('customer').string('outletName').regexp(filter))
-                        .or(identifier('customer').string('tradingCenter').regexp(filter)))
+                        .or(identifier('customer').string('tradingCenter').regexp(filter))
+                        .or(identifier('district').string('name').regexp(filter)))
+            }
 
             return q
         }
