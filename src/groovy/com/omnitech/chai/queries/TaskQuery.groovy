@@ -59,6 +59,7 @@ class TaskQuery {
         def varName = taskType.simpleName.toLowerCase()
         def query = mathQueryForUserTasks(userId, taskType)
 
+
         def searchFilter = {
             identifier(varName).string('description').regexp(search)
                     .or(identifier('customer').string('outletName').regexp(search))
@@ -77,6 +78,10 @@ class TaskQuery {
         } else if (search) {
             query.where(searchFilter())
         }
+
+        //add district path
+        query.match(node('sc').in(HAS_SUB_COUNTY).node('di')).optional()
+
         return query
     }
 
@@ -87,7 +92,7 @@ class TaskQuery {
                 .in(SC_IN_TERRITORY).node('sc')
                 .in(CUST_IN_SC).node('customer')
                 .out(CUST_TASK).node(varName).label(taskType.simpleName))
-                .match(node('sc').in(HAS_SUB_COUNTY).node('di')).optional()
+
 
     }
 
