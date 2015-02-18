@@ -83,6 +83,7 @@ class SaleController {
 
             order.takenBy = neoSecurityService.currentUser
             taskService.saveTask(order)
+            taskService.deleteNewConcreteTaskOfType(order.customer, SalesCall)
         }
     }
 

@@ -2,6 +2,7 @@ package com.omnitech.chai.rest
 
 import com.omnitech.chai.model.DetailerTask
 import com.omnitech.chai.model.Order
+import com.omnitech.chai.model.SalesCall
 import com.omnitech.chai.model.Task
 import com.omnitech.chai.model.User
 import com.omnitech.chai.util.ChaiUtils
@@ -35,7 +36,7 @@ class TaskController {
         if (user.hasRole(DETAILER_ROLE_NAME))
             taskType = DetailerTask
         else if (user.hasRole(SALES_ROLE_NAME))
-            taskType = Order
+            taskType = SalesCall
         else {
             log.warn("user: [$user] has no detailer or sales role.... sending empty list")
             respond([])

@@ -386,4 +386,13 @@ class TaskService {
         directSaleRepository.findByClientRefId(refId)
     }
 
+    def deleteNewConcreteTaskOfType(Customer customerId, Class taskType) {
+
+        def labelName = "_${taskType.simpleName}"
+        //start c = node({customerId}) match c-[:CUST_TASK]-(t:{taskType}{status:'new'}) delete t
+        def q = start(nodesById('c', customerId.id)).match(node('c').out(CUST_TASK).as('r').node('t').label(labelName).values(value('status', Task.STATUS_NEW)))
+                .delete(identifier('r'),identifier('t'))
+        log.trace("Query:deleting old calls: $q")
+        taskRepository.query(q, EMPTY_MAP)
+    }
 }

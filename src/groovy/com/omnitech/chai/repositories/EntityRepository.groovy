@@ -151,6 +151,9 @@ interface TaskRepository extends GraphRepository<Task>, CypherDslRepository<Task
     @Query('start t=node({territoryId}) MATCH (t)<-[:`SC_IN_TERRITORY`]-(sc)<-[:CUST_IN_SC]-(c)-[:CUST_TASK]->(ts) RETURN ts')
     Iterable<Task> findAllTasksInTerritory(@Param('territoryId') Long territoryId)
 
+    @Query("start c = node({customerId}) match c-[:CUST_TASK]-(t:{taskType}{status:'new'}) delete t")
+    void deleteOldSalesCall(@Param('customerId') Long customerId, @Param('taskType') String type)
+
 
 }
 
