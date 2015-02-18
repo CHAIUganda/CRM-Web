@@ -180,7 +180,7 @@ class TaskService {
 
 //        ModelFunctions.query(taskRepository,query,countQuery,params,Task)
         //todo hard code pages coz the page query has already been taken care of in the query
-        taskRepository.query(query, countQuery, EMPTY_MAP, PageUtils.create([max:2000]))
+        taskRepository.query(query, countQuery, EMPTY_MAP, PageUtils.create([max: 2000]))
     }
 
     void updateTaskDate(Long taskId, Date date) {
@@ -220,20 +220,6 @@ class TaskService {
         log.trace("exportAllTasks(): [$query]")
 
         neo.query(query.toString(), [:]).collect()
-    }
-
-    def autoGenerateTasks() {
-        customerRepository.findAll().each {
-            def task = generateCustomerDetailingTask(it)
-            if (task) taskRepository.save(task)
-        }
-    }
-
-    def autoGenerateTasks(Territory territory) {
-        customerRepository.findByTerritory(territory.id).each {
-            def task = generateCustomerDetailingTask(it)
-            if (task) taskRepository.save(task)
-        }
     }
 
     Task generateCustomerDetailingTask(Customer customer) {
@@ -333,8 +319,9 @@ class TaskService {
             if (tasks) {
                 log.info "***** Clustering: Territory[$t] Tasks[${tasks.size()}]"
                 messages << "$t(${tasks.size()})"
-                if (clusterTasks)
-                    def cluster = clusterService.assignDueDates(tasks, startDate, workDays, tasksPerDay)
+                if (clusterTasks) {
+                    clusterService.assignDueDates(tasks, startDate, workDays, tasksPerDay)
+                }
 
                 taskRepository.save(tasks)
                 allTasks.addAll(tasks)
@@ -393,7 +380,7 @@ class TaskService {
         def labelName = "_${taskType.simpleName}"
         //start c = node({customerId}) match c-[:CUST_TASK]-(t:{taskType}{status:'new'}) delete t
         def q = start(nodesById('c', customerId.id)).match(node('c').out(CUST_TASK).as('r').node('t').label(labelName).values(value('status', Task.STATUS_NEW)))
-                .delete(identifier('r'),identifier('t'))
+                .delete(identifier('r'), identifier('t'))
         log.trace("Query:deleting old calls: $q")
         taskRepository.query(q, EMPTY_MAP)
     }

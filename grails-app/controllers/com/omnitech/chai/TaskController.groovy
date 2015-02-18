@@ -215,34 +215,10 @@ class TaskController extends BaseController {
             log.error("Error Updating Task Date:", x)
             render([status: HttpStatus.INTERNAL_SERVER_ERROR, text: ChaiUtils.getBestMessage(x)] as JSON)
         }
-
-
     }
 
     def handleException(AccessDeniedException ex) {
         render view: '/login/denied', status: FORBIDDEN
-    }
-
-    def cluster() {
-        clusterService.scheduleDetailerTasks()
-        flash.message = "Done Clustering"
-        redirect(action: 'index')
-    }
-
-    def clusterOrders() {
-        clusterService.scheduleOrders()
-        flash.message = "Done Clustering"
-        redirect(action: 'index')
-    }
-
-    def autoSales() {
-        def territorys = regionService.listAllTerritorys()[0..1]
-        territorys.each {
-            log.debug "generationg tasks for $it"
-            taskService.generateSalesTasks(it)
-        }
-        flash.message = 'Tasks Have Been Generated'
-        redirect action: 'index'
     }
 
     protected void notFound() {

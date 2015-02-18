@@ -16,6 +16,7 @@ import secondstring.PhraseHelper
 import static com.omnitech.chai.model.Relations.SUPERVISES_TERRITORY
 import static com.omnitech.chai.model.Relations.USER_TERRITORY
 import static com.omnitech.chai.util.ChaiUtils.prop
+import static com.omnitech.chai.util.ChaiUtils.prop
 import static com.omnitech.chai.util.ModelFunctions.getOrCreate
 import static fuzzycsv.RecordFx.fn
 import static org.neo4j.cypherdsl.CypherQuery.*
@@ -240,13 +241,13 @@ class RegionService {
     void processRecord(Record record, PhraseHelper fuzzyEngine, List<District> districts) {
 
         def modified = false
-        def territoryName = ChaiUtils.prop(record, 'territory').trim()
+        def territoryName = prop(record, 'territory').trim()
         def territory = getOrCreateTerrioty(territoryName)
         if (territory.id) {
             neo.fetch territory.subCounties
         }
 
-        def commaSeparatedDistrictNames = ChaiUtils.prop(record, 'districts')
+        def commaSeparatedDistrictNames = prop(record, 'districts')
 
         assert commaSeparatedDistrictNames, 'You Should Provide Districts'
 
@@ -264,7 +265,7 @@ class RegionService {
 
             def district = districts.find { it.name == districtName }
 
-            def commaSepSubCounties = ChaiUtils.prop(record, "$unVerifiedDistrict-subCounties", false)
+            def commaSepSubCounties = prop(record, "$unVerifiedDistrict-subCounties", false)
 
 
             if (!commaSepSubCounties) {
