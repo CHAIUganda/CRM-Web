@@ -98,9 +98,17 @@ class ChaiUtils {
             if (weeks) {
                 if (weeks == 1) {
                     days -= (weeks * 7)
-                    return "${weeks.abs()} week${numberEnding weeks} and $days day${numberEnding days}"
+                    def string = "${weeks.abs()} week${numberEnding weeks}"
+                    if(days){
+                        string = "$string and $days day${numberEnding days}"
+                    }
+                    return string
                 }
                 return "${weeks.abs()} week${numberEnding weeks}"
+            }
+//          return "${days.abs()}day(s)${d.hours ? ' ' + d.hours.abs() + 'h' : ''}${d.days < 0 ? ' ago' : ''}"
+            if (d.hours) {
+                return "${days.abs() + (days < 0 ? 0 : 1)} day${numberEnding(days + (days < 0 ? 0 : 1))}"
             }
             return "${days.abs()} day${numberEnding days}"
         }
@@ -115,6 +123,14 @@ class ChaiUtils {
 
         return "now"
 
+    }
+
+    static int dayDiff(Date now, Date then) {
+        return then - now
+    }
+
+    static int dayDiffFomNow(Date then) {
+        return dayDiff(new Date(), then)
     }
 
     @CompileStatic

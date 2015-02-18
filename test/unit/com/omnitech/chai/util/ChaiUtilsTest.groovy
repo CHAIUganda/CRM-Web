@@ -16,10 +16,13 @@ class ChaiUtilsTest extends Specification {
         'now'               | new Date()
         '23 hours'          | new Date() + 1
         '1 day ago'         | new Date() - 1
-        '1 day'             | new Date() + 2
-        '5 days'            | new Date() + 6
+        '2 days ago'         | new Date() - 2
+        '2 days'             | new Date() + 2
+        '6 days'            | new Date() + 6
         '6 days ago'        | new Date() - 6
-        '6 days'            | new Date() + 7
+        '7 days'            | new Date() + 7
+        //todo fix 1  week 1 day
+        '1 week'            | new Date() + 8
         '1 week and 4 days' | new Date() + 12
         '3 weeks'           | new Date() + 28
         '4 weeks'           | new Date() + 30
@@ -42,6 +45,29 @@ class ChaiUtilsTest extends Specification {
         100   | 120   | 100
         200   | 160   | 100
         64    | 58    | 32
+
+    }
+
+    def 'test day diff uses absolute date'() {
+
+        def now = new Date()
+
+        when:
+        def days = ChaiUtils.dayDiff(now, now + 1)
+        then:
+        days == 1
+
+
+
+        when:
+        def atMidnight = new GregorianCalendar()
+        atMidnight.setTime(now + 1)
+        atMidnight.set(Calendar.HOUR_OF_DAY, 0)
+        atMidnight.set(Calendar.MINUTE, 0)
+        days = ChaiUtils.dayDiff(now, atMidnight.time)
+        then:
+        days == 1
+
 
     }
 }

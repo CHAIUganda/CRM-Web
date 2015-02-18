@@ -118,25 +118,25 @@ var omnitech;
             };
             MapContainer.getColor = function (days) {
                 //http://colorbrewer2.org/
-                if (days < -1)
+                if (days <= -1)
                     return '#e41a1c';
-                if (days === -1)
-                    return '#377eb8';
                 if (days === 0)
-                    return '#4daf4a';
+                    return '#377eb8';
                 if (days === 1)
-                    return '#984ea3';
+                    return '#4daf4a';
                 if (days === 2)
-                    return '#ff7f00';
+                    return '#984ea3';
                 if (days === 3)
-                    return '#ffff33';
+                    return '#ff7f00';
                 if (days === 4)
-                    return '#a65628';
+                    return '#ffff33';
                 if (days === 5)
-                    return '#f781bf';
+                    return '#a65628';
                 if (days === 6)
+                    return '#f781bf';
+                if (days === 7)
                     return '#999999';
-                if (days >= 7)
+                if (days > 7)
                     return '#000000';
             };
             MapContainer.prototype.centerTask = function (t) {

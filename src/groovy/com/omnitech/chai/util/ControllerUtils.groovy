@@ -2,7 +2,6 @@ package com.omnitech.chai.util
 
 import com.omnitech.chai.model.Customer
 import com.omnitech.chai.model.Task
-import groovy.time.TimeCategory
 
 /**
  * Created by kay on 12/28/2014.
@@ -19,7 +18,7 @@ class ControllerUtils {
         map.description = "$task.description - (${ChaiUtils.fromNow(task.dueDate)})"
         if (task.dueDate) {
             //used in the js to get the icon color
-            map.dueDays = TimeCategory.minus(task.dueDate, new Date()).days
+            map.dueDays = ChaiUtils.dayDiffFomNow(task.dueDate)
             map.dueDateText = ChaiUtils.formatDate(task.dueDate)
         }
 
