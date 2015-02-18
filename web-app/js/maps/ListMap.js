@@ -77,13 +77,18 @@ var omnitech;
                         _this.showItem(element);
                     }
                     else {
-                        element.marker.setMap(null);
+                        MapContainer.hideItem(element);
                     }
                 });
             };
             MapContainer.prototype.showItem = function (element) {
                 if (element.marker && !element.marker.getMap()) {
                     element.marker.setMap(this.gmap.map);
+                }
+            };
+            MapContainer.hideItem = function (element) {
+                if (element.marker) {
+                    element.marker.setMap(null);
                 }
             };
             MapContainer.prototype.showAll = function () {

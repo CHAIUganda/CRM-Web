@@ -40,7 +40,6 @@ module omnitech.chai {
         }
 
 
-
         private getMarkerOptions(item:Task):GMarkerOptions {
             return {
                 lat: item.lat,
@@ -88,7 +87,7 @@ module omnitech.chai {
                 if (fun(element)) {
                     this.showItem(element);
                 } else {
-                    element.marker.setMap(null);
+                    MapContainer.hideItem(element);
                 }
             });
         }
@@ -96,6 +95,12 @@ module omnitech.chai {
         private showItem(element) {
             if (element.marker && !element.marker.getMap()) {
                 element.marker.setMap(this.gmap.map);
+            }
+        }
+
+        private static hideItem(element) {
+            if (element.marker) {
+                element.marker.setMap(null);
             }
         }
 
