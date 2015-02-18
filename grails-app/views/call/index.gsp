@@ -56,14 +56,13 @@
 
                 <td>
 
-
-
                     <g:link action="show" id="${taskInstance.id}">
                         ${(params.offset ? (params.offset as Long) + 1 : 1) + i}.
-                        <g:if test="${taskInstance?.respondsTo('takenBy') && taskInstance?.takenBy}">
-                            <i class="glyphicon glyphicon-star"></i>
-                        </g:if>
                         ${fieldValue(bean: taskInstance, field: "description")}
+                        %{--<g:if test="${taskInstance?.hasProperty('takenBy') && taskInstance?.takenBy}">--}%
+                            %{--<g:link controller="user" action="show" id="${taskInstance.takenBy.id}"><i--}%
+                                    %{--class="glyphicon glyphicon-user"></i>from ${taskInstance.takenBy}</g:link>--}%
+                        %{--</g:if>--}%
                     </g:link>
                 </td>
 

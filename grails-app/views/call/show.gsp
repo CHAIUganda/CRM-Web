@@ -35,7 +35,7 @@
 
         </tr>
 
-        <g:if test="${taskInstance?.respondsTo('takenBy') && taskInstance?.takenBy}">
+        <g:if test="${taskInstance?.hasProperty('takenBy') && taskInstance?.takenBy}">
             <tr class="prop">
                 <td valign="top" class="name">Order Taken By</td>
 
