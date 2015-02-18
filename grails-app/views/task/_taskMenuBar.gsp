@@ -28,7 +28,7 @@
                 <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
                     <g:each in="${users}" var="u">
                         <li><g:link action="${params.action == 'map' ? 'map' : 'index'}"
-                                    params="${[user: u, status: params.status,max:2000]}">
+                                    params="${[user: u, status: params.status,max:(params.status == Task.STATUS_NEW || params.status == null ? 2000 : 50)]}">
                             <i class="glyphicon glyphicon-user"></i>${u} in ${u.territory}
                         </g:link></li>
                     </g:each>

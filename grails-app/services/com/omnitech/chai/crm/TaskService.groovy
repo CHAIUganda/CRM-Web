@@ -178,7 +178,9 @@ class TaskService {
         query = PageUtils.addSorting(query, params, taskType)
         log.trace("Tasks for user: [$query]")
 
-        taskRepository.query(query, countQuery, EMPTY_MAP, PageUtils.create(params))
+//        ModelFunctions.query(taskRepository,query,countQuery,params,Task)
+        //todo hard code pages coz the page query has already been taken care of in the query
+        taskRepository.query(query, countQuery, EMPTY_MAP, PageUtils.create([max:2000]))
     }
 
     void updateTaskDate(Long taskId, Date date) {
