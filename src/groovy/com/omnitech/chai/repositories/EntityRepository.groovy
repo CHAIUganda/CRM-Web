@@ -114,8 +114,8 @@ limit {limit}""")
             @Param('limit') Integer limit)
 
 
-
 }
+
 @QueryResult
 @CompileStatic
 class CustomerWithLastTaskDate {
@@ -136,6 +136,9 @@ interface TerritoryRepository extends GraphRepository<Territory> {
     Territory findByUuid(String uuid)
 
     Territory findByName(String name)
+
+    @Query('match (t:Territory{type:{type}}) return t')
+    Iterable<Territory> findAllByType(@Param('type') String type)
 }
 
 interface TaskRepository extends GraphRepository<Task>, CypherDslRepository<Task> {

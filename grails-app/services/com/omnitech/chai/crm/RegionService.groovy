@@ -326,6 +326,8 @@ class RegionService {
         PhraseHelper.train(district.subCounties.collect { it.name })
     }.memoizeBetween(0, 100)
 
-
+    List<Territory> findAllTerritoriesByType(String s) {
+        territoryRepository.findAllByType(s).collect()
+    }
 }
 

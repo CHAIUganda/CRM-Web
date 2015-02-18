@@ -15,7 +15,7 @@ class SalesCall extends Task {
     def beforeSave() {
         super.beforeSave()
         if (!description && getClass() == SalesCall) {
-            description = "Call [$customer.outletName]"
+            description = "Visit [$customer.outletName]"
         }
     }
 }
