@@ -24,6 +24,8 @@
 				
 			</tr>
 
+        <c:renderProperty label="Type" value="${territoryInstance?.type}"/>
+
         <g:if test="${territoryInstance?.supervisor}">
             <tr class="prop">
                 <td valign="top" class="name"><g:message code="territory.supervisor.label" default="Supervisor" /></td>

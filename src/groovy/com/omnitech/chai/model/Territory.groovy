@@ -16,9 +16,14 @@ import javax.validation.constraints.NotNull
 @Validateable
 class Territory extends AbstractEntity {
 
+    final static String TYPE_SALES= 'sales'
+    final static String TYPE_DETAILING= 'detailing'
+
     @NotNull
     @Indexed(unique = true)
     String name
+
+    String type
 
     @RelatedTo(type = Relations.SC_IN_TERRITORY, direction = Direction.INCOMING)
     Set<SubCounty> subCounties
