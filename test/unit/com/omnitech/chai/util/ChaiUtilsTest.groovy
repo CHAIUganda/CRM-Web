@@ -12,26 +12,26 @@ class ChaiUtilsTest extends Specification {
         str == ChaiUtils.fromNow(dateFromNow)
 
         where:
-        str                 | dateFromNow
-        'now'               | new Date()
-        '23 hours'          | new Date() + 1
-        '1 day ago'         | new Date() - 1
-        '2 days ago'         | new Date() - 2
-        '2 days'             | new Date() + 2
-        '6 days'            | new Date() + 6
-        '6 days ago'        | new Date() - 6
-        '7 days'            | new Date() + 7
+        str          | dateFromNow
+        'now'        | new Date()
+        '23 hours'   | new Date() + 1
+        '1 day ago'  | new Date() - 1
+        '2 days ago' | new Date() - 2
+        '2 days'     | new Date() + 2
+        '6 days'     | new Date() + 6
+        '6 days ago' | new Date() - 6
+        '7 days'     | new Date() + 7
         //todo fix 1  week 1 day
-        '1 week'            | new Date() + 8
+        '1 week' | new Date() + 8
         '1 week and 4 days' | new Date() + 12
-        '3 weeks'           | new Date() + 28
-        '4 weeks'           | new Date() + 30
-        '1 month'           | new Date() + 40
-        '2 months'          | new Date() + 50
-        '1 year'            | new Date() + 368
-        '1 year'            | new Date() + 400
-        '2 years'           | new Date() + 690
-        '2 years ago'       | new Date() - 690
+        '3 weeks' | new Date() + 28
+        '4 weeks' | new Date() + 30
+        '1 month' | new Date() + 40
+        '2 months' | new Date() + 50
+        '1 year' | new Date() + 368
+        '1 year' | new Date() + 400
+        '2 years' | new Date() + 690
+        '2 years ago' | new Date() - 690
 
     }
 
@@ -45,6 +45,19 @@ class ChaiUtilsTest extends Specification {
         100   | 120   | 100
         200   | 160   | 100
         64    | 58    | 32
+        2     | 1.6d  | 1
+
+    }
+
+    def 'test round up'() {
+        expect:
+        round == ChaiUtils.roundUpward(value, nearest)
+        where:
+        round | value | nearest
+        100   | 20    | 100
+        0     | 0     | 100
+        200   | 120   | 100
+        2     | 1.2d  | 1
 
     }
 

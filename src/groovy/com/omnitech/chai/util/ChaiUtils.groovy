@@ -99,7 +99,7 @@ class ChaiUtils {
                 if (weeks == 1) {
                     days -= (weeks * 7)
                     def string = "${weeks.abs()} week${numberEnding weeks}"
-                    if(days){
+                    if (days) {
                         string = "$string and $days day${numberEnding days}"
                     }
                     return string
@@ -137,6 +137,12 @@ class ChaiUtils {
     static long roundToNearest(double value, long nearest) {
         double newValue = value + (nearest / 2)
         return ((long) (newValue) / nearest) * nearest
+    }
+
+    @CompileStatic
+    static long roundUpward(double value, long nearest) {
+        if (value % nearest == 0) return value
+        return value + (nearest - (long) (value % nearest))
     }
 
     static String splitCamelCase(String s) {
