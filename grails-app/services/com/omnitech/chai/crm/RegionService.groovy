@@ -209,7 +209,7 @@ class RegionService {
             territory.subCounties = new HashSet<SubCounty>()
         }
 
-        territory.subCounties.removeAll { territory.subCounties.findAll { it.district?.id == districtId } }
+        territory.subCounties.removeAll ( territory.subCounties.findAll { it.district?.id == districtId } )
         territory.subCounties.addAll(scToBeMapped)
         territoryRepository.save(territory)
     }
