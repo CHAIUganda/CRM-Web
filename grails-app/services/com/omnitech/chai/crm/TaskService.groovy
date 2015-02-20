@@ -318,11 +318,12 @@ class TaskService {
 
             if (tasks) {
                 log.info "***** Clustering: Territory[$t] Tasks[${tasks.size()}]"
-                messages << "$t(${tasks.size()})"
+//                messages << "$t(${tasks.size()})"
                 if (clusterTasks) {
-                    clusterService.assignDueDates(tasks, startDate, workDays, tasksPerDay)
+                    def clusters = clusterService.assignDueDates(tasks, startDate, workDays, tasksPerDay)
+                    tasks = clusters.collect { it.points.collect { it.task } }.flatten()
                 }
-
+                messages << "$t(${tasks.size()})"
                 taskRepository.save(tasks)
                 allTasks.addAll(tasks)
             } else {

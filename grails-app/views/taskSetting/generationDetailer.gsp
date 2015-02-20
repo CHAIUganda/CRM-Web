@@ -30,14 +30,16 @@
                                            value="${params.avgTasksPerDay ?: 8}" required="true"/></div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" style="display: none;">
             <label for="startDate" class="col-md-2 control-label">Start Date</label>
 
-            <div class="col-md-5"><bs:datePicker class="form-control" name="startDate"
-                                                 value="${params.startDate ? Date.parse('yyyy-MM-dd', params.startDate) : new Date()}"/></div>
+            %{--<div class="col-md-5"><bs:datePicker class="form-control" name="startDate"--}%
+                                                 %{--value="${params.startDate ? Date.parse('yyyy-MM-dd', params.startDate) : new Date()}"/></div>--}%
+            <div class="col-md-5 "><bs:datePicker class="form-control" name="startDate"
+                                                 value="${new Date()}"/></div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" style="display: none;">
             <label class="col-md-2 control-label">Segment Tasks Per Territory</label>
 
             <div class="col-md-10">
@@ -47,11 +49,14 @@
                         <div class="input-group">
                             <span class="input-group-addon" style="padding: 0 0;">
                                 <label>
-                                    ${s}:<g:checkBox type="checkbox" name="segments.${s.id}_all" checked="${params."segments.${s.id}_all" == 'on'}"/>  All
+                                    %{--${s}:<g:checkBox type="checkbox" name="segments.${s.id}_all" checked="${params."segments.${s.id}_all" == 'on'}"/>  All--}%
+                                    ${s}:<g:hiddenField type="checkbox" name="segments.${s.id}_all" checked="${true}"/>  All
                                 </label>
                             </span>
+                            %{--<g:field name="segments.${s.id}" type="number"--}%
+                                     %{--value="${params."segments.$s.id" ?: 10}" class="form-control"/>--}%
                             <g:field name="segments.${s.id}" type="number"
-                                     value="${params."segments.$s.id" ?: 10}" class="form-control"/>
+                                     value="${2000}" class="form-control"/>
 
                         </div>
                     </div>

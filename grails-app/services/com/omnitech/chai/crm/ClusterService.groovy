@@ -10,7 +10,9 @@ import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.data.neo4j.transaction.Neo4jTransactional
 
 import static com.omnitech.chai.util.ChaiUtils.getNextWorkDay
+import static com.omnitech.chai.util.ChaiUtils.nextDayOfWeek
 import static java.util.Calendar.*
+import static java.util.Calendar.MONDAY
 
 /**
  * Created by kay on 12/19/2014.
@@ -78,11 +80,23 @@ class ClusterService {
     }
 
 
-    static assignDueDateToClusters(List<CentroidCluster<LocatableTask>> clusters, Date startDate, List<Integer> workDays) {
+    static List<CentroidCluster<LocatableTask>> assignDueDateToClusters(List<CentroidCluster<LocatableTask>> clusters, Date startDate, List<Integer> workDays, boolean flowIntoNextWeek = true) {
+
         def nextDate = startDate
+
+        def now = new Date()[DAY_OF_WEEK]
+        def nextMonday = nextDayOfWeek(MONDAY).time
+
+        def assignedClusters = []
+
         for (CentroidCluster<LocatableTask> entry in clusters) {
 
             nextDate = getNextWorkDay(workDays, nextDate)
+
+            if (!flowIntoNextWeek && (nextMonday - nextDate) <= 0) {
+                break;
+            }
+
 
 
             entry.getPoints().each { locatableTask ->
@@ -90,9 +104,12 @@ class ClusterService {
                 locatableTask.task.setDueDate(nextDate)
             }
 
+            assignedClusters << entry
             nextDate = ++nextDate
 
         }
+
+        return assignedClusters
     }
 
 
@@ -115,8 +132,8 @@ class ClusterService {
             return dis
         }
 
-        assignDueDateToClusters(clusters, startDate, allowedDays)
-        return clusters
+        def assignedClusters = assignDueDateToClusters(clusters, startDate, allowedDays, false)
+        return assignedClusters
     }
 
 

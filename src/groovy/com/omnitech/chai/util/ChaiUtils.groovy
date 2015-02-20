@@ -11,6 +11,7 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 
 import static java.util.Calendar.DAY_OF_WEEK
+import static java.util.Calendar.DAY_OF_WEEK
 
 /**
  * Created by kay on 9/29/14.
@@ -161,6 +162,17 @@ class ChaiUtils {
             startDate = ++startDate
         }
         return startDate
+    }
+
+    @CompileStatic
+    public static Calendar nextDayOfWeek(int dow) {
+        Calendar date = Calendar.getInstance();
+        int diff = dow - date.get(DAY_OF_WEEK);
+        if (!(diff > 0)) {
+            diff += 7;
+        }
+        date.add(Calendar.DAY_OF_MONTH, diff);
+        return date;
     }
 
     static String getBestMessage(Throwable x) {
