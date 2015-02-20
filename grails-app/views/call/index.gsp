@@ -23,12 +23,12 @@
             <g:sortableColumn property="description" params="${params}"
                               title="${message(code: 'task.description.label', default: 'Description')}"/>
 
-            <g:if test="${params.controller == 'call'}">
+            <g:if test="${params.controller == 'order'}">
                 <g:sortableColumn property="dateCreated" params="${params}"
-                                  title="${message(code: 'task.dateCreated.label', default: 'Date Created')}"/>
+                                  title="${message(code: 'task.dateCreated.label', default: 'Date Uploaded')}"/>
             </g:if>
 
-            <g:if test="${params.status == Task.STATUS_COMPLETE || params.controller == 'sale'}">
+            <g:if test="${params.status == Task.STATUS_COMPLETE || params.controller == 'visit'}">
                 <g:sortableColumn property="completionDate" params="${params}"
                                   title="${message(code: 'task.completion.label', default: 'Completion Date')}"/>
 
@@ -66,12 +66,12 @@
                     </g:link>
                 </td>
 
-                <g:if test="${params.controller == 'call'}">
+                <g:if test="${params.controller == 'order'}">
                     <td><g:formatDate date="${taskInstance.dateCreated}" format="dd-MMM-yyyy"/></td>
                 </g:if>
 
                 <td>
-                    <g:if test="${params.status == Task.STATUS_COMPLETE || params.controller == 'sale'}">
+                    <g:if test="${params.status == Task.STATUS_COMPLETE || params.controller == 'visit'}">
                         <g:formatDate date="${taskInstance.completionDate}" format="dd-MMM-yyyy"/>
                     </g:if>
                     <g:else>

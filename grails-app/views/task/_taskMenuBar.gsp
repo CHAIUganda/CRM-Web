@@ -13,7 +13,7 @@
             </li>
 
         %{-- CREATE MENU --}%
-            <g:if test="${params.controller != 'sale' && params.controller != 'detailerTask'}">
+            <g:if test="${params.controller != 'visit' && params.controller != 'detailerTask'}">
                 <li class="${params.action == "create" ? 'active' : ''}">
                     <g:link action="create"><i class="glyphicon glyphicon-plus"></i> <g:message code="default.new.label"
                                                                                                 args="[entityName]"/></g:link>
@@ -36,7 +36,7 @@
             </li>
 
         %{-- COMPLETE OR NEW MENUS --}%
-            <g:if test="${['detailerTask', 'call', 'task'].contains(params.controller)}">
+            <g:if test="${['detailerTask', 'order', 'task'].contains(params.controller)}">
                 <li>
                     <a data-toggle="dropdown" href="#"><i
                             class="glyphicon glyphicon-filter"></i>

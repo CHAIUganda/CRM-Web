@@ -45,4 +45,9 @@ class SaleController extends TaskController {
         super.delete()
     }
 
+
+    def beforeInterceptor = {
+       params.controller = 'visit'
+    }
+
 }

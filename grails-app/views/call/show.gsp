@@ -5,6 +5,8 @@
 <head>
     <meta name="layout" content="kickstart"/>
     <g:set var="entityName" value="${message(code: 'task.label', default: 'Task')}"/>
+    <g:set var="noedit_menu" value="${true}" scope="request"/>
+    <g:set var="nocreate_menu" value="${true}" scope="request"/>
     <title><g:message code="default.show.label" args="[entityName]"/></title>
 </head>
 

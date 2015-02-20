@@ -48,10 +48,10 @@
                     </li>
                     <li>
                         <sec2:link controller="call" action="index"
-                                   params="${[status: Task.STATUS_NEW]}">Calls</sec2:link>
+                                   params="${[status: Task.STATUS_NEW]}">Orders</sec2:link>
                     </li>
                     <li>
-                        <sec2:link controller="sale" action="index">Sales</sec2:link>
+                        <sec2:link controller="sale" action="index">Visits</sec2:link>
                     </li>
                     <li>
                         <sec2:link controller="taskSetting"
