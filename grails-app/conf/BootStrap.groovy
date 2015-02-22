@@ -140,8 +140,8 @@ class BootStrap {
                 '/taskSetting/generateDetailerTasks': [DETAILING_SUPERVISOR_ROLE_NAME],
 
                 //sales
-                '/taskSetting/generationOrder'      : [SALES_SUPERVISOR_ROLE_NAME],
-                '/taskSetting/generateOrderTasks'   : [SALES_SUPERVISOR_ROLE_NAME],
+//                '/taskSetting/generationOrder'      : [SALES_SUPERVISOR_ROLE_NAME],
+//                '/taskSetting/generateOrderTasks'   : [SALES_SUPERVISOR_ROLE_NAME],
 
                 //Reports
                 '/report/index'                     : [SALES_SUPERVISOR_ROLE_NAME],
