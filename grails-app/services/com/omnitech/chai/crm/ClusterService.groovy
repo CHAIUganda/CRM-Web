@@ -82,30 +82,29 @@ class ClusterService {
 
     static List<CentroidCluster<LocatableTask>> assignDueDateToClusters(List<CentroidCluster<LocatableTask>> clusters, Date startDate, List<Integer> workDays, boolean flowIntoNextWeek = true) {
 
-        def nextDate = startDate
+        def nextAvailableDate = startDate
 
-        def now = new Date()[DAY_OF_WEEK]
-        def nextMonday = nextDayOfWeek(MONDAY).time
+        def nextMonday = nextDayOfWeek(startDate,MONDAY).time
 
         def assignedClusters = []
 
         for (CentroidCluster<LocatableTask> entry in clusters) {
 
-            nextDate = getNextWorkDay(workDays, nextDate)
+            nextAvailableDate = getNextWorkDay(workDays, nextAvailableDate)
 
-            if (!flowIntoNextWeek && (nextMonday - nextDate) <= 0) {
+            if (!flowIntoNextWeek && (nextMonday - nextAvailableDate) <= 0  ) {
                 break;
             }
 
 
 
             entry.getPoints().each { locatableTask ->
-                println("Setting next date: $nextDate - [$locatableTask.task.description]")
-                locatableTask.task.setDueDate(nextDate)
+                log.trace("Setting next date: $nextAvailableDate - [$locatableTask.task.description]")
+                locatableTask.task.setDueDate(nextAvailableDate)
             }
 
             assignedClusters << entry
-            nextDate = ++nextDate
+            nextAvailableDate = ++nextAvailableDate
 
         }
 
