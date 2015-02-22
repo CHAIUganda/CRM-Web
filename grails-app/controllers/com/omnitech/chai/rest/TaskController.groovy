@@ -1,14 +1,11 @@
 package com.omnitech.chai.rest
 
-import com.omnitech.chai.model.DetailerTask
-import com.omnitech.chai.model.Order
-import com.omnitech.chai.model.SalesCall
-import com.omnitech.chai.model.Task
-import com.omnitech.chai.model.User
+import com.omnitech.chai.model.*
 import com.omnitech.chai.util.ChaiUtils
 import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.ReflectFunctions
 import grails.converters.JSON
+import org.spockframework.util.Assert
 import org.springframework.http.HttpStatus
 
 import static com.omnitech.chai.model.Role.DETAILER_ROLE_NAME
@@ -102,7 +99,21 @@ class TaskController {
     }
 
     private void doOrderUpdate(User user) {
+        def json = request.JSON as Map
+        Assert.notNull json.uuid, 'Please set the order uuid'
+        def uuid = json.uuid as String
+        def task = taskService.findTask(uuid)
 
+        if (!task) {
+            render ([status: HttpStatus.OK.reasonPhrase, message: 'Success'] as JSON)
+        }
+
+        if (json.status == Task.STATUS_CANCELLED) {
+            task.cancelledBy(user)
+            taskService.saveTask(task)
+        }
+
+        render ([status: HttpStatus.OK.reasonPhrase, message: 'Success'] as JSON)
     }
 
     private def renderError(String error, HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR) {

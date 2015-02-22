@@ -1,9 +1,12 @@
 package com.omnitech.chai.model
 
+import com.omnitech.chai.crm.TxHelperService
 import com.omnitech.chai.util.ChaiUtils
+import grails.util.Holders
 import grails.validation.Validateable
 import org.neo4j.graphdb.Direction
 import org.springframework.data.neo4j.annotation.*
+import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.data.neo4j.support.index.IndexType
 
 /**
@@ -18,7 +21,6 @@ class Task extends AbstractEntity {
     String description
     protected String type = Task.simpleName
     String status = STATUS_NEW
-
 
     //String origin of the task.. can be system or user generated
     String origin = 'system'
@@ -41,6 +43,10 @@ class Task extends AbstractEntity {
     User completedBy
 
     @Fetch
+    @RelatedTo(type = Relations.CANCELED_TASK, direction = Direction.INCOMING)
+    User canceledBy
+
+    @Fetch
     @RelatedTo(type = Relations.CUST_TASK, direction = Direction.INCOMING)
     Customer customer
     Float lat
@@ -52,6 +58,12 @@ class Task extends AbstractEntity {
         status = STATUS_COMPLETE
         this.@assignedTo == null
         this.@completedBy = user
+        this.completionDate = new Date()
+        return this
+    }
+    Task cancelledBy(User user) {
+        status = STATUS_CANCELLED
+        this.@canceledBy = user
         this.completionDate = new Date()
         return this
     }
@@ -76,9 +88,14 @@ class Task extends AbstractEntity {
 
     boolean isComplete() { status == STATUS_COMPLETE }
 
+    boolean isCancelled() { status == STATUS_CANCELLED }
+
     String getStatusMessage() {
         if (isComplete()) {
             return "Completed: ${ChaiUtils.fromNow(completionDate)}"
+        }
+        if (isCancelled()) {
+            return "Canceled: ${ChaiUtils.fromNow(completionDate)}"
         }
         return "Due: ${ChaiUtils.fromNow(dueDate)}"
     }
@@ -102,7 +119,12 @@ class Task extends AbstractEntity {
     }
 
     Set<User> loadTerritoryUsers() {
-        this.customer?.subCounty?.territory?.collect { it.territoryUsers }?.flatten() as Set
+        Neo4jTemplate neo = Holders.applicationContext.getBean(Neo4jTemplate)
+        TxHelperService tx = Holders.applicationContext.getBean(TxHelperService)
+        this.customer?.subCounty?.territory?.collect { t ->
+            tx.doInTransaction { neo.fetch(t?.territoryUsers) }
+            return t?.territoryUsers
+        }?.flatten() as Set
     }
 
     def territoryUser(String role) {
