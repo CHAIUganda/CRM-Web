@@ -44,7 +44,7 @@ class Task extends AbstractEntity {
 
     @Fetch
     @RelatedTo(type = Relations.CANCELED_TASK, direction = Direction.INCOMING)
-    User canceledBy
+    User cancelledBy
 
     @Fetch
     @RelatedTo(type = Relations.CUST_TASK, direction = Direction.INCOMING)
@@ -63,7 +63,7 @@ class Task extends AbstractEntity {
     }
     Task cancelledBy(User user) {
         status = STATUS_CANCELLED
-        this.@canceledBy = user
+        this.@cancelledBy = user
         this.completionDate = new Date()
         return this
     }
@@ -121,8 +121,11 @@ class Task extends AbstractEntity {
     Set<User> loadTerritoryUsers() {
         Neo4jTemplate neo = Holders.applicationContext.getBean(Neo4jTemplate)
         TxHelperService tx = Holders.applicationContext.getBean(TxHelperService)
+        tx.doInTransaction {
+            neo.fetch(this.customer?.subCounty?.territory)
+        }
         this.customer?.subCounty?.territory?.collect { t ->
-            tx.doInTransaction { neo.fetch(t?.territoryUsers) }
+            neo.fetch(t?.territoryUsers)
             return t?.territoryUsers
         }?.flatten() as Set
     }

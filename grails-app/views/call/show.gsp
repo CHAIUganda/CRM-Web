@@ -50,6 +50,19 @@
             </tr>
         </g:if>
 
+        <g:if test="${taskInstance?.cancelledBy}" >
+            <tr class="prop">
+                <td valign="top" class="name">Cancelled By</td>
+
+                <td valign="top" class="value">
+                    <g:link controller="user" action="show" id="${taskInstance.cancelledBy.id}">
+                        <i class="glyphicon glyphicon-user"></i>  ${taskInstance.cancelledBy}
+                    </g:link>
+                </td>
+
+            </tr>
+        </g:if>
+
         <tr class="prop">
             <td valign="top" class="name">Customer</td>
 

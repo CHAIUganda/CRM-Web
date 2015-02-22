@@ -265,7 +265,11 @@ class TaskService {
         neoTask.lat = detailerTask.lat
         neoTask.lng = detailerTask.lng
 
-        neoTask.completedBy(neoSecurityService.currentUser)
+        if (neoTask.isComplete())
+            neoTask.completedBy(neoSecurityService.currentUser)
+        else
+            neoTask.cancelledBy(neoSecurityService.currentUser)
+
 
         saveTask(neoTask)
     }
