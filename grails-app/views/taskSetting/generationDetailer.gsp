@@ -30,13 +30,13 @@
                                            value="${params.avgTasksPerDay ?: 8}" required="true"/></div>
         </div>
 
-        <div class="form-group" style="display: none;">
+        <div class="form-group">
             <label for="startDate" class="col-md-2 control-label">Start Date</label>
 
-            %{--<div class="col-md-5"><bs:datePicker class="form-control" name="startDate"--}%
-                                                 %{--value="${params.startDate ? Date.parse('yyyy-MM-dd', params.startDate) : new Date()}"/></div>--}%
-            <div class="col-md-5 "><bs:datePicker class="form-control" name="startDate"
-                                                 value="${new Date()}"/></div>
+            <div class="col-md-5"><bs:datePicker class="form-control" name="startDate"
+                                                 value="${params.startDate ? Date.parse('yyyy-MM-dd', params.startDate) : new Date()}"/></div>
+            %{--<div class="col-md-5 "><bs:datePicker class="form-control" name="startDate"--}%
+                                                 %{--value="${new Date()}"/></div>--}%
         </div>
 
         <div class="form-group" style="display: none;">
