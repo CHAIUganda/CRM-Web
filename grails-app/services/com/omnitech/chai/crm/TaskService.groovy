@@ -158,7 +158,21 @@ class TaskService {
 
     def <T extends Task> T saveTask(T task) { ModelFunctions.saveGenericEntity(neo, task) }
 
-    void deleteTask(Long id) { taskRepository.delete(id) }
+    void deleteTask(Long id) {
+        taskRepository.delete(id)
+    }
+
+    List<Task> deleteTasks(Long[] ids) {
+        List<Task> deleted = []
+        ids.each { id ->
+            def one = taskRepository.findOne(id)
+            if(one){
+                taskRepository.delete(id)
+                deleted << one
+            }
+        }
+        return deleted
+    }
 
     def <T extends Task> Page<T> searchTasks(String search, Map params, Class<T> taskType) {
         def (ReturnNext q, ReturnNext cq) = TaskQuery.filterAllTasksQuery(search, taskType)

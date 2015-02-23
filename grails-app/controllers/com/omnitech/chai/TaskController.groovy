@@ -142,6 +142,17 @@ class TaskController extends BaseController {
         render view: otherParams.view, model: model
     }
 
+    protected def deleteAll(Map otherParams) {
+        def taskIds = extractTaskIds().collect {it as Long}
+        def deleted = taskService.deleteTasks(taskIds as Long[])
+        flash.message ="Deleted ${deleted.size()} Task(s)"
+        redirect action: 'index'
+    }
+
+    private List<String> extractTaskIds() {
+        return params.taskIds instanceof String ? [params.taskIds] : params.taskIds as List<String>
+    }
+
     protected def save(Task taskInstance) {
         if (taskInstance == null) {
             notFound()

@@ -56,4 +56,8 @@ class DetailerTaskController extends TaskController {
         super.edit view: '/task/create'
     }
 
+    def deleteAll() {
+        super.deleteAll()
+    }
+
 }
