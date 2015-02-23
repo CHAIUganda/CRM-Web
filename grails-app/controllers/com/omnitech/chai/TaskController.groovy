@@ -108,7 +108,7 @@ class TaskController extends BaseController {
         def searchTerm = ModelFunctions.getWildCardRegex(params.id as String)
         def (page, users) = taskService.loadPageDataForUser(user, taskType, params, max, searchTerm)
         assert otherParams.view, 'View not specified in action'
-        render view: otherParams.view, model: [taskInstanceList: page, taskInstanceCount: page.totalElements, users: users,taskRole: otherParams.taskRole]
+        render view: otherParams.view, model: [taskInstanceList: page, taskInstanceCount: page.totalElements, users: users, taskRole: otherParams.taskRole]
     }
 
     protected def searchMap(Integer max, Class taskType, Map otherParams) {
@@ -131,8 +131,15 @@ class TaskController extends BaseController {
         txHelperService.doInTransaction {
             neo.fetch(task?.loadTerritoryUsers())
         }
+
+
+
         assert otherParams.view, 'View not specified in action'
-        render view: otherParams.view, model: [taskInstance: task,taskRole: otherParams.taskRole]
+        def model = [taskInstance: task, taskRole: otherParams.taskRole]
+        if (otherParams.viewParams instanceof Map) {
+            model.putAll(otherParams.viewParams)
+        }
+        render view: otherParams.view, model: model
     }
 
     protected def save(Task taskInstance) {

@@ -42,7 +42,7 @@ class CallController extends TaskController {
     }
 
     def show() {
-        super.show view: 'show', taskRole: SALES_ROLE_NAME
+        super.show view: 'show', taskRole: SALES_ROLE_NAME, viewParams: [noedit_menu: false]
     }
 
     def create() {

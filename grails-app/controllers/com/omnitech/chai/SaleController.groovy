@@ -34,7 +34,7 @@ class SaleController extends TaskController {
     }
 
     def show() {
-        super.show view: '/call/show', taskRole: SALES_ROLE_NAME
+        super.show view: '/call/show', taskRole: SALES_ROLE_NAME, viewParams: [noedit_menu: true]
     }
 
     def handleException(AccessDeniedException ex) {
@@ -47,7 +47,7 @@ class SaleController extends TaskController {
 
 
     def beforeInterceptor = {
-       params.controller = 'visit'
+        params.controller = 'visit'
     }
 
 }
