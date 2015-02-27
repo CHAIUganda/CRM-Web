@@ -33,7 +33,7 @@ class Territory extends AbstractEntity {
 
     @Fetch
     @RelatedTo(type = Relations.SUPERVISES_TERRITORY, direction = Direction.INCOMING)
-    User supervisor
+    Set<User> supervisor
 
     static constraints = {
         name blank: false

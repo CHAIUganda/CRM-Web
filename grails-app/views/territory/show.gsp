@@ -14,26 +14,31 @@
 
 	<table class="table">
 		<tbody>
-		
 
-		
+
+
 			<tr class="prop">
 				<td valign="top" class="name"><g:message code="territory.name.label" default="Name" /></td>
-				
+
 				<td valign="top" class="value">${fieldValue(bean: territoryInstance, field: "name")}</td>
-				
+
 			</tr>
 
         <c:renderProperty label="Type" value="${territoryInstance?.type}"/>
 
         <g:if test="${territoryInstance?.supervisor}">
             <tr class="prop">
-                <td valign="top" class="name"><g:message code="territory.supervisor.label" default="Supervisor" /></td>
+                <td valign="top" class="name"><g:message code="territory.supervisor.label" default="Supervisors" /></td>
 
                 <td valign="top" class="value">
-                    <g:link controller="user" action="show" id="${territoryInstance?.supervisor?.id}">
-                        <i class="glyphicon glyphicon-user"></i>${territoryInstance?.supervisor}
-                    </g:link>
+                    <g:each in="${territoryInstance?.supervisor}" var="s">
+                        <div class="col-md-2">
+                        <g:link controller="user" action="show" id="${s?.id}">
+                            <i class="glyphicon glyphicon-user"></i>${s}
+                        </g:link>
+                        </div>
+                    </g:each>
+
                 </td>
 
             </tr>

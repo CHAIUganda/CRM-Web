@@ -164,17 +164,19 @@ class UserService {
 
     User mapUserToTerritories(Long userId, List territoryIds) {
 
+        territoryIds = territoryIds.collect {it as Long}
         def user = findUser(userId)
 
-        def territories = territoryIds.collect { territoryRepository.findOne(it as Long) }
-
-        //first delete old references
-        territories.each {
-            it.supervisor = null
-            territoryRepository.save(it)
+        territoryRepository.findAll().each { t ->
+            //first delete old references
+            t.supervisor.removeAll { it.id == userId }
+            if (territoryIds.contains(t.id)) {
+                t.supervisor.add(user)
+            }
+            territoryRepository.save(t)
         }
-        user.supervisedTerritories = new HashSet(territories)
-        saveUser(user)
+
+        return user
     }
 
     Page<User> searchUsers(String search, Map params) {

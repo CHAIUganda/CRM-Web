@@ -95,10 +95,10 @@
         <div class="row">
 
                 <g:each in="${territories}" var="territory" status="i">
-                    <div class="col-md-4  ${userInstance?.id && userInstance?.id == territory.supervisor?.id ? 'alert-info' : ''}">
+                    <div class="col-md-4  ${ territory.supervisor?.id?.contains(userInstance?.id) ? 'alert-info' : ''}">
                         <g:checkBox name="territories" value="${territory.id}"
-                                 checked="${userInstance?.id && userInstance?.id == territory.supervisor?.id}"/>
-                        <label for="territories">${ChaiUtils.truncateString(territory.toString(),35)} ${territory.supervisor ? "<>($territory.supervisor)" : ''}</label>
+                                 checked="${ territory.supervisor?.id?.contains(userInstance?.id)}"/>
+                        <label for="territories">${ChaiUtils.truncateString(territory.toString(),35)}</label>
                     </div>
 
                 </g:each>
