@@ -29,7 +29,6 @@ class DirectSale extends Task implements Sale {
     Set<LineItem> lineItems = new HashSet()
     String comment
 
-    String clientRefId
 
     def beforeSave() {
         super.beforeSave()

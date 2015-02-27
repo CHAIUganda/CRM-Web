@@ -54,6 +54,8 @@ class Task extends AbstractEntity {
     @Indexed(indexType = IndexType.POINT, indexName = 'TASK_LOCATION')
     String wkt
 
+    String clientRefId
+
     Task completedBy(User user) {
         status = STATUS_COMPLETE
         this.@assignedTo == null

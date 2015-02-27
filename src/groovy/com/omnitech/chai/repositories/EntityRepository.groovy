@@ -145,6 +145,8 @@ interface TaskRepository extends GraphRepository<Task>, CypherDslRepository<Task
 
     Task findByUuid(String uuid)
 
+    Task findByClientRefId(String clientRefId)
+
     @Query('start c = node({customerId}) match c -[:CUST_TASK]-> (t) return t order by t.dateCreated desc limit 1')
     Task findLastTask(@Param('customerId') Long customerId)
 

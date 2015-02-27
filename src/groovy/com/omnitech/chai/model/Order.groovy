@@ -28,7 +28,6 @@ class Order extends SalesCall implements HasLineItem {
     @RelatedToVia
     Set<LineItem> lineItems = new HashSet()
     String comment
-    String clientRefId
 
     @Fetch
     @RelatedTo(type = Relations.ORDER_TAKEN_BY)

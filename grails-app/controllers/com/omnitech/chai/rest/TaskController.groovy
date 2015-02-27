@@ -73,6 +73,9 @@ class TaskController {
 
     private void doDetailerUpdate(User user) {
         def json = request.JSON as Map
+        //todo fixme
+        json.clientRefId = json.uuid
+
         println(json.toString())
         def detailerInfo = (json.get('detailers') as List)?.get(0) as Map
         def task = ModelFunctions.createObj(DetailerTask, json)
@@ -90,6 +93,7 @@ class TaskController {
         }
         if (task.isAdhock) {
             assert json.customerId, 'Please make sure you specify your customerId'
+            taskService.assertNotDubplicate(task)
             taskService.completeAdhocDetailTask(task, json.customerId)
         } else {
             taskService.completeDetailTask(task)

@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.data.neo4j.transaction.Neo4jTransactional
 import org.springframework.security.access.AccessDeniedException
+import org.springframework.util.Assert
 
 import static com.omnitech.chai.model.Relations.*
 import static com.omnitech.chai.util.ChaiUtils.getNextWorkDay
@@ -389,6 +390,16 @@ class TaskService {
         orderRepository.findByClientRefId(refId)
     }
 
+    Task findTaskByClientRefId(String refId) {
+        taskRepository.findByClientRefId(refId)
+    }
+
+
+    void assertNotDubplicate(Task task){
+        def t = taskRepository.findByClientRefId(task.clientRefId)
+        Assert.isNull(t,"Task: $t Should Already Exists In the System")
+
+    }
 
     DirectSale findDirectSaleByClientRefId(String refId) {
         directSaleRepository.findByClientRefId(refId)
