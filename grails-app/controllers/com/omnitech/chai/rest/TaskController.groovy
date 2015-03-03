@@ -15,7 +15,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST
 /**
  * Created by kay on 10/29/14.
  */
-class TaskController {
+class TaskController extends BaseRestController {
 
     static namespace = 'rest'
     static responseFormats = ['json', 'xml']
@@ -23,7 +23,6 @@ class TaskController {
 
 
     def taskService
-    def neoSecurityService
 
     def list(Integer max) {
         params.max = Math.min(max ?: 10, 2000)
@@ -86,6 +85,11 @@ class TaskController {
         task.lng = ChaiUtils.execSilently('Converting long to float') { detailerInfo['longitude'] as Float }
         task.lat = ChaiUtils.execSilently('Converting lat to float') { detailerInfo['latitude'] as Float }
         task.uuid = json.uuid
+
+        if(detailerInfo.dateOfSurvey){
+            ChaiUtils.execSilently {task.completionDate = new Date(detailerInfo.dateOfSurvey as Long)}
+        }
+
         if (!task.uuid) {
             response.status = HttpStatus.BAD_REQUEST.value()
             render { [status: HttpStatus.BAD_REQUEST.reasonPhrase, message: "You Did Not Provide The Task ID"] }
@@ -93,10 +97,11 @@ class TaskController {
         }
         if (task.isAdhock) {
             assert json.customerId, 'Please make sure you specify your customerId'
-            taskService.assertNotDubplicate(task)
+            updateCompletionInfo(task)
             taskService.completeAdhocDetailTask(task, json.customerId)
         } else {
-            taskService.completeDetailTask(task)
+            updateCompletionInfo(task)
+            taskService.completeDetailTask(task, json.customerId)
         }
         log.debug("Resp:${user}   - OK")
         render([status: HttpStatus.OK.reasonPhrase, message: 'Success'] as JSON)
@@ -109,7 +114,7 @@ class TaskController {
         def task = taskService.findTask(uuid)
 
         if (!task) {
-            render ([status: HttpStatus.OK.reasonPhrase, message: 'Success'] as JSON)
+            render([status: HttpStatus.OK.reasonPhrase, message: 'Success'] as JSON)
         }
 
         if (json.status == Task.STATUS_CANCELLED) {
@@ -117,7 +122,7 @@ class TaskController {
             taskService.saveTask(task)
         }
 
-        render ([status: HttpStatus.OK.reasonPhrase, message: 'Success'] as JSON)
+        render([status: HttpStatus.OK.reasonPhrase, message: 'Success'] as JSON)
     }
 
     private def renderError(String error, HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR) {

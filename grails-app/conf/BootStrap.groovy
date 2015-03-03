@@ -17,6 +17,7 @@ class BootStrap {
 
 
     def init = { servletContext ->
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT+3:00"))
         ChaiUtils.injectUtilityMethods()
         insertBootStrapData()
         createUuidConstraints()

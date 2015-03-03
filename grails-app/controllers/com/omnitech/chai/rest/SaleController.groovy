@@ -14,14 +14,13 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST
  * SaleController
  * A controller class handles incoming web requests and performs actions such as redirects, rendering views and so on.
  */
-class SaleController {
+class SaleController extends BaseRestController {
 
     static namespace = 'rest'
     static responseFormats = ['json', 'xml']
 //    static allowedMethods = [directSale: "POST", update: "PUT", delete: "DELETE"]
     def productService
     def taskService
-    def neoSecurityService
     def customerService
 
     def directSale() {
@@ -41,7 +40,7 @@ class SaleController {
             sale.lat = ChaiUtils.execSilently('Converting lat to float') { json['latitude'] as Float }
             //explicitly remove the id
             sale.id = null
-            sale.completedBy(neoSecurityService.currentUser)
+            updateCompletionInfo(sale)
             taskService.saveTask(sale)
         }
 
@@ -58,7 +57,7 @@ class SaleController {
 
             def saleOrder = toOrder(json, SaleOrder)
             bindSaleOrderToDbInstance(saleOrder, order)
-            saleOrder.completedBy(neoSecurityService.currentUser)
+            updateCompletionInfo(saleOrder)
             saleOrder.lng = ChaiUtils.execSilently('Converting long to float') { json['longitude'] as Float }
             saleOrder.lat = ChaiUtils.execSilently('Converting lat to float') { json['latitude'] as Float }
             taskService.saveTask(saleOrder)
@@ -154,6 +153,10 @@ class SaleController {
 
         if (map.deliveryDate) {
             ChaiUtils.execSilently { saleOrder.dueDate = new Date(map.deliveryDate as Long) }
+        }
+
+        if (map.orderDate) {
+            ChaiUtils.execSilently { saleOrder.dueDate = new Date(map.orderDate as Long) }
         }
 
         return saleOrder

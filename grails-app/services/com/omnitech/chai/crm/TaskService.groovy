@@ -167,7 +167,7 @@ class TaskService {
         List<Task> deleted = []
         ids.each { id ->
             def one = taskRepository.findOne(id)
-            if(one){
+            if (one) {
                 taskRepository.delete(id)
                 deleted << one
             }
@@ -262,11 +262,14 @@ class TaskService {
      * This updates a given task and if its a basic task it projects it to the required Type.
      * This method also makes sure that other relationships are not modified
      */
-    DetailerTask completeDetailTask(DetailerTask detailerTask) {
+    DetailerTask completeDetailTask(DetailerTask detailerTask, String customerUuid) {
         def neoTask = taskRepository.findByUuid(detailerTask.uuid)
 
         //task could have been deleted
-        if (!neoTask) return null
+        if (!neoTask) {
+            detailerTask.clientRefId = detailerTask.uuid
+            return completeAdhocDetailTask(detailerTask, customerUuid)
+        }
 
         neoTask = neo.projectTo(neoTask, DetailerTask)
         def detailFields = ReflectFunctions.findAllBasicFields(DetailerTask)
@@ -292,6 +295,8 @@ class TaskService {
     DetailerTask completeAdhocDetailTask(DetailerTask detailerTask, String customerUuid) {
 
 
+        assertNotDuplicate(detailerTask)
+
         def customer = customerRepository.findByUuid(customerUuid)
 
         if (!customer) {
@@ -300,9 +305,12 @@ class TaskService {
             return null
         }
 
+        detailerTask.isAdhock = true
         detailerTask.customer = customer
+        detailerTask.description = "Ad hoc Detailing[$customer.outletName]"
 
         detailerTask.completedBy(neoSecurityService.currentUser)
+        detailerTask.denyUuidAlter()
 
         saveTask(detailerTask)
     }
@@ -395,9 +403,9 @@ class TaskService {
     }
 
 
-    void assertNotDubplicate(Task task){
+    void assertNotDuplicate(Task task){
         def t = taskRepository.findByClientRefId(task.clientRefId)
-        Assert.isNull(t,"Task: $t Should Already Exists In the System")
+        Assert.isNull(t, "Task: $t Already Exists In the System")
 
     }
 
