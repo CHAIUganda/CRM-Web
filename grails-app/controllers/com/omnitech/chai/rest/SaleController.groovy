@@ -156,7 +156,7 @@ class SaleController extends BaseRestController {
         }
 
         if (map.orderDate) {
-            ChaiUtils.execSilently { saleOrder.dueDate = new Date(map.orderDate as Long) }
+            ChaiUtils.execSilently { saleOrder.dateCreated = new Date(map.orderDate as Long) }
         }
 
         return saleOrder
