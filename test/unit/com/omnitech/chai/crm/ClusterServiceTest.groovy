@@ -1,11 +1,9 @@
 package com.omnitech.chai.crm
 
-import com.omnitech.chai.model.Customer
-import com.omnitech.chai.model.DetailerTask
-import com.omnitech.chai.model.Task
-import com.omnitech.chai.model.Territory
+import com.omnitech.chai.model.*
 import com.omnitech.chai.repositories.DetailerTaskRepository
 import com.omnitech.chai.repositories.TaskRepository
+import org.apache.commons.math3.ml.clustering.CentroidCluster
 import spock.lang.Specification
 
 /**
@@ -29,7 +27,7 @@ class ClusterServiceTest extends Specification {
         when:
         def clusters = service.clusterAndGeneratesTasks(territory,
                 ClusterService.TASKS_PER_DAY,
-                ClusterService.NUMBER_OF_USERS,DetailerTask)
+                ClusterService.NUMBER_OF_USERS, DetailerTask)
 
         then:
         1 * detailerRepository.findAllInTerritory(4) >> generateDummyTasks()
@@ -58,4 +56,7 @@ class ClusterServiceTest extends Specification {
     Customer customer(x, y) {
         new Customer(wkt: "point($x,$y)", lat: x as float, lng: y as float)
     }
+
 }
+
+
