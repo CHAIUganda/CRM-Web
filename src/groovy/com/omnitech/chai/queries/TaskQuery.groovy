@@ -119,12 +119,14 @@ class TaskQuery {
                 .match(node('sc').in(HAS_SUB_COUNTY).node('d')).optional()
                 .match(node('c').out(CUST_IN_VILLAGE).node('v')).optional()
                 .match(node('c').out(CUST_IN_PARISH).node('p')).optional()
+                .match(node(varName).in(COMPLETED_TASK,CANCELED_TASK).node('u')).optional()
 
         def fields = [az(identifier('d').property('name'), 'DISTRICT'),
                       az(identifier('sc').property('name'), 'SUBCOUNTY'),
                       az(identifier('v').property('name'), 'VILLAGE'),
                       az(identifier('c').property('outletName'), 'OUTLET NAME'),
-                      az(identifier('c').property('outletType'), 'OUTLET TYPE')]
+                      az(identifier('c').property('outletType'), 'OUTLET TYPE'),
+                      az(identifier('u').property('username'), 'CANCELED_OR_COMPLETED BY')]
 
         ReflectFunctions.findAllBasicFields(type).each {
             if (['lastUpdated', 'dateCreated', 'id'].contains(it)) return

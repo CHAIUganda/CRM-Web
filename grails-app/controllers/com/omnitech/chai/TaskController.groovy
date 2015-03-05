@@ -79,16 +79,20 @@ class TaskController extends BaseController {
     protected def export(Class type) {
         def currentUser = neoSecurityService.currentUser
         def user = params.user ? userService.findUserByName(params.user) : null
-        def exportFields = ['DISTRICT', 'SUBCOUNTY', 'VILLAGE', 'OUTLET NAME', 'OUTLET TYPE']
+        def exportFields = ['DISTRICT', 'SUBCOUNTY', 'VILLAGE', 'OUTLET NAME', 'OUTLET TYPE','CANCELED_OR_COMPLETED BY']
         def fields = ReflectFunctions.findAllBasicFields(type).reverse()
         fields.removeAll('lastUpdated', 'dateCreated')
         exportFields.addAll(fields.collect { GrailsNameUtils.getNaturalName(it).toUpperCase() })
         if (user) {
+            if(!taskService.isAllowedToViewUserTasks(user)){
+                notFound()
+                return
+            }
             def data = taskService.exportTasksForUser(user.id, type)
             def csvData = FuzzyCSV.toCSV(data, *exportFields)
             ServletUtil.exportCSV(response, "Tasks-${params.user}.csv", csvData)
         } else if (currentUser.hasRole(Role.ADMIN_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME)) {
-            def data = taskService.exportAllTasks()
+            def data = taskService.exportAllTasks(type)
             def csvData = FuzzyCSV.toCSV(data, *exportFields)
             ServletUtil.exportCSV(response, "Tasks-All.csv", csvData)
         } else {
@@ -209,7 +213,7 @@ class TaskController extends BaseController {
     }
 
 
-    def createTaskJson(Closure<Task> create) {
+    protected def createTaskJson(Closure<Task> create) {
         handleSafely {
             def json = request.JSON as Map
 

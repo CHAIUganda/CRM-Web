@@ -128,7 +128,7 @@ class TaskService {
     }
 
     //todo optimise this with query
-    private boolean isAllowedToViewUserTasks(User otherUser) {
+    boolean isAllowedToViewUserTasks(User otherUser) {
         def currentUser = neoSecurityService.currentUser
 
         if (currentUser.hasRole(Role.SUPER_ADMIN_ROLE_NAME, Role.ADMIN_ROLE_NAME)) {
@@ -209,21 +209,23 @@ class TaskService {
         neo.query(query.toString(), [:]).collect()
     }
 
-    List<Map> exportAllTasks() {
+    List<Map> exportAllTasks(Class type) {
         def query = match(
-                node('task').label(Task.simpleName)
+                node('task').label(type.simpleName)
                         .in(CUST_TASK).node('c')
                         .out(CUST_IN_SC).node('sc')
                         .in(HAS_SUB_COUNTY).node('d'))
                 .match(node('c').out(CUST_IN_VILLAGE).node('v')).optional()
                 .match(node('c').out(CUST_IN_PARISH).node('p')).optional()
+                .match(node('task').in(COMPLETED_TASK,CANCELED_TASK).node('u')).optional()
 
 
         def fields = [az(identifier('d').property('name'), 'DISTRICT'),
                       az(identifier('sc').property('name'), 'SUBCOUNTY'),
                       az(identifier('v').property('name'), 'VILLAGE'),
                       az(identifier('c').property('outletName'), 'OUTLET NAME'),
-                      az(identifier('c').property('outletType'), 'OUTLET TYPE')]
+                      az(identifier('c').property('outletType'), 'OUTLET TYPE'),
+                      az(identifier('u').property('username'), 'CANCELED_OR_COMPLETED BY')]
 
         ReflectFunctions.findAllBasicFields(DetailerTask).each {
             if ('_dateLastUpdated' == it || it == '_dateCreated') return
