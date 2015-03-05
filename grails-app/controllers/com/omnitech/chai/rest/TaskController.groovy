@@ -76,8 +76,17 @@ class TaskController extends BaseRestController {
         json.clientRefId = json.uuid
 
         println(json.toString())
-        def detailerInfo = (json.get('detailers') as List)?.get(0) as Map
         def task = ModelFunctions.createObj(DetailerTask, json)
+
+        if (task.isCancelled()) {
+            updateCompletionInfo(task)
+            taskService.completeDetailTask(task,json.customerId)
+            log.debug("Resp:${user}   - OK")
+            render([status: HttpStatus.OK.reasonPhrase, message: 'Success'] as JSON)
+            return
+        }
+
+        def detailerInfo = (json.get('detailers') as List)?.get(0) as Map
         if (detailerInfo) {
             detailerInfo.remove('id')
             ModelFunctions.bind(task, detailerInfo)
