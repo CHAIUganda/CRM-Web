@@ -15,34 +15,23 @@
 
 	<table class="table">
 		<tbody>
-		
+
+
+		<tr class="prop">
+			<td valign="top" class="name"><g:message code="customerSegment.name.label" default="Name" /></td>
+
+			<td valign="top" class="value">${fieldValue(bean: customerSegmentInstance, field: "name")}</td>
+
+		</tr>
 			<tr class="prop">
 				<td valign="top" class="name"><g:message code="customerSegment.callFrequency.label" default="Call Frequency" /></td>
 				
 				<td valign="top" class="value">${fieldValue(bean: customerSegmentInstance, field: "callFrequency")}</td>
 				
 			</tr>
-		
-			<tr class="prop">
-				<td valign="top" class="name"><g:message code="customerSegment.dateCreated.label" default="Date Created" /></td>
-				
-				<td valign="top" class="value"><g:formatDate date="${customerSegmentInstance?.dateCreated}" /></td>
-				
-			</tr>
-		
-			<tr class="prop">
-				<td valign="top" class="name"><g:message code="customerSegment.lastUpdated.label" default="Last Updated" /></td>
-				
-				<td valign="top" class="value"><g:formatDate date="${customerSegmentInstance?.lastUpdated}" /></td>
-				
-			</tr>
-		
-			<tr class="prop">
-				<td valign="top" class="name"><g:message code="customerSegment.name.label" default="Name" /></td>
-				
-				<td valign="top" class="value">${fieldValue(bean: customerSegmentInstance, field: "name")}</td>
-				
-			</tr>
+
+		<c:renderProperty label="Days In Period" value="${customerSegmentInstance?.daysInPeriod}"/>
+
 		
 			<tr class="prop">
 				<td valign="top" class="name"><g:message code="customerSegment.segmentationScript.label" default="Segmentation Script" /></td>
@@ -64,6 +53,22 @@
 				<td valign="top" class="value">${fieldValue(bean: customerSegmentInstance, field: "uuid")}</td>
 				
 			</tr>
+
+		<tr class="prop">
+			<td valign="top" class="name"><g:message code="customerSegment.dateCreated.label"
+													 default="Date Created"/></td>
+
+			<td valign="top" class="value"><g:formatDate date="${customerSegmentInstance?.dateCreated}"/></td>
+
+		</tr>
+
+		<tr class="prop">
+			<td valign="top" class="name"><g:message code="customerSegment.lastUpdated.label"
+													 default="Last Updated"/></td>
+
+			<td valign="top" class="value"><g:formatDate date="${customerSegmentInstance?.lastUpdated}"/></td>
+
+		</tr>
 		
 		</tbody>
 	</table>

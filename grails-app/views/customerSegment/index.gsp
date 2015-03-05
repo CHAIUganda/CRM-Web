@@ -16,19 +16,21 @@
     <table class="table table-bordered margin-top-medium">
         <thead>
         <tr>
-            
-            <g:sortableColumn property="callFrequency" title="${message(code: 'customerSegment.callFrequency.label', default: 'Call Frequency')}" />
-            
-            <g:sortableColumn property="dateCreated" title="${message(code: 'customerSegment.dateCreated.label', default: 'Date Created')}" />
-            
-            <g:sortableColumn property="lastUpdated" title="${message(code: 'customerSegment.lastUpdated.label', default: 'Last Updated')}" />
-            
+
+
             <g:sortableColumn property="name" title="${message(code: 'customerSegment.name.label', default: 'Name')}" />
-            
+
+            <g:sortableColumn property="callFrequency" title="${message(code: 'customerSegment.callFrequency.label', default: 'Call Frequency')}" />
+
+            <g:sortableColumn property="callFrequency" title="${message(code: 'customerSegment.daysInPeriod.label', default: 'In Days')}" />
+
             <g:sortableColumn property="segmentationScript" title="${message(code: 'customerSegment.segmentationScript.label', default: 'Segmentation Script')}" />
-            
-            <g:sortableColumn property="teskGeneratorScript" title="${message(code: 'customerSegment.teskGeneratorScript.label', default: 'Task Generator Script')}" />
-            
+
+            <g:sortableColumn property="dateCreated"
+                              title="${message(code: 'customerSegment.dateCreated.label', default: 'Date Created')}"/>
+
+            <g:sortableColumn property="lastUpdated"
+                              title="${message(code: 'customerSegment.lastUpdated.label', default: 'Last Updated')}"/>
             <td>
                 Action
             </td>
@@ -37,25 +39,28 @@
         <tbody>
         <g:each in="${customerSegmentInstanceList}" status="i" var="customerSegmentInstance">
             <tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
-                
-                <td><g:link action="show" id="${customerSegmentInstance.id}">${fieldValue(bean: customerSegmentInstance, field: "callFrequency")}</g:link></td>
-                
-                <td><g:formatDate date="${customerSegmentInstance.dateCreated}" format="dd-MMM-yyyy" /></td>
-                
-                <td><g:formatDate date="${customerSegmentInstance.lastUpdated}" format="dd-MMM-yyyy" /></td>
-                
-                <td>${fieldValue(bean: customerSegmentInstance, field: "name")}</td>
-                
+
+                <td><g:link action="show"
+                            id="${customerSegmentInstance.id}">${fieldValue(bean: customerSegmentInstance, field: "name")}</g:link></td>
+
+
+                <td>${fieldValue(bean: customerSegmentInstance, field: "callFrequency")} times in</td>
+
+                <td>${fieldValue(bean: customerSegmentInstance, field: "daysInPeriod")} days</td>
+
                 <td>${fieldValue(bean: customerSegmentInstance, field: "segmentationScript")}</td>
-                
-                <td>${fieldValue(bean: customerSegmentInstance, field: "taskGeneratorScript")}</td>
-                
+
+
+                <td><g:formatDate date="${customerSegmentInstance.dateCreated}" format="dd-MMM-yyyy"/></td>
+
+                <td><g:formatDate date="${customerSegmentInstance.lastUpdated}" format="dd-MMM-yyyy"/></td>
                 <td>
                     <g:link action="edit" id="${customerSegmentInstance.id}"><i
                             class="glyphicon glyphicon-pencil"></i></g:link>
                     <g:link action="delete" id="${customerSegmentInstance.id}"><i
                             class="glyphicon glyphicon-remove"></i></g:link>
                 </td>
+
             </tr>
         </g:each>
         </tbody>
