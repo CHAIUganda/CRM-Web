@@ -72,7 +72,7 @@ class TaskService {
             page = listTasksByStatus(params.status as String, params, taskType)
         }
 
-        page.content.each { neo.fetch(it.customer?.subCounty?.territory?.territoryUsers) }
+        page.content.each { neo.fetch(it.loadTerritoryUsers()) }
 
         return page as Page<T>
     }
