@@ -1,5 +1,6 @@
 package com.omnitech.chai
 
+import com.omnitech.chai.model.Role
 import com.omnitech.chai.model.Task
 import com.omnitech.chai.util.ChaiUtils
 import com.omnitech.chai.util.ModelFunctions
@@ -76,6 +77,7 @@ class TaskController extends BaseController {
     }
 
     protected def export(Class type) {
+        def currentUser = neoSecurityService.currentUser
         def user = params.user ? userService.findUserByName(params.user) : null
         def exportFields = ['DISTRICT', 'SUBCOUNTY', 'VILLAGE', 'OUTLET NAME', 'OUTLET TYPE']
         def fields = ReflectFunctions.findAllBasicFields(type).reverse()
@@ -85,10 +87,14 @@ class TaskController extends BaseController {
             def data = taskService.exportTasksForUser(user.id, type)
             def csvData = FuzzyCSV.toCSV(data, *exportFields)
             ServletUtil.exportCSV(response, "Tasks-${params.user}.csv", csvData)
-        } else {
+        } else if (currentUser.hasRole(Role.ADMIN_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME)) {
             def data = taskService.exportAllTasks()
             def csvData = FuzzyCSV.toCSV(data, *exportFields)
             ServletUtil.exportCSV(response, "Tasks-All.csv", csvData)
+        } else {
+            def data = taskService.exportTasksForUser(currentUser.id, type)
+            def csvData = FuzzyCSV.toCSV(data, *exportFields)
+            ServletUtil.exportCSV(response, "Tasks-${params.user}.csv", csvData)
         }
     }
 
