@@ -29,11 +29,6 @@ class Task extends AbstractEntity {
     Date dueDate
     @GraphProperty(propertyType = Long.class)
     Date completionDate
-    @GraphProperty(propertyType = Long.class)
-    Date systemDueDate
-    //this is different from dateCreated. This is usually coming from an external system.
-    @GraphProperty(propertyType = Long.class)
-    Date actualDateCreated
 
 
     Boolean isAdhock
@@ -154,9 +149,6 @@ class Task extends AbstractEntity {
     def beforeSave() {
         setLocation(lng, lat)
         this.type = getClass().simpleName
-        if(!actualDateCreated){
-            actualDateCreated = dateCreated
-        }
     }
 
     public void setLocation(Float lng, Float lat) {
