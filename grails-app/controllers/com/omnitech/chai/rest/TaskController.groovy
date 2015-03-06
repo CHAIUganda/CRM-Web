@@ -76,11 +76,11 @@ class TaskController extends BaseRestController {
         //todo fixme
         json.clientRefId = json.uuid
 
-        println(json.toString())
+        println(request.JSON.toString())
         def task = ModelFunctions.createObj(DetailerTask, json)
 
         if (task.isCancelled()) {
-            updateCompletionInfo(task)
+            task.uuid = json.uuid
             taskService.completeDetailTask(task,json.customerId)
             log.debug("Resp:${user}   - OK")
             render([status: HttpStatus.OK.reasonPhrase, message: 'Success'] as JSON)
