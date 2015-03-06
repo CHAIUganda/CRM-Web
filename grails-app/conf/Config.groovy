@@ -191,3 +191,4 @@ grails.plugin.springsecurity.filterChain.chainMap = [
 	'*//**//*favicon.ico':                ['permitAll']
 ]*/
 
+deploy.server = 'dev'

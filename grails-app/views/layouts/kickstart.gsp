@@ -32,7 +32,22 @@
 
     <%-- For Javascript see end of body --%>
 </head>
+    <%
+        def server = grailsApplication.config.deploy.server
+        def bannerBackground = ''
+        def bannerText = ''
+        switch (server){
+            case 'dev':
+                bannerBackground = 'red'
+                bannerText = 'DEVELOPMENT SERVER'
+                break
+            case 'test':
+                bannerBackground = 'green'
+                bannerText = 'TEST SERVER'
+                break
 
+        }
+    %>
 <body>
 <div class="container" style=" max-width: 1170px; padding: 0; background: #f6f6f6; box-shadow: 0px 0px 5px #888888;">
     <script>
@@ -41,6 +56,9 @@
     <div id="header">
         <div class="logo">
             <a href="http://www.omnitech.co.ug"></a>
+        </div>
+        <div style="background: ${bannerBackground}">
+           ${bannerText}
         </div>
         <br clear="all">
     <sec:ifLoggedIn>
