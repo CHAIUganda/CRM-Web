@@ -25,7 +25,7 @@
 
             <g:if test="${params.controller == 'order'}">
                 <g:sortableColumn property="dateCreated" params="${params}"
-                                  title="${message(code: 'task.dateCreated.label', default: 'Date Uploaded')}"/>
+                                  title="${message(code: 'task.dateCreated.label', default: 'Date Created')}"/>
             </g:if>
 
             <g:if test="${params.status == Task.STATUS_COMPLETE || params.controller == 'visit'}">
