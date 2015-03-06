@@ -270,13 +270,13 @@ class TaskService {
      * This updates a given task and if its a basic task it projects it to the required Type.
      * This method also makes sure that other relationships are not modified
      */
-    DetailerTask completeDetailTask(DetailerTask detailerTask, String customerUuid) {
-        def neoTask = taskRepository.findByUuid(detailerTask.uuid)
+    DetailerTask completeDetailTask(DetailerTask remoteTask, String customerUuid) {
+        def neoTask = taskRepository.findByUuid(remoteTask.uuid)
 
         //task could have been deleted
         if (!neoTask) {
-            detailerTask.clientRefId = detailerTask.uuid
-            return completeAdhocDetailTask(detailerTask, customerUuid)
+            remoteTask.clientRefId = remoteTask.uuid
+            return completeAdhocDetailTask(remoteTask, customerUuid)
         }
 
         neoTask = neo.projectTo(neoTask, DetailerTask)
@@ -286,15 +286,17 @@ class TaskService {
         detailFields.with {
             removeAll(ReflectFunctions.findAllBasicFields(Task))
         }
-        ModelFunctions.bind(neoTask, detailerTask.properties, detailFields)
+        ModelFunctions.bind(neoTask, remoteTask.properties, detailFields)
         //copy longitude and latitude
-        neoTask.lat = detailerTask.lat
-        neoTask.lng = detailerTask.lng
+        neoTask.lat = remoteTask.lat
+        neoTask.lng = remoteTask.lng
 
-        if (neoTask.isComplete())
-            neoTask.completedBy(neoSecurityService.currentUser)
-        else
+        if (remoteTask.isCancelled()) {
+            neoTask.description = remoteTask.description
             neoTask.cancelledBy(neoSecurityService.currentUser)
+        }
+        else
+            neoTask.completedBy(neoSecurityService.currentUser)
 
 
         saveTask(neoTask)
@@ -303,9 +305,15 @@ class TaskService {
     DetailerTask completeAdhocDetailTask(DetailerTask detailerTask, String customerUuid) {
 
 
+        if (detailerTask.isCancelled()) {
+            log.warn("Cannot synchronise a cancelled task [${detailerTask.description}]")
+            return null
+        }
+
         assertNotDuplicate(detailerTask)
 
         def customer = customerRepository.findByUuid(customerUuid)
+
 
         if (!customer) {
             log.warn("AdhocDetailCustomer Not Found: [$customerUuid]")
@@ -412,9 +420,9 @@ class TaskService {
 
 
     void assertNotDuplicate(Task task){
+        Assert.notNull(task.clientRefId, "Task: $task Has No Client Ref Id")
         def t = taskRepository.findByClientRefId(task.clientRefId)
         Assert.isNull(t, "Task: $t Already Exists In the System")
-
     }
 
     DirectSale findDirectSaleByClientRefId(String refId) {

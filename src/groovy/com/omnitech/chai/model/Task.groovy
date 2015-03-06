@@ -148,6 +148,8 @@ class Task extends AbstractEntity {
         this.type = getClass().simpleName
     }
 
+    String toString() { description }
+
     public void setLocation(Float lng, Float lat) {
         this.lat = lat
         this.lng = lng
