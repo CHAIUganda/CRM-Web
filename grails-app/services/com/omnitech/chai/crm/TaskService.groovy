@@ -220,12 +220,18 @@ class TaskService {
                 .match(node('task').in(COMPLETED_TASK,CANCELED_TASK).node('u')).optional()
 
 
+
         def fields = [az(identifier('d').property('name'), 'DISTRICT'),
                       az(identifier('sc').property('name'), 'SUBCOUNTY'),
                       az(identifier('v').property('name'), 'VILLAGE'),
                       az(identifier('c').property('outletName'), 'OUTLET NAME'),
                       az(identifier('c').property('outletType'), 'OUTLET TYPE'),
                       az(identifier('u').property('username'), 'CANCELED_OR_COMPLETED BY')]
+
+        if (type.isAssignableFrom(Order)) {
+            query.match(node('task').out(ORDER_TAKEN_BY).node('takenBy')).optional()
+            fields << az(identifier('takenBy').property('username'), 'ORDER TAKEN BY')
+        }
 
         ReflectFunctions.findAllBasicFields(DetailerTask).each {
             if ('_dateLastUpdated' == it || it == '_dateCreated') return

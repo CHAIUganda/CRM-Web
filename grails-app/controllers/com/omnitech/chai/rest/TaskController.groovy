@@ -5,8 +5,9 @@ import com.omnitech.chai.util.ChaiUtils
 import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.ReflectFunctions
 import grails.converters.JSON
-import org.spockframework.util.Assert
+
 import org.springframework.http.HttpStatus
+import org.springframework.util.Assert
 
 import static com.omnitech.chai.model.Role.DETAILER_ROLE_NAME
 import static com.omnitech.chai.model.Role.SALES_ROLE_NAME

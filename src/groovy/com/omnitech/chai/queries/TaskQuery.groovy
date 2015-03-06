@@ -1,5 +1,6 @@
 package com.omnitech.chai.queries
 
+import com.omnitech.chai.model.Order
 import com.omnitech.chai.model.Task
 import com.omnitech.chai.util.PageUtils
 import com.omnitech.chai.util.ReflectFunctions
@@ -127,6 +128,11 @@ class TaskQuery {
                       az(identifier('c').property('outletName'), 'OUTLET NAME'),
                       az(identifier('c').property('outletType'), 'OUTLET TYPE'),
                       az(identifier('u').property('username'), 'CANCELED_OR_COMPLETED BY')]
+
+        if (type.isAssignableFrom(Order)) {
+            query.match(node(varName).out(ORDER_TAKEN_BY).node('takenBy')).optional()
+            fields << az(identifier('takenBy').property('username'), 'ORDER TAKEN BY')
+        }
 
         ReflectFunctions.findAllBasicFields(type).each {
             if (['lastUpdated', 'dateCreated', 'id'].contains(it)) return

@@ -1,5 +1,6 @@
 package com.omnitech.chai
 
+import com.omnitech.chai.model.Order
 import com.omnitech.chai.model.Role
 import com.omnitech.chai.model.Task
 import com.omnitech.chai.util.ChaiUtils
@@ -80,6 +81,10 @@ class TaskController extends BaseController {
         def currentUser = neoSecurityService.currentUser
         def user = params.user ? userService.findUserByName(params.user) : null
         def exportFields = ['DISTRICT', 'SUBCOUNTY', 'VILLAGE', 'OUTLET NAME', 'OUTLET TYPE','CANCELED_OR_COMPLETED BY']
+
+        if(type.isAssignableFrom(Order)){
+            exportFields << 'ORDER TAKEN BY'
+        }
         def fields = ReflectFunctions.findAllBasicFields(type).reverse()
         fields.removeAll('lastUpdated', 'dateCreated')
         exportFields.addAll(fields.collect { GrailsNameUtils.getNaturalName(it).toUpperCase() })
