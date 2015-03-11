@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull
 
 import static com.omnitech.chai.model.Relations.STOCK_PRODUCT
 
-@RelationshipEntity(type = 'HAS_PRODUCT')
+@RelationshipEntity(type = Relations.HAS_PRODUCT)
 @Validateable
 class LineItem extends AbstractEntity {
 

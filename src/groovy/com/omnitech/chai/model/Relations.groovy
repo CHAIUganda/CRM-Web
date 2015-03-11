@@ -71,6 +71,7 @@ interface Relations {
 
     // Order -> User
     final static ORDER_TAKEN_BY = 'ORDER_TAKEN_BY'
+    final static HAS_PRODUCT = 'HAS_PRODUCT'
 
     //Detailing -> DetailerStock
     final static String HAS_DETAILER_STOCK = 'HAS_DETAILER_STOCK'
