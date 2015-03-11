@@ -254,7 +254,7 @@ class TaskService {
         if (type.isAssignableFrom(Order)) {
             def products = productRepository.findAll()
             def queries = products.collect { p ->
-                def productName = p.name.toUpperCase()
+                def productName = p.name.toUpperCase() + '-' + (p.unitOfMeasure ?: '')
                 returnFields.add(productName)
                 "sum (case when id(p) = $p.id then li.quantity else null end) as `${productName}`"
             }
