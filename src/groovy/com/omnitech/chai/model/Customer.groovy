@@ -56,10 +56,8 @@ public class Customer extends AbstractEntity implements LeafNode {
             restockFrequency,
             childrenUnder5yrsPerDay
 
-    //todo add hasSisterBranch
     Boolean hasSisterBranch
     Boolean isActive = true
-    //todo add dateOutletOpened
     @GraphProperty(propertyType = Long.class)
     Date dateOutletOpened
 

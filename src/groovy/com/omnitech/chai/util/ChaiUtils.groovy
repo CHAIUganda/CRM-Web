@@ -193,7 +193,10 @@ class ChaiUtils {
         return "Technical Error Please Contact Sytem Admin: $x"
     }
 
-
+    /**
+     * Safely retrieves a value from a record
+     * @return
+     */
     static String prop(Record mapper, String name, boolean required = true, String defaultValue = null) {
         if (required) {
             assert mapper.derivedHeaders.contains(name), "Record ${mapper.idx()} should have a [$name]"

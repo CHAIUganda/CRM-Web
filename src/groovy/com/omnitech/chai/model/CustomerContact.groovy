@@ -9,8 +9,6 @@ import org.springframework.data.neo4j.annotation.RelatedTo
 @Validateable
 class CustomerContact extends AbstractEntity {
 
-    //todo remove from form [name,graduationYear,contact,typeOfContact]
-
     String title
     String firstName
     String surname
@@ -21,8 +19,6 @@ class CustomerContact extends AbstractEntity {
     String role
     String qualification
     String networkOrAssociationName
-
-    //todo add to form
 
 
 

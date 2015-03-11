@@ -90,7 +90,7 @@ class ReflectFunctions {
         for (Field field in extractFields(aClass)) {
             def result = transform(aClass, field)
 
-            //todo for now we do not support classes referencing each other
+            //for now we do not support classes referencing each other
             if (aClass == field.type) continue
 
             if (result != null) results.add(result)
