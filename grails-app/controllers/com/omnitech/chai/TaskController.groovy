@@ -9,7 +9,6 @@ import com.omnitech.chai.util.ReflectFunctions
 import com.omnitech.chai.util.ServletUtil
 import fuzzycsv.FuzzyCSV
 import grails.converters.JSON
-import grails.util.GrailsNameUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.http.HttpStatus
@@ -20,6 +19,7 @@ import java.text.SimpleDateFormat
 import static com.omnitech.chai.util.ControllerUtils.customerToJsonMap
 import static com.omnitech.chai.util.ControllerUtils.taskToJsonMap
 import static com.omnitech.chai.util.ModelFunctions.extractId
+import static grails.util.GrailsNameUtils.getNaturalName
 import static org.springframework.http.HttpStatus.*
 
 /**
@@ -80,14 +80,6 @@ class TaskController extends BaseController {
     protected def export(Class type) {
         def currentUser = neoSecurityService.currentUser
         def user = params.user ? userService.findUserByName(params.user) : null
-        def exportFields = ['DISTRICT', 'SUBCOUNTY', 'VILLAGE', 'OUTLET NAME', 'OUTLET TYPE','CANCELED_OR_COMPLETED BY']
-
-        if(type.isAssignableFrom(Order)){
-            exportFields << 'ORDER TAKEN BY'
-        }
-        def fields = ReflectFunctions.findAllBasicFields(type).reverse()
-        fields.removeAll('lastUpdated', 'dateCreated')
-        exportFields.addAll(fields.collect { GrailsNameUtils.getNaturalName(it).toUpperCase() })
         if (user) {
             if(!taskService.isAllowedToViewUserTasks(user)){
                 notFound()
@@ -97,7 +89,7 @@ class TaskController extends BaseController {
             def csvData = FuzzyCSV.toCSV(data, *exportFields)
             ServletUtil.exportCSV(response, "Tasks-${params.user}.csv", csvData)
         } else if (currentUser.hasRole(Role.ADMIN_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME)) {
-            def data = taskService.exportAllTasks(type)
+            def (exportFields, data) = taskService.exportAllTasks(type)
             def csvData = FuzzyCSV.toCSV(data, *exportFields)
             ServletUtil.exportCSV(response, "Tasks-All.csv", csvData)
         } else {

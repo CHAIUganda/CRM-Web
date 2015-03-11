@@ -35,6 +35,7 @@ class TaskService {
     def neoSecurityService
     def userService
     def clusterService
+    def productRepository
 
     /* Tasks */
 
@@ -206,18 +207,21 @@ class TaskService {
 
     List<Map> exportTasksForUser(Long userId, Class taskTpe) {
         def query = TaskQuery.exportTasks(userId, taskTpe)
+        log.trace("export tasks for user: $query")
         neo.query(query.toString(), [:]).collect()
     }
 
-    List<Map> exportAllTasks(Class type) {
+    List exportAllTasks(Class type) {
+
+        def returnFields = []
         def query = match(
                 node('task').label(type.simpleName)
                         .in(CUST_TASK).node('c')
                         .out(CUST_IN_SC).node('sc')
                         .in(HAS_SUB_COUNTY).node('d'))
                 .match(node('c').out(CUST_IN_VILLAGE).node('v')).optional()
-                .match(node('c').out(CUST_IN_PARISH).node('p')).optional()
                 .match(node('task').in(COMPLETED_TASK,CANCELED_TASK).node('u')).optional()
+
 
 
 
@@ -228,21 +232,47 @@ class TaskService {
                       az(identifier('c').property('outletType'), 'OUTLET TYPE'),
                       az(identifier('u').property('username'), 'CANCELED_OR_COMPLETED BY')]
 
+
         if (type.isAssignableFrom(Order)) {
             query.match(node('task').out(ORDER_TAKEN_BY).node('takenBy')).optional()
+                    .match(node('task').out(HAS_PRODUCT).as('li').node('p')).optional()
             fields << az(identifier('takenBy').property('username'), 'ORDER TAKEN BY')
+
+
         }
 
-        ReflectFunctions.findAllBasicFields(DetailerTask).each {
-            if ('_dateLastUpdated' == it || it == '_dateCreated') return
-            fields << az(identifier('task').property(it), getNaturalName(it).toUpperCase())
+        ReflectFunctions.findAllBasicFields(type).each {
+            if (['lastUpdated', 'dateCreated', 'id'].contains(it)) return
+            def fieldAlias = getNaturalName(it).toUpperCase()
+            fields << az(identifier('task').property(it), fieldAlias)
+            returnFields << fieldAlias
         }
         query.returns(*fields)
         //District,Subcounty,Village,Customer Name, outletType,
         // All other fields
-        log.trace("exportAllTasks(): [$query]")
 
-        neo.query(query.toString(), [:]).collect()
+
+        def stringQuery = query.toString()
+
+        if (type.isAssignableFrom(Order)) {
+            def products = productRepository.findAll()
+            def queries = products.collect { p ->
+                def productName = p.name.toUpperCase()
+                returnFields.add(productName)
+                "sum (case when id(p) = $p.id then li.quantity else null end) as `${productName}`"
+            }
+            def joinedExpressions = queries.join(',')
+            if (joinedExpressions)
+                stringQuery = "$stringQuery, $joinedExpressions"
+        }
+        log.trace("exportAllTasks(): [$stringQuery]")
+
+        def finalFields = ['DISTRICT', 'SUBCOUNTY', 'VILLAGE', 'OUTLET NAME', 'OUTLET TYPE', 'CANCELED_OR_COMPLETED BY']
+        finalFields.addAll(returnFields)
+
+        finalFields.removeAll('COMMENT','IS ADHOCK','WKT')
+
+        [finalFields, neo.query(stringQuery, [:]).collect()]
     }
 
     Task generateCustomerDetailingTask(Customer customer) {
