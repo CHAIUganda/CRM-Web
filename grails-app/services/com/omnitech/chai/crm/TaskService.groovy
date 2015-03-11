@@ -206,9 +206,10 @@ class TaskService {
     }
 
     List<Map> exportTasksForUser(Long userId, Class taskTpe) {
-        def query = TaskQuery.exportTasks(userId, taskTpe)
+        def products = productRepository.findAllByUser(userId)
+        def (exportFields,query) = TaskQuery.exportTasks(userId, taskTpe,products)
         log.trace("export tasks for user: $query")
-        neo.query(query.toString(), [:]).collect()
+        [exportFields,neo.query(query.toString(), [:]).collect()]
     }
 
     List exportAllTasks(Class type) {
@@ -220,7 +221,7 @@ class TaskService {
                         .out(CUST_IN_SC).node('sc')
                         .in(HAS_SUB_COUNTY).node('d'))
                 .match(node('c').out(CUST_IN_VILLAGE).node('v')).optional()
-                .match(node('task').in(COMPLETED_TASK,CANCELED_TASK).node('u')).optional()
+                .match(node('task').in(COMPLETED_TASK, CANCELED_TASK).node('u')).optional()
 
 
 
@@ -237,8 +238,7 @@ class TaskService {
             query.match(node('task').out(ORDER_TAKEN_BY).node('takenBy')).optional()
                     .match(node('task').out(HAS_PRODUCT).as('li').node('p')).optional()
             fields << az(identifier('takenBy').property('username'), 'ORDER TAKEN BY')
-
-
+            returnFields << 'ORDER TAKEN BY'
         }
 
         ReflectFunctions.findAllBasicFields(type).each {
@@ -248,9 +248,6 @@ class TaskService {
             returnFields << fieldAlias
         }
         query.returns(*fields)
-        //District,Subcounty,Village,Customer Name, outletType,
-        // All other fields
-
 
         def stringQuery = query.toString()
 
@@ -270,7 +267,7 @@ class TaskService {
         def finalFields = ['DISTRICT', 'SUBCOUNTY', 'VILLAGE', 'OUTLET NAME', 'OUTLET TYPE', 'CANCELED_OR_COMPLETED BY']
         finalFields.addAll(returnFields)
 
-        finalFields.removeAll('COMMENT','IS ADHOCK','WKT')
+        finalFields.removeAll('COMMENT', 'IS ADHOCK', 'WKT')
 
         [finalFields, neo.query(stringQuery, [:]).collect()]
     }
@@ -324,8 +321,7 @@ class TaskService {
         if (remoteTask.isCancelled()) {
             neoTask.description = remoteTask.description
             neoTask.cancelledBy(neoSecurityService.currentUser)
-        }
-        else
+        } else
             neoTask.completedBy(neoSecurityService.currentUser)
 
 
@@ -449,7 +445,7 @@ class TaskService {
     }
 
 
-    void assertNotDuplicate(Task task){
+    void assertNotDuplicate(Task task) {
         Assert.notNull(task.clientRefId, "Task: $task Has No Client Ref Id")
         def t = taskRepository.findByClientRefId(task.clientRefId)
         Assert.isNull(t, "Task: $t Already Exists In the System")

@@ -4,6 +4,7 @@ import com.omnitech.chai.model.Order
 import com.omnitech.chai.model.Role
 import com.omnitech.chai.model.Task
 import com.omnitech.chai.util.ChaiUtils
+import com.omnitech.chai.util.ExportUtil
 import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.ReflectFunctions
 import com.omnitech.chai.util.ServletUtil
@@ -85,16 +86,19 @@ class TaskController extends BaseController {
                 notFound()
                 return
             }
-            def data = taskService.exportTasksForUser(user.id, type)
+            def (exportFields, data) = taskService.exportTasksForUser(user.id, type)
             def csvData = FuzzyCSV.toCSV(data, *exportFields)
+            csvData = ExportUtil.fixDates(type,csvData)
             ServletUtil.exportCSV(response, "Tasks-${params.user}.csv", csvData)
         } else if (currentUser.hasRole(Role.ADMIN_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME)) {
             def (exportFields, data) = taskService.exportAllTasks(type)
             def csvData = FuzzyCSV.toCSV(data, *exportFields)
+            csvData = ExportUtil.fixDates(type,csvData)
             ServletUtil.exportCSV(response, "Tasks-All.csv", csvData)
         } else {
-            def data = taskService.exportTasksForUser(currentUser.id, type)
+            def (exportFields, data)= taskService.exportTasksForUser(currentUser.id, type)
             def csvData = FuzzyCSV.toCSV(data, *exportFields)
+            csvData = ExportUtil.fixDates(type,csvData)
             ServletUtil.exportCSV(response, "Tasks-${params.user}.csv", csvData)
         }
     }

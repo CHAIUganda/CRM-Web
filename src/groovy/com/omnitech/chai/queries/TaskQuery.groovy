@@ -1,6 +1,7 @@
 package com.omnitech.chai.queries
 
 import com.omnitech.chai.model.Order
+import com.omnitech.chai.model.Product
 import com.omnitech.chai.model.Task
 import com.omnitech.chai.util.PageUtils
 import com.omnitech.chai.util.ReflectFunctions
@@ -112,7 +113,8 @@ class TaskQuery {
         return query
     }
 
-    static def exportTasks(Long userId, Class type) {
+    static def exportTasks(Long userId, Class type, Iterable<Product> products) {
+        def returnFields = []
         def varName = type.simpleName.toLowerCase()
         def query = mathQueryForUserTasks(userId, type)
                 .with(distinct(identifier(varName)))
@@ -131,19 +133,44 @@ class TaskQuery {
 
         if (type.isAssignableFrom(Order)) {
             query.match(node(varName).out(ORDER_TAKEN_BY).node('takenBy')).optional()
+                    .match(node('task').out(HAS_PRODUCT).as('li').node('p')).optional()
             fields << az(identifier('takenBy').property('username'), 'ORDER TAKEN BY')
+            returnFields << 'ORDER TAKEN BY'
         }
 
         ReflectFunctions.findAllBasicFields(type).each {
             if (['lastUpdated', 'dateCreated', 'id'].contains(it)) return
-            fields << az(identifier(varName).property(it), getNaturalName(it).toUpperCase())
+            def fieldAlias = getNaturalName(it).toUpperCase()
+            fields << az(identifier(varName).property(it), fieldAlias)
+            returnFields << fieldAlias
         }
 
         query.returns(*fields)
 
+
+        def stringQuery = query.toString()
+
+        if (type.isAssignableFrom(Order)) {
+            def queries = products.collect { p ->
+                def productName = p.name.toUpperCase()
+                returnFields.add(productName)
+                "sum (case when id(p) = $p.id then li.quantity else null end) as `${productName}`"
+            }
+            def joinedExpressions = queries.join(',')
+            if (joinedExpressions)
+                stringQuery = "$stringQuery, $joinedExpressions"
+        }
+
+
+
         log.trace("Query: exportTasksForUser(): [$query]")
 
-        return query
+        def finalFields = ['DISTRICT', 'SUBCOUNTY', 'VILLAGE', 'OUTLET NAME', 'OUTLET TYPE', 'CANCELED_OR_COMPLETED BY']
+        finalFields.addAll(returnFields)
+
+        finalFields.removeAll('COMMENT', 'IS ADHOCK', 'WKT')
+
+        return [finalFields, stringQuery]
     }
 
 

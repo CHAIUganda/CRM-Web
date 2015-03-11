@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat
  */
 
 class AbstractEntity {
-    private static DateFormat format = new SimpleDateFormat('yyyy-MM-dd hh:mm:ss')
+    static DateFormat format = new SimpleDateFormat('yyyy-MM-dd hh:mm:ss')
     @GraphId
     Long id
     String uuid
