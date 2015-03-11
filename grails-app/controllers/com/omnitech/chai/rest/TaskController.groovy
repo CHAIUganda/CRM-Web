@@ -87,6 +87,8 @@ class TaskController extends BaseRestController {
             return
         }
 
+        Assert.notEmpty((json.get('detailers') as List),"Detailing Task Should Have Detailing Info")
+
         def detailerInfo = (json.get('detailers') as List)?.get(0) as Map
         if (detailerInfo) {
             detailerInfo.remove('id')
@@ -110,7 +112,6 @@ class TaskController extends BaseRestController {
             updateCompletionInfo(task)
             taskService.completeAdhocDetailTask(task, json.customerId)
         } else {
-            updateCompletionInfo(task)
             taskService.completeDetailTask(task, json.customerId)
         }
         log.debug("Resp:${user}   - OK")

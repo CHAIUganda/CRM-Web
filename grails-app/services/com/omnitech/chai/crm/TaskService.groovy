@@ -317,6 +317,7 @@ class TaskService {
         //copy longitude and latitude
         neoTask.lat = remoteTask.lat
         neoTask.lng = remoteTask.lng
+        neoTask.isAdhock = false
 
         if (remoteTask.isCancelled()) {
             neoTask.description = remoteTask.description
