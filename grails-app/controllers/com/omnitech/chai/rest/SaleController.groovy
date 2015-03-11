@@ -52,15 +52,15 @@ class SaleController extends BaseRestController {
             def json = request.JSON as Map
             log.debug("A SaleOrder: ${request.JSON}")
             //find original order
-            def order = taskService.findOrder(json.orderId as String)
-            assert order, "Order should exist in the database"
+            def serverOrder = taskService.findOrder(json.orderId as String)
+            assert serverOrder, "Order should exist in the database"
 
-            def saleOrder = toOrder(json, SaleOrder)
-            bindSaleOrderToDbInstance(saleOrder, order)
-            updateCompletionInfo(saleOrder)
-            saleOrder.lng = ChaiUtils.execSilently('Converting long to float') { json['longitude'] as Float }
-            saleOrder.lat = ChaiUtils.execSilently('Converting lat to float') { json['latitude'] as Float }
-            taskService.saveTask(saleOrder)
+            def mobileSale = toOrder(json, SaleOrder)
+            bindSaleOrderToDbInstance(mobileSale, serverOrder)
+            updateCompletionInfo(mobileSale)
+            mobileSale.lng = ChaiUtils.execSilently('Converting long to float') { json['longitude'] as Float }
+            mobileSale.lat = ChaiUtils.execSilently('Converting lat to float') { json['latitude'] as Float }
+            taskService.saveTask(mobileSale)
         }
     }
 
@@ -86,13 +86,15 @@ class SaleController extends BaseRestController {
         }
     }
 
-    private static void bindSaleOrderToDbInstance(SaleOrder saleOrder, SalesCall order) {
+    private static void bindSaleOrderToDbInstance(SaleOrder mobileSale, SalesCall serverOrder) {
         //copy original order props to saleOrder
         def whiteList = ReflectFunctions.findAllFields(Task).collect { it.name }
         whiteList << 'comment'
-        ModelFunctions.bind(saleOrder, order.properties, whiteList)
+        whiteList << 'takenBy'
+        whiteList.remove('')
+        ModelFunctions.bind(mobileSale, serverOrder.properties, whiteList)
         //Explicitly copy the ID ModelFunctions ignores this
-        saleOrder.id = order.id
+        mobileSale.id = serverOrder.id
     }
 
     private DirectSale toDirectSale(Map map) {

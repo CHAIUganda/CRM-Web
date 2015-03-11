@@ -336,6 +336,8 @@ class SaleControllerSpec extends Specification {
             assert sale.comment
             assert sale.id == 5
 
+            assert sale.takenBy.username == 'someuser'
+
             return true
         }
 
@@ -356,9 +358,10 @@ class SaleControllerSpec extends Specification {
         1 * productService.findProductByUuid('xxxx-xxxx') >> new Product()
         1 * productService.findProductByUuid('yyyy-yyyyy') >> new Product()
         1 * securityService.currentUser >> new User()
-        1 * taskService.findOrder('oooo') >> new Order(customer: new Customer(), comment: "SSjj", id: 5)
+        1 * taskService.findOrder('oooo') >> new Order(customer: new Customer(), comment: "SSjj", id: 5,takenBy: new User(username: 'someuser') )
         1 * taskService.saveTask({ directSaleValidator(it) })
         response.contentAsString == '{"status":"OK","message":"Success"}'
+
 
     }
 
