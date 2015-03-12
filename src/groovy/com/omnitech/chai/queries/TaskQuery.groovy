@@ -121,7 +121,6 @@ class TaskQuery {
                 .match(node(varName).in(CUST_TASK).node('c').out(CUST_IN_SC).node('sc'))
                 .match(node('sc').in(HAS_SUB_COUNTY).node('d')).optional()
                 .match(node('c').out(CUST_IN_VILLAGE).node('v')).optional()
-                .match(node('c').out(CUST_IN_PARISH).node('p')).optional()
                 .match(node(varName).in(COMPLETED_TASK,CANCELED_TASK).node('u')).optional()
 
         def fields = [az(identifier('d').property('name'), 'DISTRICT'),
@@ -133,7 +132,7 @@ class TaskQuery {
 
         if (type.isAssignableFrom(Order)) {
             query.match(node(varName).out(ORDER_TAKEN_BY).node('takenBy')).optional()
-                    .match(node('task').out(HAS_PRODUCT).as('li').node('p')).optional()
+                    .match(node(varName).out(HAS_PRODUCT).as('li').node('p')).optional()
             fields << az(identifier('takenBy').property('username'), 'ORDER TAKEN BY')
             returnFields << 'ORDER TAKEN BY'
         }
