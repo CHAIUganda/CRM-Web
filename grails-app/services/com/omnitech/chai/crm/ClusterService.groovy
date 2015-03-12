@@ -12,7 +12,6 @@ import org.springframework.data.neo4j.transaction.Neo4jTransactional
 import static com.omnitech.chai.util.ChaiUtils.getNextWorkDay
 import static com.omnitech.chai.util.ChaiUtils.nextDayOfWeek
 import static java.util.Calendar.*
-import static java.util.Calendar.MONDAY
 
 /**
  * Created by kay on 12/19/2014.
@@ -154,7 +153,7 @@ class ClusterService {
         if (clusters.size() == 1) return [clusters, []]
 
 
-        def smallClusters = []
+        List<CentroidCluster<LocatableTask>> finalSmallClusters = []
         List<LocatableTask> missedPoints = []
 
         def maximumNumberOfTask = (tasksPerDay + (tasksPerDay * _percOverheadTaskPerDay)).toInteger()
@@ -163,21 +162,21 @@ class ClusterService {
             if (cluster.points.size() > maximumNumberOfTask) {
                 def (subClusters, mp) = getClusters2(cluster.points, tasksPerDay, maximumNumberOfTask, 0.3f)
                 missedPoints.addAll(mp)
-                smallClusters.addAll(subClusters)
+                finalSmallClusters.addAll(subClusters)
             } else if (cluster.points.size() < minimumSize) {
                 missedPoints.addAll(cluster.points)
             } else {
-                smallClusters << cluster
+                finalSmallClusters << cluster
             }
         }
 
         if (processMissedPoint && missedPoints) {
             def (smallSubCluster, List<LocatableTask> mp) = getClusters2(missedPoints, tasksPerDay, maximumNumberOfTask, 0.3f)
-            smallClusters.addAll(smallSubCluster)
+            finalSmallClusters.addAll(smallSubCluster)
             if (mp) {
                 //add remaining tasks to closest clusters
                 mp.each { t ->
-                    def closestCluster = smallClusters.min { CentroidCluster a ->
+                    def closestCluster = finalSmallClusters.min { CentroidCluster a ->
 
                         def distance = distanceBetweenPoints([t.lat, t.lng] as double[], a.center.point)
                         log.trace("t[${t.task.description}] ->[${a.points[0].task.description}] = $distance")
@@ -187,9 +186,23 @@ class ClusterService {
                     closestCluster.addPoint(t)
                 }
             }
+
+            //go through each on for the clusters generate one more time and make sure none passes the maximum threshhold
+            def reClusteredTasks = []
+            def newSmallCluseters = []
+            finalSmallClusters.each { sc ->
+                if (sc.points.size() > maximumNumberOfTask) {
+                    def (smallerSubClusters, otherMissedPoints) = getClusters2(sc.points, tasksPerDay, maximumNumberOfTask, 0.3f, true)
+                    newSmallCluseters.addAll(smallerSubClusters)
+                    reClusteredTasks << sc
+                }
+            }
+            finalSmallClusters.removeAll(reClusteredTasks)
+            finalSmallClusters.removeAll(newSmallCluseters)
+
         }
 
-        return [smallClusters, missedPoints]
+        return [finalSmallClusters, missedPoints]
     }
 
     static int calculateBestNumberOfCluster(int taskSize, int absoluteTaskPerDay) {
