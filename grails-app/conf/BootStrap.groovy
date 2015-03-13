@@ -1,3 +1,4 @@
+import com.omnitech.chai.migrations.DbMigrations
 import com.omnitech.chai.model.*
 import com.omnitech.chai.util.ChaiUtils
 import org.springframework.beans.factory.config.BeanDefinition
@@ -14,6 +15,7 @@ class BootStrap {
     def txHelperService
     def graphDatabaseService
     def userService
+    def migrationService
 
 
     def init = { servletContext ->
@@ -24,6 +26,12 @@ class BootStrap {
         insertEssentialRoles()
         insertDefaultSegments()
         insertActualProducts()
+
+        //Migration code
+        def migrations = new DbMigrations()
+
+
+        migrationService.runMigration(migrations.migrations())
 
         //Test Data
         println("Inserting test Data....")

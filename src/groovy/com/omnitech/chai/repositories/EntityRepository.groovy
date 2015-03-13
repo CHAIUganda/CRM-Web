@@ -264,3 +264,8 @@ interface ReportGroupRepository extends GraphRepository<ReportGroup> {
     ReportGroup findByUuid(String uuid)
 }
 
+interface DbChangeSetRepository extends GraphRepository<DbChangeSet> {
+    DbChangeSet findByUuid(String uuid)
+    DbChangeSet findByChangeId(String uuid)
+}
+
