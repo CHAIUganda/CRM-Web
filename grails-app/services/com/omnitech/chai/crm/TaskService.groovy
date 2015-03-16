@@ -256,8 +256,8 @@ class TaskService {
             def queries = products.collect { p ->
                 def productName = p.name.toUpperCase() + '-' + (p.unitOfMeasure ?: '')
                 returnFields.add(productName)
-//                "sum (case when id(p) = $p.id then li.quantity else null end) as `${productName}`"
-                "case when id(p) = $p.id then li.quantity else null end as `${productName}`"
+               return  "sum (case when id(p) = $p.id then li.quantity else null end) as `${productName}`"
+//                "case when id(p) = $p.id then li.quantity else null end as `${productName}`"
             }
             def joinedExpressions = queries.join(',')
             if (joinedExpressions)
