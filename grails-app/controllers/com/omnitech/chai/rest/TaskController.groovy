@@ -129,6 +129,9 @@ class TaskController extends BaseRestController {
         }
 
         if (json.status == Task.STATUS_CANCELLED) {
+            if(json.description){
+                task.description = json.description
+            }
             task.cancelledBy(user)
             taskService.saveTask(task)
         }
