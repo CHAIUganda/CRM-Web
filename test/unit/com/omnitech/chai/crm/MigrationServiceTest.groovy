@@ -233,6 +233,45 @@ class MigrationServiceTest extends Specification {
         })
         assert !updateClosureExecuted
     }
+    //todo
+    def "test migrations with script test and closure update"() {
+        def neo = service.neo = Mock(Neo4jTemplate)
+        def repo = service.dbChangeSetRepository = Mock(DbChangeSetRepository)
+
+        Result result = Mock()
+
+        def testClosureExecuted = false
+        def testClosure = {
+            testClosureExecuted = true
+            false
+        }
+
+        def updateClosureExecuted = false
+        def updateClosure = {
+            updateClosureExecuted = true
+        }
+
+        def changeSets = MigrationDSL.make {
+            changeSet(id: 'my change', desc: 'test migration') {
+                test testClosure
+                test 'test'
+                update updateClosure
+            }
+        }
+
+        when:
+        service.runMigration(changeSets)
+
+        then:
+        1 * repo.findByChangeId('my change') >> null
+        1 * neo.query('test', EMPTY_MAP) >> result
+        1 * result.singleOrNull() >> [answer: true]
+        0 * neo.query(null, EMPTY_MAP)
+        1 * repo.save({ DbChangeSet c ->
+            c.description == 'test migration' && c.changeId == "my change"
+        })
+        assert updateClosureExecuted
+    }
 
     def "test migrations do not run run if test fails with script true and closure false"() {
         def neo = service.neo = Mock(Neo4jTemplate)

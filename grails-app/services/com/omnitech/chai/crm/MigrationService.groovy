@@ -37,7 +37,7 @@ class MigrationService {
         def closureResult = changeSet.testClosure?.call() ?: true
         if (test(changeSet.testCypher) && closureResult) {
             log.info("Changeset: Executing: $changeSet")
-            if (changeSet.testCypher)
+            if (changeSet.updateCypher)
                 neo.query(changeSet.updateCypher, EMPTY_MAP)
             changeSet.updateClosure?.call()
         }
