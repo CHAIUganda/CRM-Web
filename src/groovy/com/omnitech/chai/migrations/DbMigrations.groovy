@@ -2,6 +2,7 @@ package com.omnitech.chai.migrations
 
 import com.omnitech.chai.crm.MigrationService
 import com.omnitech.chai.crm.TxHelperService
+import com.omnitech.chai.model.CustomerSegment
 import com.omnitech.chai.model.RequestMap
 import com.omnitech.chai.repositories.RequestMapRepository
 import grails.util.Holders
@@ -9,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.support.Neo4jTemplate
 
 import static com.omnitech.chai.model.Role.SALES_SUPERVISOR_ROLE_NAME
-import static com.omnitech.chai.model.Role.getDETAILING_SUPERVISOR_ROLE_NAME
+import static com.omnitech.chai.model.Role.DETAILING_SUPERVISOR_ROLE_NAME
 import static com.omnitech.chai.util.ModelFunctions.getOrCreate
 
 /**
@@ -46,6 +47,13 @@ class DbMigrations {
                                    '/report/getReport/**'      : [DETAILING_SUPERVISOR_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
                                    '/report/download/**'       : [DETAILING_SUPERVISOR_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
                                    '/report/reportWiz/**'      : [DETAILING_SUPERVISOR_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME]])
+                }
+            }
+
+            changeSet(id: 'add-default-segment'){
+                test "match (c:CustomerSegment) where c.name = 'Default' with count(c) as segments return segments = 0 as answer"
+                update {
+                    neo.save(new CustomerSegment(name: 'Default', callFrequency: 1, segmentationScript: 'true'))
                 }
             }
         }
