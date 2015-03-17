@@ -1,17 +1,17 @@
 <g:each in="${customerInstance?.customerContacts}" var="customerContactInstance" status="i">
     <div class="panel panel-success">
 
-        <div class="panel-heading">Contact-${i + 1}-${customerContactInstance?.firstName}</div>
+        <div class="panel-heading">Contact-${i + 1}-${customerContactInstance?.names}</div>
 
         <div class="panel-body">
             <table class="table">
                 <tbody>
 
                 <tr class="prop">
-                    <td valign="top" class="name"><g:message code="customerContact.surnname.label"
-                                                             default="Surname"/></td>
+                    <td valign="top" class="name"><g:message code="customerContact.names.label"
+                                                             default="Name"/></td>
 
-                    <td valign="top" class="value">${fieldValue(bean: customerContactInstance, field: "surname")}</td>
+                    <td valign="top" class="value">${fieldValue(bean: customerContactInstance, field: "names")}</td>
 
                 </tr>
 

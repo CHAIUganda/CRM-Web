@@ -176,8 +176,7 @@ class CustomerService {
 
         def customerContact = new CustomerContact(
                 title: prop(record, 'title', false),
-                firstName: prop(record, 'firstName', false),
-                surname: prop(record, 'surname', false),
+                names: "${prop(record, 'surname', false, "")} ${prop(record, 'firstName', false, "")}",
                 contact: prop(record, 'contact', false),
                 gender: prop(record, 'gender', false),
                 role: prop(record, 'role', false),
@@ -196,9 +195,8 @@ class CustomerService {
         if (prop(record, 'surname2', false) || prop(record, 'firstName2', false)) {
             def customerContact2 = new CustomerContact(
                     title: prop(record, 'title2', false),
-                    firstName: prop(record, 'firstName2', false),
-                    surname: prop(record, 'surname2', false),
-                    contact: prop(record, 'contact2', false),
+                    names: "${prop(record, 'surname2', false)}  ${prop(record, 'firstName2', false, "")}",
+                    contact: prop(record, 'contact2', false, ""),
                     gender: prop(record, 'gender2', false)?.toLowerCase(),
                     role: prop(record, 'role2', false),
                     qualification: prop(record, 'qualification2', false),

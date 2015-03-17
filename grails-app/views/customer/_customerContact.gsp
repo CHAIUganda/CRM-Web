@@ -22,28 +22,13 @@
 
             <div>
                 <label for="contact" class="control-label">
-                    <g:message code="customerContact.firstName.label" default="Contact First Name"/>
+                    <g:message code="customerContact.names.label" default="Name"/>
                 </label>
 
-                <div><g:textField class='form-control' name="tCustomerContacts[{{\$index}}].firstName"
-                                  ng-model="c.firstName"/></div>
+                <div><g:textField class='form-control' name="tCustomerContacts[{{\$index}}].names"
+                                  ng-model="c.names"/></div>
             </div>
 
-
-            <div>
-                <label for="contact" class="control-label">
-                    <g:message code="customerContact.surname.label" default="Contact Surname"/>
-                </label>
-
-                <div><g:textField class='form-control' name="tCustomerContacts[{{\$index}}].surname"
-                                  ng-model="c.surname"/></div>
-            </div>
-
-
-
-        </div>
-
-        <div class="col-md-6">
             <div>
                 <label for="gender" class="control-label">
                     <g:message code="customerContact.gender.label" default="Gender"/>
@@ -53,6 +38,10 @@
                                from="${['male', 'female']}"
                                ng-model="c.gender"/></div>
             </div>
+
+        </div>
+
+        <div class="col-md-6">
 
             <div>
                 <label for="networkOrAssociation" class="control-label">

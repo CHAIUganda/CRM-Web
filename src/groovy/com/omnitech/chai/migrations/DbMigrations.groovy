@@ -9,8 +9,8 @@ import grails.util.Holders
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.support.Neo4jTemplate
 
-import static com.omnitech.chai.model.Role.SALES_SUPERVISOR_ROLE_NAME
 import static com.omnitech.chai.model.Role.DETAILING_SUPERVISOR_ROLE_NAME
+import static com.omnitech.chai.model.Role.SALES_SUPERVISOR_ROLE_NAME
 import static com.omnitech.chai.util.ModelFunctions.getOrCreate
 
 /**
@@ -55,6 +55,10 @@ class DbMigrations {
                 update {
                     neo.save(new CustomerSegment(name: 'Default', callFrequency: 1, segmentationScript: 'true'))
                 }
+            }
+
+            changeSet(id: 'rename-CustomerContact.surname-to-names') {
+                update 'MATCH (n:CustomerContact) WHERE has(n.`surname`) set n.names = n.surname remove n.surname'
             }
         }
     }

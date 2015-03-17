@@ -11,7 +11,7 @@ class CustomerContact extends AbstractEntity {
 
     String title
     String firstName
-    String surname
+    String names
     String contact
 
 
@@ -26,8 +26,6 @@ class CustomerContact extends AbstractEntity {
         gender          blank: false, inList: ['male', 'female']
         role            blank: false
         qualification   blank: false
-        firstName       blank: false
-        surname         blank: false
         title           blank: false
 
     }
