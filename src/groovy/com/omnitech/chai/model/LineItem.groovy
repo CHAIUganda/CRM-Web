@@ -33,8 +33,7 @@ class LineItem extends AbstractEntity {
     static constraints = {
         product nullable: false
         hasLineItem nullable: false
-        quantity min: 1d
-        unitPrice min: 1d
+        quantity min: 1
     }
 }
 
