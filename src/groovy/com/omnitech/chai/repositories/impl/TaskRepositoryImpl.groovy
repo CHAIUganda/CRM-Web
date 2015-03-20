@@ -1,9 +1,6 @@
 package com.omnitech.chai.repositories.impl
 
-import com.omnitech.chai.model.DetailerStock
-import com.omnitech.chai.model.DetailerTask
-import com.omnitech.chai.model.Order
-import com.omnitech.chai.model.Sale
+import com.omnitech.chai.model.*
 import com.omnitech.chai.repositories.CategoryBrandResult
 import com.omnitech.chai.repositories.DetailerStockRepository
 import com.omnitech.chai.repositories.ProductRepository
@@ -42,7 +39,8 @@ class TaskRepositoryImpl extends CustomRepositoryBase implements CustomTaskRepos
                 .match(node(nodeName).in(COMPLETED_TASK, CANCELED_TASK).node('u')).optional()
         def fields = essentialExportTaskClauses()
         def labels = ['DISTRICT', 'SUBCOUNTY', 'VILLAGE', 'OUTLET NAME', 'OUTLET TYPE', 'CANCELED_OR_COMPLETED BY']
-        customizeExportQuery(query, fields, labels, type.newInstance())
+        def className = type.simpleName
+        "customizeExportQuery$className"(query, fields, labels, type)
 
     }
 
@@ -68,26 +66,36 @@ class TaskRepositoryImpl extends CustomRepositoryBase implements CustomTaskRepos
          az(identifier('u').property('username'), 'CANCELED_OR_COMPLETED BY')]
     }
 
-    private def customizeExportQuery(Match query,
+    private def customizeExportQueryOrder(Match query,
                                      List<Expression> queryReturnFields,
                                      List<String> queryReturnLabels,
-                                     Order order) {
+                                     Class<Order> task) {
         queryReturnLabels << 'ORDER TAKEN BY'
-        def varName = Order.simpleName.toLowerCase()
+        def varName = nodeName(task)
+
         query.match(node(varName).out(ORDER_TAKEN_BY).node('takenBy')).optional()
                 .match(node(varName).out(HAS_PRODUCT).as('li').node('p')).optional()
         queryReturnFields << az(identifier('takenBy').property('username'), 'ORDER TAKEN BY')
+
+        def (fieldLabels, returnFields) = getClassExportFields(task)
+
+        queryReturnFields.addAll(returnFields)
+        queryReturnLabels.addAll(fieldLabels)
 
         query.returns(queryReturnFields)
 
         def stringQuery = query.toString()
 
-        stringQuery = addRepeatElementStatements(stringQuery, bean(ProductRepository).findAll()) { p ->
-            def productName = p.name.toUpperCase() + '-' + (p.unitOfMeasure ?: '')
-            queryReturnLabels << productName
-            return "sum (case when id(p) = $p.id then li.quantity else null end) as `$productName`"
-
+        ['quantity'].each { String property ->
+            def fieldLabel = getNaturalName(property)
+            stringQuery = addRepeatElementStatements(stringQuery, bean(ProductRepository).findAll()) { p ->
+                def aliasName = p.name.toUpperCase() + (p.unitOfMeasure ? "-$p.unitOfMeasure" : '') + "($fieldLabel)"
+                queryReturnLabels << aliasName
+                def expr = "collect (case when id(p) = $p.id then li.$property else null end)"
+                return "head($expr)  as `$aliasName`"
+            }
         }
+
 
         return export(stringQuery, queryReturnLabels, Order)
     }
@@ -100,22 +108,65 @@ class TaskRepositoryImpl extends CustomRepositoryBase implements CustomTaskRepos
         return data
     }
 
-    private def customizeExportQuery(Match query,
+    private def customizeExportQuerySale(Match query,
                                      List<Expression> queryReturnFields,
-                                     List<String> queryReturnLabels, Sale order) {
+                                     List<String> queryReturnLabels, Class<Sale> task) {
+
+        def varName = nodeName(task)
+
+        query.match(node(varName).out(HAS_PRODUCT).as('li').node('p')).optional()
+                .match(node(varName).out(STOCK_PRODUCT).as(nodeName(StockLine)).node('p2')).optional()
+
+        //queryReturnLabels << 'ORDER TAKEN BY'
+        //.match(node(varName).out(ORDER_TAKEN_BY).node('takenBy')).optional()
+        //queryReturnFields << az(identifier('takenBy').property('username'), 'ORDER TAKEN BY')
+
+        def (fieldLabels, returnFields) = getClassExportFields(DirectSale, varName)
+
+        queryReturnFields.addAll(returnFields)
+        queryReturnLabels.addAll(fieldLabels)
+
+        query.returns(queryReturnFields)
+
+        def stringQuery = query.toString()
+
+        //selling information
+        ['quantity', 'unitPrice'].each { String property ->
+            def fieldLabel = getNaturalName(property)
+            stringQuery = addRepeatElementStatements(stringQuery, bean(ProductRepository).findAll()) { p ->
+                def aliasName = p.name.toUpperCase() + (p.unitOfMeasure ? "-$p.unitOfMeasure" : '') + "(SALE: $fieldLabel)"
+                queryReturnLabels << aliasName
+                def expr = "collect (case when id(p) = $p.id then li.$property else null end)"
+                return "head($expr)  as `$aliasName`"
+            }
+        }
+
+        //stock information
+        ['quantity'].each { String property ->
+            def fieldLabel = getNaturalName(property)
+            stringQuery = addRepeatElementStatements(stringQuery, bean(ProductRepository).findAll()) { p ->
+                def aliasName = p.name.toUpperCase() + (p.unitOfMeasure ? "-$p.unitOfMeasure" : '') + "(STOCK: $fieldLabel)"
+                queryReturnLabels << aliasName
+                def expr = "collect (case when id(p2) = $p.id then stockline.$property else null end)"
+                return "head($expr)  as `$aliasName`"
+            }
+        }
+
+
+        return export(stringQuery, queryReturnLabels, DirectSale)
 
     }
 
-    private def customizeExportQuery(Match query,
+    private def customizeExportQueryDetailerTask(Match query,
                                      List<Expression> queryReturnFields,
                                      List<String> queryReturnLabels,
-                                     DetailerTask task) {
+                                     Class<DetailerTask> task) {
 
 
         def stockNode = nodeName(DetailerStock)
         query.match(node(nodeName(DetailerTask)).out(HAS_DETAILER_STOCK).node(stockNode)).optional()
 
-        def (fieldLabels, returnFields) = getClassExportFields(task.getClass())
+        def (fieldLabels, returnFields) = getClassExportFields(task)
 
         queryReturnFields.addAll(returnFields)
         queryReturnLabels.addAll(fieldLabels)
@@ -134,12 +185,12 @@ class TaskRepositoryImpl extends CustomRepositoryBase implements CustomTaskRepos
 
 
 
-        export(queryString, queryReturnLabels, task.getClass())
+        export(queryString, queryReturnLabels, task)
     }
 
 
-    static getClassExportFields(Class aClass) {
-        def varName = aClass.simpleName.toLowerCase()
+    static getClassExportFields(Class aClass, String alias = null) {
+        def varName = alias ?: aClass.simpleName.toLowerCase()
         def returnFields = [], fieldLabels = []
         ReflectFunctions.findAllBasicFields(aClass).each {
             if (['lastUpdated', 'dateCreated', 'id'].contains(it)) return
