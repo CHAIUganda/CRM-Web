@@ -1,6 +1,7 @@
 package com.omnitech.chai.repositories
 
 import com.omnitech.chai.model.*
+import com.omnitech.chai.repositories.impl.CustomTaskRepository
 import groovy.transform.CompileStatic
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.annotation.QueryResult
@@ -141,7 +142,7 @@ interface TerritoryRepository extends GraphRepository<Territory> {
     Iterable<Territory> findAllByType(@Param('type') String type)
 }
 
-interface TaskRepository extends GraphRepository<Task>, CypherDslRepository<Task> {
+interface TaskRepository extends GraphRepository<Task>, CypherDslRepository<Task>, CustomTaskRepository {
 
     Task findByUuid(String uuid)
 
@@ -267,5 +268,21 @@ interface ReportGroupRepository extends GraphRepository<ReportGroup> {
 interface DbChangeSetRepository extends GraphRepository<DbChangeSet> {
     DbChangeSet findByUuid(String uuid)
     DbChangeSet findByChangeId(String uuid)
+}
+
+interface DetailerStockRepository extends GraphRepository<DetailerStock> {
+
+    @Query("match (d:DetailerStock) return distinct d.category as category , d.brand as brand order by category, brand")
+    Iterable<CategoryBrandResult> findAllCategoriesAndBrands()
+
+}
+
+@CompileStatic
+@QueryResult
+class CategoryBrandResult {
+    @ResultColumn('category')
+    String category
+    @ResultColumn('brand')
+    String brand
 }
 

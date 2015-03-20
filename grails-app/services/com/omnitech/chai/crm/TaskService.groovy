@@ -13,13 +13,11 @@ import org.springframework.data.neo4j.transaction.Neo4jTransactional
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.util.Assert
 
-import static com.omnitech.chai.model.Relations.*
+import static com.omnitech.chai.model.Relations.CUST_TASK
 import static com.omnitech.chai.util.ChaiUtils.getNextWorkDay
-import static grails.util.GrailsNameUtils.getNaturalName
 import static java.util.Collections.EMPTY_MAP
 import static java.util.Collections.max
 import static org.neo4j.cypherdsl.CypherQuery.*
-import static org.neo4j.cypherdsl.CypherQuery.as as az
 
 @Neo4jTransactional
 class TaskService {
@@ -205,73 +203,14 @@ class TaskService {
         saveTask(task)
     }
 
-    List<Map> exportTasksForUser(Long userId, Class taskTpe) {
+    List<List> exportTasksForUser(Long userId, Class taskTpe) {
         def products = productRepository.findAllByUser(userId)
         def (exportFields,query) = TaskQuery.exportTasks(userId, taskTpe,products)
         log.trace("export tasks for user: $query")
         [exportFields,neo.query(query.toString(), [:]).collect()]
     }
 
-    List exportAllTasks(Class type) {
-
-        def returnFields = []
-        def query = match(
-                node('task').label(type.simpleName)
-                        .in(CUST_TASK).node('c')
-                        .out(CUST_IN_SC).node('sc')
-                        .in(HAS_SUB_COUNTY).node('d'))
-                .match(node('c').out(CUST_IN_VILLAGE).node('v')).optional()
-                .match(node('task').in(COMPLETED_TASK, CANCELED_TASK).node('u')).optional()
-
-
-
-
-        def fields = [az(identifier('d').property('name'), 'DISTRICT'),
-                      az(identifier('sc').property('name'), 'SUBCOUNTY'),
-                      az(identifier('v').property('name'), 'VILLAGE'),
-                      az(identifier('c').property('outletName'), 'OUTLET NAME'),
-                      az(identifier('c').property('outletType'), 'OUTLET TYPE'),
-                      az(identifier('u').property('username'), 'CANCELED_OR_COMPLETED BY')]
-
-
-        if (type.isAssignableFrom(Order)) {
-            query.match(node('task').out(ORDER_TAKEN_BY).node('takenBy')).optional()
-                    .match(node('task').out(HAS_PRODUCT).as('li').node('p')).optional()
-            fields << az(identifier('takenBy').property('username'), 'ORDER TAKEN BY')
-            returnFields << 'ORDER TAKEN BY'
-        }
-
-        ReflectFunctions.findAllBasicFields(type).each {
-            if (['lastUpdated', 'dateCreated', 'id'].contains(it)) return
-            def fieldAlias = getNaturalName(it).toUpperCase()
-            fields << az(identifier('task').property(it), fieldAlias)
-            returnFields << fieldAlias
-        }
-        query.returns(*fields)
-
-        def stringQuery = query.toString()
-
-        if (type.isAssignableFrom(Order)) {
-            def products = productRepository.findAll()
-            def queries = products.collect { p ->
-                def productName = p.name.toUpperCase() + '-' + (p.unitOfMeasure ?: '')
-                returnFields.add(productName)
-               return  "sum (case when id(p) = $p.id then li.quantity else null end) as `${productName}`"
-//                "case when id(p) = $p.id then li.quantity else null end as `${productName}`"
-            }
-            def joinedExpressions = queries.join(',')
-            if (joinedExpressions)
-                stringQuery = "$stringQuery, $joinedExpressions"
-        }
-        log.trace("exportAllTasks(): [$stringQuery]")
-
-        def finalFields = ['DISTRICT', 'SUBCOUNTY', 'VILLAGE', 'OUTLET NAME', 'OUTLET TYPE', 'CANCELED_OR_COMPLETED BY']
-        finalFields.addAll(returnFields)
-
-        finalFields.removeAll('COMMENT', 'IS ADHOCK', 'WKT')
-
-        [finalFields, neo.query(stringQuery, [:]).collect()]
-    }
+    List exportAllTasks(Class type) { taskRepository.exportAllTasks(type) }
 
     Task generateCustomerDetailingTask(Customer customer) {
         def segment = customer.segment

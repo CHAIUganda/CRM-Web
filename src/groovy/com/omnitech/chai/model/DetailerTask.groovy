@@ -54,10 +54,10 @@ class DetailerTask extends Task {
 
 @NodeEntity
 class DetailerStock extends AbstractEntity {
-    private String brand;
+     String brand;
     /** Not-null value. */
-    private String category;
-    private double stockLevel;
-    private Double buyingPrice;
-    private Double sellingPrice;
+     String category;
+     double stockLevel;
+     Double buyingPrice;
+     Double sellingPrice;
 }
