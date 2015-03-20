@@ -85,6 +85,13 @@ class CustomerController {
 
     }
 
+    /**
+     * Binds copies only the neccessary properties so that other relationships do not die
+     * @param customerId
+     * @param customer
+     * @param subCounty
+     * @return
+     */
     private Customer _updateVillage(String customerId, Customer customer, SubCounty subCounty) {
         def neoCustomer = customerService.findCustomer(customerId)
         if (!neoCustomer) {
@@ -97,7 +104,11 @@ class CustomerController {
         def whiteList = ReflectFunctions.findAllBasicFields(Customer)
         whiteList.removeAll(ModelFunctions.META_FIELDS)
         whiteList.remove('id')
+
+
         ModelFunctions.bind(neoCustomer, customer.properties, whiteList)
+        neoCustomer.customerContacts = customer.customerContacts
+        neoCustomer
     }
 
     private def handleSafely(def func) {
