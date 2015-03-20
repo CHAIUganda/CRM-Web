@@ -23,22 +23,18 @@ class DetailerTask extends Task {
     String knowledgeAbtOrsAndUsage
     String knowledgeAbtZincAndUsage
     String whyNotUseAntibiotics
-    Boolean doYouStockOrsZinc
-    Integer howManyZincInStock
-    Integer howmanyOrsInStock
-    String zincBrandsold
-    String orsBrandSold
-    String ifNoWhy
-    Double zincPrice
-    Double orsPrice
-    Double buyingPrice
     String pointOfsaleMaterial
     String recommendationNextStep
     String recommendationLevel
 
+    //new items
+    String ifNoZincWhy;
+    String ifNoOrsWhy;
+
     @Fetch
     @RelatedTo(type = Relations.HAS_DETAILER_STOCK)
     Set<DetailerStock> detailerStocks
+
 
     def beforeSave() {
         super.beforeSave()
