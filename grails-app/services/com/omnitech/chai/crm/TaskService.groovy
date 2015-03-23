@@ -204,10 +204,7 @@ class TaskService {
     }
 
     List<List> exportTasksForUser(Long userId, Class taskTpe) {
-        def products = productRepository.findAllByUser(userId)
-        def (exportFields,query) = TaskQuery.exportTasks(userId, taskTpe,products)
-        log.trace("export tasks for user: $query")
-        [exportFields,neo.query(query.toString(), [:]).collect()]
+        taskRepository.exportAllTasks(userId, taskTpe)
     }
 
     List exportAllTasks(Class type) { taskRepository.exportAllTasks(type) }

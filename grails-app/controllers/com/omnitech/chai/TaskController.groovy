@@ -78,23 +78,20 @@ class TaskController extends BaseController {
     protected def export(Class type) {
         def currentUser = neoSecurityService.currentUser
         def user = params.user ? userService.findUserByName(params.user) : null
+        def filePrefix = type.simpleName
         if (user) {
             if(!taskService.isAllowedToViewUserTasks(user)){
                 notFound()
                 return
             }
-            def (exportFields, data) = taskService.exportTasksForUser(user.id, type)
-            def csvData = FuzzyCSV.toCSV(data, *exportFields)
-            csvData = ExportUtil.fixDates(type,csvData)
-            ServletUtil.exportCSV(response, "Tasks-${params.user}.csv", csvData)
+            def csvData = taskService.exportTasksForUser(user.id, type)
+            ServletUtil.exportCSV(response, "${filePrefix}-Tasks-${params.user}.csv", csvData)
         } else if (currentUser.hasRole(Role.ADMIN_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME)) {
             def csvData = taskService.exportAllTasks(type)
-            ServletUtil.exportCSV(response, "Tasks-All.csv", csvData)
+            ServletUtil.exportCSV(response, "${filePrefix}-Tasks-All.csv", csvData)
         } else {
-            def (exportFields, data)= taskService.exportTasksForUser(currentUser.id, type)
-            def csvData = FuzzyCSV.toCSV(data, *exportFields)
-            csvData = ExportUtil.fixDates(type,csvData)
-            ServletUtil.exportCSV(response, "Tasks-${params.user}.csv", csvData)
+            def csvData= taskService.exportTasksForUser(currentUser.id, type)
+            ServletUtil.exportCSV(response, "${filePrefix}-Tasks-${params.user}.csv", csvData)
         }
     }
 

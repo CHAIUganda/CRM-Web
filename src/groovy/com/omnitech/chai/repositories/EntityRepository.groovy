@@ -1,7 +1,8 @@
 package com.omnitech.chai.repositories
 
 import com.omnitech.chai.model.*
-import com.omnitech.chai.repositories.impl.CustomTaskRepository
+import com.omnitech.chai.repositories.impl.ICustomerRepository
+import com.omnitech.chai.repositories.impl.ITaskRepository
 import groovy.transform.CompileStatic
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.annotation.QueryResult
@@ -71,7 +72,7 @@ interface VillageRepository extends GraphRepository<Village> {
 
 }
 
-interface CustomerRepository extends GraphRepository<Customer>, CypherDslRepository<Customer> {
+interface CustomerRepository extends GraphRepository<Customer>, CypherDslRepository<Customer> , ICustomerRepository{
 
     Customer findByUuid(String uuid)
 
@@ -142,7 +143,7 @@ interface TerritoryRepository extends GraphRepository<Territory> {
     Iterable<Territory> findAllByType(@Param('type') String type)
 }
 
-interface TaskRepository extends GraphRepository<Task>, CypherDslRepository<Task>, CustomTaskRepository {
+interface TaskRepository extends GraphRepository<Task>, CypherDslRepository<Task>, ITaskRepository {
 
     Task findByUuid(String uuid)
 

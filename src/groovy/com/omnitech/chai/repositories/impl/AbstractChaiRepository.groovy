@@ -1,6 +1,8 @@
 package com.omnitech.chai.repositories.impl
 
+import com.omnitech.chai.util.ExportUtil
 import com.omnitech.chai.util.ReflectFunctions
+import fuzzycsv.FuzzyCSV
 import grails.util.Holders
 import groovy.transform.CompileStatic
 import org.springframework.data.neo4j.support.Neo4jTemplate
@@ -30,7 +32,7 @@ abstract class AbstractChaiRepository {
         return Holders.applicationContext.getBean(c)
     }
 
-    static getClassExportFields(Class aClass, String alias = null) {
+    static List getClassExportFields(Class aClass, String alias = null) {
         def varName = alias ?: aClass.simpleName.toLowerCase()
         def returnFields = [], fieldLabels = []
         ReflectFunctions.findAllBasicFields(aClass).each {
@@ -43,6 +45,14 @@ abstract class AbstractChaiRepository {
     }
 
     @CompileStatic
-     static String nodeName(Class aClass) { aClass.simpleName.toLowerCase() }
+    static String nodeName(Class aClass) { aClass.simpleName.toLowerCase() }
+
+    def export(String query, List<String> queryReturnLabels, Class type) {
+        queryReturnLabels.removeAll('COMMENT', 'IS ADHOCK', 'WKT')
+        def results = neo.query(query, Collections.EMPTY_MAP).collect()
+        def data = FuzzyCSV.toCSV(results, *queryReturnLabels)
+        data = ExportUtil.fixDates(type, data)
+        return data
+    }
 
 }

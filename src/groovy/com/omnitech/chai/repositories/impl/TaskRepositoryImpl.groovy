@@ -4,10 +4,6 @@ import com.omnitech.chai.model.*
 import com.omnitech.chai.repositories.CategoryBrandResult
 import com.omnitech.chai.repositories.DetailerStockRepository
 import com.omnitech.chai.repositories.ProductRepository
-import com.omnitech.chai.util.ExportUtil
-import com.omnitech.chai.util.ReflectFunctions
-import fuzzycsv.FuzzyCSV
-import groovy.transform.CompileStatic
 import org.neo4j.cypherdsl.expression.Expression
 import org.neo4j.cypherdsl.grammar.Match
 
@@ -20,13 +16,15 @@ import static org.neo4j.cypherdsl.CypherQuery.as as az
 /**
  * Created by kay on 3/19/2015.
  */
-interface CustomTaskRepository {
+interface ITaskRepository {
 
     List exportAllTasks(Class type)
 
+    List exportAllTasks(Long userId, Class type)
+
 }
 
-class TaskRepositoryImpl extends CustomRepositoryBase implements CustomTaskRepository {
+class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskRepository {
 
     @Override
     List exportAllTasks(Class type) {
@@ -40,11 +38,12 @@ class TaskRepositoryImpl extends CustomRepositoryBase implements CustomTaskRepos
         def fields = essentialExportTaskClauses()
         def labels = ['DISTRICT', 'SUBCOUNTY', 'VILLAGE', 'OUTLET NAME', 'OUTLET TYPE', 'CANCELED_OR_COMPLETED BY']
         def className = type.simpleName
-        "customizeExportQuery$className"(query, fields, labels, type)
+        def products = bean(ProductRepository).findAll()
+        "customizeExportQuery$className"(query, fields, labels, type, products)
 
     }
 
-    def exportTasks(Long userId, Class type) {
+    List exportAllTasks(Long userId, Class type) {
         def nodeName = type.simpleName.toLowerCase()
         def query = mathQueryForUserTasks(userId, type)
                 .with(distinct(identifier(nodeName)))
@@ -54,7 +53,9 @@ class TaskRepositoryImpl extends CustomRepositoryBase implements CustomTaskRepos
                 .match(node(nodeName).in(COMPLETED_TASK, CANCELED_TASK).node('u')).optional()
         def fields = essentialExportTaskClauses()
         def labels = ['DISTRICT', 'SUBCOUNTY', 'VILLAGE', 'OUTLET NAME', 'OUTLET TYPE', 'CANCELED_OR_COMPLETED BY']
-        customizeExportQuery(query, fields, labels, type.newInstance())
+        def className = type.simpleName
+        def products = bean(ProductRepository).findAllByUser(userId)
+        "customizeExportQuery$className"(query, fields, labels, type, products)
     }
 
     private static List essentialExportTaskClauses() {
@@ -69,7 +70,8 @@ class TaskRepositoryImpl extends CustomRepositoryBase implements CustomTaskRepos
     private def customizeExportQueryOrder(Match query,
                                      List<Expression> queryReturnFields,
                                      List<String> queryReturnLabels,
-                                     Class<Order> task) {
+                                     Class<Order> task,
+                                     Iterable<Product> products) {
         queryReturnLabels << 'ORDER TAKEN BY'
         def varName = nodeName(task)
 
@@ -100,17 +102,12 @@ class TaskRepositoryImpl extends CustomRepositoryBase implements CustomTaskRepos
         return export(stringQuery, queryReturnLabels, Order)
     }
 
-    private def export(String query, List<String> queryReturnLabels, Class type) {
-        queryReturnLabels.removeAll('COMMENT', 'IS ADHOCK', 'WKT')
-        def results = neo.query(query, Collections.EMPTY_MAP).collect()
-        def data = FuzzyCSV.toCSV(results, *queryReturnLabels)
-        data = ExportUtil.fixDates(type, data)
-        return data
-    }
 
     private def customizeExportQuerySale(Match query,
                                      List<Expression> queryReturnFields,
-                                     List<String> queryReturnLabels, Class<Sale> task) {
+                                     List<String> queryReturnLabels,
+                                     Class<Sale> task,
+                                     Iterable<Product> products) {
 
         def varName = nodeName(task)
 
@@ -160,7 +157,8 @@ class TaskRepositoryImpl extends CustomRepositoryBase implements CustomTaskRepos
     private def customizeExportQueryDetailerTask(Match query,
                                      List<Expression> queryReturnFields,
                                      List<String> queryReturnLabels,
-                                     Class<DetailerTask> task) {
+                                     Class<DetailerTask> task,
+                                     Iterable<Product> products) {
 
 
         def stockNode = nodeName(DetailerStock)
@@ -189,19 +187,6 @@ class TaskRepositoryImpl extends CustomRepositoryBase implements CustomTaskRepos
     }
 
 
-    static getClassExportFields(Class aClass, String alias = null) {
-        def varName = alias ?: aClass.simpleName.toLowerCase()
-        def returnFields = [], fieldLabels = []
-        ReflectFunctions.findAllBasicFields(aClass).each {
-            if (['lastUpdated', 'dateCreated', 'id'].contains(it)) return
-            def fieldAlias = getNaturalName(it).toUpperCase()
-            returnFields << az(identifier(varName).property(it), fieldAlias)
-            fieldLabels << fieldAlias
-        }
-        [fieldLabels, returnFields]
-    }
-
-
     private static
     def <T> String addRepeatElementStatements(String stringQuery, Iterable<T> items, Closure<String> getExpression) {
         def queries = items.collect { def p -> getExpression(p) }
@@ -215,12 +200,10 @@ class TaskRepositoryImpl extends CustomRepositoryBase implements CustomTaskRepos
     private static def customizeExportQuery(Match query,
                                             List<Expression> queryReturnFields,
                                             List<String> queryReturnLabels,
-                                            def order) {
+                                            def order,
+                                            Iterable<Product> products) {
         throw new UnsupportedOperationException("Export of $order is not supported")
     }
-
-    @CompileStatic
-    private static String nodeName(Class aClass) { aClass.simpleName.toLowerCase() }
 
 
 }
