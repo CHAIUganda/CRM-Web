@@ -136,6 +136,12 @@ class CustomerService {
         })
     }
 
+    List exportCustomers(){
+
+        customerRepository.exportAllCustomers()
+
+    }
+
     private processRecord(Record record) {
 
         //Processing Regions

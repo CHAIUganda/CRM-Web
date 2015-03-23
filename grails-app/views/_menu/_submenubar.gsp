@@ -33,12 +33,19 @@ This menu is used to show function that can be triggered on the content (an obje
                 </li>
             </g:if>
 
+            %{--Customer--}%
             <sec:ifAnyGranted roles="ROLE_SUPER_ROOT">
                 <g:if test="${params.controller == 'customer' && ['index', '', null].contains(params.action)}">
                     <li class="active">
                         <a class="btn btn-primary" data-toggle="modal" data-target="#importCustomers">
                             <i class="glyphicon glyphicon-upload"></i> Import Customers
                         </a>
+                    </li>
+
+                    <li class="active">
+                        <g:link controller="customer" action="export" class="btn btn-primary">
+                            <i class="glyphicon glyphicon-upload"></i> Export All
+                        </g:link>
                     </li>
                 </g:if>
             </sec:ifAnyGranted>

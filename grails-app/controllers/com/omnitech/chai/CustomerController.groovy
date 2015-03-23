@@ -5,6 +5,7 @@ import com.omnitech.chai.model.CustomerContact
 import com.omnitech.chai.model.Role
 import com.omnitech.chai.util.GroupFlattener
 import com.omnitech.chai.util.ModelFunctions
+import com.omnitech.chai.util.ServletUtil
 import grails.converters.JSON
 import grails.transaction.Transactional
 import org.springframework.web.multipart.commons.CommonsMultipartFile
@@ -163,6 +164,11 @@ class CustomerController {
         segmentationService.runSegmentationRoutine()
         flash.message = 'Segmentation Complete'
         redirect action: 'index'
+    }
+
+    def export() {
+        def customers = customerService.exportCustomers()
+        ServletUtil.exportCSV(response, 'Customers.csv', customers)
     }
 
 
