@@ -1,6 +1,7 @@
 package com.omnitech.chai
 
 import com.omnitech.chai.model.Sale
+import com.omnitech.chai.model.Task
 import org.springframework.security.access.AccessDeniedException
 
 import static com.omnitech.chai.model.Role.SALES_ROLE_NAME
@@ -48,6 +49,7 @@ class SaleController extends TaskController {
 
     def beforeInterceptor = {
         params.controller = 'visit'
+        params.status = Task.STATUS_COMPLETE
     }
 
 }
