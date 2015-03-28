@@ -2,8 +2,8 @@ package com.omnitech.chai.crm
 
 import com.omnitech.chai.exception.ImportException
 import com.omnitech.chai.model.*
+import com.omnitech.chai.repositories.dto.CustomerDTO
 import com.omnitech.chai.util.ModelFunctions
-import com.omnitech.chai.util.PageUtils
 import com.omnitech.chai.util.ReflectFunctions
 import fuzzycsv.FuzzyCSV
 import fuzzycsv.Record
@@ -13,6 +13,8 @@ import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.data.neo4j.transaction.Neo4jTransactional
 
 import static com.omnitech.chai.model.Relations.*
+import static com.omnitech.chai.model.Role.ADMIN_ROLE_NAME
+import static com.omnitech.chai.model.Role.SUPER_ADMIN_ROLE_NAME
 import static com.omnitech.chai.util.ChaiUtils.execSilently
 import static com.omnitech.chai.util.ChaiUtils.prop
 import static fuzzycsv.RecordFx.fn
@@ -39,18 +41,12 @@ class CustomerService {
 
     List<Customer> listAllCustomers() { customerRepository.findAll().collect() }
 
-    Page<Customer> listCustomersInCtx(Long userId, Map params) {
-        def customer = Customer.simpleName.toLowerCase()
-        def startQuery = {
-            start(nodesById('u', userId))
-                    .match(node('u').out(USER_TERRITORY, SUPERVISES_TERRITORY)
-                    .node('t').in(SC_IN_TERRITORY)
-                    .node('sc').in(CUST_IN_SC).node(customer))
+    Page<CustomerDTO> listCustomersInCtx(User user, Map params) {
+        if (user.hasRole(ADMIN_ROLE_NAME, SUPER_ADMIN_ROLE_NAME)) {
+            return customerRepository.findAllCustomersForPage(params)
+        }else {
+            customerRepository.findAllCustomersForPage(user.id,params)
         }
-        def q = startQuery().returns(distinct(identifier(customer)))
-        PageUtils.addPagination(q, params, Customer)
-        def cq = startQuery().returns(count(distinct(identifier(customer))))
-        ModelFunctions.query(neo, q, cq, params, Customer)
     }
 
     Customer findCustomer(Long id) { customerRepository.findOne(id) }

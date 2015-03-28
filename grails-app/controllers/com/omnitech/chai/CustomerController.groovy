@@ -2,7 +2,6 @@ package com.omnitech.chai
 
 import com.omnitech.chai.model.Customer
 import com.omnitech.chai.model.CustomerContact
-import com.omnitech.chai.model.Role
 import com.omnitech.chai.util.GroupFlattener
 import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.ServletUtil
@@ -29,14 +28,8 @@ class CustomerController {
 
     def index(Integer max) {
         params.max = Math.min(max ?: 50, 100)
-        def page
-        if (neoSecurityService.currentUser.hasRole(Role.SUPER_ADMIN_ROLE_NAME))
-            page = customerService.listCustomers(params)
-        else
-            page = customerService.listCustomersInCtx(neoSecurityService.currentUser.id, params)
-
-        def content = new GroupFlattener(leaves: page.content).normalize()
-        [customerInstanceList: content, customerInstanceCount: page.totalElements]
+        def page = customerService.listCustomersInCtx(neoSecurityService.currentUser, params)
+        [customerInstanceList: page.content, customerInstanceCount: page.totalElements, layout_nosearchtext : true]
     }
 
     def search(Integer max) {

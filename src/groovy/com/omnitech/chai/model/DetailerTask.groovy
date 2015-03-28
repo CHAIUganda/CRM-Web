@@ -26,6 +26,7 @@ class DetailerTask extends Task {
     String pointOfsaleMaterial
     String recommendationNextStep
     String recommendationLevel
+    String objections
 
     //new items
     String ifNoZincWhy;

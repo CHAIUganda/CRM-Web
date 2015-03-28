@@ -33,6 +33,9 @@
 <c:renderProperty label="Why Not Use Antibiotics"
                   value="${fieldValue(bean: taskInstance, field: "whyNotUseAntibiotics")}"/>
 
+<c:renderProperty label="Objections"
+                  value="${fieldValue(bean: taskInstance, field: "objections")}"/>
+
 <c:renderProperty label="Uuid"
                   value="${fieldValue(bean: taskInstance, field: "uuid")}"/>
 

@@ -2,7 +2,6 @@ package com.omnitech.chai.util
 
 import org.neo4j.cypherdsl.Order
 import org.neo4j.cypherdsl.grammar.OrderBy
-import org.neo4j.cypherdsl.grammar.ReturnNext
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 
@@ -48,7 +47,7 @@ class PageUtils {
         return new PageRequest(pageNumber, size)
     }
 
-    static <T extends OrderBy> T  addPagination(T next, Map param, Class returnClass) {
+    static <T extends OrderBy> T addPagination(T next, Map param, Class returnClass) {
         def pageParams = create(param)
         addSorting(next, param, returnClass)
                 .skip(pageParams.offset)
@@ -60,7 +59,7 @@ class PageUtils {
      * Use this instead of addPagination if u intend to use CypherDSLRepo
      */
     static <T extends OrderBy> T addSorting(T next, Map param, Class returnClass) {
-        def entityName = returnClass.simpleName.toLowerCase()
+        def entityName = returnClass?.simpleName?.toLowerCase()
 
         def pageParams = create(param)
         def sortIt = pageParams.sort?.iterator()
@@ -72,12 +71,17 @@ class PageUtils {
             def order = sortIt.next()
             sort = order.property
             if (sort?.contains('.')) {
-                (entityName,sort) = sort.split(/\./)
-
+                (entityName, sort) = sort.split(/\./)
             }
             direction = order.direction == Sort.Direction.ASC ? Order.ASCENDING : Order.DESCENDING
         }
-        next.orderBy(order(identifier(entityName).property(sort ? sort : 'id'), direction))
+        if (sort) {
+            if (entityName) {
+                next.orderBy(order(identifier(entityName).property(sort), direction))
+            } else {
+                next.orderBy(order(identifier(sort), direction))
+            }
+        }
         return next
     }
 

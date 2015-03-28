@@ -23,9 +23,11 @@
 
             <g:sortableColumn property="outletSize" title="${message(code: 'customer.outletSize.label', default: 'Outlet Size')}" />
 
-            <th>${message(code: 'district.label', default: 'District')}</th>
+            <g:sortableColumn property="district" title="${message(code: 'customer.district.label', default: 'District')}" />
 
             <g:sortableColumn property="dateCreated" title="${message(code: 'customer.dateCreated.label', default: 'Date Created')}" />
+
+            <g:sortableColumn property="lastVisit" title="${message(code: 'customer.lastVisit.label', default: 'Last Visit')}" />
 
             <th>
                 Action
@@ -34,40 +36,29 @@
         </thead>
         <tbody>
         <g:each in="${customerInstanceList}" status="i" var="customerInstance">
-            <g:if test="${customerInstance.isHead()}">
-                <tr data-tt-id="${customerInstance.id}" class="${(i % 2) == 0 ? 'even' : 'odd'}">
-            </g:if>
-            <g:else>
-                <tr data-tt-id="${customerInstance.id}" data-tt-parent-id="${customerInstance.parentId}"  class="${(i % 2) == 0 ? 'even' : 'odd'}">
-            </g:else>
 
-            <g:if test="${customerInstance.isGroup()}">
-                <td>
-                    <strong>Segment-${fieldValue(bean: customerInstance, field: "name")}:</strong>
-                </td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </g:if>
-            <g:else>
+            <tr data-tt-id="${customerInstance.id}" class="${(i % 2) == 0 ? 'even' : 'odd'}">
 
-                <td><g:link action="show" id="${customerInstance.id}">${fieldValue(bean: customerInstance, field: "outletName")}</g:link></td>
+                <td><g:link action="show" id="${customerInstance.id}">
+                    ${(params.offset ? (params.offset as Long) + 1 : 1) + i}.
+                    ${fieldValue(bean: customerInstance, field: "outletName")}
+                </g:link></td>
 
                 <td>${fieldValue(bean: customerInstance, field: "outletType")}</td>
 
                 <td>${fieldValue(bean: customerInstance, field: "outletSize")}</td>
 
-                <td>${customerInstance?.element?.subCounty?.district}</td>
+                <td>${customerInstance?.district}</td>
 
                 <td><g:formatDate date="${customerInstance.dateCreated}" format="dd-MMM-yyyy" /></td>
+
+                <td><g:formatDate date="${customerInstance.lastVisit}" format="dd-MMM-yyyy" /></td>
 
                 <td>
                     <g:link action="edit" id="${customerInstance.id}"><i
                             class="glyphicon glyphicon-pencil"></i></g:link>
                 </td>
-            </g:else>
+
             </tr>
         </g:each>
         </tbody>
@@ -106,9 +97,6 @@
 </div>
 
 <r:require module="jqueryTreeTable"/>
-<g:javascript>
-    $("#tree-table").treetable({ expandable: true, initialState: "expanded" });
-</g:javascript>
 </body>
 
 </html>
