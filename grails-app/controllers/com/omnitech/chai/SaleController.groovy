@@ -15,6 +15,10 @@ class SaleController extends TaskController {
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
     def index(Integer max) {
+        if(!params.sort){
+            params.sort = 'completionDate'
+            params.order = 'desc'
+        }
         super.index max, Sale, [view: '/call/index', taskRole: SALES_ROLE_NAME]
     }
 
