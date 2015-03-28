@@ -41,6 +41,7 @@ class CustomerController {
         cMap['villageName'] = customer?.village?.name
         cMap['subcountyId'] = customer?.subCounty?.uuid
         cMap['parishName'] = customer?.parish?.name
+        cMap['segment'] = customer?.segment?.name
 
         //todo to fix on upload
         cMap['longitude'] = customer.lng
