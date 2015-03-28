@@ -19,6 +19,7 @@ class Product extends AbstractEntity implements LeafNode {
     String unitOfMeasure
     String formulation
     Double unitPrice
+    Boolean deleted = false
 
     @Fetch
     @RelatedTo(type = Relations.GRP_HAS_PRD, direction = Direction.INCOMING)

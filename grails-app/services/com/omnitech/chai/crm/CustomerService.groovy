@@ -63,7 +63,13 @@ class CustomerService {
 
     Customer findCustomer(String uuid) { uuid ? customerRepository.findByUuid(uuid) : null }
 
-    void deleteCustomer(Long id) { customerRepository.delete(id) }
+    void deleteCustomer(Long id) {
+        def customer = customerRepository.findOne(id)
+        if (customer) {
+            customer.deleted = true
+            customerRepository.save(customer)
+        }
+    }
 
     @Neo4jTransactional
     Page<Customer> searchCustomers(String search, Map params) {

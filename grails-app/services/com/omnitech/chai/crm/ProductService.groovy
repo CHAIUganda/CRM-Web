@@ -3,7 +3,6 @@ package com.omnitech.chai.crm
 import com.omnitech.chai.model.Product
 import com.omnitech.chai.model.ProductGroup
 import com.omnitech.chai.model.User
-import com.omnitech.chai.util.ChaiUtils
 import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.UUID
 import org.springframework.beans.factory.annotation.Autowired
@@ -58,7 +57,12 @@ class ProductService {
     }
 
     void deleteProduct(Long id) {
-        productRepository.delete(id)
+        def product = productRepository.findOne(id)
+        if (product) {
+            product.deleted = true
+            productRepository.save(product)
+        }
+
     }
 
     /* ProductGroups */

@@ -58,6 +58,7 @@ public class Customer extends AbstractEntity implements LeafNode {
 
     Boolean hasSisterBranch
     Boolean isActive = true
+    Boolean deleted = false
     @GraphProperty(propertyType = Long.class)
     Date dateOutletOpened
 
