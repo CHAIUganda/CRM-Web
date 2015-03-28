@@ -203,6 +203,7 @@ class SaleControllerSpec extends Specification {
     void "test invalid Line Item Request"() {
 
         def data = '''{
+"customerId" : "cccc",
   "howManyZincInStock": 5,
    "uuid":"clientRefId1",
   "howManyOrsInStock": 3,
@@ -213,8 +214,8 @@ class SaleControllerSpec extends Specification {
   "dateOfSale": "2013-01-3 04:05:40",
   "adhockSalesDatas": [
     {
-      "quantity": 0,
-      "price": 454,
+      "quantity": 2,
+      "price": 0,
       "productId": "xxxx-xxxx"
     },
     {
@@ -228,10 +229,12 @@ class SaleControllerSpec extends Specification {
         ProductService productService = Mock()
         TaskService taskService = Mock()
         NeoSecurityService securityService = Mock()
+        CustomerService customerService = Mock()
 
         controller.productService = productService
         controller.taskService = taskService
         controller.neoSecurityService = securityService
+        controller.customerService = customerService
 
 
         when:
@@ -241,9 +244,11 @@ class SaleControllerSpec extends Specification {
 
         then:
         1 * taskService.findDirectSaleByClientRefId('clientRefId1') >> null
-        1 * productService.findProductByUuid('xxxx-xxxx') >> new Product()
+        1 * productService.findProductByUuid('xxxx-xxxx') >> new Product(name: 'ORS')
+        1 * productService.findProductByUuid('yyyy-yyyyy') >> new Product()
+        1 * customerService.findCustomer('cccc') >> new Customer()
         0 * taskService.saveTask(_)
-        response.contentAsString ==~ ".*is less than minimum value.*"
+        response.contentAsString == '{"status":"Bad Request","message":"Sale Unit Price for [ORS] was not specified. "}'
 
     }
 
@@ -359,7 +364,7 @@ class SaleControllerSpec extends Specification {
         controller.saleOrder()
 
         then:
-        1 * productService.findProductByUuid('xxxx-xxxx') >> new Product()
+        1 * productService.findProductByUuid('xxxx-xxxx') >> new Product(name: 'ORS')
         1 * productService.findProductByUuid('yyyy-yyyyy') >> new Product()
         1 * securityService.currentUser >> new User()
         1 * taskService.findOrder('oooo') >> new Order(customer: new Customer(), comment: "SSjj", id: 5,takenBy: new User(username: 'someuser') )

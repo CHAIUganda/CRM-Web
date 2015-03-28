@@ -41,6 +41,7 @@ class SaleController extends BaseRestController {
             //explicitly remove the id
             sale.id = null
             updateCompletionInfo(sale)
+            validateSale(sale)
             taskService.saveTask(sale)
         }
 
@@ -60,6 +61,7 @@ class SaleController extends BaseRestController {
             updateCompletionInfo(mobileSale)
             mobileSale.lng = ChaiUtils.execSilently('Converting long to float') { json['longitude'] as Float }
             mobileSale.lat = ChaiUtils.execSilently('Converting lat to float') { json['latitude'] as Float }
+            validateSale(mobileSale)
             taskService.saveTask(mobileSale)
         }
     }
@@ -218,6 +220,14 @@ class SaleController extends BaseRestController {
             product = productService.getOrCreateProductByUuid(uuid)
         }
         return product
+    }
+
+    private static def validateSale(Sale sale) {
+
+        sale?.lineItems?.each {
+            assert it.quantity > 0, "Sale quantity for [${it.product.name}] was not specified"
+            assert it.unitPrice > 0, "Sale Unit Price for [${it.product.name}] was not specified"
+        }
     }
 
 
