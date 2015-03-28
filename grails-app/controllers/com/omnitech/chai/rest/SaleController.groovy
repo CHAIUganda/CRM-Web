@@ -120,7 +120,7 @@ class SaleController extends BaseRestController {
 
     private StockLine toStockLine(Map map, StockInfo directSale) {
 
-        def product = productService.findProductByUuid(map.productId as String)
+        def product = getOrCreateProduct(map.productId as String)
 
         assert product, "Product with id [$map.productId] Should Exist In the DB"
 
@@ -128,6 +128,10 @@ class SaleController extends BaseRestController {
                 product: product,
                 stockInfo: directSale,
                 quantity: map.quantity as Double)
+
+        if (lineItem.quantity == 0) {
+            lineItem.quantity = 1
+        }
 
         if (!lineItem.validate())
             throw new ValidationException("Error Validating LineItem", lineItem.errors)
@@ -166,7 +170,7 @@ class SaleController extends BaseRestController {
 
     private LineItem toLineItem(Map map, HasLineItem directSale) {
 
-        def product = productService.findProductByUuid(map.productId as String)
+        def product = getOrCreateProduct(map.productId as String)
 
         assert product, "Product with id [$map.productId] Should Exist In the DB"
 
@@ -175,6 +179,10 @@ class SaleController extends BaseRestController {
                 hasLineItem: directSale,
                 quantity: map.quantity as Double,
                 unitPrice: map.price as Double)
+
+        if (lineItem.quantity == 0) {
+            lineItem.quantity = 1
+        }
 
         if (!lineItem.validate())
             throw new ValidationException("Error Validating LineItem", lineItem.errors)
@@ -198,6 +206,18 @@ class SaleController extends BaseRestController {
             log.error("Error while handling request: \n $params", x)
             render(status: BAD_REQUEST, text: [status: BAD_REQUEST.reasonPhrase, message: ChaiUtils.getBestMessage(x)] as JSON)
         }
+    }
+
+    private Product getOrCreateProduct(String uuid) {
+        def versionCode = request.getHeader('app-version-code')
+        def product
+        if (versionCode) {
+            product = productService.findProductByUuid(uuid)
+            assert product, "Product with id [$uuid] Should Exist In the DB"
+        } else {
+            product = productService.getOrCreateProductByUuid(uuid)
+        }
+        return product
     }
 
 

@@ -3,7 +3,9 @@ package com.omnitech.chai.crm
 import com.omnitech.chai.model.Product
 import com.omnitech.chai.model.ProductGroup
 import com.omnitech.chai.model.User
+import com.omnitech.chai.util.ChaiUtils
 import com.omnitech.chai.util.ModelFunctions
+import com.omnitech.chai.util.UUID
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
@@ -36,6 +38,17 @@ class ProductService {
 
     Product findProductByUuid(String uuid) {
         productRepository.findByUuid(uuid)
+    }
+
+    Product getOrCreateProductByUuid(String uuid) {
+        def product = ModelFunctions.getOrCreate({
+            findProductByUuid(uuid)
+        }, {
+            def p = new Product(name: 'Deleted Product-' + UUID.uuid(4), uuid: uuid, unitOfMeasure: 'UnKnown')
+            p.denyUuidAlter()
+            return saveProduct(p, Collections.EMPTY_LIST)
+        })
+        return product
     }
 
     Product saveProduct(Product product, List territoryIds) {
