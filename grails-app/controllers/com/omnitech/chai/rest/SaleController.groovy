@@ -57,8 +57,16 @@ class SaleController extends BaseRestController {
             assert serverOrder, "Order should exist in the database"
 
             def mobileSale = toOrder(json, SaleOrder)
+
             bindSaleOrderToDbInstance(mobileSale, serverOrder)
             updateCompletionInfo(mobileSale)
+            //add date of sale
+            //todo put all date timestamping in one place
+            if(json.dateOfSale){
+                ChaiUtils.execSilently{
+                    mobileSale.completionDate = new Date(json.dateOfSale as Long)
+                }
+            }
             mobileSale.lng = ChaiUtils.execSilently('Converting long to float') { json['longitude'] as Float }
             mobileSale.lat = ChaiUtils.execSilently('Converting lat to float') { json['latitude'] as Float }
             validateSale(mobileSale)
@@ -107,6 +115,13 @@ class SaleController extends BaseRestController {
 
         // add line items
         def ds = ModelFunctions.createObj(DirectSale, dupeMap)
+
+        //add date of sale
+        if(map.dateOfSale){
+            ChaiUtils.execSilently{
+                ds.completionDate = new Date(map.dateOfSale as Long)
+            }
+        }
 
         if (map.adhockStockDatas) {
             ds = ModelFunctions.createObj(DirectSaleWithStock, ds.properties)

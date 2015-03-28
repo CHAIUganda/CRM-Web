@@ -28,7 +28,11 @@ class SaleControllerSpec extends Specification {
 
     void "test valid JSON Sale Request"() {
 
-        def data = '''{
+        def dateOfSale = Date.parse('yyyy-MM-dd', '2014-01-01')
+
+
+
+        def data = """{
   "customerId" : "cccc",
    "uuid":"clientRefId1",
   "howManyZincInStock": 5,
@@ -37,7 +41,7 @@ class SaleControllerSpec extends Specification {
   "recommendationNextStep": "start recommending ors",
   "recommendationLevel": "Level 2",
   "governmentApproval": true,
-  "dateOfSale": "2013-01-3 04:05:40",
+  "dateOfSale": $dateOfSale.time,
   "adhockSalesDatas": [
     {
       "quantity": 5,
@@ -50,7 +54,7 @@ class SaleControllerSpec extends Specification {
       "productId": "yyyy-yyyyy"
     }
   ]
-}'''
+}""" .toString()
 
         def directSaleValidator = { DirectSale ds ->
             assert ds.howManyZincInStock == 5
@@ -72,6 +76,7 @@ class SaleControllerSpec extends Specification {
             assert ds.completedBy
             assert ds.customer
             assert ds.id == null
+            assert (ds.completionDate - dateOfSale) == 0
 
             return true
         }
@@ -298,7 +303,10 @@ class SaleControllerSpec extends Specification {
 
     void "test valid JSON SaleOrder Request"() {
 
-        def data = '''{
+        def dateOfSale = Date.parse('yyyy-MM-dd', '2014-01-01')
+
+
+        def data = """{
   "customerId" : "cccc",
   "orderId":"oooo",
   "howManyZincInStock": 5,
@@ -307,7 +315,7 @@ class SaleControllerSpec extends Specification {
   "recommendationNextStep": "start recommending ors",
   "recommendationLevel": "Level 2",
   "governmentApproval": true,
-  "dateOfSale": "2013-01-3 04:05:40",
+  "dateOfSale": $dateOfSale.time,
   "salesDatas": [
     {
       "quantity": 5,
@@ -320,7 +328,7 @@ class SaleControllerSpec extends Specification {
       "productId": "yyyy-yyyyy"
     }
   ]
-}'''
+}""".toString()
 
         def directSaleValidator = { SaleOrder sale ->
             assert sale.howManyZincInStock == 5
@@ -345,6 +353,7 @@ class SaleControllerSpec extends Specification {
             assert sale.id == 5
 
             assert sale.takenBy.username == 'someuser'
+            assert (sale.completionDate - dateOfSale) == 0
 
             return true
         }
