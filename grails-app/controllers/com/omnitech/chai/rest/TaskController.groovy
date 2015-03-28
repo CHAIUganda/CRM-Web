@@ -126,6 +126,7 @@ class TaskController extends BaseRestController {
 
         if (!task) {
             render([status: HttpStatus.OK.reasonPhrase, message: 'Success'] as JSON)
+            return
         }
 
         if (json.status == Task.STATUS_CANCELLED) {

@@ -1,5 +1,6 @@
 package com.omnitech.chai.reports
 
+import com.omnitech.chai.model.Customer
 import com.omnitech.chai.model.Product
 import com.omnitech.chai.model.Territory
 import com.omnitech.chai.model.User
@@ -14,5 +15,7 @@ interface ReportContext {
     List<Territory> getUserTerritories()
 
     List<User> getSupervisedUsers()
+
+    Double averageSalesValue(Customer customer)
 
 }

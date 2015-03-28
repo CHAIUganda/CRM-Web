@@ -22,6 +22,10 @@ class CallController extends TaskController {
     def orderService
 
     def index(Integer max) {
+        if(!params.sort){
+            params.sort = 'completionDate'
+            params.order = 'desc'
+        }
         super.index max, Order, [view: '/call/index', taskRole: SALES_ROLE_NAME]
     }
 

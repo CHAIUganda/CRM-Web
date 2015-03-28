@@ -1,9 +1,12 @@
 package com.omnitech.chai.crm
 
-import com.omnitech.chai.model.Customer
 import com.omnitech.chai.model.CustomerSegment
 import com.omnitech.chai.model.Setting
+import com.omnitech.chai.model.Territory
+import com.omnitech.chai.repositories.CustomerWithLastTask
 import com.omnitech.chai.util.ChaiUtils
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.data.neo4j.transaction.Neo4jTransactional
 
 /**
@@ -15,6 +18,10 @@ class SegmentationService {
     def customerRepository
     def customerSegmentRepository
     def settingRepository
+    def reportContextService
+    def territoryRepository
+    @Autowired
+    Neo4jTemplate neo
 
     void runSegmentationRoutine() {
         def segments = customerSegmentRepository.findAll().collect() as List<CustomerSegment>
@@ -26,30 +33,39 @@ class SegmentationService {
 
         def segmentScript = compileScript(segmentSetting.value)
 
-        customerRepository.findAll().each { c ->
-            gradeCustomer(segmentScript, c, segments)
+
+        territoryRepository.findAllByType(Territory.TYPE_DETAILING).each { Territory t ->
+
+            log.info("########################### Segmenting customers in Territory[$t]...")
+            int count = 0
+            customerRepository.findAllCustomersAlongWithLastTask(t.id).each { c ->
+                gradeCustomer(segmentScript, c, segments)
+                count = count + 1
+            }
+            log.info("Segmented [$count] Customers")
+
         }
 
     }
 
-    def gradeCustomer(Script segmentScript, Customer c, List<CustomerSegment> cSs) {
+    def gradeCustomer(Script segmentScript, CustomerWithLastTask custWithTask, List<CustomerSegment> cSs) {
 
-        def customerScore = getCustomerScore(segmentScript, c)
-        log.info("CustomerScore[$c] = $customerScore")
+        def customerScore = getCustomerScore(segmentScript, custWithTask)
+        log.info("CustomerScore[$custWithTask.customer] = $customerScore")
         cSs.each { cs ->
             def script = cs.getSegmentationScript()
 
 
             if (script) {
                 def result = ChaiUtils.execSilently("Failed to execute segmentation script on customer") {
-                    evaluateScript(script, [customer: c, segment: cs, customerScore: customerScore])
+                    evaluateScript(script, [customer: custWithTask.customer, segment: cs, customerScore: customerScore])
                 }
 
                 if (result == true) {
-                    log.info("CustomerScore[$c]Score[$customerScore] ---> $cs.name")
-                    c.segment = cs
-                    c.segmentScore = customerScore
-                    customerRepository.save(c)
+                    log.info("CustomerScore[$custWithTask.customer]Score[$customerScore] ---> $cs.name")
+                    custWithTask.customer.segment = cs
+                    custWithTask.customer.segmentScore = customerScore
+                    customerRepository.save(custWithTask.customer)
                 }
             }
         }
@@ -57,8 +73,8 @@ class SegmentationService {
 
     }
 
-    Double getCustomerScore(Script script, Customer customer) {
-        script.setBinding(new Binding([customer: customer]))
+    Double getCustomerScore(Script script, CustomerWithLastTask customer) {
+        script.setBinding(new Binding([customer: customer.customer, task: customer.task, reportContext: reportContextService]))
         def rt = script.run() as Double
         return rt
     }
@@ -81,6 +97,6 @@ class SegmentationService {
 
     Closure<Script> compileScript = { String script ->
         getShell().parse(script)
-    }.memoizeBetween(0, 20)
+    }.memoizeBetween(10, 20)
 
 }

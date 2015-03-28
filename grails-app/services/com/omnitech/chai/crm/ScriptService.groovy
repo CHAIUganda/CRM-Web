@@ -13,6 +13,7 @@ class ScriptService implements InitializingBean {
     Neo4jTemplate neo
     def reportContextService
     Binding binding
+    def segmentationService
 
     def evaluate(String script, Map params = [:]) {
 

@@ -1,5 +1,6 @@
 package com.omnitech.chai.crm
 
+import com.omnitech.chai.model.Customer
 import com.omnitech.chai.model.Product
 import com.omnitech.chai.model.Territory
 import com.omnitech.chai.model.User
@@ -17,6 +18,7 @@ class ReportContextService implements ReportContext {
     def regionService
     def neoSecurityService
     def userService
+    def customerRepository
 
     @Override
     List<Product> getUserProducts() {
@@ -48,5 +50,10 @@ class ReportContextService implements ReportContext {
 
     User getCurrentUser() {
         neoSecurityService.currentUser
+    }
+
+    @Override
+    Double averageSalesValue(Customer customer) {
+        return customerRepository.averageSalesValue(customer.id)
     }
 }

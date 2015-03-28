@@ -24,5 +24,20 @@ class ScripHelpersTest extends Specification {
         val = intRangeScore(7, [50, 15, 0])
         then:
         val == 1
+
+        when:
+        val = intRangeScore(5, [15, 5, 0])
+        then:
+        val == 2
+
+        when:
+        val = intRangeScore(15, [15, 5, 0])
+        then:
+        val == 2
+
+        when:
+        val = intRangeScore(0, [15, 5, 0])
+        then:
+        val ==1
     }
 }

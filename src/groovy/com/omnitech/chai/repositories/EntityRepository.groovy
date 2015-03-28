@@ -115,6 +115,17 @@ limit {limit}""")
             @Param('segmentId') Long segmentId,
             @Param('limit') Integer limit)
 
+    @Query('start c = node({customerId}) match (c)-[:CUST_TASK]->(s:Sale)-[li:HAS_PRODUCT]-() with s, sum(li.quantity * li.unitPrice) as saleValue return avg(saleValue)')
+    Double averageSalesValue(@Param('customerId')Long customerId)
+
+    @Query('''start t = node({territoryId})
+match (t)<-[:SC_IN_TERRITORY]-(sc)<-[:CUST_IN_SC]-(c)
+optional match c-[:CUST_TASK]->(o:DetailerTask)
+with c ,max(o.completionDate) as completionDate
+optional match c-[:CUST_TASK]->(o:DetailerTask{completionDate: completionDate})
+return c as customer, o as task''')
+    Iterable<CustomerWithLastTask> findAllCustomersAlongWithLastTask(@Param('territoryId')Long territoryId)
+
 
 }
 
@@ -127,6 +138,15 @@ class CustomerWithLastTaskDate {
     @ResultColumn('completionDate')
     Date completionDate
 
+}
+
+@QueryResult
+@CompileStatic
+class CustomerWithLastTask {
+    @ResultColumn('customer')
+    Customer customer
+    @ResultColumn('task')
+    DetailerTask task
 }
 
 
