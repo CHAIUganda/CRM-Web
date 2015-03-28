@@ -60,6 +60,11 @@ class DbMigrations {
             changeSet(id: 'rename-CustomerContact.surname-to-names') {
                 update 'MATCH (n:CustomerContact) WHERE has(n.`surname`) set n.names = n.surname remove n.surname'
             }
+
+            changeSet(id:'set-detailing-type-on-all-det-territories'){
+                update("match (t:Territory) where t.name =~ 'DET_.*' set t.type = 'detailing'")
+            }
+
         }
     }
 

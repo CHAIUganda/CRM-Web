@@ -54,7 +54,7 @@ class MigrationDSL {
 
 }
 
-@ToString(includes = ["id", "description"])
+@ToString(includes = ["id", "description"],includePackage = false,ignoreNulls = true)
 class ChangeSet {
 
     Closure testClosure
