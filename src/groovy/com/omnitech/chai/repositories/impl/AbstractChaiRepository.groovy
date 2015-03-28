@@ -49,8 +49,10 @@ abstract class AbstractChaiRepository {
 
     def export(String query, List<String> queryReturnLabels, Class type) {
         queryReturnLabels.removeAll('COMMENT', 'IS ADHOCK', 'WKT')
+        log.trace("Export: Tasks:$type.simpleName: $query")
         def results = neo.query(query, Collections.EMPTY_MAP).collect()
         def data = FuzzyCSV.toCSV(results, *queryReturnLabels)
+        log.trace("Export: Results:${results.size()}")
         data = ExportUtil.fixDates(type, data)
         return data
     }

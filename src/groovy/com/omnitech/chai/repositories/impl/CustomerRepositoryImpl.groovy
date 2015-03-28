@@ -26,12 +26,15 @@ class CustomerRepositoryImpl extends AbstractChaiRepository implements ICustomer
                 .out(CUST_IN_SC).node('sc')
                 .in(HAS_SUB_COUNTY).node('d'))
                 .match(node(nodeName).out(CUST_IN_VILLAGE).node('v')).optional()
+                .match(node(nodeName).out(IN_SEGMENT).node('seg')).optional()
 
         def fields = [az(identifier('d').property('name'), 'DISTRICT'),
                       az(identifier('sc').property('name'), 'SUBCOUNTY'),
-                      az(identifier('v').property('name'), 'VILLAGE')]
+                      az(identifier('v').property('name'), 'VILLAGE'),
+                      az(identifier('seg').property('name'), 'SEGMENT'),
+        ]
 
-        def labels = ['DISTRICT', 'SUBCOUNTY', 'VILLAGE']
+        def labels = ['DISTRICT', 'SUBCOUNTY', 'VILLAGE','SEGMENT']
 
         def (custLabels, custFields) = getClassExportFields(Customer)
 
