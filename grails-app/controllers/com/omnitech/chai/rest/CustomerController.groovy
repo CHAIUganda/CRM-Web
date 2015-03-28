@@ -60,7 +60,8 @@ class CustomerController {
 
     def update() {
         handleSafely {
-            log.debug("updating ")
+            def user = neoSecurityService.currentUser as User
+            log.debug("Req: ${user} Updating Customer: ")
             def json = request.JSON as Map
 
             println(json.inspect())
