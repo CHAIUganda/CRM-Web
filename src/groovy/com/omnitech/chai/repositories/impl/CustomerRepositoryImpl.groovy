@@ -3,11 +3,12 @@ package com.omnitech.chai.repositories.impl
 import com.omnitech.chai.model.*
 import com.omnitech.chai.repositories.dto.CustomerDTO
 import com.omnitech.chai.util.ModelFunctions
-import com.omnitech.chai.util.PageUtils
+import org.neo4j.cypherdsl.grammar.Match
 import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
 
 import static com.omnitech.chai.model.Relations.*
+import static com.omnitech.chai.util.PageUtils.addPagination
 import static org.neo4j.cypherdsl.CypherQuery.*
 import static org.neo4j.cypherdsl.CypherQuery.as as az
 
@@ -56,74 +57,63 @@ class CustomerRepositoryImpl extends AbstractChaiRepository implements ICustomer
     }
 
     Page<CustomerDTO> findAllCustomersForPage(Map params) {
-
-        def cName = nodeName(Customer)
-        def dName = nodeName(District)
-        def sName = nodeName(SubCounty)
-        def tName = nodeName(Task)
-        def segName = nodeName(CustomerSegment)
-
         def _query = {
-            match(node(cName).label(Customer.simpleName))
-                    .match(node(cName).out(CUST_TASK).node(tName)).optional()
-                    .match(node(cName).out(CUST_IN_SC).node(sName).in(HAS_SUB_COUNTY).node(dName)).optional()
-                    .match(node(cName).out(IN_SEGMENT).node(segName)).optional()
-
+            def m = match(node(cName).label(Customer.simpleName))
+            addOtherRelevantFields(m, params)
+            return m
         }
-
-        def q = _query().returns(
-                distinct(az(id(cName), 'id')),
-                az(identifier(cName).property('outletName'), 'outletName'),
-                az(identifier(cName).property('outletType'), 'outletType'),
-                az(identifier(cName).property('outletSize'), 'outletSize'),
-                az(identifier(cName).property('dateCreated'), 'dateCreated'),
-                az(identifier(dName).property('name'), 'district'),
-                az(identifier(segName).property('name'), 'segment'),
-                az(max(identifier(tName).property('completionDate')), 'lastVisit')
-        )
-        PageUtils.addPagination(q, params, null)
+        def q = addPagination(_query().returns(customerReturnFieldsClause()), params, null)
         def cq = _query().returns(count(distinct(identifier(cName))))
         ModelFunctions.query(bean(Neo4jTemplate), q, cq, params, CustomerDTO)
-
-
     }
 
+
     Page<CustomerDTO> findAllCustomersForPage(Long userId, Map params) {
-
-        def cName = nodeName(Customer)
-        def dName = nodeName(District)
-        def sName = nodeName(SubCounty)
-        def tName = nodeName(Task)
-        def segName = nodeName(CustomerSegment)
-
         def _query = {
-            start(nodesById('u', userId))
+            def m = start(nodesById('u', userId))
                     .match(node('u').out(USER_TERRITORY, SUPERVISES_TERRITORY).node('ut')
                     .in(SC_IN_TERRITORY).node(sName)
                     .in(CUST_IN_SC).node(cName))
-                    .match(node(sName).in(HAS_SUB_COUNTY).node(dName)).optional()
-                    .match(node(cName).out(CUST_TASK).node(tName)).optional()
-                    .match(node(cName).out(IN_SEGMENT).node(segName)).optional()
+            addOtherRelevantFields(m, params)
+            return m
         }
 
-        def q = _query().returns(
-                distinct(az(id(cName), 'id')),
-                az(identifier(cName).property('outletName'), 'outletName'),
-                az(identifier(cName).property('outletType'), 'outletType'),
-                az(identifier(cName).property('outletSize'), 'outletSize'),
-                az(identifier(cName).property('dateCreated'), 'dateCreated'),
-                az(identifier(dName).property('name'), 'district'),
-                az(identifier(segName).property('name'), 'segment'),
-                az(max(identifier(tName).property('completionDate')), 'lastVisit')
-        )
-
-        q = PageUtils.addPagination(q, params, null)
-
+        def q = addPagination(_query().returns(customerReturnFieldsClause()), params, null)
         def cq = _query().returns(count(distinct(identifier(cName))))
-
         ModelFunctions.query(bean(Neo4jTemplate), q, cq, params, CustomerDTO)
+    }
 
+    private static addOtherRelevantFields(Match m, Map params) {
+        if (params.segment) matchSegment(m, params, true)
+        m.match(node(cName).out(CUST_TASK).node(tName)).optional()
+                .match(node(cName).out(CUST_IN_SC).node(sName).in(HAS_SUB_COUNTY).node(dName)).optional()
+        if (!params.segment) matchSegment(m, params, false)
 
     }
+
+    private static customerReturnFieldsClause() {
+        [distinct(az(id(cName), 'id')),
+         az(identifier(cName).property('outletName'), 'outletName'),
+         az(identifier(cName).property('outletType'), 'outletType'),
+         az(identifier(cName).property('outletSize'), 'outletSize'),
+         az(identifier(cName).property('dateCreated'), 'dateCreated'),
+         az(identifier(dName).property('name'), 'district'),
+         az(identifier(segName).property('name'), 'segment'),
+         az(max(identifier(tName).property('completionDate')), 'lastVisit')]
+    }
+
+    private static matchSegment(Match m, Map params, boolean ignoreIfNotInFilter) {
+        if (params.segment)
+            m.match(node(cName).out(IN_SEGMENT).node(segName).values(value('name', params.segment as String)))
+        else if (!ignoreIfNotInFilter) {
+            m.match(node(cName).out(IN_SEGMENT).node(segName)).optional()
+        }
+    }
+
+    private static def cName = nodeName(Customer)
+    private static def dName = nodeName(District)
+    private static def sName = nodeName(SubCounty)
+    private static def tName = nodeName(Task)
+    private static def segName = nodeName(CustomerSegment)
 
 }
