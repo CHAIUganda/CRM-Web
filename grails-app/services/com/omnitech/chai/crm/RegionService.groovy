@@ -2,7 +2,6 @@ package com.omnitech.chai.crm
 
 import com.omnitech.chai.exception.ImportException
 import com.omnitech.chai.model.*
-import com.omnitech.chai.util.ChaiUtils
 import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.PageUtils
 import fuzzycsv.FuzzyCSV
@@ -11,11 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.data.neo4j.transaction.Neo4jTransactional
+import org.springframework.util.Assert
 import secondstring.PhraseHelper
 
 import static com.omnitech.chai.model.Relations.SUPERVISES_TERRITORY
 import static com.omnitech.chai.model.Relations.USER_TERRITORY
-import static com.omnitech.chai.util.ChaiUtils.prop
 import static com.omnitech.chai.util.ChaiUtils.prop
 import static com.omnitech.chai.util.ModelFunctions.getOrCreate
 import static fuzzycsv.RecordFx.fn
@@ -45,7 +44,11 @@ class RegionService {
 
     District saveDistrict(District district) { ModelFunctions.saveEntity(districtRepository, district) }
 
-    void deleteDistrict(Long id) { districtRepository.delete(id) }
+    void deleteDistrict(Long id) {
+        District d = districtRepository.findOne(id)
+        Assert.state d?.subCounties?.size() == 0, 'Cannot Delete a District With SubCounties'
+        districtRepository.delete(id)
+    }
 
     List<District> listAllDistrictWithSubCounties() { districtRepository.listAllDistrictsWithSubCounties().collect() }
 
@@ -209,7 +212,7 @@ class RegionService {
             territory.subCounties = new HashSet<SubCounty>()
         }
 
-        territory.subCounties.removeAll ( territory.subCounties.findAll { it.district?.id == districtId } )
+        territory.subCounties.removeAll(territory.subCounties.findAll { it.district?.id == districtId })
         territory.subCounties.addAll(scToBeMapped)
         territoryRepository.save(territory)
     }

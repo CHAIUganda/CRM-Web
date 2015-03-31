@@ -116,7 +116,14 @@ class DistrictController {
             notFound(); return
         }
 
-        regionService.deleteDistrict id
+        try {
+            regionService.deleteDistrict id
+        } catch (Exception x) {
+            flash.message = x.message
+            redirect action: 'show', id: id
+            return
+        }
+
 
         request.withFormat {
             form {
