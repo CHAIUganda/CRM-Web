@@ -43,7 +43,6 @@ class CustomerController {
                 segments             : segments,
                 detailingTerritories : detailingTerritories,
                 saleTerritories      : salesTerritories,
-                layout_nosearchtext  : true
         ]
     }
 
