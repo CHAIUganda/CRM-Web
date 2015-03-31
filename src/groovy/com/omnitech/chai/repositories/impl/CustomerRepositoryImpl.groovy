@@ -60,17 +60,7 @@ class CustomerRepositoryImpl extends AbstractChaiRepository implements ICustomer
     Page<CustomerDTO> findAllCustomersForPage(Map params) {
         def _query = {
             Match m = match(node(cName).label(Customer.simpleName))
-            if (params.search) {
-                def search = ModelFunctions.getWildCardRegex(params.search as String)
-                m.where(identifier(cName).property('outletName').regexp(search)
-                        .or(identifier(cName).property('outletType').regexp(search))
-                        .or(identifier(cName).property('outletSize').regexp(search))
-                )
-            }
-
-            //filter out territory from here
-
-
+            mayBeAddSearchCriteria(m, params)
             addOtherRelevantFields(m, params)
             return m
         }
@@ -87,13 +77,7 @@ class CustomerRepositoryImpl extends AbstractChaiRepository implements ICustomer
                     .in(SC_IN_TERRITORY).node(sName)
                     .in(CUST_IN_SC).node(cName))
 
-            if (params.search) {
-                def search = ModelFunctions.getWildCardRegex(params.search as String)
-                m.where(identifier(cName).property('outletName').regexp(search)
-                        .or(identifier(cName).property('outletType').regexp(search))
-                        .or(identifier(cName).property('outletSize').regexp(search))
-                )
-            }
+            mayBeAddSearchCriteria(m, params)
             addOtherRelevantFields(m, params)
             return m
         }
@@ -140,6 +124,16 @@ class CustomerRepositoryImpl extends AbstractChaiRepository implements ICustomer
 
     private static matchTerritory(Match m, Long territoryId) {
         m.match(node(sName).out(SC_IN_TERRITORY).node(terName)).where(id(terName).eq(territoryId))
+    }
+
+    private static mayBeAddSearchCriteria(Match m, Map params) {
+        if (params.search) {
+            def search = ModelFunctions.getWildCardRegex(params.search as String)
+            m.where(identifier(cName).property('outletName').regexp(search)
+                    .or(identifier(cName).property('outletType').regexp(search))
+                    .or(identifier(cName).property('outletSize').regexp(search))
+            )
+        }
     }
 
     private static def cName = nodeName(Customer)
