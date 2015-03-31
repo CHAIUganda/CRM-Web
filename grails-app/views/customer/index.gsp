@@ -7,9 +7,12 @@
     <meta name="layout" content="kickstart" />
     <g:set var="entityName" value="${message(code: 'customer.label', default: 'Customer')}" />
     <title><g:message code="default.index.label" args="[entityName]" /></title>
+    <g:set var="layout_nosecondarymenu" value="${true}" scope="request"/>
 </head>
 
 <body>
+
+<g:render template="customerMenubar"/>
 
 <section id="index-customer" class="first">
 
@@ -23,7 +26,7 @@
 
             <g:sortableColumn property="outletSize" title="${message(code: 'customer.outletSize.label', default: 'Outlet Size')}" />
 
-            <g:sortableColumn property="segment" title="${message(code: 'customer.segment.label', default: 'Segment')}" />
+            <g:sortableColumn property="segment" title="${message(code: 'customer.segment.label', default: (params.segment ? "Segment-($params.segment)": 'Segment'))}" />
 
             <g:sortableColumn property="district" title="${message(code: 'customer.district.label', default: 'District')}" />
 
@@ -69,7 +72,7 @@
     </table>
     <div>
         <bs:paginate total="${customerInstanceCount}"
-                     id="${params.action == 'search' ? (params.term ?: params.id) : null}"/>
+                     id="${params.action == 'search' ? (params.term ?: params.id) : null}" params="${params}"/>
     </div>
 </section>
 
