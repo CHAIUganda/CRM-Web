@@ -11,8 +11,7 @@
         </li>
 
         <li class="${params.action == "create" ? 'active' : ''}">
-            <g:link action="create"><i class="glyphicon glyphicon-plus"></i> <g:message code="default.new.label"
-                                                                                        args="[entityName]"/></g:link>
+            <g:link action="create"><i class="glyphicon glyphicon-plus"></i> <g:message code="default.new.label" args="."/></g:link>
         </li>
 
 
@@ -22,17 +21,17 @@
                     class="glyphicon glyphicon-filter"></i>${params.segment ? params.segment : 'Segment'}<b
                     class="caret"></b></a>
             <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+                <li>
+                    <c:link action="index" params="${params}" reset="segment">
+                        <i class="glyphicon glyphicon-th-list"></i> *All
+                    </c:link>
+                </li>
                 <g:each in="${segments}" var="s">
                     <li><c:link action="index"
                                 params="${[segment: s]}" extraParams="${params}">
                         <i class="glyphicon glyphicon-th-list"></i> ${s}
                     </c:link></li>
                 </g:each>
-                <li>
-                    <c:link action="index" params="${params}" reset="segment">
-                        <i class="glyphicon glyphicon-th-list"></i> All
-                    </c:link>
-                </li>
             </ul>
         </li>
 
@@ -45,6 +44,11 @@
                 } : 'Detailing Territories'}<b
                         class="caret"></b></a>
                 <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+                    <li>
+                        <c:link action="index" params="${params}" reset="detTerritory">
+                            <i class="glyphicon glyphicon-th-list"></i> *All
+                        </c:link>
+                    </li>
                     <g:each in="${detailingTerritories}" var="t">
                         <li><c:link action="index"
                                     params="${[detTerritory: t.id]}" extraParams="${params}" reset="salTerritory">
@@ -65,6 +69,11 @@
                 } : 'Sales Territories'}<b
                         class="caret"></b></a>
                 <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+                    <li>
+                        <c:link action="index" params="${params}" reset="salTerritory">
+                            <i class="glyphicon glyphicon-th-list"></i> *All
+                        </c:link>
+                    </li>
                     <g:each in="${saleTerritories}" var="t">
                         <li><c:link action="index"
                                     params="${[salTerritory: t.id]}" extraParams="${params}" reset="detTerritory">
