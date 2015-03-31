@@ -44,8 +44,8 @@ class CustomerService {
     Page<CustomerDTO> listCustomersInCtx(User user, Map params) {
         if (user.hasRole(ADMIN_ROLE_NAME, SUPER_ADMIN_ROLE_NAME)) {
             return customerRepository.findAllCustomersForPage(params)
-        }else {
-            customerRepository.findAllCustomersForPage(user.id,params)
+        } else {
+            customerRepository.findAllCustomersForPage(user.id, params)
         }
     }
 
@@ -86,9 +86,7 @@ class CustomerService {
         def customer = Customer.simpleName.toLowerCase()
         def exec = start(nodesById('u', userId))
                 .match(node('u').out(USER_TERRITORY).node('t').in(SC_IN_TERRITORY).node('sc').in(CUST_IN_SC).node(customer))
-                .where(identifier(customer).property('isActive').eq(isActive)
-                .or(not(has(identifier(customer).property('isActive'))))
-        ).returns(distinct(identifier(customer)))
+                .returns(distinct(identifier(customer)))
         log.trace("findAllCustomersByUser $exec")
         ModelFunctions.query(customerRepository, exec, params, Customer).collect()
     }
@@ -138,7 +136,7 @@ class CustomerService {
         })
     }
 
-    List exportCustomers(){
+    List exportCustomers() {
 
         customerRepository.exportAllCustomers()
 
