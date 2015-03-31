@@ -167,7 +167,10 @@ class ModelFunctions {
     }
 
 
-    static String getWildCardRegex(String search) { "(?i).*${Pattern.quote(search)}.*".toString() }
+    static String getWildCardRegex(String search) {
+        search = search.split(/\s+/).collect { String s -> "(${Pattern.quote(s)})" }.join('.*')
+        "(?i).*$search.*".toString()
+    }
 
     @CompileStatic(TypeCheckingMode.SKIP)
     static def setProperty(Object object, String propertyName, def value) {
