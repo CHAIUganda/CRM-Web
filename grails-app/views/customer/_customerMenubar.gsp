@@ -97,18 +97,16 @@
 
 
     %{-- The Search Box--}%
-        <g:if test="${!layout_nosearchtext && (params.action == 'index' || params.action == 'search')}">
-            <li class="navbar-right">
-                <div class="col-lg-12">
-                    %{--<input type="hidden" name="currentPage" value="${currentPage}"/>--}%
-                    %{--<input type="hidden" name="domain" value="${clazz}"/>--}%
-                    <form action="search">
-                        <input class="form-control" name="term" value="${(params.term ?: params.id)}"
-                               placeholder="Please type search item and press enter" style="width: 300px;"/>
-                    </form>
-                </div>
-            </li>
-        </g:if>
+        <li class="navbar-right">
+            <div class="col-lg-12">
+                %{--<input type="hidden" name="currentPage" value="${currentPage}"/>--}%
+                %{--<input type="hidden" name="domain" value="${clazz}"/>--}%
+                <form>
+                    <input class="form-control" name="search" value="${params.search}"
+                           placeholder="Search By Customer Name,Type or Size" style="width: 300px;"/>
+                </form>
+            </div>
+        </li>
 
     </ul>
 </div>

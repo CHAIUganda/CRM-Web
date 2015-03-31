@@ -59,7 +59,14 @@ class CustomerRepositoryImpl extends AbstractChaiRepository implements ICustomer
 
     Page<CustomerDTO> findAllCustomersForPage(Map params) {
         def _query = {
-            def m = match(node(cName).label(Customer.simpleName))
+            Match m = match(node(cName).label(Customer.simpleName))
+            if (params.search) {
+                def search = ModelFunctions.getWildCardRegex(params.search as String)
+                m.where(identifier(cName).property('outletName').regexp(search)
+                        .or(identifier(cName).property('outletType').regexp(search))
+                        .or(identifier(cName).property('outletSize').regexp(search))
+                )
+            }
 
             //filter out territory from here
 
@@ -79,6 +86,14 @@ class CustomerRepositoryImpl extends AbstractChaiRepository implements ICustomer
                     .match(node('u').out(USER_TERRITORY, SUPERVISES_TERRITORY).node('ut')
                     .in(SC_IN_TERRITORY).node(sName)
                     .in(CUST_IN_SC).node(cName))
+
+            if (params.search) {
+                def search = ModelFunctions.getWildCardRegex(params.search as String)
+                m.where(identifier(cName).property('outletName').regexp(search)
+                        .or(identifier(cName).property('outletType').regexp(search))
+                        .or(identifier(cName).property('outletSize').regexp(search))
+                )
+            }
             addOtherRelevantFields(m, params)
             return m
         }
