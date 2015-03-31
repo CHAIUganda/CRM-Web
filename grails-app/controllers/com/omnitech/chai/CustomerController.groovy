@@ -9,6 +9,8 @@ import grails.converters.JSON
 import grails.transaction.Transactional
 import org.springframework.web.multipart.commons.CommonsMultipartFile
 
+import static com.omnitech.chai.model.Territory.TYPE_DETAILING
+import static com.omnitech.chai.model.Territory.TYPE_SALES
 import static com.omnitech.chai.util.ModelFunctions.extractId
 import static org.springframework.http.HttpStatus.*
 
@@ -28,8 +30,21 @@ class CustomerController {
 
     def index(Integer max) {
         params.max = Math.min(max ?: 50, 100)
+        def user = neoSecurityService.currentUser
         def page = customerService.listCustomersInCtx(neoSecurityService.currentUser, params)
-        [customerInstanceList: page.content, customerInstanceCount: page.totalElements, layout_nosearchtext : true]
+        def segments = customerService.listAllCustomerSegments()
+
+        def territories = regionService.findTerritoriesForUser(user, [max: 2000])
+        def detailingTerritories = territories.findAll { it.type == TYPE_DETAILING }
+        def salesTerritories = territories.findAll { it.type == TYPE_SALES }
+        return [
+                customerInstanceList : page.content,
+                customerInstanceCount: page.totalElements,
+                segments             : segments,
+                detailingTerritories : detailingTerritories,
+                saleTerritories      : salesTerritories,
+                layout_nosearchtext  : true
+        ]
     }
 
     def search(Integer max) {
@@ -173,8 +188,8 @@ class CustomerController {
             return
         }
 
-        render  customerService
-                .searchCustomers(term, [sort: 'outletName',max:10])
+        render customerService
+                .searchCustomers(term, [sort: 'outletName', max: 10])
                 .content
                 .collect {
             [id        : it.id,
@@ -182,7 +197,7 @@ class CustomerController {
              outletName: it.outletName,
              contact   : it.customerContacts?.iterator()?.next()?.contact
             ]
-        }       as JSON
+        } as JSON
     }
 
     protected void notFound() {

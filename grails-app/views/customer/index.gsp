@@ -16,23 +16,23 @@
 
 <section id="index-customer" class="first">
 
-    <table class="table table-bordered margin-top-medium" id="tree-table">
+    <table class="table table-bordered margin-top-medium">
         <thead>
         <tr>
 
-            <g:sortableColumn property="outletName" title="${message(code: 'customer.outletName.label', default: 'Outlet')}" />
+            <g:sortableColumn property="outletName" title="${message(code: 'customer.outletName.label', default: 'Outlet')}" params="${params}" />
 
-            <g:sortableColumn property="outletType" title="${message(code: 'customer.outletType.label', default: 'Outlet Type')}" />
+            <g:sortableColumn property="outletType" title="${message(code: 'customer.outletType.label', default: 'Outlet Type')}" params="${params}" />
 
-            <g:sortableColumn property="outletSize" title="${message(code: 'customer.outletSize.label', default: 'Outlet Size')}" />
+            <g:sortableColumn property="outletSize" title="${message(code: 'customer.outletSize.label', default: 'Outlet Size')}" params="${params}"/>
 
-            <g:sortableColumn property="segment" title="${message(code: 'customer.segment.label', default: (params.segment ? "Segment-($params.segment)": 'Segment'))}" />
+            <g:sortableColumn property="segment" title="${message(code: 'customer.segment.label', default: (params.segment ? "Segment-($params.segment)": 'Segment'))}"  params="${params}"/>
 
-            <g:sortableColumn property="district" title="${message(code: 'customer.district.label', default: 'District')}" />
+            <g:sortableColumn property="district" title="${message(code: 'customer.district.label', default: 'District')}" params="${params}" />
 
-            <g:sortableColumn property="dateCreated" title="${message(code: 'customer.dateCreated.label', default: 'Date Created')}" />
+            <g:sortableColumn property="dateCreated" title="${message(code: 'customer.dateCreated.label', default: 'Date Created')}" params="${params}"/>
 
-            <g:sortableColumn property="lastVisit" title="${message(code: 'customer.lastVisit.label', default: 'Last Visit')}" />
+            <g:sortableColumn property="lastVisit" title="${message(code: 'customer.lastVisit.label', default: 'Last Visit')}" params="${params}"/>
 
             <th>
                 Action

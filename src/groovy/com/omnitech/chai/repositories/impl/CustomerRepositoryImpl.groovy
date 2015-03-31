@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
 
 import static com.omnitech.chai.model.Relations.*
+import static com.omnitech.chai.util.ModelFunctions.extractId
 import static com.omnitech.chai.util.PageUtils.addPagination
 import static org.neo4j.cypherdsl.CypherQuery.*
 import static org.neo4j.cypherdsl.CypherQuery.as as az
@@ -59,6 +60,10 @@ class CustomerRepositoryImpl extends AbstractChaiRepository implements ICustomer
     Page<CustomerDTO> findAllCustomersForPage(Map params) {
         def _query = {
             def m = match(node(cName).label(Customer.simpleName))
+
+            //filter out territory from here
+
+
             addOtherRelevantFields(m, params)
             return m
         }
@@ -85,8 +90,16 @@ class CustomerRepositoryImpl extends AbstractChaiRepository implements ICustomer
 
     private static addOtherRelevantFields(Match m, Map params) {
         if (params.segment) matchSegment(m, params, true)
+
+        if (params.detTerritory || params.salTerritory) {
+            m.match(node(cName).out(CUST_IN_SC).node(sName).in(HAS_SUB_COUNTY).node(dName))
+            if (params.detTerritory) matchTerritory(m, extractId(params, 'detTerritory'))
+            if (params.salTerritory) matchTerritory(m, extractId(params, 'salTerritory'))
+        } else {
+            m.match(node(cName).out(CUST_IN_SC).node(sName).in(HAS_SUB_COUNTY).node(dName)).optional()
+        }
+
         m.match(node(cName).out(CUST_TASK).node(tName)).optional()
-                .match(node(cName).out(CUST_IN_SC).node(sName).in(HAS_SUB_COUNTY).node(dName)).optional()
         if (!params.segment) matchSegment(m, params, false)
 
     }
@@ -110,10 +123,15 @@ class CustomerRepositoryImpl extends AbstractChaiRepository implements ICustomer
         }
     }
 
+    private static matchTerritory(Match m, Long territoryId) {
+        m.match(node(sName).out(SC_IN_TERRITORY).node(terName)).where(id(terName).eq(territoryId))
+    }
+
     private static def cName = nodeName(Customer)
     private static def dName = nodeName(District)
     private static def sName = nodeName(SubCounty)
     private static def tName = nodeName(Task)
     private static def segName = nodeName(CustomerSegment)
+    private static def terName = nodeName(Territory)
 
 }
