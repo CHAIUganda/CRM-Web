@@ -47,18 +47,6 @@ class CustomerController {
         ]
     }
 
-    def search(Integer max) {
-        params.max = Math.min(max ?: 10, 100)
-        if (params.term) {
-            redirect(action: 'search', id: params.term)
-            return
-        }
-        def page = customerService.searchCustomers(params.id, params)
-        def content = new GroupFlattener(leaves: page.content).normalize()
-        render view: 'index', model: [customerInstanceList: content, customerInstanceCount: page.totalElements]
-    }
-
-
     def show() {
         def id = extractId(params)
         if (id == -1) {
