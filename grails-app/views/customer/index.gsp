@@ -23,6 +23,8 @@
 
             <g:sortableColumn property="outletSize" title="${message(code: 'customer.outletSize.label', default: 'Outlet Size')}" />
 
+            <g:sortableColumn property="segment" title="${message(code: 'customer.segment.label', default: 'Segment')}" />
+
             <g:sortableColumn property="district" title="${message(code: 'customer.district.label', default: 'District')}" />
 
             <g:sortableColumn property="dateCreated" title="${message(code: 'customer.dateCreated.label', default: 'Date Created')}" />
@@ -47,6 +49,8 @@
                 <td>${fieldValue(bean: customerInstance, field: "outletType")}</td>
 
                 <td>${fieldValue(bean: customerInstance, field: "outletSize")}</td>
+
+                <td>${customerInstance?.segment}</td>
 
                 <td>${customerInstance?.district}</td>
 

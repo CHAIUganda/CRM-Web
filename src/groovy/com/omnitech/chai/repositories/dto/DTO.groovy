@@ -22,4 +22,7 @@ class CustomerDTO {
     Date lastVisit
     @ResultColumn('district')
     String district
+    @ResultColumn('segment')
+    String segment
+
 }
