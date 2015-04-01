@@ -52,6 +52,13 @@
 				
 			</tr>
 
+        <tr class="prop">
+				<td valign="top" class="name"><g:message code="product.unitPrice.label" default="Manufacturer" /></td>
+
+				<td valign="top" class="value">${fieldValue(bean: productInstance, field: "manufacturer")}</td>
+
+			</tr>
+
 		%{--<g:if test="${userInstance?.hasRole(com.omnitech.chai.model.Role.SUPERVISOR_ROLE_NAME)}">--}%
 		<tr class="prop">
 			<td valign="top" class="name"><g:message code="product.territories.label"

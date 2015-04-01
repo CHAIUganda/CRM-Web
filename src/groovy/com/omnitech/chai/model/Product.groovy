@@ -18,6 +18,7 @@ class Product extends AbstractEntity implements LeafNode {
     String name
     String unitOfMeasure
     String formulation
+    String manufacturer
     Double unitPrice
     Boolean deleted = false
 

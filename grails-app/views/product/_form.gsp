@@ -43,6 +43,14 @@
 				</div>
 			</div>
 
+        <div class="${hasErrors(bean: productInstance, field: 'manufacturer', 'error')} ">
+				<label for="unitPrice" class="control-label"><g:message code="product.manufacturer.label" default="Manufacturer" /></label>
+				<div>
+					<g:textField class='form-control' style="width: 50%;" name="manufacturer" value="${productInstance.manufacturer}" />
+					<span class="help-inline">${hasErrors(bean: productInstance, field: 'manufacturer', 'error')}</span>
+				</div>
+			</div>
+
 %{--SELECT TERRITORIES--}%
 <div class="row">
     <div class="row">

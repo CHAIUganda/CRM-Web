@@ -24,8 +24,8 @@
             <g:sortableColumn property="metric"
                               title="${message(code: 'product.formulation.label', default: 'Formulation')}"/>
 
-            <g:sortableColumn property="unitPrice"
-                              title="${message(code: 'product.unitPrice.label', default: 'Unit Price')}"/>
+            <g:sortableColumn property="manufacturer"
+                              title="${message(code: 'product.manufacturer.label', default: 'Manufacturer')}"/>
 
             <td>
                 Action
@@ -62,7 +62,7 @@
 
                 <td>${fieldValue(bean: productInstance, field: "formulation")}</td>
 
-                <td>${fieldValue(bean: productInstance, field: "unitPrice")}</td>
+                <td>${fieldValue(bean: productInstance, field: "manufacturer")}</td>
 
                 <td>
                     <g:link action="edit" id="${productInstance.id}"><i class="glyphicon glyphicon-pencil"></i></g:link>
