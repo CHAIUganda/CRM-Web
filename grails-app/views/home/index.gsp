@@ -44,7 +44,6 @@
                                 <th>Territory</th>
                                 <th>No. Tasks</th>
                                 <th>% Complete</th>
-                                <th>% Productivity</th>
                                 <th>Orders</th>
                                 <th>New Customers</th>
                             </tr>
@@ -62,17 +61,6 @@
                                                  aria-valuenow="${item.covered}" aria-valuemin="0" aria-valuemax="100"
                                                  style="width: ${item.covered}%; color: #000000;">
                                                 ${item.covered}%
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="progress">
-                                            <div class="progress-bar progress-bar-info"
-                                                 role="progressbar"
-                                                 aria-valuenow="${item.productivity}" aria-valuemin="0"
-                                                 aria-valuemax="100"
-                                                 style="width: ${item.productivity}%; color: #000000;">
-                                                ${item.productivity}%
                                             </div>
                                         </div>
                                     </td>

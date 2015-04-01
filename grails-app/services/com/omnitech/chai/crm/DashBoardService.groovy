@@ -14,6 +14,7 @@ class DashBoardService {
     @Autowired
     Neo4jTemplate template
 
+    //to do remove productivity
     List<Map> detailingReport(Date startDate, Date endDate) {
         def query = '''match (r:Role{authority:'ROLE_DETAILER'})<-[:HAS_ROLE]-(u:User)-[:USER_TERRITORY]->(t)<-[:SC_IN_TERRITORY]-(sc)<-[:CUST_IN_SC]-(cm)
 optional match cm-[:CUST_TASK]->(ts:DetailerTask)
