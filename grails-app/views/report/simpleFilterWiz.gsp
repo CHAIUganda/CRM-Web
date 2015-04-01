@@ -44,8 +44,13 @@
 
     </g:each>
     <div class="form-group">
-        <div class="col-md-9 col-md-offset-3">
-            <g:submitButton name="getReport" value="Download" class="btn btn-default"/>
+
+        <label class="col-md-3 control-label">Download</label>
+
+        <div class="col-md-9">
+            <g:submitButton name="rtType" value="CSV" class="btn btn-default"/>
+            <g:submitButton name="rtType" value="XLS" class="btn btn-default"/>
+            <g:submitButton name="rtType" value="PDF" class="btn btn-default"/>
         </div>
     </div>
 </g:form>

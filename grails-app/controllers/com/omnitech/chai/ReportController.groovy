@@ -65,8 +65,19 @@ class ReportController {
         def filter = params.filter ? params.filter : 'true'
         def report = reportService.findReport(id)
         def reportBuilder = reportService.buildReport(id, columns, filter)
-        ServletUtil.setAttachment(response, "${report.name}.pdf")
-        reportBuilder.toPdf(response.outputStream)
+
+        params.rtType = params.rtType?.toLowerCase()
+
+        if (params.rtType == 'xls') {
+            ServletUtil.setAttachment(response, "${report.name}.xlx")
+            reportBuilder.toXls(response.outputStream)
+        } else if (params.rtType == 'csv') {
+            ServletUtil.setAttachment(response, "${report.name}.csv")
+            reportBuilder.toCsv(response.outputStream)
+        } else {
+            ServletUtil.setAttachment(response, "${report.name}.pdf")
+            reportBuilder.toPdf(response.outputStream)
+        }
     }
 
     def create() {
@@ -210,8 +221,17 @@ class ReportController {
     }
 
     def renderReport(JasperReportBuilder rb, String name) {
-        ServletUtil.setAttachment(response, "${name}.pdf")
-        rb.toPdf(response.outputStream)
+        params.rtType = params.rtType?.toLowerCase()
+        if (params.rtType == 'xls') {
+            ServletUtil.setAttachment(response, "${name}.xls")
+            rb.toXls(response.outputStream)
+        } else if (params.rtType == 'csv') {
+            ServletUtil.setAttachment(response, "${name}.csv")
+            rb.toCsv(response.outputStream)
+        } else {
+            ServletUtil.setAttachment(response, "${name}.pdf")
+            rb.toPdf(response.outputStream)
+        }
     }
 
 
