@@ -109,6 +109,7 @@ class CustomerRepositoryImpl extends AbstractChaiRepository implements ICustomer
          az(identifier(cName).property('outletType'), 'outletType'),
          az(identifier(cName).property('outletSize'), 'outletSize'),
          az(identifier(cName).property('dateCreated'), 'dateCreated'),
+         az(identifier(cName).property('isActive'), 'isActive'),
          az(identifier(dName).property('name'), 'district'),
          az(identifier(segName).property('name'), 'segment'),
          az(max(identifier(tName).property('completionDate')), 'lastVisit')]
@@ -129,11 +130,20 @@ class CustomerRepositoryImpl extends AbstractChaiRepository implements ICustomer
     private static mayBeAddSearchCriteria(Match m, Map params) {
         if (params.search) {
             def search = ModelFunctions.getWildCardRegex(params.search as String)
-            m.where(identifier(cName).property('outletName').regexp(search)
+            m.where(and(identifier(cName).property('outletName').regexp(search)
                     .or(identifier(cName).property('outletType').regexp(search))
-                    .or(identifier(cName).property('outletSize').regexp(search))
+                    .or(identifier(cName).property('outletSize').regexp(search)))
             )
         }
+
+        if (params.active) {
+            def isActive = Boolean.parseBoolean(params.active as String)
+            if (isActive)
+                m.where(not(identifier(cName).property('isActive').eq(false)))
+            else
+                m.where(identifier(cName).property('isActive').eq(false))
+        }
+
     }
 
     private static def cName = nodeName(Customer)

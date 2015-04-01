@@ -1,12 +1,11 @@
-
 <%@ page import="com.omnitech.chai.model.Customer" %>
 <!DOCTYPE html>
 <html>
 
 <head>
-    <meta name="layout" content="kickstart" />
-    <g:set var="entityName" value="${message(code: 'customer.label', default: 'Customer')}" />
-    <title><g:message code="default.index.label" args="[entityName]" /></title>
+    <meta name="layout" content="kickstart"/>
+    <g:set var="entityName" value="${message(code: 'customer.label', default: 'Customer')}"/>
+    <title><g:message code="default.index.label" args="[entityName]"/></title>
     <g:set var="layout_nosecondarymenu" value="${true}" scope="request"/>
 </head>
 
@@ -20,23 +19,37 @@
         <thead>
         <tr>
 
-            <g:sortableColumn property="outletName" title="${message(code: 'customer.outletName.label', default: 'Outlet')}" params="${params}" />
+            <g:sortableColumn property="outletName"
+                              title="${message(code: 'customer.outletName.label', default: 'Outlet')}"
+                              params="${params}"/>
 
-            <g:sortableColumn property="outletType" title="${message(code: 'customer.outletType.label', default: 'Outlet Type')}" params="${params}" />
+            <g:sortableColumn property="outletType"
+                              title="${message(code: 'customer.outletType.label', default: 'Outlet Type')}"
+                              params="${params}"/>
 
-            <g:sortableColumn property="outletSize" title="${message(code: 'customer.outletSize.label', default: 'Outlet Size')}" params="${params}"/>
+            <g:sortableColumn property="outletSize"
+                              title="${message(code: 'customer.outletSize.label', default: 'Outlet Size')}"
+                              params="${params}"/>
 
-            <g:sortableColumn property="segment" title="${message(code: 'customer.segment.label', default: (params.segment ? "Segment-($params.segment)": 'Segment'))}"  params="${params}"/>
+            <g:sortableColumn property="segment"
+                              title="${message(code: 'customer.segment.label', default: (params.segment ? "Segment-($params.segment)" : 'Segment'))}"
+                              params="${params}"/>
 
-            <g:sortableColumn property="district" title="${message(code: 'customer.district.label', default: 'District')}" params="${params}" />
+            <g:sortableColumn property="district"
+                              title="${message(code: 'customer.district.label', default: 'District')}"
+                              params="${params}"/>
 
-            <g:sortableColumn property="dateCreated" title="${message(code: 'customer.dateCreated.label', default: 'Date Created')}" params="${params}"/>
+            <g:sortableColumn property="dateCreated"
+                              title="${message(code: 'customer.dateCreated.label', default: 'Date Created')}"
+                              params="${params}"/>
 
-            <g:sortableColumn property="lastVisit" title="${message(code: 'customer.lastVisit.label', default: 'Last Visit')}" params="${params}"/>
+            <g:sortableColumn property="lastVisit"
+                              title="${message(code: 'customer.lastVisit.label', default: 'Last Visit')}"
+                              params="${params}"/>
 
-            <th>
-                Action
-            </th>
+            <g:sortableColumn property="isActive"
+                              title="${message(code: 'customer.lastVisit.label', default: 'Active')}"
+                              params="${params}"/>
         </tr>
         </thead>
         <tbody>
@@ -57,19 +70,17 @@
 
                 <td>${customerInstance?.district}</td>
 
-                <td><g:formatDate date="${customerInstance.dateCreated}" format="dd-MMM-yyyy" /></td>
+                <td><g:formatDate date="${customerInstance.dateCreated}" format="dd-MMM-yyyy"/></td>
 
-                <td><g:formatDate date="${customerInstance.lastVisit}" format="dd-MMM-yyyy" /></td>
+                <td><g:formatDate date="${customerInstance.lastVisit}" format="dd-MMM-yyyy"/></td>
 
-                <td>
-                    <g:link action="edit" id="${customerInstance.id}"><i
-                            class="glyphicon glyphicon-pencil"></i></g:link>
-                </td>
+                <td>${customerInstance.isActive == null ? true : customerInstance.isActive}</td>
 
             </tr>
         </g:each>
         </tbody>
     </table>
+
     <div>
         <bs:paginate total="${customerInstanceCount}"
                      id="${params.action == 'search' ? (params.term ?: params.id) : null}" params="${params}"/>
@@ -89,7 +100,8 @@
             <div class="modal-body">
                 <g:uploadForm action="importCustomers">
                     <div class="row">
-                        <div class="col-md-7"><input type="file"  name="myFile"/></div>
+                        <div class="col-md-7"><input type="file" name="myFile"/></div>
+
                         <div class="col-md-3">
                             <button type="submit" class="btn btn-primary">
                                 <i class="glyphicon glyphicon-upload"></i> Upload

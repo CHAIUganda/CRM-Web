@@ -11,7 +11,8 @@
         </li>
 
         <li class="${params.action == "create" ? 'active' : ''}">
-            <g:link action="create"><i class="glyphicon glyphicon-plus"></i> <g:message code="default.new.label" args="."/></g:link>
+            <g:link action="create"><i class="glyphicon glyphicon-plus"></i> <g:message code="default.new.label"
+                                                                                        args="."/></g:link>
         </li>
 
 
@@ -32,6 +33,33 @@
                         <i class="glyphicon glyphicon-th-list"></i> ${s}
                     </c:link></li>
                 </g:each>
+            </ul>
+        </li>
+
+
+        %{--ACTIVE Filter--}%
+        <li>
+            <a data-toggle="dropdown" href="#"><i
+                    class="glyphicon glyphicon-filter"></i>${params.active ? (Boolean.parseBoolean(params.active) ? 'Active':'Inactive') : 'Activity'}<b
+                    class="caret"></b></a>
+            <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+                <li>
+                    <c:link action="index" params="${params}" reset="active">
+                        <i class="glyphicon glyphicon-th-list"></i> *All
+                    </c:link>
+                </li>
+                <li>
+                    <c:link action="index"
+                            params="${[active: false]}" extraParams="${params}">
+                        <i class="glyphicon glyphicon-thumbs-up"></i> Active
+                    </c:link>
+                </li>
+                <li>
+                    <c:link action="index"
+                            params="${[active: false]}" extraParams="${params}">
+                        <i class="glyphicon glyphicon-thumbs-down"></i> Inactive
+                    </c:link>
+                </li>
             </ul>
         </li>
 

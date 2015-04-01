@@ -24,5 +24,7 @@ class CustomerDTO {
     String district
     @ResultColumn('segment')
     String segment
+    @ResultColumn('isActive')
+    Boolean isActive
 
 }
