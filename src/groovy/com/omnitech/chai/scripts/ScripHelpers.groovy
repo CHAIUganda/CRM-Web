@@ -15,7 +15,7 @@ class ScripHelpers {
         if (!lProducts) return 0
         if (lProducts.contains('small')) return 5
         if (lProducts.contains('medium')) return 25
-        if (lProducts.contains('big')) return 55
+        if (lProducts.contains('big') || lProducts.contains('large')) return 55
         return 0
     }
 
