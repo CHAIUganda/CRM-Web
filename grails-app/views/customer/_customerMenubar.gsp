@@ -19,7 +19,7 @@
         %{--Segment Filter--}%
         <li>
             <a data-toggle="dropdown" href="#"><i
-                    class="glyphicon glyphicon-filter"></i>${params.segment ? params.segment : 'Segment'}<b
+                    class="glyphicon glyphicon-stats"></i>${params.segment ? params.segment : 'Segment'}<b
                     class="caret"></b></a>
             <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
                 <li>
@@ -40,7 +40,7 @@
         %{--ACTIVE Filter--}%
         <li>
             <a data-toggle="dropdown" href="#"><i
-                    class="glyphicon glyphicon-filter"></i>${params.active ? (Boolean.parseBoolean(params.active) ? 'Active':'Inactive') : 'Activity'}<b
+                    class="glyphicon glyphicon-check"></i>${params.active ? (Boolean.parseBoolean(params.active) ? 'Active':'Inactive') : 'Activity'}<b
                     class="caret"></b></a>
             <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
                 <li>
@@ -50,7 +50,7 @@
                 </li>
                 <li>
                     <c:link action="index"
-                            params="${[active: false]}" extraParams="${params}">
+                            params="${[active: true]}" extraParams="${params}">
                         <i class="glyphicon glyphicon-thumbs-up"></i> Active
                     </c:link>
                 </li>
