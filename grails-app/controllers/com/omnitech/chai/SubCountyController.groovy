@@ -52,7 +52,7 @@ class SubCountyController {
         }
 
         if (subCountyInstance.hasErrors()) {
-            respond subCountyInstance.errors, view: 'create' ,model: getPageModel()
+            respond subCountyInstance.errors, view: 'create', model: getPageModel()
             return
         }
 
@@ -74,7 +74,7 @@ class SubCountyController {
             notFound(); return
         }
         def subCountyInstance = regionService.findSubCounty(id)
-        respond subCountyInstance  ,model: getPageModel()
+        respond subCountyInstance, model: getPageModel()
     }
 
     @Transactional
@@ -85,7 +85,7 @@ class SubCountyController {
         }
 
         if (subCountyInstance.hasErrors()) {
-            respond subCountyInstance.errors, view: 'edit',model: getPageModel()
+            respond subCountyInstance.errors, view: 'edit', model: getPageModel()
             return
         }
 
@@ -108,9 +108,13 @@ class SubCountyController {
         if (id == -1) {
             notFound(); return
         }
-
-        regionService.deleteSubCounty id
-
+        try {
+            regionService.deleteSubCounty id
+        } catch (Exception x) {
+            flash.error = x.message
+            redirect action: 'show', id: id
+            return
+        }
         request.withFormat {
             form {
                 flash.message = message(code: 'default.deleted.message', args: [message(code: 'SubCounty.label', default: 'SubCounty'), id])
