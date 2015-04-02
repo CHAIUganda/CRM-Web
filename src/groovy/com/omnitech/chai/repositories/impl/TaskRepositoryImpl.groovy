@@ -4,11 +4,13 @@ import com.omnitech.chai.model.*
 import com.omnitech.chai.repositories.CategoryBrandResult
 import com.omnitech.chai.repositories.DetailerStockRepository
 import com.omnitech.chai.repositories.ProductRepository
+import com.omnitech.chai.util.ChaiUtils
 import org.neo4j.cypherdsl.expression.Expression
 import org.neo4j.cypherdsl.grammar.Match
 
 import static com.omnitech.chai.model.Relations.*
 import static com.omnitech.chai.queries.TaskQuery.mathQueryForUserTasks
+import static com.omnitech.chai.util.ChaiUtils.bean
 import static grails.util.GrailsNameUtils.getNaturalName
 import static org.neo4j.cypherdsl.CypherQuery.*
 import static org.neo4j.cypherdsl.CypherQuery.as as az

@@ -28,10 +28,6 @@ abstract class AbstractChaiRepository {
         return neo4jTemplate
     }
 
-    def <T> T bean(Class<T> c) {
-        return Holders.applicationContext.getBean(c)
-    }
-
     static List getClassExportFields(Class aClass, String alias = null) {
         def varName = alias ?: aClass.simpleName.toLowerCase()
         def returnFields = [], fieldLabels = []

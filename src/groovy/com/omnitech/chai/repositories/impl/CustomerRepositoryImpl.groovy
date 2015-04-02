@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
 
 import static com.omnitech.chai.model.Relations.*
+import static com.omnitech.chai.util.ChaiUtils.bean
 import static com.omnitech.chai.util.ModelFunctions.extractId
 import static com.omnitech.chai.util.PageUtils.addPagination
 import static org.neo4j.cypherdsl.CypherQuery.*
@@ -59,7 +60,7 @@ class CustomerRepositoryImpl extends AbstractChaiRepository implements ICustomer
 
     Page<CustomerDTO> findAllCustomersForPage(Map params) {
         def _query = {
-            Match m = match(node(cName).label(Customer.simpleName))
+            Match m = match(node(cName).label(Customer.simpleName).out(CUST_IN_SC).node(sName).in(HAS_SUB_COUNTY).node(dName))
             mayBeAddSearchCriteria(m, params)
             addOtherRelevantFields(m, params)
             return m
@@ -76,6 +77,7 @@ class CustomerRepositoryImpl extends AbstractChaiRepository implements ICustomer
                     .match(node('u').out(USER_TERRITORY, SUPERVISES_TERRITORY).node('ut')
                     .in(SC_IN_TERRITORY).node(sName)
                     .in(CUST_IN_SC).node(cName))
+                    .match(node(sName).in(HAS_SUB_COUNTY).node(dName))
 
             mayBeAddSearchCriteria(m, params)
             addOtherRelevantFields(m, params)
@@ -91,11 +93,8 @@ class CustomerRepositoryImpl extends AbstractChaiRepository implements ICustomer
         if (params.segment) matchSegment(m, params, true)
 
         if (params.detTerritory || params.salTerritory) {
-            m.match(node(cName).out(CUST_IN_SC).node(sName).in(HAS_SUB_COUNTY).node(dName))
             if (params.detTerritory) matchTerritory(m, extractId(params, 'detTerritory'))
             if (params.salTerritory) matchTerritory(m, extractId(params, 'salTerritory'))
-        } else {
-            m.match(node(cName).out(CUST_IN_SC).node(sName).in(HAS_SUB_COUNTY).node(dName)).optional()
         }
 
         m.match(node(cName).out(CUST_TASK).node(tName)).optional()
@@ -132,7 +131,8 @@ class CustomerRepositoryImpl extends AbstractChaiRepository implements ICustomer
             def search = ModelFunctions.getWildCardRegex(params.search as String)
             m.where(and(identifier(cName).property('outletName').regexp(search)
                     .or(identifier(cName).property('outletType').regexp(search))
-                    .or(identifier(cName).property('outletSize').regexp(search)))
+                    .or(identifier(cName).property('outletSize').regexp(search))
+                    .or(identifier(dName).property('name').regexp(search)))
             )
         }
 
