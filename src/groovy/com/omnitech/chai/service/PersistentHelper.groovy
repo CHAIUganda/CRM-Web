@@ -4,6 +4,7 @@ import com.omnitech.chai.model.AbstractEntity
 import com.omnitech.chai.util.ModelFunctions
 import org.springframework.context.ApplicationEvent
 import org.springframework.context.event.SmartApplicationListener
+import org.springframework.data.neo4j.lifecycle.BeforeDeleteEvent
 import org.springframework.data.neo4j.lifecycle.BeforeSaveEvent
 
 /**
@@ -13,7 +14,20 @@ class PersistentHelper implements SmartApplicationListener {
 
     @Override
     void onApplicationEvent(ApplicationEvent event) {
-        BeforeSaveEvent bsEvent = event as BeforeSaveEvent<AbstractEntity>
+
+        switch (event.getClass()) {
+            case BeforeSaveEvent:
+                beforeSave(event as BeforeSaveEvent<AbstractEntity>)
+                break
+            case BeforeDeleteEvent:
+                beforeDelete(event as BeforeDeleteEvent)
+                break
+        }
+
+
+    }
+
+    private static beforeSave(BeforeSaveEvent<AbstractEntity> bsEvent) {
         def entity = bsEvent?.entity
 
         if (entity.id) {
@@ -28,10 +42,14 @@ class PersistentHelper implements SmartApplicationListener {
 
     }
 
+    private static beforeDelete(BeforeDeleteEvent<AbstractEntity> bsEvent) {
+        def entity = bsEvent?.entity
+        if (entity.respondsTo('beforeDelete')) entity.'beforeDelete'()
+    }
 
     @Override
     boolean supportsEventType(Class<? extends ApplicationEvent> eventType) {
-        return eventType == BeforeSaveEvent
+        return eventType == BeforeSaveEvent || eventType == BeforeDeleteEvent
     }
 
     @Override

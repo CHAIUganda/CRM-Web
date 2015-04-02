@@ -119,7 +119,7 @@ class DistrictController {
         try {
             regionService.deleteDistrict id
         } catch (Exception x) {
-            flash.message = x.message
+            flash.error = x.message
             redirect action: 'show', id: id
             return
         }

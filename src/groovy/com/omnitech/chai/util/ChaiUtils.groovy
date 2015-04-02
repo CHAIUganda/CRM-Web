@@ -2,6 +2,7 @@ package com.omnitech.chai.util
 
 import com.omnitech.chai.exception.ImportException
 import fuzzycsv.Record
+import grails.util.Holders
 import grails.validation.ValidationException
 import groovy.time.TimeCategory
 import groovy.transform.CompileStatic
@@ -19,6 +20,11 @@ class ChaiUtils {
     static log = LoggerFactory.getLogger(ChaiUtils)
 
     private static DateFormat format = new SimpleDateFormat('yyyy-MM-dd')
+
+
+    static def <T> T bean(Class<T> c) {
+        return Holders.applicationContext.getBean(c)
+    }
 
     static String formatDate(Date date) {
         if (date) return format.format(date)

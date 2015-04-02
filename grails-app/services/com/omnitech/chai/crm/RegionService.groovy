@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.data.neo4j.transaction.Neo4jTransactional
-import org.springframework.util.Assert
 import secondstring.PhraseHelper
 
 import static com.omnitech.chai.model.Relations.SUPERVISES_TERRITORY
@@ -44,11 +43,7 @@ class RegionService {
 
     District saveDistrict(District district) { ModelFunctions.saveEntity(districtRepository, district) }
 
-    void deleteDistrict(Long id) {
-        District d = districtRepository.findOne(id)
-        Assert.state d?.subCounties?.size() == 0, 'Cannot Delete a District With SubCounties'
-        districtRepository.delete(id)
-    }
+    void deleteDistrict(Long id) { districtRepository.delete(id) }
 
     List<District> listAllDistrictWithSubCounties() { districtRepository.listAllDistrictsWithSubCounties().collect() }
 

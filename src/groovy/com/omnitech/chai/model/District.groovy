@@ -6,6 +6,7 @@ import org.springframework.data.neo4j.annotation.Fetch
 import org.springframework.data.neo4j.annotation.Indexed
 import org.springframework.data.neo4j.annotation.NodeEntity
 import org.springframework.data.neo4j.annotation.RelatedTo
+import org.springframework.util.Assert
 
 import javax.validation.constraints.NotNull
 
@@ -36,6 +37,10 @@ class District extends AbstractEntity {
 
     String toString() {
         "$name"
+    }
+
+    def beforeDelete(){
+        Assert.state subCounties?.size() == 0, 'Cannot Delete a District With SubCounties'
     }
 
 }
