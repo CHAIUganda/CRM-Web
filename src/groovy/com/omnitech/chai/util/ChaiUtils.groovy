@@ -181,6 +181,18 @@ class ChaiUtils {
         return cal;
     }
 
+    @CompileStatic
+    public static Calendar previousDayOfWeek(Date startDate, int dow) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(startDate);
+        int diff = dow - cal.get(DAY_OF_WEEK);
+        if (diff >= 0) {
+            diff -= 7;
+        }
+        cal.add(Calendar.DAY_OF_MONTH, diff);
+        return cal;
+    }
+
     static String getBestMessage(Throwable x) {
 
         if (x instanceof ValidationException) {

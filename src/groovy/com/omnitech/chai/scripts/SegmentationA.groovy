@@ -31,7 +31,7 @@ DetailerTask task = task
 
 def footFall = customer.numberOfCustomersPerDay
 def products = getProductCount(customer.numberOfProducts)
-def diarrheaMarket = customer.numberOfCustomersPerDay
+def diarrheaMarket = task?.diarrheaPatientsInFacility
 
 def clinicFilter = { Customer c -> ['Health Centre', 'Hospital', 'Clinic', 'Private Clinic', 'Public Health Center', 'Public Hospital', 'Private Hospital'].contains(c.outletType) }
 def drugShopFilter = { Customer c -> ['Drug Shop'].contains(c.outletType) }
@@ -40,28 +40,20 @@ def pharmacyFilter = { Customer c -> ['Pharmacy', 'Retail Pharmacy', 'Wholesale 
 // ******************************************
 // FOOTFALL SCORE
 // ******************************************
-def footFallScore = calcScore(customer, 0.05, [
+def footFallScore = calcScore(customer, 0.1, [
         (clinicFilter)  : { intRangeScore footFall, [15, 5, 0] },
         (pharmacyFilter): { intRangeScore footFall, [50, 10, 0] },
         (drugShopFilter): { intRangeScore footFall, [15, 5, 0] },
 ])
-println("$customer.outletName($customer.outletType) FOOTFALL: $footFall : Weighted Score = $footFallScore : Raw = ${footFallScore / 0.05}")
+println("$customer.outletName($customer.outletType) FOOTFALL: $footFall : Weighted Score = $footFallScore : Raw = ${footFallScore / 0.1}")
 
-// ******************************************
-// DIARRHEA MARKET
-// ******************************************
-def diarrheaMarketScore = calcScore(customer, 0.05, [
-        (clinicFilter)  : { intRangeScore diarrheaMarket, [10, 5, 0] },
-        (pharmacyFilter): { intRangeScore diarrheaMarket, [23, 9, 0] },
-        (drugShopFilter): { intRangeScore diarrheaMarket, [10, 5, 0] }
-])
-println("$customer.outletName($customer.outletType) CHILDREN SERVED: $diarrheaMarketScore : Weighted Score = $diarrheaMarketScore : RealScore = ${diarrheaMarketScore / 0.05}")
+println("$customer.outletName($customer.outletType) DIARRHEA MARKET: $diarrheaMarketScore : Weighted Score = $diarrheaMarketScore : RealScore = ${diarrheaMarketScore /  0.15}")
 
 
 // ******************************************
 // PRODUCT SCORE
 // ******************************************
-def productScore = calcScore(customer, 0.05, [
+def productScore = calcScore(customer, 0, [
         (clinicFilter)  : { intRangeScore products, [50, 10, 0] },
         (pharmacyFilter): { intRangeScore products, [50, 10, 0] },
         (drugShopFilter): { intRangeScore products, [50, 10, 0] }
@@ -71,7 +63,7 @@ println("$customer.outletName($customer.outletType) PRODUCT SCORE: $products : W
 // ******************************************
 // LOCATION
 // ******************************************
-def locationScore = calcScore(customer, 0.1, { objRangeScore customer.split?.toLowerCase(), ['urban', 'rural'] })
+def locationScore = calcScore(customer, 0.15, { objRangeScore customer.split?.toLowerCase(), [ 'rural','urban'] })
 println("$customer.outletName($customer.outletType) LOCATION: $customer.split : Weighted Score = $locationScore : RealScore = ${locationScore / 0.05}")
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -84,9 +76,22 @@ if(!task){
     return  1.5
 }
 
+// ******************************************
+// DIARRHEA MARKET
+// ******************************************
+def diarrheaMarketScore = calcScore(customer, 0.15, [
+        (clinicFilter)  : { intRangeScore diarrheaMarket, [10, 5, 0] },
+        (pharmacyFilter): { intRangeScore diarrheaMarket, [23, 9, 0] },
+        (drugShopFilter): { intRangeScore diarrheaMarket, [10, 5, 0] }
+])
+
+// ******************************************
+// DIARRHEA MARKET
+// ******************************************
 def diarrheaRecommendationScore = calcScore(customer, 0.1, {
     objRangeScore task.recommendationLevel?.toLowerCase(), ['yes', 'no']
 })
+println("$customer.outletName($customer.outletType) DIARRHEA MARKET: $task.recommendationLevel : Weighted Score = $diarrheaRecommendationScore : RealScore = ${knowledgeScore / 0.1}")
 
 // ******************************************
 // EDUCATION LEVEL
@@ -94,11 +99,11 @@ def diarrheaRecommendationScore = calcScore(customer, 0.1, {
 
 def levels = ['high', 'medium', 'low']
 
-def diaKnowledge = intRangeScore(cleanUpWeight(task.whatYouKnowAbtDiarrhea), levels)
-def diaEffectsKnowledge = intRangeScore(cleanUpWeight(task.diarrheaEffectsOnBody), levels)
-def orsKnowledge = intRangeScore(cleanUpWeight(task.knowledgeAbtOrsAndUsage), levels)
-def zincKnowledge = intRangeScore(cleanUpWeight(task.knowledgeAbtZincAndUsage), levels)
-def antiBioticKnowledge = intRangeScore(cleanUpWeight(task.whyNotUseAntibiotics), levels)
+def diaKnowledge = objRangeScore(cleanUpWeight(task.whatYouKnowAbtDiarrhea), levels)
+def diaEffectsKnowledge = objRangeScore(cleanUpWeight(task.diarrheaEffectsOnBody), levels)
+def orsKnowledge = objRangeScore(cleanUpWeight(task.knowledgeAbtOrsAndUsage), levels)
+def zincKnowledge = objRangeScore(cleanUpWeight(task.knowledgeAbtZincAndUsage), levels)
+def antiBioticKnowledge = objRangeScore(cleanUpWeight(task.whyNotUseAntibiotics), levels)
 
 def totalKnowledge = (diaKnowledge + diaEffectsKnowledge + orsKnowledge + zincKnowledge + antiBioticKnowledge)
 
@@ -150,3 +155,6 @@ println("$customer.outletName($customer.outletType) SALES VALUE: $averageSalesVa
 def score = footFallScore + diarrheaMarketScore + productScore + locationScore + diarrheaRecommendationScore + knowledgeScore + orsStockScore + zincStockScore + salesValueScore
 println(score)
 return score
+
+//inverse score
+///fixed weight cleanup
