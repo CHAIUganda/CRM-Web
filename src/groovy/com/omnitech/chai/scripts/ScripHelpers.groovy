@@ -65,20 +65,54 @@ class ScripHelpers {
         return entry.value
     }
 
-
-    static int intRangeScore(def value, List ranges) {
+    /**
+     *    If used in normal mode then [50,30,0]  is read as
+     *    between 0-29 = 1, 30-49 = 2, 50 and above = 3
+     *
+     *    If used as inverse then it is read as
+     *    below 0 = 3, below 30 = 2, below 50 and above = 1
+     * @param value
+     * @param ranges
+     * @param invert
+     * @return
+     */
+    static int intRangeScore(def value, List ranges, boolean invert = false) {
         def size = ranges.size()
+
         for (int i = 0; i < size; i++) {
             def val = ranges[i]
-            if (i == 0 && value >= val) return size
-            if (value >= val) return (size == i + 1) ? 1 : size - 1
+            if (i == 0 && value >= val) {
+                if (invert) return 1
+                return size
+            }
+            if (value >= val) {
+                def finalScore = (size == i + 1) ? 1 : size - 1
+                if (invert) return size - 1
+                return finalScore
+            }
+        }
+        if (invert) return size
+        return 0
+    }
+
+    static int intRangeInverse(def value, List ranges, boolean invert = false) {
+        println(ranges)
+        def size = ranges.size()
+        def score = size
+        for (int i = 0; i < size; i++) {
+            def val = ranges[i]
+            if (value <= val) {
+                return score
+            }
+            score = score - 1
         }
         return 0
     }
 
     static int objRangeScore(def value, List ranges) {
+        def size = ranges.size()
         def score = ranges.indexOf(value)
-        if (score != -1) return score
+        if (score != -1) return size - score
         return 0
     }
 
