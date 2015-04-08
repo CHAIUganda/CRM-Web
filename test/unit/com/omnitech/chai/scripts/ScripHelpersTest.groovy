@@ -2,7 +2,6 @@ package com.omnitech.chai.scripts
 
 import spock.lang.Specification
 
-import static com.omnitech.chai.scripts.ScripHelpers.intRangeInverse
 import static com.omnitech.chai.scripts.ScripHelpers.intRangeScore
 import static com.omnitech.chai.scripts.ScripHelpers.objRangeScore
 
@@ -63,9 +62,9 @@ class ScripHelpersTest extends Specification {
         val == 0
     }
 
-    def 'test inverse range score'(){
+    def 'test inverse range score'() {
         when:
-       def val = intRangeScore(30, [50, 15, 0],true)
+        def val = intRangeScore(30, [50, 15, 0], true)
         then:
         val == 2
 
@@ -75,12 +74,12 @@ class ScripHelpersTest extends Specification {
         val == 1
 
         when:
-        val = intRangeScore(7, [50, 15, 5],true)
+        val = intRangeScore(7, [50, 15, 5], true)
         then:
         val == 2
 
         when:
-        val = intRangeScore(2, [15, 5, 3],true)
+        val = intRangeScore(2, [15, 5, 3], true)
         then:
         val == 3
 
