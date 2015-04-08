@@ -70,7 +70,7 @@ class ScripHelpers {
         def size = ranges.size()
         for (int i = 0; i < size; i++) {
             def val = ranges[i]
-            if (i == 0 && value > val) return size
+            if (i == 0 && value >= val) return size
             if (value >= val) return (size == i + 1) ? 1 : size - 1
         }
         return 0

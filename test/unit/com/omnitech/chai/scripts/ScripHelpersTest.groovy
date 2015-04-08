@@ -33,7 +33,7 @@ class ScripHelpersTest extends Specification {
         when:
         val = intRangeScore(15, [15, 5, 0])
         then:
-        val == 2
+        val == 3
 
         when:
         val = intRangeScore(0, [15, 5, 0])
