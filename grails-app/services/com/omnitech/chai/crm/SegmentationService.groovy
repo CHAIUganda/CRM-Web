@@ -7,12 +7,11 @@ import com.omnitech.chai.repositories.CustomerWithLastTask
 import com.omnitech.chai.util.ChaiUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.support.Neo4jTemplate
-import org.springframework.data.neo4j.transaction.Neo4jTransactional
 
 /**
  * Created by kay on 10/22/14.
  */
-@Neo4jTransactional
+
 class SegmentationService {
 
     def customerRepository
@@ -20,11 +19,14 @@ class SegmentationService {
     def settingRepository
     def reportContextService
     def territoryRepository
+    def txHelperService
     @Autowired
     Neo4jTemplate neo
 
     void runSegmentationRoutine() {
-        def segments = customerSegmentRepository.findAll().collect() as List<CustomerSegment>
+        def segments = txHelperService.doInTransaction {
+            customerSegmentRepository.findAll().collect() as List<CustomerSegment>
+        }
 
         def segmentSetting = settingRepository.findByName(Setting.SEGMENTATION_SCRIPT)
 
@@ -34,16 +36,21 @@ class SegmentationService {
         def segmentScript = compileScript(segmentSetting.value)
 
 
-        territoryRepository.findAllByType(Territory.TYPE_DETAILING).each { Territory t ->
 
-            log.info("########################### Segmenting customers in Territory[$t]...")
-            int count = 0
-            customerRepository.findAllCustomersAlongWithLastTask(t.id).each { c ->
-                gradeCustomer(segmentScript, c, segments)
-                count = count + 1
+        def territories = txHelperService.doInTransaction {
+            territoryRepository.findAllByType(Territory.TYPE_DETAILING).collect()
+        }
+
+        territories[0..1].each { Territory t ->
+            txHelperService.doInTransaction {
+                log.info("########################### Segmenting customers in Territory[$t]...")
+                int count = 0
+                customerRepository.findAllCustomersAlongWithLastTask(t.id).each { c ->
+                    gradeCustomer(segmentScript, c, segments)
+                    count = count + 1
+                }
+                log.info("Segmented [$count] Customers.. And Commiting Transaction")
             }
-            log.info("Segmented [$count] Customers")
-
         }
 
     }

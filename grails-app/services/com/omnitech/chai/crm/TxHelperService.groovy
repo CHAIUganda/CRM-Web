@@ -13,7 +13,7 @@ class TxHelperService {
     @Autowired
     Neo4jTemplate neo
 
-    def doInTransaction(Closure code) {
+    def<T> T doInTransaction(Closure<T> code) {
         code.delegate = this
         code()
     }
