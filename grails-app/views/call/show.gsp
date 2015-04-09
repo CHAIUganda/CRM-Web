@@ -4,7 +4,7 @@
 
 <head>
     <meta name="layout" content="kickstart"/>
-    <g:set var="entityName" value="${message(code: 'task.label', default: 'Task')}"/>
+    <g:set var="entityName" value="${message(code: 'task.label', default: 'Sale')}"/>
     %{--<g:set var="noedit_menu" value="${true}" scope="request"/>--}%
     <g:set var="nocreate_menu" value="${true}" scope="request"/>
     <title><g:message code="default.show.label" args="[entityName]"/></title>
@@ -126,7 +126,7 @@
             <td valign="top" class="value">
                 <g:if test="${taskInstance.completionDate}">
                     <g:formatDate date="${taskInstance.completionDate}"
-                                  format="dd-MMM-yyyy"/> (Completed ${ChaiUtils.fromNow(taskInstance.dueDate)})
+                                  format="dd-MMM-yyyy HH:mm"/> (Completed ${ChaiUtils.fromNow(taskInstance.completionDate)})
                 </g:if>
             </td>
 

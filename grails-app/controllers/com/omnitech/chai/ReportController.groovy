@@ -210,14 +210,25 @@ class ReportController {
 
         switch (report.type) {
             case Report.TYPE_STATIC:
-                renderReport(scriptService.buildReport(report.script), report.name)
+                try {
+                    renderReport(scriptService.buildReport(report.script), report.name)
+                } catch (IllegalArgumentException x) {
+                    flash.error = x.message
+                    redirect(action: 'index', id: id)
+                }
                 break
             case Report.TYPE_SIMPLE_FILTER:
-                def reportBuilder = scriptService.buildReport(report.script, [action: 'p_get_report', params: params])
-                renderReport(reportBuilder, report.name)
+                try {
+                    def reportBuilder = scriptService.buildReport(report.script, [action: 'p_get_report', params: params])
+                    renderReport(reportBuilder, report.name)
+                } catch (IllegalArgumentException x) {
+                    flash.error = x.message
+                    redirect(action: 'simpleFilterWiz', id: id)
+                }
                 break
 
         }
+
     }
 
     def renderReport(JasperReportBuilder rb, String name) {

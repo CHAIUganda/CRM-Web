@@ -6,6 +6,10 @@
     <meta name="layout" content="kickstart"/>
     <g:set var="entityName" value="${message(code: 'report.label', default: 'Report')}"/>
     <title>Simple Report Filter</title>
+    <r:require module="chosen"/>
+    <g:javascript>
+        $(".chzn-select").chosen({enable_split_word_search:true});
+    </g:javascript>
 </head>
 
 <body>
@@ -35,7 +39,12 @@
 
                 %{-- Select One--}%
                 <g:if test="${f.fieldType == List}">
-                    <g:select name="${f.fieldName}" from="${f.possibleValues}" class="form-control"/>
+                    <g:select name="${f.fieldName}" from="${f.possibleValues}" class="form-control  chzn-select"/>
+                </g:if>
+
+                 %{-- Select Many--}%
+                <g:if test="${f.fieldType == "selectMany"}">
+                    <g:select name="${f.fieldName}" from="${f.possibleValues}" multiple="true" class="form-control chzn-select"/>
                 </g:if>
 
             </div>

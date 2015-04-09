@@ -1,7 +1,7 @@
 package com.omnitech.chai.util
 
-import au.com.bytecode.opencsv.CSVWriter
 import fuzzycsv.FuzzyCSVWriter
+import org.springframework.util.Assert
 
 import javax.servlet.http.HttpServletResponse
 
@@ -39,5 +39,11 @@ class ServletUtil {
         setAttachment(response, fileName)
         def cSVWriter = new FuzzyCSVWriter(response.writer)
         cSVWriter.writeAll(waterpoints)
+    }
+
+    static List<String> extractList(Map params, String name, String msg = null) {
+        Assert.notNull params[name], (msg ?: "$name should not be empty")
+        return params[name] instanceof String ? [params[name]] : params[name]
+
     }
 }
