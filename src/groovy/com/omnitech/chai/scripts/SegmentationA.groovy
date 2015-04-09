@@ -5,8 +5,6 @@ import com.omnitech.chai.model.DetailerTask
 import com.omnitech.chai.reports.ReportContext
 import com.omnitech.chai.util.ChaiUtils
 
-import static com.omnitech.chai.model.Customer.getSTRUCT_SEMI_PERMANENT
-import static com.omnitech.chai.model.Customer.getTYPE_CLINIC
 import static com.omnitech.chai.scripts.ScripHelpers.*
 
 //Customer cust =  customer as Customer
@@ -47,8 +45,6 @@ def footFallScore = calcScore(customer, 0.1, [
 ])
 println("$customer.outletName($customer.outletType) FOOTFALL: $footFall : Weighted Score = $footFallScore : Raw = ${footFallScore / 0.1}")
 
-println("$customer.outletName($customer.outletType) DIARRHEA MARKET: $diarrheaMarketScore : Weighted Score = $diarrheaMarketScore : RealScore = ${diarrheaMarketScore /  0.15}")
-
 
 // ******************************************
 // PRODUCT SCORE
@@ -63,7 +59,7 @@ println("$customer.outletName($customer.outletType) PRODUCT SCORE: $products : W
 // ******************************************
 // LOCATION
 // ******************************************
-def locationScore = calcScore(customer, 0.15, { objRangeScore customer.split?.toLowerCase(), [ 'rural','urban'] })
+def locationScore = calcScore(customer, 0.15, { objRangeScore customer.split?.toLowerCase(), ['rural', 'urban'] })
 println("$customer.outletName($customer.outletType) LOCATION: $customer.split : Weighted Score = $locationScore : RealScore = ${locationScore / 0.05}")
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -72,8 +68,8 @@ println("$customer.outletName($customer.outletType) LOCATION: $customer.split : 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-if(!task){
-    return  1.5
+if (!task) {
+    return 1.5
 }
 
 // ******************************************
@@ -84,14 +80,15 @@ def diarrheaMarketScore = calcScore(customer, 0.15, [
         (pharmacyFilter): { intRangeScore diarrheaMarket, [23, 9, 0] },
         (drugShopFilter): { intRangeScore diarrheaMarket, [10, 5, 0] }
 ])
+println("$customer.outletName($customer.outletType) DIARRHEA MARKET: $diarrheaMarketScore : Weighted Score = $diarrheaMarketScore : RealScore = ${diarrheaMarketScore / 0.15}")
 
 // ******************************************
-// DIARRHEA MARKET
+// RECOMMENDS FOR DIARRHEA
 // ******************************************
 def diarrheaRecommendationScore = calcScore(customer, 0.1, {
     objRangeScore task.recommendationLevel?.toLowerCase(), ['yes', 'no']
 })
-println("$customer.outletName($customer.outletType) DIARRHEA MARKET: $task.recommendationLevel : Weighted Score = $diarrheaRecommendationScore : RealScore = ${knowledgeScore / 0.1}")
+println("$customer.outletName($customer.outletType) RECOMMENDS FOR DIARRHEA: $task.recommendationLevel : Weighted Score = $diarrheaRecommendationScore : RealScore = ${diarrheaRecommendationScore / 0.1}")
 
 // ******************************************
 // EDUCATION LEVEL
@@ -122,9 +119,9 @@ println("$customer.outletName($customer.outletType) KNOWLEDGE: $knowledgeList TT
 
 def orsStockLevel = task?.detailerStocks?.findAll { it.category == 'ors' }?.collect { it.stockLevel }?.sum()
 def orsStockScore = calcScore(customer, 0.2, [
-        (clinicFilter)  : { intRangeScore orsStockLevel, [60, 30, 0] },
-        (pharmacyFilter): { intRangeScore orsStockLevel, [200, 50, 0] },
-        (drugShopFilter): { intRangeScore orsStockLevel, [25, 5, 0] }
+        (clinicFilter)  : { intRangeInverse orsStockLevel, [30, 60] },
+        (pharmacyFilter): { intRangeInverse orsStockLevel, [50, 200] },
+        (drugShopFilter): { intRangeInverse orsStockLevel, [5, 25] }
 ])
 println("$customer.outletName($customer.outletType) LEVEL OF ORS: $orsStockLevel : Weighted Score = $orsStockScore : RealScore = ${orsStockScore / 0.2}")
 
@@ -133,9 +130,9 @@ println("$customer.outletName($customer.outletType) LEVEL OF ORS: $orsStockLevel
 // ******************************************
 def zincStockLevel = task?.detailerStocks?.findAll { it.category == 'zinc' }?.collect { it.stockLevel }?.sum()
 def zincStockScore = calcScore(customer, 0.2, [
-        (clinicFilter)  : { intRangeScore zincStockLevel, [60, 30, 0] },
-        (pharmacyFilter): { intRangeScore zincStockLevel, [200, 50, 0] },
-        (drugShopFilter): { intRangeScore zincStockLevel, [25, 5, 0] }
+        (clinicFilter)  : { intRangeInverse zincStockLevel, [100, 175] },
+        (pharmacyFilter): { intRangeInverse zincStockLevel, [30, 200] },
+        (drugShopFilter): { intRangeInverse zincStockLevel, [5, 20] }
 ])
 println("$customer.outletName($customer.outletType) LEVEL OF ORS: $zincStockLevel : Weighted Score = $zincStockScore : RealScore = ${zincStockScore / 0.2}")
 

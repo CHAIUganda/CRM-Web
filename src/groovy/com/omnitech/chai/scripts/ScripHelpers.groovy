@@ -95,18 +95,15 @@ class ScripHelpers {
         return 0
     }
 
-    static int intRangeInverse(def value, List ranges, boolean invert = false) {
-        println(ranges)
+    static int intRangeInverse(def value, List ranges) {
         def size = ranges.size()
-        def score = size
+        def score = size + 1
         for (int i = 0; i < size; i++) {
             def val = ranges[i]
-            if (value <= val) {
-                return score
-            }
+            if (value < val) return score
             score = score - 1
         }
-        return 0
+        return score
     }
 
     static int objRangeScore(def value, List ranges) {
