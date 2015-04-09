@@ -45,7 +45,6 @@ def footFallScore = calcScore(customer, 0.1, [
 ])
 println("$customer.outletName($customer.outletType) FOOTFALL: $footFall : Weighted Score = $footFallScore : Raw = ${footFallScore / 0.1}")
 
-
 // ******************************************
 // PRODUCT SCORE
 // ******************************************
@@ -86,7 +85,7 @@ println("$customer.outletName($customer.outletType) DIARRHEA MARKET: $diarrheaMa
 // RECOMMENDS FOR DIARRHEA
 // ******************************************
 def diarrheaRecommendationScore = calcScore(customer, 0.1, {
-    objRangeScore task.recommendationLevel?.toLowerCase(), ['yes', 'no']
+    objRangeScore task.recommendationLevel?.toLowerCase(), ['no', 'yes']
 })
 println("$customer.outletName($customer.outletType) RECOMMENDS FOR DIARRHEA: $task.recommendationLevel : Weighted Score = $diarrheaRecommendationScore : RealScore = ${diarrheaRecommendationScore / 0.1}")
 
@@ -104,7 +103,7 @@ def antiBioticKnowledge = objRangeScore(cleanUpWeight(task.whyNotUseAntibiotics)
 
 def totalKnowledge = (diaKnowledge + diaEffectsKnowledge + orsKnowledge + zincKnowledge + antiBioticKnowledge)
 
-def knowledgeScore = calcScore(customer, 0.1, { intRangeScore totalKnowledge, [11, 9, 5] })
+def knowledgeScore = calcScore(customer, 0.1, { intRangeInverse totalKnowledge, [9, 12] })
 
 def knowledgeList = []
 task.with {
@@ -134,7 +133,7 @@ def zincStockScore = calcScore(customer, 0.2, [
         (pharmacyFilter): { intRangeInverse zincStockLevel, [30, 200] },
         (drugShopFilter): { intRangeInverse zincStockLevel, [5, 20] }
 ])
-println("$customer.outletName($customer.outletType) LEVEL OF ORS: $zincStockLevel : Weighted Score = $zincStockScore : RealScore = ${zincStockScore / 0.2}")
+println("$customer.outletName($customer.outletType) LEVEL OF ZINC: $zincStockLevel : Weighted Score = $zincStockScore : RealScore = ${zincStockScore / 0.2}")
 
 // ******************************************
 // AVERAGE SALES VALUE
