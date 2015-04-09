@@ -41,7 +41,7 @@ class SegmentationService {
             territoryRepository.findAllByType(Territory.TYPE_DETAILING).collect()
         }
 
-        territories[0..1].each { Territory t ->
+        territories.each { Territory t ->
             txHelperService.doInTransaction {
                 log.info("########################### Segmenting customers in Territory[$t]...")
                 int count = 0
