@@ -21,9 +21,9 @@ class ScripHelpers {
 
     static String cleanUpWeight(String products) {
         def lProducts = products?.toLowerCase()
-        if (lProducts.contains('high')) return 'high'
-        if (lProducts.contains('medium')) return 'medium'
-        if (lProducts.contains('low')) return 'low'
+        if (lProducts?.contains('high')) return 'high'
+        if (lProducts?.contains('medium')) return 'medium'
+        if (lProducts?.contains('low')) return 'low'
         return null
     }
 
