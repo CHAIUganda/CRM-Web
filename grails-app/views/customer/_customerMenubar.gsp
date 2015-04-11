@@ -40,7 +40,7 @@
         %{--ACTIVE Filter--}%
         <li>
             <a data-toggle="dropdown" href="#"><i
-                    class="glyphicon glyphicon-check"></i>${params.active ? (Boolean.parseBoolean(params.active) ? 'Active':'Inactive') : 'Activity'}<b
+                    class="glyphicon glyphicon-check"></i>${params.active ? (Boolean.parseBoolean(params.active) ? 'Active' : 'Inactive') : 'Activity'}<b
                     class="caret"></b></a>
             <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
                 <li>
@@ -115,32 +115,30 @@
 
 
     %{--Customer--}%
-        <sec:ifAnyGranted roles="ROLE_SUPER_ROOT">
-            <g:if test="${params.controller == 'customer' && ['index', '', null].contains(params.action)}">
-                <li class="active">
-                    <a class="btn btn-primary" data-toggle="modal" data-target="#importCustomers">
-                        <i class="glyphicon glyphicon-upload"></i> Import Customers
-                    </a>
-                </li>
+        <sec2:ifAllGranted roles="ROLE_SUPER_ROOT">
+            <li class="active">
+                <a class="btn btn-primary" data-toggle="modal" data-target="#importCustomers">
+                    <i class="glyphicon glyphicon-upload"></i> Import Customers
+                </a>
+            </li>
+        </sec2:ifAllGranted>
 
-                <li class="active">
-                    <g:link controller="customer" action="export" class="btn btn-primary">
-                        <i class="glyphicon glyphicon-upload"></i> Export All
-                    </g:link>
-                </li>
-            </g:if>
-        </sec:ifAnyGranted>
+        <li>
+            <sec2:link controller="customer" action="export">
+                <i class="glyphicon glyphicon-upload"></i> Export
+            </sec2:link>
+        </li>
 
 
 
-    %{-- The Search Box--}%
+        %{-- The Search Box--}%
         <li class="navbar-right">
             <div class="col-lg-12">
                 %{--<input type="hidden" name="currentPage" value="${currentPage}"/>--}%
                 %{--<input type="hidden" name="domain" value="${clazz}"/>--}%
                 <form>
                     <input class="form-control" name="search" value="${params.search}"
-                           placeholder="Search By Customer Name,Type or Size" style="width: 300px;"/>
+                           placeholder="Search..."/>
                 </form>
             </div>
         </li>
