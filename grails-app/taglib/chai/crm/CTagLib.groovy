@@ -55,66 +55,6 @@ class CTagLib {
         out << g.link(attrs, body)
     }
 
-    def mapToTable = { attrs ->
-
-        StringBuilder output = new StringBuilder()
-
-        if (attrs.map instanceof Map) {
-            Map map = attrs.map
-
-            if (map.size() > 0) {
-                output.append("<table><thead><tr>")
-
-                ArrayList[] values = map.values()
-
-                int max = values.collect { it.size() }.max()
-
-
-                map.each { key, val ->
-                    output.append("<th>${key}</th>")
-                }
-
-                output.append("</tr></thead><tbody>")
-
-                (1..max).each { num ->
-                    output.append("<tr>")
-
-                    values.each {
-
-                        if (it.size() >= num) {
-                            output.append("<td>${it.get(num - 1)}</td>")
-                        } else {
-                            output.append("<td></td>")
-                        }
-                    }
-
-                    output.append("</tr>")
-                }
-
-                output.append("</tbody></table>")
-            }
-
-        }
-        out << output
-    }
-
-    /**
-     * Render a table property
-     *
-     * @attr dataList Property name
-     */
-    def renderTable = { attrs ->
-
-        List data = attrs.dataList
-
-        if (data) {
-
-            data.collect { d -> ReflectFunctions.extractProperties(d) }
-
-            data.each { r -> }
-        }
-
-    }
 
 
 }
