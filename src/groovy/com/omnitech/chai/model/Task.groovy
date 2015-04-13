@@ -9,6 +9,8 @@ import org.springframework.data.neo4j.annotation.*
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.data.neo4j.support.index.IndexType
 
+import static com.omnitech.chai.util.ChaiUtils.bean
+
 /**
  * Created by kay on 9/24/14.
  */
@@ -120,15 +122,13 @@ class Task extends AbstractEntity {
     }
 
     Set<User> loadTerritoryUsers() {
-        Neo4jTemplate neo = Holders.applicationContext.getBean(Neo4jTemplate)
-        TxHelperService tx = Holders.applicationContext.getBean(TxHelperService)
-        tx.doInTransaction {
+        bean(TxHelperService).doInTransaction {
             neo.fetch(this.customer?.subCounty?.territory)
+            customer?.subCounty?.territory?.collect { t ->
+                neo.fetch(t?.territoryUsers)
+                return t?.territoryUsers
+            }?.flatten() as Set
         }
-        this.customer?.subCounty?.territory?.collect { t ->
-            neo.fetch(t?.territoryUsers)
-            return t?.territoryUsers
-        }?.flatten() as Set
     }
 
     def territoryUser(String role) {

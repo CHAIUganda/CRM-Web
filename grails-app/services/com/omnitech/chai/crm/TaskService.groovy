@@ -33,7 +33,6 @@ class TaskService {
     def neoSecurityService
     def userService
     def clusterService
-    def productRepository
 
     /* Tasks */
 
@@ -203,9 +202,7 @@ class TaskService {
         saveTask(task)
     }
 
-    List<List> exportTasksForUser(Long userId, Class taskTpe) {
-        taskRepository.exportAllTasks(userId, taskTpe)
-    }
+    List<List> exportTasksForUser(Long userId, Class taskTpe) { taskRepository.exportAllTasks(userId, taskTpe) }
 
     List exportAllTasks(Class type) { taskRepository.exportAllTasks(type) }
 
@@ -295,13 +292,6 @@ class TaskService {
         saveTask(detailerTask)
     }
 
-
-    void generateSalesTasks(Territory territory) {
-        customerRepository.findByTerritory(territory.id).each {
-            def newTask = new Order(customer: it, dueDate: new Date())
-            if (newTask) taskRepository.save(newTask)
-        }
-    }
 
     def generateTasks(List<Territory> territories,
                       List<CustomerSegment> segments,

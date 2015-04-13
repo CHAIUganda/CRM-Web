@@ -30,7 +30,7 @@ class MigrationService {
         def dbChange = toDbChangSet(changeSet)
         def neoChangeSet = dbChangeSetRepository.findByChangeId(dbChange.changeId)
         if (neoChangeSet) {
-            log.debug("Ignoring $changeSet cause it already exists in Db")
+            log.trace("Ignoring $changeSet cause it already exists in Db")
             return null
         }
 

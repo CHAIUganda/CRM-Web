@@ -14,14 +14,16 @@ class RestApiFilters {
         restApi(uri: '/rest/**', action: '*') {
             before = {
 
-                def user = neoSecurityService.currentUser
-                def deviceImei = request.getHeader('device-imei')
+                return true
 
-                def imeiOk = deviceImei && user?.device?.imei == deviceImei
-                if (!imeiOk) {
-                    response.sendError(HttpStatus.UNAUTHORIZED.value(), "You Are Not Allowed To Use This Device")
-                }
-                return imeiOk
+//                def user = neoSecurityService.currentUser
+//                def deviceImei = request.getHeader('device-imei')
+//
+//                def imeiOk = deviceImei && user?.device?.imei == deviceImei
+//                if (!imeiOk) {
+//                    response.sendError(HttpStatus.UNAUTHORIZED.value(), "You Are Not Allowed To Use This Device")
+//                }
+//                return imeiOk
             }
             after = { Map model ->
 

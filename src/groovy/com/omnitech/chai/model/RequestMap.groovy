@@ -2,12 +2,12 @@ package com.omnitech.chai.model
 
 import com.omnitech.chai.crm.TxHelperService
 import com.omnitech.chai.repositories.RequestMapRepository
-import grails.util.Holders
 import grails.validation.Validateable
-import org.springframework.context.ApplicationContext
 import org.springframework.data.neo4j.annotation.Indexed
 import org.springframework.data.neo4j.annotation.NodeEntity
 import org.springframework.http.HttpMethod
+
+import static com.omnitech.chai.util.ChaiUtils.bean
 
 @Validateable
 @NodeEntity
@@ -25,13 +25,9 @@ class RequestMap extends AbstractEntity {
     }
 
     static List<RequestMap> list() {
-        ApplicationContext ac = Holders.getApplicationContext()
-        def tx = ac.getBean(TxHelperService)
-        def repo = ac.getBean(RequestMapRepository)
-        def maps = tx.doInTransaction {
-            repo.findAll().to(RequestMap).collect()
+        bean(TxHelperService).doInTransaction {
+            bean(RequestMapRepository).findAll().collect()
         }
-        maps
     }
 
     def beforeSave() {
@@ -50,10 +46,10 @@ class RequestMap extends AbstractEntity {
             }
         }
 
-        configAttribute = attribs.collect{it.trim()}.join(',')
+        configAttribute = attribs.collect { it.trim() }.join(',')
     }
 
-    String toString(){
+    String toString() {
         "$url -> $configAttribute"
     }
 
