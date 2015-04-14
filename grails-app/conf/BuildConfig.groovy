@@ -63,10 +63,8 @@ grails.project.dependency.resolution = {
         runtime 'javax.validation:validation-api:1.1.0.Final'
         runtime 'org.neo4j:neo4j-spatial:0.13-neo4j-2.1.2'
         compile 'org.neo4j:neo4j-cypher-dsl:2.1.4'
-        compile 'fuzzy-csv:fuzzycsv:1.0-SNAPSHOT'
         compile 'com.xlson.groovycsv:groovycsv:1.0'
         compile 'org.apache.commons:commons-math3:3.3'
-        compile 'org.omnitech:sms-api:1.0-SNAPSHOT'
 
         runtime('org.neo4j.app:neo4j-server:2.1.2') {
             excludes 'org.slf4j:slf4j-jdk14'
@@ -84,8 +82,6 @@ grails.project.dependency.resolution = {
             excludes 'jdtcore:eclipse'
         }
         build "com.lowagie:itext:2.1.7"
-        compile 'csv-graphs:csv-graphs:1.0-SNAPSHOT'
-        compile 'filter_report:filter_report:1.0-SNAPSHOT'
         compile 'com.lowagie:itext:2.1.7'
 
 
