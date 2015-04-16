@@ -189,16 +189,16 @@ class ClusterService {
 
             //go through each on for the clusters generate one more time and make sure none passes the maximum threshhold
             def reClusteredTasks = []
-            def newSmallCluseters = []
+            def newSmallClusters = []
             finalSmallClusters.each { sc ->
                 if (sc.points.size() > maximumNumberOfTask) {
                     def (smallerSubClusters, otherMissedPoints) = getClusters2(sc.points, tasksPerDay, maximumNumberOfTask, 0.3f, true)
-                    newSmallCluseters.addAll(smallerSubClusters)
+                    newSmallClusters.addAll(smallerSubClusters)
                     reClusteredTasks << sc
                 }
             }
             finalSmallClusters.removeAll(reClusteredTasks)
-            finalSmallClusters.removeAll(newSmallCluseters)
+            finalSmallClusters.addAll(newSmallClusters)
 
         }
 
