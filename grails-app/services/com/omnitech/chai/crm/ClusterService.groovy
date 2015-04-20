@@ -1,27 +1,25 @@
 package com.omnitech.chai.crm
 
-import com.omnitech.chai.model.*
+import com.omnitech.chai.model.LatLng
+import com.omnitech.chai.model.Task
 import com.omnitech.chai.util.ChaiUtils
 import org.apache.commons.math3.ml.clustering.CentroidCluster
 import org.apache.commons.math3.ml.clustering.Clusterable
 import org.apache.commons.math3.ml.clustering.KMeansPlusPlusClusterer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.support.Neo4jTemplate
-import org.springframework.data.neo4j.transaction.Neo4jTransactional
 
 import static com.omnitech.chai.util.ChaiUtils.getNextWorkDay
 import static com.omnitech.chai.util.ChaiUtils.nextDayOfWeek
-import static java.util.Calendar.*
+import static java.util.Calendar.MONDAY
 
 /**
  * Created by kay on 12/19/2014.
  */
 class ClusterService {
 
-    def territoryRepository
     def taskRepository
     def detailerTaskRepository
-    def orderRepository
     @Autowired
     Neo4jTemplate neo
     static int TASKS_PER_DAY = 10
@@ -52,38 +50,11 @@ class ClusterService {
     }
 
 
-    @Neo4jTransactional
-    void scheduleDetailerTasks() {
-        territoryRepository.findAll().each {
-            clusterAndGeneratesTasks(it, TASKS_PER_DAY, NUMBER_OF_USERS, DetailerTask)
-        }
-    }
-
-    @Neo4jTransactional
-    void scheduleOrders() {
-        territoryRepository.findAll().each {
-            clusterAndGeneratesTasks(it, TASKS_PER_DAY, NUMBER_OF_USERS, Order)
-        }
-    }
-
-    List<CentroidCluster<LocatableTask>> clusterAndGeneratesTasks(Territory territory, int tasksPerDay, int numberOfUsers, Class type) {
-
-        def locatableTasks = getLocatableTasks(territory, type)
-        if (!locatableTasks) return []
-        def clusters = getClusters(locatableTasks, tasksPerDay, numberOfUsers)
-
-        assignDueDateToClusters(clusters, new Date(), [MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY])
-
-        clusters.each { c -> c.getPoints().each { lt -> taskRepository.save(lt.task) } }
-        return clusters
-    }
-
-
     static List<CentroidCluster<LocatableTask>> assignDueDateToClusters(List<CentroidCluster<LocatableTask>> clusters, Date startDate, List<Integer> workDays, boolean flowIntoNextWeek = true) {
 
         def nextAvailableDate = startDate
 
-        def nextMonday = nextDayOfWeek(startDate,MONDAY).time
+        def nextMonday = nextDayOfWeek(startDate, MONDAY).time
 
         def assignedClusters = []
 
@@ -91,7 +62,7 @@ class ClusterService {
 
             nextAvailableDate = getNextWorkDay(workDays, nextAvailableDate)
 
-            if (!flowIntoNextWeek && (nextMonday - nextAvailableDate) <= 0  ) {
+            if (!flowIntoNextWeek && (nextMonday - nextAvailableDate) <= 0) {
                 break;
             }
 
@@ -120,28 +91,26 @@ class ClusterService {
             return null
         } as List<LocatableTask>
 
-        def (List<CentroidCluster<LocatableTask>> clusters, List other) = getClusters2(locatableTasks, tasksPerDay, 20, 0.3f, true)
-
-
-        clusters.sort { CentroidCluster<LocatableTask> a, CentroidCluster<LocatableTask> b ->
-            def dis = distanceBetweenPoints(
-                    [getLat: { a.center.point[0] }, getLng: { a.center.point[1] }] as LatLng,
-                    [getLat: { b.center.point[0] }, getLng: { b.center.point[1] }] as LatLng)
-            return dis
+        def (List<CentroidCluster<LocatableTask>> clusters, List other) = ChaiUtils.time("Clustering [${locatableTasks.size()}]...") {
+            getClusters2(locatableTasks, tasksPerDay, 20, 0.3f, true)
         }
 
-        def assignedClusters = assignDueDateToClusters(clusters, startDate, allowedDays, false)
+
+        ChaiUtils.time("Sorting Generated Clusters [${clusters?.size()}]") {
+            clusters.sort { CentroidCluster<LocatableTask> a, CentroidCluster<LocatableTask> b ->
+                def dis = distanceBetweenPoints(
+                        [getLat: { a.center.point[0] }, getLng: { a.center.point[1] }] as LatLng,
+                        [getLat: { b.center.point[0] }, getLng: { b.center.point[1] }] as LatLng)
+                return dis
+            }
+        }
+
+        def assignedClusters = ChaiUtils.time("Assigning DueDates TO Clusters [${clusters?.size()}]") {
+            assignDueDateToClusters(clusters, startDate, allowedDays, false)
+        }
         return assignedClusters
     }
 
-
-    static List<CentroidCluster<LocatableTask>> getClusters(List<LocatableTask> locatableTasks, int tasksPerDay, int numberOfUsers) {
-        def taskSize = locatableTasks.size()
-        def numberOfClusters = calculateClustersNeeded(taskSize, tasksPerDay, numberOfUsers)
-        def clusterer = new KMeansPlusPlusClusterer<LocatableTask>(numberOfClusters as int, 10000);
-        List<CentroidCluster<LocatableTask>> clusters = clusterer.cluster(locatableTasks);
-        return clusters
-    }
     //20 is a magic number to reduce the number of clusters
     static List getClusters2(List<LocatableTask> locatableTasks, int tasksPerDay, int _magicTasksPerDay, float _percOverheadTaskPerDay, boolean processMissedPoint = false) {
         def taskSize = locatableTasks.size()
@@ -208,28 +177,6 @@ class ClusterService {
     static int calculateBestNumberOfCluster(int taskSize, int absoluteTaskPerDay) {
         return ChaiUtils.roundUpward(taskSize, absoluteTaskPerDay) / absoluteTaskPerDay
 
-    }
-
-
-    private List<LocatableTask> getLocatableTasks(Territory territory, Class type) {
-        def tasks
-        if (type == DetailerTask)
-            tasks = detailerTaskRepository.findAllInTerritory(territory.id)
-        else
-            tasks = orderRepository.findAllInTerritory(territory.id)
-
-
-        List<LocatableTask> locatableTasks = []
-
-        tasks.each { t ->
-            if (t.isLocatable()) locatableTasks << new LocatableTask(task: t)
-        }
-        return locatableTasks
-    }
-
-
-    static int calculateClustersNeeded(int taskSize, int tasksPerDay, int numberOfUser) {
-        taskSize / (tasksPerDay * numberOfUser)
     }
 
 }

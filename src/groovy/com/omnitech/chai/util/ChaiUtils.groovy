@@ -6,6 +6,7 @@ import grails.util.Holders
 import grails.validation.ValidationException
 import groovy.time.TimeCategory
 import groovy.transform.CompileStatic
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 import java.text.DateFormat
@@ -17,7 +18,7 @@ import static java.util.Calendar.DAY_OF_WEEK
  * Created by kay on 9/29/14.
  */
 class ChaiUtils {
-    static log = LoggerFactory.getLogger(ChaiUtils)
+    static Logger log = LoggerFactory.getLogger(ChaiUtils)
 
     private static DateFormat format = new SimpleDateFormat('yyyy-MM-dd')
 
@@ -191,6 +192,34 @@ class ChaiUtils {
         }
         cal.add(Calendar.DAY_OF_MONTH, diff);
         return cal;
+    }
+
+
+    static ThreadLocal<Integer> indent = new ThreadLocal<Integer>() {
+        @Override
+        protected Integer initialValue() {
+            return 0
+        }
+    }
+
+    @CompileStatic
+    static def <T> T time(String name = "", Closure<T> worker) {
+        def padding = '    ' * indent.get()
+        indent.set(++indent.get())
+        log.debug "$padding ##### BenchmarkStart: {$name}"
+        def start = System.currentTimeMillis()
+        try {
+            def rt = worker.call()
+            def stop = System.currentTimeMillis()
+
+            def time = TimeCategory.minus(new Date(stop), new Date(start))
+            log.debug "$padding ###### Completed in {$name} in ${time}".toString()
+
+            return rt
+        } finally {
+            indent.set(--indent.get())
+        }
+
     }
 
     static String getBestMessage(Throwable x) {

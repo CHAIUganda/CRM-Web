@@ -15,6 +15,7 @@ import org.springframework.util.Assert
 
 import static com.omnitech.chai.model.Relations.CUST_TASK
 import static com.omnitech.chai.util.ChaiUtils.getNextWorkDay
+import static com.omnitech.chai.util.ChaiUtils.time
 import static java.util.Collections.EMPTY_MAP
 import static java.util.Collections.max
 import static org.neo4j.cypherdsl.CypherQuery.*
@@ -60,17 +61,21 @@ class TaskService {
 
         Page<T> page
         def user = params.user ? userRepository.findByUsername(params.user) : null
-        if (filter) {
-            page = searchTasks(filter, params, taskType)
-        } else if (user) {
-            def status = params.status ?: Task.STATUS_NEW
-            params.status = status
-            page = findAllTasksForUser(user.id, status, params, taskType, null)
-        } else {
-            page = listTasksByStatus(params.status as String, params, taskType)
+        time("Querying Tasks From DB") {
+            if (filter) {
+                page = searchTasks(filter, params, taskType)
+            } else if (user) {
+                def status = params.status ?: Task.STATUS_NEW
+                params.status = status
+                page = findAllTasksForUser(user.id, status, params, taskType, null)
+            } else {
+                page = listTasksByStatus(params.status as String, params, taskType)
+            }
         }
 
-        page.content.each { neo.fetch(it.loadTerritoryUsers()) }
+        time("Fetching Task Users") {
+            page.content.each { neo.fetch(it.loadTerritoryUsers()) }
+        }
 
         return page as Page<T>
     }
@@ -83,8 +88,10 @@ class TaskService {
 
         def user = params.user ? userRepository.findByUsername(params.user) : null
 
-        if (user && !isAllowedToViewUserTasks(user)) {
-            throw new AccessDeniedException('You Cannot View This Users Tasks')
+        time("Checking if User Is Allowed Access") {
+            if (user && !isAllowedToViewUserTasks(user)) {
+                throw new AccessDeniedException('You Cannot View This Users Tasks')
+            }
         }
 
         String status = params.status
@@ -95,8 +102,9 @@ class TaskService {
         } else {
             page = findAllTasksForUser(supervisorUserId, status, params, taskType, filter)
         }
-
-        page.content.each { neo.fetch(it?.loadTerritoryUsers()) }
+        time("Fetching Task Users") {
+            page.content.each { neo.fetch(it?.loadTerritoryUsers()) }
+        }
 
         return page as Page<T>
     }
@@ -114,12 +122,22 @@ class TaskService {
         def roleNeeded = taskType == DetailerTask ? Role.DETAILER_ROLE_NAME : Role.SALES_ROLE_NAME
         Page page
         def users
-        if (user.hasRole(Role.ADMIN_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME)) {
-            page = loadPageData(max, params, taskType, filter)
-            users = userService.listUsersByRole(roleNeeded)
-        } else {
-            page = loadSuperVisorUserData(max, params, taskType, user.id, filter)
-            users = userService.listUsersSupervisedBy(user.id, roleNeeded)
+        time("Loading Prepare to Load Page Data") {
+            if (user.hasRole(Role.ADMIN_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME)) {
+                time("Loading Task Data") {
+                    page = loadPageData(max, params, taskType, filter)
+                }
+                time("Loading Territory User") {
+                    users = userService.listUsersByRole(roleNeeded)
+                }
+            } else {
+                time("Loading Task Data") {
+                    page = loadSuperVisorUserData(max, params, taskType, user.id, filter)
+                }
+                time("Loading Territory User") {
+                    users = userService.listUsersSupervisedBy(user.id, roleNeeded)
+                }
+            }
         }
         users = users.collect().sort { it.username }
         return [page, users]
@@ -305,28 +323,31 @@ class TaskService {
         def messages = []
         def allTasks = []
 
-        territories.each { t ->
-            def tasks = []
+        time("Genrating possible tasks for $territories") {
+            territories.each { t ->
+                def tasks = []
 
-            segments.each { s ->
-                log.info("Generating Tasks for: Territory[$t] and Segment[$s]")
-                tasks.addAll generateTasks(t, s, startDate, workDays, taskType)
-            }
-
-            if (tasks) {
-                log.info "***** Clustering: Territory[$t] Tasks[${tasks.size()}]"
-//                messages << "$t(${tasks.size()})"
-                if (clusterTasks) {
-                    def clusters = clusterService.assignDueDates(tasks, startDate, workDays, tasksPerDay)
-                    tasks = clusters.collect { it.points.collect { it.task } }.flatten()
+                segments.each { s ->
+                    time("Generating Tasks for: Territory[$t] and Segment[$s]") {
+                        tasks.addAll generateTasks(t, s, startDate, workDays, taskType)
+                    }
                 }
-                messages << "$t(${tasks.size()})"
-                taskRepository.save(tasks)
-                allTasks.addAll(tasks)
-            } else {
-                log.warn "***WARNING:***No Tasks Generated for Territory[$t]"
+
+                if (tasks) {
+                    log.info "***** Clustering: Territory[$t] Tasks[${tasks.size()}]"
+//                messages << "$t(${tasks.size()})"
+                    if (clusterTasks) {
+                        def clusters = clusterService.assignDueDates(tasks, startDate, workDays, tasksPerDay)
+                        tasks = clusters.collect { it.points.collect { it.task } }.flatten()
+                    }
+                    messages << "$t(${tasks.size()})"
+                    allTasks.addAll(tasks)
+                } else {
+                    log.warn "***WARNING:***No Tasks Generated for Territory[$t]"
+                }
             }
         }
+        time("Saving Generated Tasks ${allTasks.size()}") { taskRepository.save(allTasks) }
 
         return [messages, allTasks]
 

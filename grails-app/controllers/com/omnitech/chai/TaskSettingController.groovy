@@ -2,12 +2,14 @@ package com.omnitech.chai
 
 import com.omnitech.chai.model.CustomerSegment
 import com.omnitech.chai.model.DetailerTask
-import com.omnitech.chai.model.Order
 import com.omnitech.chai.model.SalesCall
 import com.omnitech.chai.model.Task
+import com.omnitech.chai.util.ChaiUtils
 import com.omnitech.chai.util.ControllerUtils
 import grails.converters.JSON
 import org.springframework.util.Assert
+
+import static com.omnitech.chai.util.ChaiUtils.time
 
 /**
  * Created by kay on 1/23/2015.
@@ -31,13 +33,13 @@ class TaskSettingController {
     }
 
     def generateDetailerTasks() {
-        def (msgs, tasks) = generateTasks(DetailerTask,true)
+        def (msgs, tasks) = generateTasks(DetailerTask, true)
         flash.message = "Generated Tasks ${msgs.join(',')}"
         renderOnMap(tasks)
     }
 
     def generateOrderTasks() {
-        def (msgs, tasks) = generateTasks(SalesCall,false)
+        def (msgs, tasks) = generateTasks(SalesCall, false)
         flash.message = "Generated Tasks ${msgs.join(',')}"
         renderOnMap(tasks)
 
@@ -45,10 +47,12 @@ class TaskSettingController {
 
     private def renderOnMap(List<Task> tasks) {
 
-        def taskData = txHelperService.doInTransaction {
-            tasks.collect {
-                neo.fetch(it.loadTerritoryUsers())
-                ControllerUtils.taskToJsonMap(it)
+        def taskData = time("Loading Territory Users") {
+            txHelperService.doInTransaction {
+                tasks.collect {
+                    neo.fetch(it.loadTerritoryUsers())
+                    ControllerUtils.taskToJsonMap(it)
+                }
             }
         }
 
@@ -58,12 +62,12 @@ class TaskSettingController {
 
         //for pagination
         params.max = Integer.MAX_VALUE
-        render(view: '/task/map', model: [taskInstanceList : tasks,
+        render(view: '/task/map', model: [taskInstanceList: tasks,
                                           taskInstanceCount: tasks.size(),
-                                          users            : [],
-                                          mapData          : jsonMapString,
-                                          no_mapsubmenu    : true,
-                                          no_pagination    : true])
+                                          users: [],
+                                          mapData: jsonMapString,
+                                          no_mapsubmenu: true,
+                                          no_pagination: true])
     }
 
     def handleException(IllegalArgumentException ex) {
@@ -81,7 +85,7 @@ class TaskSettingController {
         [territories, segments]
     }
 
-    private def generateTasks(Class taskType,boolean cluster) {
+    private def generateTasks(Class taskType, boolean cluster) {
 
         println(params)
         def workDays = params.workDays instanceof String ? [params.workDays] : params.workDays
@@ -101,7 +105,9 @@ class TaskSettingController {
 
         def territories = extractTerritories()
 
-        taskService.generateTasks(territories, segments, startDate, workDays, tasksPerDay, taskType,cluster)
+        time("Genearting Task for $territories") {
+            taskService.generateTasks(territories, segments, startDate, workDays, tasksPerDay, taskType, cluster)
+        }
     }
 
     private def extractTerritories() {
