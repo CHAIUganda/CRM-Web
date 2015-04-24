@@ -125,7 +125,7 @@ class TaskService {
         time("Loading Prepare to Load Page Data") {
             if (user.hasRole(Role.ADMIN_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME)) {
                 time("Loading Task Data") {
-                    page = loadPageData(max, params, taskType, filter)
+                    page = taskRepository.findAllTasks(taskType,params)
                 }
                 time("Loading Territory User") {
                     users = userService.listUsersByRole(roleNeeded)
@@ -139,7 +139,7 @@ class TaskService {
                 }
             }
         }
-        users = users.collect().sort { it.username }
+//        users = users.collect().sort { it.username }
         return [page, users]
     }
 

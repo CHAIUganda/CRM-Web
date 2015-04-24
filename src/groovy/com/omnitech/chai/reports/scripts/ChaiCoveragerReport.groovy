@@ -5,6 +5,7 @@ import csvgraphs.CSVGraph
 import csvgraphs.Colors
 import filterreport.Filter
 import org.springframework.data.neo4j.support.Neo4jTemplate
+import org.springframework.util.Assert
 
 import static fuzzycsv.FuzzyCSV.toCSV
 import static fuzzycsv.FuzzyCSVTable.tbl
@@ -72,6 +73,8 @@ order by USER''', [endDate: endDate.timeInMillis])
     def data = tbl(toCSV(query.collect {
         it
     }, 'USER', 'DISTRICT', 'CUSTOMERS', 'COVERED', 'PERCENTAGE_COVERED'))
+
+    Assert.isTrue data?.csv?.size() >= 1,'Report Has No Data Please Modify Your Filters'
 
     CSVGraph g = new CSVGraph('CHAI CRM', "Coverage Report [$params.month ${endDate.get(YEAR)}]", 'http://23.239.27.196:8080/web-crm/', '/image', data.csv)
             .setChart(cht.barChart())

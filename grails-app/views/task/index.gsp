@@ -70,11 +70,11 @@
 
                     <td>${taskInstance.getStatusMessage()}</td>
 
-                    <td>${taskInstance.customer?.subCounty?.district}</td>
+                    <td>${taskInstance.district}</td>
 
                     <td>${ChaiUtils.truncateString(taskInstance.customer, 10)}</td>
 
-                    <td>${taskInstance.territoryUser()}</td>
+                    <td>${taskInstance.assignedUser}</td>
 
                     %{--<td>--}%
                     %{--<g:link action="edit" id="${taskInstance.id}" title="Edit/Schedule"><i--}%

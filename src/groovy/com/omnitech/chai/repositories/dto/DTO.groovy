@@ -1,5 +1,6 @@
 package com.omnitech.chai.repositories.dto
 
+import groovy.transform.CompileStatic
 import org.springframework.data.neo4j.annotation.QueryResult
 import org.springframework.data.neo4j.annotation.ResultColumn
 
@@ -7,6 +8,7 @@ import org.springframework.data.neo4j.annotation.ResultColumn
  * Created by kay on 3/28/2015.
  */
 @QueryResult
+@CompileStatic
 class CustomerDTO {
     @ResultColumn('id')
     Long id
