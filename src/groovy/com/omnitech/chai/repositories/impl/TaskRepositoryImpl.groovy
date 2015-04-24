@@ -289,6 +289,7 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
          az(identifier(taskName).property('dueDate'), 'dueDate'),
          az(identifier(taskName).property('completionDate'), 'completionDate'),
          az(identifier(taskName).property('status'), 'status'),
+         az(identifier(taskName).property('dateCreated'), 'dateCreated'),
          az(identifier(cName).property('outletName'), 'customer'),
          az(identifier(dName).property('name'), 'district'),
          az(id(terName), 'territoryId')]

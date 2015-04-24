@@ -85,11 +85,11 @@
 
                 <td>${taskInstance.getStatusMessage()}</td>
 
-                <td>${taskInstance.customer?.subCounty?.district}</td>
+                <td>${taskInstance.district}</td>
 
                 <td>${taskInstance.customer}</td>
 
-                <td>${taskInstance.territoryUser()}</td>
+                <td>${taskInstance.assignedUser}</td>
 
                 %{--<td>--}%
                 %{--<g:link action="edit" id="${taskInstance.id}" title="Edit/Schedule"><i--}%

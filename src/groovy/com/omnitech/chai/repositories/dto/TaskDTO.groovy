@@ -29,6 +29,9 @@ class TaskDTO {
     String district
     @ResultColumn('territoryId')
     Long territoryId
+    @ResultColumn('dateCreated')
+    Date dateCreated
+
 
     String getStatusMessage() {
         if (isComplete()) {
