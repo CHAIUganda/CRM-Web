@@ -156,7 +156,6 @@ class TaskService {
         return [page, users]
     }
 
-    //todo optimise this with query
     boolean isAllowedToViewUserTasks(User otherUser) {
         def currentUser = neoSecurityService.currentUser
 
@@ -165,18 +164,12 @@ class TaskService {
         }
 
         if (currentUser.hasRole(Role.DETAILING_SUPERVISOR_ROLE_NAME)) {
-            return userService.listUsersSupervisedBy(currentUser.id, Role.DETAILER_ROLE_NAME).any {
-                otherUser.id == it.id
-            }
+            return taskRepository.canSupervisorViewUserTasks(currentUser.id, otherUser.id, Role.DETAILING_SUPERVISOR_ROLE_NAME)
         }
 
         if (currentUser.hasRole(Role.SALES_SUPERVISOR_ROLE_NAME)) {
-            return userService.listUsersSupervisedBy(currentUser.id, Role.SALES_ROLE_NAME).any {
-                otherUser.id == it.id
-            }
+            return taskRepository.canSupervisorViewUserTasks(currentUser.id, otherUser.id, Role.SALES_SUPERVISOR_ROLE_NAME)
         }
-
-
         return false;
 
     }

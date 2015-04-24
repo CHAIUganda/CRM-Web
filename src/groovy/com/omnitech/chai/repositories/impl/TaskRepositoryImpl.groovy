@@ -33,6 +33,8 @@ interface ITaskRepository {
 
     Page<TaskDTO> findAllTasksForUser(Long userId, Class<TaskDTO> type, Map params)
 
+    boolean canSupervisorViewUserTasks(Long userId, Long otherUserId, String supervisorRole)
+
 }
 
 class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskRepository {
@@ -302,6 +304,25 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
 
         def results = bean(Neo4jTemplate).query(q.toString(), EMPTY_MAP).collect { it.username }
         return results
+    }
+
+    boolean canSupervisorViewUserTasks(Long userId, Long otherUserId, String supervisorRole) {
+        def terType = null
+        if (supervisorRole == Role.DETAILING_SUPERVISOR_ROLE_NAME) {
+            terType = Territory.TYPE_DETAILING
+        }
+        if (terType == Role.SALES_SUPERVISOR_ROLE_NAME) {
+            terType = Territory.TYPE_SALES
+        }
+        if(!terType) return false
+        def q = start(nodesById('thisUser', userId),nodesById('otherUser',otherUserId))
+                .match(node('thisUser').out(SUPERVISES_TERRITORY).node()
+                .in(USER_TERRITORY).node('otherUser')
+        ).returns(az(count(identifier('otherUser').property('username')),'otherUsers'))
+
+        def result = neo.query(q.toString(), EMPTY_MAP).singleOrNull()
+
+        return result?.otherUsers > 0
     }
 
 
