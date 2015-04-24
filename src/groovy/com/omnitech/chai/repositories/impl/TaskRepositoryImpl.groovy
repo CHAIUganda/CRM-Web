@@ -16,6 +16,7 @@ import static com.omnitech.chai.queries.TaskQuery.mathQueryForUserTasks
 import static com.omnitech.chai.util.ChaiUtils.bean
 import static com.omnitech.chai.util.PageUtils.addPagination
 import static grails.util.GrailsNameUtils.getNaturalName
+import static java.util.Collections.EMPTY_MAP
 import static org.neo4j.cypherdsl.CypherQuery.*
 import static org.neo4j.cypherdsl.CypherQuery.as as az
 
@@ -219,22 +220,26 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
         def label = type.simpleName
         def taskName = nodeName(type)
         def roleNeeded = type == DetailerTask ? Role.DETAILER_ROLE_NAME : Role.SALES_ROLE_NAME
+        def territoryType = type == DetailerTask ? Territory.TYPE_DETAILING : Territory.TYPE_SALES
 
         def _query = {
             def q = match(node(taskName).label(label).values(value('status', params.status))
                     .in(CUST_TASK).node(cName)
                     .out(CUST_IN_SC).node(sName)
                     .in(HAS_SUB_COUNTY).node(dName))
-                    .match(
-                    node(sName).out(SC_IN_TERRITORY).node(terName)
-                            .in(USER_TERRITORY).node(uName)
-                            .out(HAS_ROLE).node(rName).values(value('authority', roleNeeded))).optional()
+                    .match(node(sName).out(SC_IN_TERRITORY).node(terName).values(value('type', territoryType))).optional()
             mayBeAddSearchCriteria(taskName, q, params)
             return q
         }
+
         def q = addPagination(_query().returns(taskFieldsClause(taskName)), params, null)
         def cq = _query().returns(count(distinct(identifier(taskName))))
-        ModelFunctions.query(bean(Neo4jTemplate), q, cq, params, TaskDTO)
+
+        def results = ModelFunctions.query(bean(Neo4jTemplate), q, cq, params, TaskDTO)
+        def _getTerritoryUsers = { Long tid -> getTerritoryUsers(tid, roleNeeded) }.memoize()
+        results.each { it.assignedUser = _getTerritoryUsers.call(it.territoryId) }
+
+        return results
     }
 
     private static mayBeAddSearchCriteria(String taskName, Match m, Map params) {
@@ -254,12 +259,19 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
          az(identifier(taskName).property('status'), 'status'),
          az(identifier(cName).property('outletName'), 'customer'),
          az(identifier(dName).property('name'), 'district'),
-         az(id(terName), 'territoryId'),
-         az(collect(identifier(uName).property('username')), 'assignedUser')]
+         az(id(terName), 'territoryId')]
     }
 
-    private  List<String> getTerritoryUsers(Long territoryId, String requiredRole){
-        return  null
+    private List<String> getTerritoryUsers(Long territoryId, String roleNeeded) {
+        if (!territoryId) return null
+        def q = start(nodesById(terName, territoryId))
+                .match(node(terName)
+                .in(USER_TERRITORY).node(uName)
+                .out(HAS_ROLE).node(rName).values(value('authority', roleNeeded)))
+                .returns(az(distinct(identifier(uName).property('username')), 'username'))
+
+        def results = bean(Neo4jTemplate).query(q.toString(), EMPTY_MAP).collect { it.username }
+        return results
     }
 
 

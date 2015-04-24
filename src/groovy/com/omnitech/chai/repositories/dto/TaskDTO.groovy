@@ -24,7 +24,6 @@ class TaskDTO {
     String status
     @ResultColumn('customer')
     String customer
-    @ResultColumn('assignedUser')
     List<String> assignedUser
     @ResultColumn('district')
     String district
