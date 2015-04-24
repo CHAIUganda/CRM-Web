@@ -273,7 +273,7 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
 
         def results = ModelFunctions.query(bean(Neo4jTemplate), q, cq, params, TaskDTO)
         def _getTerritoryUsers = { Long tid -> getTerritoryUsers(tid, roleNeeded) }.memoize()
-        results.each { it.assignedUser = _getTerritoryUsers.call(it.territoryId) }
+        results.each { it.assignedUser = _getTerritoryUsers.call(it.subCountyId) }
         return results
     }
 
