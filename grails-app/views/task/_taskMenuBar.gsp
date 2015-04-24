@@ -27,10 +27,12 @@
                         class="caret"></b></a>
                 <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
                     <g:each in="${users}" var="u">
-                        <li><g:link action="${params.action == 'map' ? 'map' : 'index'}"
-                                    params="${[user: u, status: params.status,max:(params.status == Task.STATUS_NEW || params.status == null ? 2000 : 50)]}">
+                        <li>
+                            <c:link action="${params.action == 'map' ? 'map' : 'index'}"
+                                    params="${[user: u, max: 100]}" extraParams="${params}">
                             <i class="glyphicon glyphicon-user"></i>${u} in ${u.territory}
-                        </g:link></li>
+                            </c:link>
+                        </li>
                     </g:each>
                 </ul>
             </li>
@@ -44,33 +46,21 @@
                         <b class="caret"></b>
                     </a>
                     <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
-                        <g:if test="${params.user != null}">
+
+                        <li>
+                            <c:link action="${params.action == 'map' ? 'map' : 'index'}"
+                                    params="${[status: Task.STATUS_NEW]}" extraParams="${params}">
+                                <i class="glyphicon glyphicon-list"></i>Active
+                            </c:link>
+                        </li>
                             <li>
-                                <g:link action="${params.action == 'map' ? 'map' : 'index'}"
-                                        params="${[status: Task.STATUS_NEW, user: params.user]}">
-                                    <i class="glyphicon glyphicon-list"></i>Active
-                                </g:link>
-                            </li>
-                            <li>
-                                <g:link action="${params.action == 'map' ? 'map' : 'index'}"
-                                        params="${[status: Task.STATUS_COMPLETE, user: params.user]}">
+                                <c:link action="${params.action == 'map' ? 'map' : 'index'}"
+                                        params="${[status: Task.STATUS_COMPLETE]}" extraParams="${params}"
+                                        reset="max">
                                     <i class="glyphicon glyphicon-list"></i>Complete
-                                </g:link>
+                                </c:link>
                             </li>
-                        </g:if>
-                        <g:else>
-                            <li>
-                                <g:link action="${params.action == 'map' ? 'map' : 'index'}"
-                                        params="${[status: Task.STATUS_NEW]}">
-                                    <i class="glyphicon glyphicon-list"></i>Active</g:link>
-                            </li>
-                            <li>
-                                <g:link action="${params.action == 'map' ? 'map' : 'index'}"
-                                        params="${[status: Task.STATUS_COMPLETE]}">
-                                    <i class="glyphicon glyphicon-list"></i>Complete
-                                </g:link>
-                            </li>
-                        </g:else>
+
                     </ul>
                 </li>
             </g:if>
@@ -119,17 +109,11 @@
                     </g:else>
                 </g:link>
             </li>
-            %{--<li>--}%
-            %{--<g:link action="cluster">--}%
-            %{--<i class="glyphicon glyphicon-cloud" title="Cluster"></i>Clstr--}%
-            %{--</g:link>--}%
-            %{--</li>--}%
 
-            %{--The Search Box--}%
             <li class="navbar-right">
                 <div class="col-lg-12">
-                    <form action="search">
-                        <input class="form-control" name="term" value="${(params.term ?: params.id)}"
+                    <form action="index">
+                        <input class="form-control" name="search" value="${params.search}"
                                placeholder="Please type search item and press enter" style="width: 300px;"/>
                     </form>
                 </div>
