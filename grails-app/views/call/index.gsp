@@ -40,11 +40,12 @@
             <g:sortableColumn property="status" params="${params}"
                               title="${message(code: 'task.status.label', default: 'Status')}"/>
 
-            <g:sortableColumn property="di.name" params="${params}"
+            <g:sortableColumn property="district" params="${params}"
                               title="${message(code: 'district.label', default: 'District')}"/>
 
 
-            <th>Customer</th>
+            <g:sortableColumn property="customer" params="${params}"
+                              title="${message(code: 'district.label', default: 'Customer')}"/>
             <th>Assigned User</th>
 
             %{--<th>Action</th>--}%

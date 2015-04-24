@@ -26,8 +26,6 @@ class TaskDTO {
     List<String> assignedUser
     @ResultColumn('district')
     String district
-    @ResultColumn('territoryId')
-    Long territoryId
     @ResultColumn('dateCreated')
     Date dateCreated
     @ResultColumn('lat')
@@ -50,6 +48,9 @@ class TaskDTO {
     Long customerId
     @ResultColumn('customerDescription')
     String customerDescription
+
+    @ResultColumn('subCountyId')
+    Long subCountyId
 
     Float getLat() { lat ?: cLat }
 

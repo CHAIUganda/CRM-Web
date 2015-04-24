@@ -121,7 +121,7 @@ class TaskService {
 
         def roleNeeded = taskType == DetailerTask ? Role.DETAILER_ROLE_NAME : Role.SALES_ROLE_NAME
         Page page
-        def users
+        Iterable<User> users
         User contextUser = null
         if (params.user) {
             contextUser = params.user ? userRepository.findByUsername(params.user) : null
@@ -152,7 +152,7 @@ class TaskService {
                 }
             }
         }
-//        users = users.collect().sort { it.username }
+        users = users.collect().sort { it.username }
         return [page, users]
     }
 

@@ -241,8 +241,8 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
         def cq = _query().returns(count(distinct(identifier(taskName))))
 
         def results = ModelFunctions.query(bean(Neo4jTemplate), q, cq, params, TaskDTO)
-        def _getTerritoryUsers = { Long tid -> getTerritoryUsers(tid, roleNeeded) }.memoize()
-        results.each { it.assignedUser = _getTerritoryUsers.call(it.territoryId) }
+        def _getTerritoryUsers = { Long subCountyId -> getTerritoryUsers(subCountyId, roleNeeded) }.memoize()
+        results.each { it.assignedUser = _getTerritoryUsers.call(it.subCountyId) }
 
         return results
     }
@@ -303,13 +303,13 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
          az(identifier(cName).property('customerDescription'), 'customerDescription'),
          az(id(cName), 'customerId'),
          az(identifier(dName).property('name'), 'district'),
-         az(id(terName), 'territoryId')]
+         az(id(sName), 'subCountyId')]
     }
 
-    private List<String> getTerritoryUsers(Long territoryId, String roleNeeded) {
-        if (!territoryId) return null
-        def q = start(nodesById(terName, territoryId))
-                .match(node(terName)
+    private List<String> getTerritoryUsers(Long subCountyId, String roleNeeded) {
+        if (!subCountyId) return null
+        def q = start(nodesById(sName, subCountyId))
+                .match(node(sName).out(SC_IN_TERRITORY).node(terName)
                 .in(USER_TERRITORY).node(uName)
                 .out(HAS_ROLE).node(rName).values(value('authority', roleNeeded)))
                 .returns(az(distinct(identifier(uName).property('username')), 'username'))
