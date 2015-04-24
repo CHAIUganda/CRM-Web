@@ -31,6 +31,8 @@ interface ITaskRepository {
 
     Page<TaskDTO> findAllTasks(Class<TaskDTO> type, Map params)
 
+    Page<TaskDTO> findAllTasksForUser(Long userId, Class<TaskDTO> type, Map params)
+
 }
 
 class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskRepository {
@@ -223,7 +225,7 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
         def territoryType = type == DetailerTask ? Territory.TYPE_DETAILING : Territory.TYPE_SALES
 
         def _query = {
-            def q = match(node(taskName).label(label).values(value('status', params.status))
+            def q = match(node(taskName).label(label).values(value('status', params.status ?: 'new'))
                     .in(CUST_TASK).node(cName)
                     .out(CUST_IN_SC).node(sName)
                     .in(HAS_SUB_COUNTY).node(dName))
@@ -239,6 +241,34 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
         def _getTerritoryUsers = { Long tid -> getTerritoryUsers(tid, roleNeeded) }.memoize()
         results.each { it.assignedUser = _getTerritoryUsers.call(it.territoryId) }
 
+        return results
+    }
+
+    def Page<TaskDTO> findAllTasksForUser(Long userId, Class<TaskDTO> type, Map params) {
+
+        def label = type.simpleName
+        def taskName = nodeName(type)
+        def roleNeeded = type == DetailerTask ? Role.DETAILER_ROLE_NAME : Role.SALES_ROLE_NAME
+        def territoryType = type == DetailerTask ? Territory.TYPE_DETAILING : Territory.TYPE_SALES
+
+        def _query = {
+
+            def q = start(nodesById('myUser', userId))
+                    .match(node('myUser').out(USER_TERRITORY, SUPERVISES_TERRITORY).node(terName).values(value('type', territoryType))
+                    .in(SC_IN_TERRITORY).node(sName)
+                    .in(CUST_IN_SC).node(cName)
+                    .out(CUST_TASK).node(taskName).label(label).values(value('status', params.status ?: 'new')))
+                    .match(node(sName).in(HAS_SUB_COUNTY).node(dName))
+            mayBeAddSearchCriteria(taskName, q, params)
+            return q
+        }
+
+        def q = addPagination(_query().returns(taskFieldsClause(taskName)), params, null)
+        def cq = _query().returns(count(distinct(identifier(taskName))))
+
+        def results = ModelFunctions.query(bean(Neo4jTemplate), q, cq, params, TaskDTO)
+        def _getTerritoryUsers = { Long tid -> getTerritoryUsers(tid, roleNeeded) }.memoize()
+        results.each { it.assignedUser = _getTerritoryUsers.call(it.territoryId) }
         return results
     }
 

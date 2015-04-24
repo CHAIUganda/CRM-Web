@@ -111,31 +111,44 @@ class TaskService {
 
     /**
      * Used by task controllers to load page data
-     * @param user
+     * @param loggedInUser
      * @param taskType
      * @param params
      * @param max
      * @return
      */
-    def List loadPageDataForUser(User user, Class taskType, Map params, Integer max, String filter) {
+    def List loadPageDataForUser(User loggedInUser, Class taskType, Map params, Integer max, String filter) {
 
         def roleNeeded = taskType == DetailerTask ? Role.DETAILER_ROLE_NAME : Role.SALES_ROLE_NAME
         Page page
         def users
+        User contextUser = null
+        if (params.user) {
+            contextUser = params.user ? userRepository.findByUsername(params.user) : null
+            time("Cheking if User [${loggedInUser}] can view [${contextUser}] Has Access Rights") {
+                if (!isAllowedToViewUserTasks(contextUser))
+                    throw new AccessDeniedException("You Are Not Allowed To View This Data")
+            }
+        }
+
+        if (!contextUser && !loggedInUser.hasRole(Role.ADMIN_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME)) {
+            contextUser = loggedInUser
+        }
+
         time("Loading Prepare to Load Page Data") {
-            if (user.hasRole(Role.ADMIN_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME)) {
-                time("Loading Task Data") {
-                    page = taskRepository.findAllTasks(taskType,params)
+            time("Loading Task Data") {
+                if (contextUser) {
+                    page = taskRepository.findAllTasksForUser(contextUser.id, taskType, params)
+                } else {
+                    page = taskRepository.findAllTasks(taskType, params)
                 }
-                time("Loading Territory User") {
+            }
+
+            time("Loading Territory User") {
+                if (loggedInUser.hasRole(Role.ADMIN_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME)) {
                     users = userService.listUsersByRole(roleNeeded)
-                }
-            } else {
-                time("Loading Task Data") {
-                    page = loadSuperVisorUserData(max, params, taskType, user.id, filter)
-                }
-                time("Loading Territory User") {
-                    users = userService.listUsersSupervisedBy(user.id, roleNeeded)
+                } else {
+                    users = userService.listUsersSupervisedBy(loggedInUser.id, roleNeeded)
                 }
             }
         }

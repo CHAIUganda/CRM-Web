@@ -3,10 +3,8 @@ package com.omnitech.chai
 import com.omnitech.chai.model.Role
 import com.omnitech.chai.model.Task
 import com.omnitech.chai.util.ChaiUtils
-import com.omnitech.chai.util.ExportUtil
 import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.ServletUtil
-import fuzzycsv.FuzzyCSV
 import grails.converters.JSON
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.support.Neo4jTemplate
@@ -38,6 +36,8 @@ class TaskController extends BaseController {
     Neo4jTemplate neo
 
     protected def index(Integer max, Class type, Map otherParams) {
+        params.max = max = Math.min(max ?: 50, 100)
+
         def user = neoSecurityService.currentUser
         if (params.remove('ui') == 'map') {
             redirect(action: 'map', params: params)
@@ -49,6 +49,7 @@ class TaskController extends BaseController {
     }
 
     protected def map(Integer max, Class type, Map otherParams) {
+        params.max = max = Math.min(max ?: 50, 100)
 
         def user = neoSecurityService.currentUser
         def (page, users) = taskService.loadPageDataForUser(user, type, params, max, null)
