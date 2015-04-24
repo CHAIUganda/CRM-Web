@@ -204,6 +204,9 @@ class ChaiUtils {
 
     @CompileStatic
     static def <T> T time(String name = "", Closure<T> worker) {
+        if(!log.isDebugEnabled()) {
+            return worker.call()
+        }
         def padding = '    ' * indent.get()
         indent.set(++indent.get())
         log.debug "$padding ##### BenchmarkStart: {$name}"

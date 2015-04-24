@@ -22,8 +22,7 @@ class TaskDTO {
     Date completionDate
     @ResultColumn('status')
     String status
-    @ResultColumn('customer')
-    String customer
+
     List<String> assignedUser
     @ResultColumn('district')
     String district
@@ -31,6 +30,30 @@ class TaskDTO {
     Long territoryId
     @ResultColumn('dateCreated')
     Date dateCreated
+    @ResultColumn('lat')
+    Float lat
+    @ResultColumn('lng')
+    Float lng
+    @ResultColumn('wkt')
+    String wkt
+
+    @ResultColumn('cLat')
+    Float cLat
+    @ResultColumn('cLng')
+    Float cLng
+    @ResultColumn('cWkt')
+    String cWkt
+    @ResultColumn('customer')
+    String customer
+
+    @ResultColumn('customerId')
+    Long customerId
+    @ResultColumn('customerDescription')
+    String customerDescription
+
+    Float getLat() { lat ?: cLat }
+
+    Float getLng() { lng ?: cLng }
 
 
     String getStatusMessage() {

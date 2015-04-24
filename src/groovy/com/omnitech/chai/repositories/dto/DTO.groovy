@@ -20,13 +20,35 @@ class CustomerDTO {
     String outletSize
     @ResultColumn('dateCreated')
     Date dateCreated
-    @ResultColumn('lastVisit')
-    Date lastVisit
     @ResultColumn('district')
     String district
     @ResultColumn('segment')
     String segment
     @ResultColumn('isActive')
     Boolean isActive
+    String type = 'customer'
+}
 
+@QueryResult
+@CompileStatic
+class CustomerDTOExt extends CustomerDTO {
+    @ResultColumn('id')
+    Long id
+    @ResultColumn('outletName')
+    String outletName
+    @ResultColumn('outletType')
+    String outletType
+    @ResultColumn('outletSize')
+    String outletSize
+    @ResultColumn('dateCreated')
+    Date dateCreated
+    @ResultColumn('district')
+    String district
+    @ResultColumn('segment')
+    String segment
+    @ResultColumn('isActive')
+    Boolean isActive
+    String type = 'customer'
+    @ResultColumn('lastVisit')
+    Date lastVisit
 }

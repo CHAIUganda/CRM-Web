@@ -231,8 +231,9 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
                     .in(CUST_TASK).node(cName)
                     .out(CUST_IN_SC).node(sName)
                     .in(HAS_SUB_COUNTY).node(dName))
-                    .match(node(sName).out(SC_IN_TERRITORY).node(terName).values(value('type', territoryType))).optional()
             mayBeAddSearchCriteria(taskName, q, params)
+            q.match(node(sName).out(SC_IN_TERRITORY).node(terName).values(value('type', territoryType))).optional()
+
             return q
         }
 
@@ -260,8 +261,10 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
                     .in(SC_IN_TERRITORY).node(sName)
                     .in(CUST_IN_SC).node(cName)
                     .out(CUST_TASK).node(taskName).label(label).values(value('status', params.status ?: 'new')))
-                    .match(node(sName).in(HAS_SUB_COUNTY).node(dName))
+
             mayBeAddSearchCriteria(taskName, q, params)
+            q.match(node(sName).in(HAS_SUB_COUNTY).node(dName))
+
             return q
         }
 
@@ -278,7 +281,7 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
         if (params.search) {
             def search = ModelFunctions.getWildCardRegex(params.search as String)
             m.where(and(identifier(taskName).property('description').regexp(search)
-                    .or(identifier(dName).property('name').regexp(search)))
+                    .or(identifier(cName).property('outletName').regexp(search)))
             )
         }
     }
@@ -290,7 +293,15 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
          az(identifier(taskName).property('completionDate'), 'completionDate'),
          az(identifier(taskName).property('status'), 'status'),
          az(identifier(taskName).property('dateCreated'), 'dateCreated'),
+         az(identifier(taskName).property('lat'), 'lat'),
+         az(identifier(taskName).property('lng'), 'lng'),
+         az(identifier(taskName).property('wkt'), 'wkt'),
+         az(identifier(cName).property('lat'), 'cLat'),
+         az(identifier(cName).property('lng'), 'cLng'),
+         az(identifier(cName).property('wkt'), 'cWkt'),
          az(identifier(cName).property('outletName'), 'customer'),
+         az(identifier(cName).property('customerDescription'), 'customerDescription'),
+         az(id(cName), 'customerId'),
          az(identifier(dName).property('name'), 'district'),
          az(id(terName), 'territoryId')]
     }
@@ -315,11 +326,11 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
         if (terType == Role.SALES_SUPERVISOR_ROLE_NAME) {
             terType = Territory.TYPE_SALES
         }
-        if(!terType) return false
-        def q = start(nodesById('thisUser', userId),nodesById('otherUser',otherUserId))
+        if (!terType) return false
+        def q = start(nodesById('thisUser', userId), nodesById('otherUser', otherUserId))
                 .match(node('thisUser').out(SUPERVISES_TERRITORY).node()
                 .in(USER_TERRITORY).node('otherUser')
-        ).returns(az(count(identifier('otherUser').property('username')),'otherUsers'))
+        ).returns(az(count(identifier('otherUser').property('username')), 'otherUsers'))
 
         def result = neo.query(q.toString(), EMPTY_MAP).singleOrNull()
 

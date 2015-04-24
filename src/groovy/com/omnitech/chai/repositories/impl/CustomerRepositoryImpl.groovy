@@ -2,6 +2,7 @@ package com.omnitech.chai.repositories.impl
 
 import com.omnitech.chai.model.*
 import com.omnitech.chai.repositories.dto.CustomerDTO
+import com.omnitech.chai.repositories.dto.CustomerDTOExt
 import com.omnitech.chai.util.ModelFunctions
 import org.neo4j.cypherdsl.grammar.Match
 import org.springframework.data.domain.Page
@@ -65,9 +66,14 @@ class CustomerRepositoryImpl extends AbstractChaiRepository implements ICustomer
             addOtherRelevantFields(m, params)
             return m
         }
-        def q = addPagination(_query().returns(customerReturnFieldsClause()), params, null)
+        def q = addPagination(_query().returns(customerReturnFieldsClause(params)), params, null)
         def cq = _query().returns(count(distinct(identifier(cName))))
-        ModelFunctions.query(bean(Neo4jTemplate), q, cq, params, CustomerDTO)
+
+        //some times we do not want the tasks to tag along
+        if (params.doNoQueryTasks)
+            return ModelFunctions.query(bean(Neo4jTemplate), q, cq, params, CustomerDTO)
+
+        return ModelFunctions.query(bean(Neo4jTemplate), q, cq, params, CustomerDTOExt)
     }
 
 
@@ -84,9 +90,14 @@ class CustomerRepositoryImpl extends AbstractChaiRepository implements ICustomer
             return m
         }
 
-        def q = addPagination(_query().returns(customerReturnFieldsClause()), params, null)
+        def q = addPagination(_query().returns(customerReturnFieldsClause(params)), params, null)
         def cq = _query().returns(count(distinct(identifier(cName))))
-        ModelFunctions.query(bean(Neo4jTemplate), q, cq, params, CustomerDTO)
+
+        //some times we do not want the tasks to tag along
+        if (params.doNoQueryTasks)
+            return ModelFunctions.query(bean(Neo4jTemplate), q, cq, params, CustomerDTO)
+
+        return ModelFunctions.query(bean(Neo4jTemplate), q, cq, params, CustomerDTOExt)
     }
 
     private static addOtherRelevantFields(Match m, Map params) {
@@ -97,21 +108,29 @@ class CustomerRepositoryImpl extends AbstractChaiRepository implements ICustomer
             if (params.salTerritory) matchTerritory(m, extractId(params, 'salTerritory'))
         }
 
-        m.match(node(cName).out(CUST_TASK).node(tName)).optional()
+        //some times we do not want the tasks to tag along
+        if (!params.doNoQueryTasks)
+            m.match(node(cName).out(CUST_TASK).node(tName)).optional()
         if (!params.segment) matchSegment(m, params, false)
 
     }
 
-    private static customerReturnFieldsClause() {
-        [distinct(az(id(cName), 'id')),
-         az(identifier(cName).property('outletName'), 'outletName'),
-         az(identifier(cName).property('outletType'), 'outletType'),
-         az(identifier(cName).property('outletSize'), 'outletSize'),
-         az(identifier(cName).property('dateCreated'), 'dateCreated'),
-         az(identifier(cName).property('isActive'), 'isActive'),
-         az(identifier(dName).property('name'), 'district'),
-         az(identifier(segName).property('name'), 'segment'),
-         az(max(identifier(tName).property('completionDate')), 'lastVisit')]
+    private static customerReturnFieldsClause(Map params) {
+        def fields = [distinct(az(id(cName), 'id')),
+                      az(identifier(cName).property('outletName'), 'outletName'),
+                      az(identifier(cName).property('outletType'), 'outletType'),
+                      az(identifier(cName).property('outletSize'), 'outletSize'),
+                      az(identifier(cName).property('dateCreated'), 'dateCreated'),
+                      az(identifier(cName).property('isActive'), 'isActive'),
+                      az(identifier(dName).property('name'), 'district'),
+                      az(identifier(segName).property('name'), 'segment')]
+
+        if (!params.doNoQueryTasks)
+            fields << az(max(identifier(tName).property('completionDate')), 'lastVisit')
+
+        return fields
+
+
     }
 
     private static matchSegment(Match m, Map params, boolean ignoreIfNotInFilter) {

@@ -114,7 +114,7 @@
                 <div class="col-lg-12">
                     <form action="index">
                         <input class="form-control" name="search" value="${params.search}"
-                               placeholder="Please type search item and press enter" style="width: 300px;"/>
+                               placeholder="Search Customer Name.." style="width: 300px;"/>
                     </form>
                 </div>
             </li>
