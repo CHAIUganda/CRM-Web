@@ -14,11 +14,13 @@ class SimpleClustererTest extends Specification {
     def Double 'test 1 '() {
 
         def tasks = loadTasks('/CustomerWithGPS.csv')
-        def clusterer = new SimpleClusterer(locatableTasks: tasks, tasksPerDay: 8)
+        def clusterer = new SimpleClusterer(locatableTasks: new ArrayList<LocatableTask>(tasks), tasksPerDay: 8)
         when:
         def clusters = clusterer.cluster()
         then:
+        clusters.size() == 28
         clusters.size() > 0
+        clusters.sum { it.points.size() } == tasks.size()
 
     }
 
@@ -45,7 +47,7 @@ class SimpleClustererTest extends Specification {
         def clusters = clusterer.mayBeCreateEqualCluster(tasks)
         then:
         clusters.size() == 1
-        clusters.every { it.points.size() == 14}
+        clusters.every { it.points.size() == 14 }
 
     }
 

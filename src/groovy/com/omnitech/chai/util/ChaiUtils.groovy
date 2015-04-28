@@ -18,7 +18,7 @@ import static java.util.Calendar.DAY_OF_WEEK
  * Created by kay on 9/29/14.
  */
 class ChaiUtils {
-    static Logger log = LoggerFactory.getLogger(ChaiUtils)
+    private static Logger log = LoggerFactory.getLogger(ChaiUtils)
 
     private static DateFormat format = new SimpleDateFormat('yyyy-MM-dd')
 

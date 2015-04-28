@@ -6,8 +6,9 @@ import groovy.transform.CompileStatic
 import org.apache.commons.math3.ml.clustering.CentroidCluster
 import org.apache.commons.math3.ml.clustering.Clusterable
 import org.apache.commons.math3.ml.clustering.KMeansPlusPlusClusterer
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
-import static com.omnitech.chai.util.ChaiUtils.getLog
 import static com.omnitech.chai.util.ChaiUtils.roundUpward
 import static com.omnitech.chai.util.ChaiUtils.time
 
@@ -15,6 +16,8 @@ import static com.omnitech.chai.util.ChaiUtils.time
  * Created by kay on 4/27/2015.
  */
 class SimpleClusterer {
+
+    static Logger log = LoggerFactory.getLogger(ChaiUtils)
 
     public static final float MAXIMUM_THRESHOLD = 0.4f
     public static final float MINIMUM_THRESHOLD = 0.3f
@@ -31,15 +34,14 @@ class SimpleClusterer {
 
         initMinAndMax()
 
-        def (List<CentroidCluster<LocatableTask>> x, mp) = getClusters2(locatableTasks, 20)
+        def (List<CentroidCluster<LocatableTask>> x, mp) = getClusters2(locatableTasks, 20, true)
 
 
-        int sum = 0
-        x.eachWithIndex { CentroidCluster<LocatableTask> entry, int i ->
-            sum = sum + entry.points.size()
-            println("Cluster($i). Points: ${entry.points.size()} ${entry.points.point}")
+        if (log.traceEnabled) {
+            x.eachWithIndex { CentroidCluster<LocatableTask> entry, int i ->
+                log.trace("Cluster($i). Points: ${entry.points.size()} ${entry.points.point}")
+            }
         }
-        println("All Clustered Tasks: $sum")
 
         return x
     }
@@ -53,10 +55,10 @@ class SimpleClusterer {
     //20 is a magic number to reduce the number of clusters
     List getClusters2(List<LocatableTask> locatableTasks, int _magicMaxTasksPerDay, boolean processMissedPoint = false) {
 
-        //Start with may be creating same GPS points
+        //Start by excluding customer with same coords
         def optimumClusters = mayBeCreateEqualCluster(locatableTasks)
 
-        removeTasksInCluster(locatableTasks, optimumClusters)
+        removeTasksAlreadyClustered(locatableTasks, optimumClusters)
 
         def taskSize = locatableTasks.size()
 
@@ -84,9 +86,9 @@ class SimpleClusterer {
 
         for (cluster in clusters) {
             if (cluster.points.size() > maximumNumberOfTask) {
-                def (subClusters, mp) = getClusters2(cluster.points, maximumNumberOfTask)
+                def (otherOptimalClusters, mp) = getClusters2(cluster.points, maximumNumberOfTask)
                 missedPoints.addAll(mp)
-                optimumClusters.addAll(subClusters)
+                optimumClusters.addAll(otherOptimalClusters)
             } else if (cluster.points.size() < minimumSize) {
                 missedPoints.addAll(cluster.points)
             } else {
@@ -121,7 +123,8 @@ class SimpleClusterer {
         return [optimumClusters, missedPoints]
     }
 
-    private static void removeTasksInCluster(List<LocatableTask> tasks, List<CentroidCluster<LocatableTask>> clusters) {
+    private
+    static void removeTasksAlreadyClustered(List<LocatableTask> tasks, List<CentroidCluster<LocatableTask>> clusters) {
         tasks.removeAll { thisTask -> clusters.any { it.points.contains(thisTask) } }
     }
 
