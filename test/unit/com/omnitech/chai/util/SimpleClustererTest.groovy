@@ -13,7 +13,7 @@ class SimpleClustererTest extends Specification {
 
     def Double 'test 1 '() {
 
-        def tasks = loadTasks()
+        def tasks = loadTasks('/CustomerWithGPS.csv')
         def clusterer = new SimpleClusterer(locatableTasks: tasks, tasksPerDay: 8)
         when:
         def clusters = clusterer.cluster()
@@ -23,8 +23,35 @@ class SimpleClustererTest extends Specification {
     }
 
 
-    List<LocatableTask> loadTasks() {
-        def csv = getClass().getResource('/CustomerWithGPS.csv').text
+    def Double 'attempToCreateClusters'() {
+
+        def tasks = loadTasks('/CustomerSimilar.csv')
+        def clusterer = new SimpleClusterer(locatableTasks: tasks, tasksPerDay: 8)
+                .initMinAndMax()
+        when:
+        def clusters = clusterer.mayBeCreateEqualCluster(tasks)
+        then:
+        clusters.size() == 2
+        clusters.every { it.points.size() == 7 }
+
+    }
+
+    def Double 'attempToCreateClusters 10 '() {
+
+        def tasks = loadTasks('/CustomerSimilar.csv')
+        def clusterer = new SimpleClusterer(locatableTasks: tasks, tasksPerDay: 12)
+                .initMinAndMax()
+        when:
+        def clusters = clusterer.mayBeCreateEqualCluster(tasks)
+        then:
+        clusters.size() == 1
+        clusters.every { it.points.size() == 14}
+
+    }
+
+
+    List<LocatableTask> loadTasks(file) {
+        def csv = getClass().getResource(file).text
 
         CsvParser parser = new CsvParser()
 
