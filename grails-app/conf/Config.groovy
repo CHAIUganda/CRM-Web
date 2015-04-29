@@ -124,7 +124,7 @@ log4j = {
                 layout: logLayoutPattern)
     }
 
-    debug logFile: ["grails.app.services", "grails.app.controllers", "com.omnitech", "groovy.sql.Sql", "org.omnitech.sms"]
+    info logFile: ["grails.app.services", "grails.app.controllers", "com.omnitech", "groovy.sql.Sql", "org.omnitech.sms"]
 
     error  'org.codehaus.groovy.grails.web.servlet',        // controllers
            'org.codehaus.groovy.grails.web.pages',          // GSP

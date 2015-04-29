@@ -18,7 +18,7 @@ class ScriptService implements InitializingBean {
     def evaluate(String script, Map params = [:]) {
 
         try {
-            def result = evalImpl(script,params)
+            def result = evalImpl(script, params)
             return result;
         } catch (Exception e) {
             log.error("Error while executing KPI Script", e)
@@ -29,18 +29,18 @@ class ScriptService implements InitializingBean {
 
 
     JasperReportBuilder buildReport(String script, Map params = [:]) {
-        def result = evalImpl(script,params)
+        def result = evalImpl(script, params)
         return result as JasperReportBuilder
     }
 
-    private def evalImpl(String script, Map params) {
+    private def evalImpl = { String script, Map params ->
         def shell = getShell(params)
         if (script.startsWith('file:')) {
             return shell.evaluate(new File(script.replaceFirst('file:', '')))
         } else {
             return shell.evaluate(script)
         }
-    }
+    }.memoizeBetween(0, 100)
 
     @Override
     void afterPropertiesSet() {

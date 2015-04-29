@@ -56,6 +56,7 @@ class TaskSettingController {
 
         time("Loading Territory Users") {
             txHelperService.doInTransaction {
+                //todo generally controllers should not access repositories
                 def _getTerritoryUsers = { Long tid -> bean(TaskRepository).getTerritoryUsers(tid, roleNeeded) }.memoize()
                 dtos.each { it.assignedUser = _getTerritoryUsers.call(it.subCountyId) }
             }
