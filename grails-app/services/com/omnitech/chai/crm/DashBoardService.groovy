@@ -130,10 +130,10 @@ where (ct.dateCreated >= {startDate})  and (ct.dateCreated <= {endDate})
 where (od.dateCreated >= {startDate})  and (od.dateCreated <= {endDate})
 return  '{period}' as item, customers as Customers,tasks as Tasks,count(distinct ct) as Complete_Tasks,count(distinct od) as Orders"""
 
-        println(query)
+        log.trace(query)
 
         def now = new Date()
-        println("$userId ${now.time}  ${(now - 30).time}")
+        log.debug("$userId ${now.time}  ${(now - 30).time}")
         def weekData = template.query(query.replace('{period}', 'week'), [userId: userId, startDate: (now - 7).time, endDate: now.time, period: 'week']).collect() as List
         def monthData = template.query(query.replace('{period}', 'month'), [userId: userId, startDate: (now - 30).time, endDate: now.time, period: 'month']).collect() as List
 

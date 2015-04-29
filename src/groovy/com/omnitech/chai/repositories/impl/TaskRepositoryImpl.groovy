@@ -199,7 +199,6 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
         }
 
 
-        println("************ $queryString*****************")
 
         export(queryString, queryReturnLabels, task)
     }

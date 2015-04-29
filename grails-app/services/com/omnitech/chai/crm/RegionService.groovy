@@ -219,7 +219,7 @@ class RegionService {
 
         def districts = listAllDistricts()
         districts.each {
-            println("neo.fetch(it.subCounties) $it")
+            log.trace("neo.fetch(it.subCounties) $it")
             neo.fetch(it.subCounties)
         }
         def fuzzyEngine = PhraseHelper.train(districts?.collect { it.name })

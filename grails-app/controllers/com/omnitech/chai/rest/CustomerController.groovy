@@ -65,7 +65,7 @@ class CustomerController {
             log.debug("Req: ${user} Updating Customer: ")
             def json = request.JSON as Map
 
-            println(json.inspect())
+            log.trace(json.inspect())
 
             //todo maybe validate
             def customer = ModelFunctions.createObj(Customer, json) as Customer

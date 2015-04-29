@@ -95,7 +95,7 @@ class TaskSettingController {
 
     private def generateTasks(Class taskType, boolean cluster) {
 
-        println(params)
+        log.debug(params)
         def workDays = params.workDays instanceof String ? [params.workDays] : params.workDays
         workDays = workDays.collect { it as Integer }
         Assert.notNull workDays, 'Please Set Work Days'
