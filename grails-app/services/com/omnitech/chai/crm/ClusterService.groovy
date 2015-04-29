@@ -29,11 +29,6 @@ class ClusterService {
     static int NUMBER_OF_USERS = 1
 
 
-    static public double distanceBetweenPoints(LatLng pointA, LatLng pointB) {
-        distanceBetweenPoints([pointA.lat, pointA.lng] as double[], [pointA.lat, pointB.lng] as double[])
-    }
-
-
     static public double distanceBetweenPoints(double[] pointA, double[] pointB) {
         // Setup the inputs to the formula
         double R = 6371009d; // average radius of the earth in metres
@@ -94,16 +89,14 @@ class ClusterService {
             return null
         } as List<LocatableTask>
 
-        def (List<CentroidCluster<LocatableTask>> clusters, List other) = time("Clustering [${locatableTasks.size()}]...") {
-            getClusters2(locatableTasks, tasksPerDay, 20, MAXIMUM_THRESHOLD, 0, true)
+        List<CentroidCluster<LocatableTask>> clusters = time("Clustering [${locatableTasks.size()}]...") {
+            getClusters2(locatableTasks, tasksPerDay)
         }
 
 
         time("Sorting Generated Clusters [${clusters?.size()}]") {
             clusters.sort { CentroidCluster<LocatableTask> a, CentroidCluster<LocatableTask> b ->
-                def dis = distanceBetweenPoints(
-                        [getLat: { a.center.point[0] }, getLng: { a.center.point[1] }] as LatLng,
-                        [getLat: { b.center.point[0] }, getLng: { b.center.point[1] }] as LatLng)
+                def dis = distanceBetweenPoints(a.center.point, b.center.point)
                 return dis
             }
         }
@@ -115,19 +108,9 @@ class ClusterService {
     }
 
     //20 is a magic number to reduce the number of clusters
-    static List getClusters2(List<LocatableTask> locatableTasks, int tasksPerDay, int _magicTasksPerDay, float _percOverheadTaskPerDay, int clusteringCount, boolean processMissedPoint = false) {
-        new SimpleClusterer()
+    static List getClusters2(List<LocatableTask> locatableTasks, int tasksPerDay) {
+        new SimpleClusterer(tasksPerDay: tasksPerDay, locatableTasks: locatableTasks).cluster()
     }
-
-    static int calculateBestNumberOfCluster(int taskSize, int absoluteTaskPerDay) {
-        return roundUpward(taskSize, absoluteTaskPerDay) / absoluteTaskPerDay
-
-    }
-
-    static int howManyUniquePointsDoWeHave(List<LocatableTask> locatableTasks) {
-        return locatableTasks.collect { [it.lat, it.lng] }.unique().size()
-    }
-
 
 }
 

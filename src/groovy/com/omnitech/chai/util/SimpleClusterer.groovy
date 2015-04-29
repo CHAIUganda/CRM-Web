@@ -55,6 +55,10 @@ class SimpleClusterer {
     //20 is a magic number to reduce the number of clusters
     List getClusters2(List<LocatableTask> locatableTasks, int _magicMaxTasksPerDay, boolean processMissedPoint = false) {
 
+        if(locatableTasks.size() <= maximumNumberOfTask){
+            return [[createCluster(locatableTasks)],[]]
+        }
+
         //Start by excluding customer with same coords
         def optimumClusters = mayBeCreateEqualCluster(locatableTasks)
 
@@ -194,10 +198,5 @@ class SimpleClusterer {
         return roundUpward(taskSize, absoluteTaskPerDay) / absoluteTaskPerDay
 
     }
-
-    static int howManyUniquePointsDoWeHave(List<Clusterable> locatableTasks) {
-        return locatableTasks.collect { it.point }.unique().size()
-    }
-
 
 }

@@ -14,6 +14,7 @@ import org.springframework.data.neo4j.support.Neo4jTemplate
 import static com.omnitech.chai.model.Relations.*
 import static com.omnitech.chai.queries.TaskQuery.mathQueryForUserTasks
 import static com.omnitech.chai.util.ChaiUtils.bean
+import static com.omnitech.chai.util.ChaiUtils.time
 import static com.omnitech.chai.util.PageUtils.addPagination
 import static grails.util.GrailsNameUtils.getNaturalName
 import static java.util.Collections.EMPTY_MAP
@@ -34,6 +35,8 @@ interface ITaskRepository {
     Page<TaskDTO> findAllTasksForUser(Long userId, Class<TaskDTO> type, Map params)
 
     boolean canSupervisorViewUserTasks(Long userId, Long otherUserId, String supervisorRole)
+
+    List<String> getTerritoryUsers(Long subCountyId, String roleNeeded)
 
 }
 
@@ -185,17 +188,18 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
         def queryString = query.returns(queryReturnFields).toString()
 
         //add stock quantity
-        def categoriesAndBrands = bean(DetailerStockRepository).findAllCategoriesAndBrands()
+        def categoriesAndBrands = time("Loading Categories and Brands For Export"){ bean(DetailerStockRepository).findAllCategoriesAndBrands()} .collect()
         ['stockLevel', 'buyingPrice', 'sellingPrice'].each { String property ->
             def fieldLabel = getNaturalName(property)
             queryString = addRepeatElementStatements(queryString, categoriesAndBrands) { CategoryBrandResult d ->
                 def aliasName = "$d.category-$d.brand-($fieldLabel)"
                 queryReturnLabels << aliasName
-                return "sum (case when ${stockNode}.category = '$d.category' and ${stockNode}.brand = '$d.brand' then ${stockNode}.$property else null end) as `$aliasName`"
+                return "\nsum (case when ${stockNode}.category = '$d.category' and ${stockNode}.brand = '$d.brand' then ${stockNode}.$property else null end) as `$aliasName`"
             }
         }
 
 
+        println("************ $queryString*****************")
 
         export(queryString, queryReturnLabels, task)
     }
@@ -233,6 +237,7 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
                     .in(HAS_SUB_COUNTY).node(dName))
             mayBeAddSearchCriteria(taskName, q, params)
             q.match(node(sName).out(SC_IN_TERRITORY).node(terName).values(value('type', territoryType))).optional()
+            q.match(node(cName).out(IN_SEGMENT).node(csName)) .optional()
 
             return q
         }
@@ -264,6 +269,8 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
 
             mayBeAddSearchCriteria(taskName, q, params)
             q.match(node(sName).in(HAS_SUB_COUNTY).node(dName))
+            q.match(node(cName).out(IN_SEGMENT).node(csName)) .optional()
+
 
             return q
         }
@@ -302,11 +309,12 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
          az(identifier(cName).property('outletName'), 'customer'),
          az(identifier(cName).property('customerDescription'), 'customerDescription'),
          az(id(cName), 'customerId'),
+         az(identifier(csName).property('name'), 'segment'),
          az(identifier(dName).property('name'), 'district'),
          az(id(sName), 'subCountyId')]
     }
 
-    private List<String> getTerritoryUsers(Long subCountyId, String roleNeeded) {
+    List<String> getTerritoryUsers(Long subCountyId, String roleNeeded) {
         if (!subCountyId) return null
         def q = start(nodesById(sName, subCountyId))
                 .match(node(sName).out(SC_IN_TERRITORY).node(terName)
@@ -342,6 +350,7 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
     private static def dName = nodeName(District)
     private static def uName = nodeName(User)
     private static def sName = nodeName(SubCounty)
+    private static def csName = nodeName(CustomerSegment)
     private static def rName = nodeName(Role)
     private static def terName = nodeName(Territory)
 

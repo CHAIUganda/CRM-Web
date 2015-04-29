@@ -43,11 +43,15 @@ class TaskDTO {
     String cWkt
     @ResultColumn('customer')
     String customer
+    @ResultColumn('segment')
+    String segment
 
     @ResultColumn('customerId')
     Long customerId
     @ResultColumn('customerDescription')
     String customerDescription
+
+
 
     @ResultColumn('subCountyId')
     Long subCountyId

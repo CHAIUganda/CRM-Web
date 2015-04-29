@@ -2,13 +2,17 @@ package com.omnitech.chai
 
 import com.omnitech.chai.model.CustomerSegment
 import com.omnitech.chai.model.DetailerTask
+import com.omnitech.chai.model.Role
 import com.omnitech.chai.model.SalesCall
 import com.omnitech.chai.model.Task
-import com.omnitech.chai.util.ChaiUtils
+import com.omnitech.chai.repositories.TaskRepository
+import com.omnitech.chai.repositories.impl.ITaskRepository
+import com.omnitech.chai.repositories.impl.TaskRepositoryImpl
 import com.omnitech.chai.util.ControllerUtils
 import grails.converters.JSON
 import org.springframework.util.Assert
 
+import static com.omnitech.chai.util.ChaiUtils.bean
 import static com.omnitech.chai.util.ChaiUtils.time
 
 /**
@@ -35,39 +39,41 @@ class TaskSettingController {
     def generateDetailerTasks() {
         def (msgs, tasks) = generateTasks(DetailerTask, true)
         flash.message = "Generated Tasks ${msgs.join(',')}"
-        renderOnMap(tasks)
+        renderOnMap(tasks,DetailerTask)
     }
 
     def generateOrderTasks() {
         def (msgs, tasks) = generateTasks(SalesCall, false)
         flash.message = "Generated Tasks ${msgs.join(',')}"
-        renderOnMap(tasks)
+        renderOnMap(tasks,SalesCall)
 
     }
 
-    private def renderOnMap(List<Task> tasks) {
+    private def renderOnMap(List<Task> tasks,Class taskType) {
 
-        def taskData = time("Loading Territory Users") {
+        def roleNeeded = taskType == DetailerTask ? Role.DETAILER_ROLE_NAME : Role.SALES_ROLE_NAME
+        def dtos = tasks.collect { ControllerUtils.taskToTaskDTO(it) }
+
+        time("Loading Territory Users") {
             txHelperService.doInTransaction {
-                tasks.collect {
-                    neo.fetch(it.loadTerritoryUsers())
-                    ControllerUtils.taskToJsonMap(it)
-                }
+                def _getTerritoryUsers = { Long tid -> bean(TaskRepository).getTerritoryUsers(tid, roleNeeded) }.memoize()
+                dtos.each { it.assignedUser = _getTerritoryUsers.call(it.subCountyId) }
             }
         }
 
+        def taskData  = dtos.collect {ControllerUtils.taskToJsonMap(it)}
 
         def mapData = taskData as JSON
         def jsonMapString = mapData.toString(true)
 
         //for pagination
         params.max = Integer.MAX_VALUE
-        render(view: '/task/map', model: [taskInstanceList: tasks,
+        render(view: '/task/map', model: [taskInstanceList : tasks,
                                           taskInstanceCount: tasks.size(),
-                                          users: [],
-                                          mapData: jsonMapString,
-                                          no_mapsubmenu: true,
-                                          no_pagination: true])
+                                          users            : [],
+                                          mapData          : jsonMapString,
+                                          no_mapsubmenu    : true,
+                                          no_pagination    : true])
     }
 
     def handleException(IllegalArgumentException ex) {
@@ -76,6 +82,7 @@ class TaskSettingController {
             redirect action: 'generationDetailer', params: params
         else
             redirect action: 'generationOrder', params: params
+        log.error('Error while generating tasks', ex)
     }
 
     private def getPageModel() {
