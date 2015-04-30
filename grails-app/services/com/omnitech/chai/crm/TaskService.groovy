@@ -35,80 +35,6 @@ class TaskService {
     def userService
     def clusterService
 
-    /* Tasks */
-
-    def <T extends Task> Page<T> listTasks(Class<T> taskType, Map params) {
-        ModelFunctions.listAll(neo, taskType, params, Task)
-    }
-
-    def <T extends Task> Page<T> listTasksByStatus(String status, Map params, Class<T> taskType) {
-
-        def resultQuery = TaskQuery.getTaskQuery(status, taskType).returns(identifier('task'))
-        PageUtils.addSorting(resultQuery, params, Task)
-
-        def countyQuery = TaskQuery.getTaskQuery(status, taskType).returns(count(identifier('task')))
-        log.trace("listTasksByStatus: countQuery: $countyQuery")
-        log.trace("listTasksByStatus: dataQuery: $resultQuery")
-
-        taskRepository.query(resultQuery, countyQuery, EMPTY_MAP, PageUtils.create(params))
-    }
-
-    def <T extends Task> Page<T> loadPageData(Integer max, Map params, Class<T> taskType, String filter) {
-        params.max = max ?: 50
-        if (!params.sort) {
-            params.sort = 'dueDate'
-        }
-
-        Page<T> page
-        def user = params.user ? userRepository.findByUsername(params.user) : null
-        time("Querying Tasks From DB") {
-            if (filter) {
-                page = searchTasks(filter, params, taskType)
-            } else if (user) {
-                def status = params.status ?: Task.STATUS_NEW
-                params.status = status
-                page = findAllTasksForUser(user.id, status, params, taskType, null)
-            } else {
-                page = listTasksByStatus(params.status as String, params, taskType)
-            }
-        }
-
-        time("Fetching Task Users") {
-            page.content.each { neo.fetch(it.loadTerritoryUsers()) }
-        }
-
-        return page as Page<T>
-    }
-
-    def <T extends Task> Page<T> loadSuperVisorUserData(Integer max, Map params, Class<T> taskType, Long supervisorUserId, String filter) {
-        params.max = max ?: 50
-        if (!params.sortt) {
-            params.sort = 'dueDate'
-        }
-
-        def user = params.user ? userRepository.findByUsername(params.user) : null
-
-        time("Checking if User Is Allowed Access") {
-            if (user && !isAllowedToViewUserTasks(user)) {
-                throw new AccessDeniedException('You Cannot View This Users Tasks')
-            }
-        }
-
-        String status = params.status
-
-        Page<T> page
-        if (user) {
-            page = findAllTasksForUser(user.id, status, params, taskType, filter)
-        } else {
-            page = findAllTasksForUser(supervisorUserId, status, params, taskType, filter)
-        }
-        time("Fetching Task Users") {
-            page.content.each { neo.fetch(it?.loadTerritoryUsers()) }
-        }
-
-        return page as Page<T>
-    }
-
     /**
      * Used by task controllers to load page data
      * @param loggedInUser
@@ -135,7 +61,7 @@ class TaskService {
             contextUser = loggedInUser
         }
 
-        time("Loading Prepare to Load Page Data") {
+        time("Preparing to Load Page Data") {
             time("Loading Task Data") {
                 if (contextUser) {
                     page = taskRepository.findAllTasksForUser(contextUser.id, taskType, params)
@@ -197,12 +123,6 @@ class TaskService {
         return deleted
     }
 
-    def <T extends Task> Page<T> searchTasks(String search, Map params, Class<T> taskType) {
-        def (ReturnNext q, ReturnNext cq) = TaskQuery.filterAllTasksQuery(search, taskType)
-        log.trace("Query:Search Tasks: $q")
-        PageUtils.addSorting(q, params, taskType)
-        taskRepository.query(q, cq, EMPTY_MAP, PageUtils.create(params))
-    }
 
     /* Detailer Tasks*/
 
