@@ -2,6 +2,7 @@ package com.omnitech.chai
 
 import com.omnitech.chai.model.Customer
 import com.omnitech.chai.model.DetailerTask
+import com.omnitech.chai.model.MalariaDetails
 import com.omnitech.chai.util.ModelFunctions
 
 import static com.omnitech.chai.model.Role.DETAILER_ROLE_NAME
@@ -18,6 +19,10 @@ class DetailerTaskController extends TaskController {
 
     def index(Integer max) {
         super.index max, DetailerTask, [view: '/task/index', taskRole: DETAILER_ROLE_NAME]
+    }
+
+    def malaria(Integer max) {
+        super.index max, MalariaDetails, [view: '/task/malariaIndex', taskRole: DETAILER_ROLE_NAME]
     }
 
     def map(Integer max) {
@@ -38,6 +43,10 @@ class DetailerTaskController extends TaskController {
 
     def show() {
         super.show view: '/task/show', taskRole: SALES_ROLE_NAME
+    }
+
+    def showMalaria() {
+        super.show view: '/task/showMalaria', taskRole: SALES_ROLE_NAME
     }
 
     def create() {

@@ -41,6 +41,9 @@ This URL Below will also come with orders
 - http://23.239.27.196:8080/web-crm/rest/task/update
 
 
+PAY ATTENTION:
+target/work/plugins/spring-security/src/groovy/grails/plugin/springsecurity/ReflectionUtils.groovy line 105:
+	def Requestmap = Class.forName("com.omnitech.chai.model.RequestMap")
 
 
 

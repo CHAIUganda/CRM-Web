@@ -263,9 +263,65 @@ class TaskService {
         saveTask(neoTask)
     }
 
+    MalariaDetails completeMalariaTask(MalariaDetails remoteTask, String customerUuid) {
+        def neoTask = taskRepository.findByUuid(remoteTask.uuid)
+
+        //task could have been deleted
+        if (!neoTask) {
+            remoteTask.clientRefId = remoteTask.uuid
+            return completeAdhocDetailTask(remoteTask, customerUuid)
+        }
+
+        neoTask = neo.projectTo(neoTask, MalariaDetails)
+        def detailFields = ReflectFunctions.findAllBasicFields(MalariaDetails)
+
+        //Do not change original task data
+        detailFields.with {
+            removeAll(ReflectFunctions.findAllBasicFields(Task))
+        }
+
+        ModelFunctions.bind(neoTask, remoteTask.properties, detailFields)
+        //copy longitude and latitude
+        neoTask.lat = remoteTask.lat
+        neoTask.lng = remoteTask.lng
+        neoTask.isAdhock = false
+
+        if (remoteTask.isCancelled()) {
+            neoTask.description = remoteTask.description
+            neoTask.cancelledBy(neoSecurityService.currentUser)
+        } else
+            neoTask.completedBy(neoSecurityService.currentUser)
+
+        saveTask(neoTask)
+    }
+
     DetailerTask completeAdhocDetailTask(DetailerTask detailerTask, String customerUuid) {
+        if (detailerTask.isCancelled()) {
+            log.warn("Cannot synchronise a cancelled task [${detailerTask.description}]")
+            return null
+        }
 
+        assertNotDuplicate(detailerTask)
 
+        def customer = customerRepository.findByUuid(customerUuid)
+
+        if (!customer) {
+            log.warn("AdhocDetailCustomer Not Found: [$customerUuid]")
+            //customer could have been deleted
+            return null
+        }
+
+        detailerTask.isAdhock = true
+        detailerTask.customer = customer
+        detailerTask.description = "Ad hoc Detailing[$customer.outletName]"
+
+        detailerTask.completedBy(neoSecurityService.currentUser)
+        detailerTask.denyUuidAlter()
+
+        saveTask(detailerTask)
+    }
+
+    MalariaDetails completeAdhocMalariaTask(MalariaDetails detailerTask, String customerUuid) {
         if (detailerTask.isCancelled()) {
             log.warn("Cannot synchronise a cancelled task [${detailerTask.description}]")
             return null
@@ -291,7 +347,6 @@ class TaskService {
 
         saveTask(detailerTask)
     }
-
 
     def generateTasks(List<Territory> territories,
                       List<CustomerSegment> segments,

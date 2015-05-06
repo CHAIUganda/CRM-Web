@@ -43,6 +43,9 @@
                     <i class="glyphicon glyphicon-tasks"></i>Tasks <b class="caret"></b></a>
                 <ul role="menu" class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
                     <li>
+                        <sec2:link controller="detailerTask" action="malaria">Malaria Details</sec2:link>
+                    </li>
+                    <li>
                         <sec2:link controller="detailerTask" action="index"
                                    params="${[status: Task.STATUS_NEW]}">Detailer</sec2:link>
                     </li>

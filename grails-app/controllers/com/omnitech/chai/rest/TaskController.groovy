@@ -71,6 +71,68 @@ class TaskController extends BaseRestController {
         }
     }
 
+    def test(){
+        
+    }
+
+    def malariaUpdate(){
+        def user = neoSecurityService.currentUser
+        log.debug("Req:${user}   - Update Task")
+        if (user.hasRole(DETAILER_ROLE_NAME)) {
+            doMalariaUpdate(user)
+        } else {
+            renderError("You Do No Have Appropriate Roles To Perform This Task", HttpStatus.FORBIDDEN)
+        }
+    }
+
+    private void doMalariaUpdate(User user) {
+        def json = request.JSON as Map
+        //todo fixme
+        json.clientRefId = json.uuid
+
+        println(request.JSON.toString())
+        def task = ModelFunctions.createObj(MalariaDetails, json)
+
+
+        if (task.isCancelled()) {
+            task.uuid = json.uuid
+            taskService.completeMalariaTask(task,json.customerId)
+            log.debug("Resp:${user}   - OK")
+            render([status: HttpStatus.OK.reasonPhrase, message: 'Success'] as JSON)
+            return
+        }
+
+        Assert.notEmpty((json.get('detailers') as List),"Detailing Task Should Have Detailing Info")
+
+        def detailerInfo = (json.get('detailers') as List)?.get(0) as Map
+        if (detailerInfo) {
+            detailerInfo.remove('id')
+            ModelFunctions.bind(task, detailerInfo)
+        }
+        task.lng = ChaiUtils.execSilently('Converting long to float') { detailerInfo['longitude'] as Float }
+        task.lat = ChaiUtils.execSilently('Converting lat to float') { detailerInfo['latitude'] as Float }
+        task.uuid = json.uuid
+
+        if(detailerInfo.dateOfSurvey){
+            ChaiUtils.execSilently {task.completionDate = new Date(detailerInfo.dateOfSurvey as Long)}
+        }
+
+        if (!task.uuid) {
+            response.status = HttpStatus.BAD_REQUEST.value()
+            render { [status: HttpStatus.BAD_REQUEST.reasonPhrase, message: "You Did Not Provide The Task ID"] }
+            return
+        }
+        if (task.isAdhock) {
+            assert json.customerId, 'Please make sure you specify your customerId'
+            updateCompletionInfo(task)
+            taskService.completeAdhocMalariaTask(task, json.customerId)
+        } else {
+            taskService.completeAdhocMalariaTask(task, json.customerId)
+        }
+        log.debug("Resp:${user}   - OK")
+        render([status: HttpStatus.OK.reasonPhrase, message: 'Success'] as JSON)
+    }
+
     private void doDetailerUpdate(User user) {
         def json = request.JSON as Map
         //todo fixme

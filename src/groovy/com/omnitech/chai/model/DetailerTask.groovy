@@ -12,8 +12,6 @@ import org.springframework.data.neo4j.annotation.RelatedTo
 @NodeEntity
 @Validateable
 class DetailerTask extends Task {
-
-
     Integer diarrheaPatientsInFacility
     String heardAboutDiarrheaTreatmentInChildren
     String howDidYouHear

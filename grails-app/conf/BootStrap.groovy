@@ -71,10 +71,15 @@ class BootStrap {
                 )
 
                 neo.save new RequestMap(url: '/**', configAttribute: 'ROLE_SUPER_ADMIN')
+
                 for (String url in [
                         '/login/*', '/logout/*', '/**/js/**', '/**/css/**',
                         '/**/images/**', '/**/favicon.ico']) {
                     neo.save new RequestMap(url: url, configAttribute: 'permitAll')
+                }
+
+                neo.findAll(User).each{
+                    println it.username
                 }
             }
         }
@@ -99,6 +104,8 @@ class BootStrap {
 
                 //Detailing
                 '/detailerTask/index'               : [DETAILER_ROLE_NAME, DETAILING_SUPERVISOR_ROLE_NAME],
+                '/detailerTask/malaria'               : [DETAILER_ROLE_NAME, DETAILING_SUPERVISOR_ROLE_NAME],
+                '/detailerTask/showMalaria/*'               : [DETAILER_ROLE_NAME, DETAILING_SUPERVISOR_ROLE_NAME],
                 '/detailerTask/show/*'              : [DETAILER_ROLE_NAME, DETAILING_SUPERVISOR_ROLE_NAME],
                 '/detailerTask/map'                 : [DETAILER_ROLE_NAME, DETAILING_SUPERVISOR_ROLE_NAME],
                 '/detailerTask/search/**'           : [DETAILER_ROLE_NAME, DETAILING_SUPERVISOR_ROLE_NAME],
