@@ -3,6 +3,7 @@ package com.omnitech.chai.repositories.impl
 import com.omnitech.chai.model.*
 import com.omnitech.chai.repositories.CategoryBrandResult
 import com.omnitech.chai.repositories.DetailerStockRepository
+import com.omnitech.chai.repositories.MalariaStockRepository
 import com.omnitech.chai.repositories.ProductRepository
 import com.omnitech.chai.util.ChaiUtils
 import org.neo4j.cypherdsl.expression.Expression
@@ -19,11 +20,8 @@ import static org.neo4j.cypherdsl.CypherQuery.as as az
  * Created by kay on 3/19/2015.
  */
 interface ITaskRepository {
-
     List exportAllTasks(Class type)
-
     List exportAllTasks(Long userId, Class type)
-
 }
 
 class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskRepository {
@@ -42,7 +40,6 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
         def className = type.simpleName
         def products = bean(ProductRepository).findAll()
         "customizeExportQuery$className"(query, fields, labels, type, products)
-
     }
 
     List exportAllTasks(Long userId, Class type) {
@@ -183,12 +180,34 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
                 return "sum (case when ${stockNode}.category = '$d.category' and ${stockNode}.brand = '$d.brand' then ${stockNode}.$property else null end) as `$aliasName`"
             }
         }
-
-
-
         export(queryString, queryReturnLabels, task)
     }
 
+    private def customizeExportQueryMalariaDetails(Match query, List<Expression> queryReturnFields, List<String> queryReturnLabels,
+        Class<MalariaDetails> task, Iterable<Product> products) {
+
+        def stockNode = nodeName(DetailerMalariaStock)
+        query.match(node(nodeName(MalariaDetails)).out(HAS_DETAILER_STOCK).node(stockNode)).optional()
+
+        def (fieldLabels, returnFields) = getClassExportFields(task)
+
+        queryReturnFields.addAll(returnFields)
+        queryReturnLabels.addAll(fieldLabels)
+
+        def queryString = query.returns(queryReturnFields).toString()
+
+        //add stock quantity
+        def categoriesAndBrands = bean(MalariaStockRepository).findAllCategoriesAndBrands()
+        ['stockLevel', 'buyingPrice', 'sellingPrice'].each { String property ->
+            def fieldLabel = getNaturalName(property)
+            queryString = addRepeatElementStatements(queryString, categoriesAndBrands) {CategoryBrandResult d ->
+                def aliasName = "$d.category-$d.brand-($fieldLabel)"
+                queryReturnLabels << aliasName
+                return "sum (case when ${stockNode}.category = '$d.category' and ${stockNode}.brand = '$d.brand' then ${stockNode}.$property else null end) as `$aliasName`"
+            }
+        }
+        export(queryString, queryReturnLabels, task)
+    }
 
     private static
     def <T> String addRepeatElementStatements(String stringQuery, Iterable<T> items, Closure<String> getExpression) {

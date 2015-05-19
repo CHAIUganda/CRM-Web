@@ -21,7 +21,6 @@ import static org.neo4j.cypherdsl.CypherQuery.*
 
 @Neo4jTransactional
 class TaskService {
-
     def taskRepository
     def userRepository
     @Autowired
@@ -71,7 +70,6 @@ class TaskService {
         }
 
         page.content.each { neo.fetch(it.loadTerritoryUsers()) }
-
         return page as Page<T>
     }
 

@@ -102,9 +102,9 @@ class TaskController extends BaseRestController {
             return
         }
 
-        Assert.notEmpty((json.get('detailers') as List),"Detailing Task Should Have Detailing Info")
+        Assert.notEmpty((json.get('malariadetails') as List),"Detailing Task Should Have Detailing Info")
 
-        def detailerInfo = (json.get('detailers') as List)?.get(0) as Map
+        def detailerInfo = (json.get('malariadetails') as List)?.get(0) as Map
         if (detailerInfo) {
             detailerInfo.remove('id')
             ModelFunctions.bind(task, detailerInfo)

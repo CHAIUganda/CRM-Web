@@ -177,8 +177,6 @@ interface TaskRepository extends GraphRepository<Task>, CypherDslRepository<Task
 
     @Query("start c = node({customerId}) match c-[:CUST_TASK]-(t:{taskType}{status:'new'}) delete t")
     void deleteOldSalesCall(@Param('customerId') Long customerId, @Param('taskType') String type)
-
-
 }
 
 interface CustomerSegmentRepository extends GraphRepository<CustomerSegment> {
@@ -292,10 +290,13 @@ interface DbChangeSetRepository extends GraphRepository<DbChangeSet> {
 }
 
 interface DetailerStockRepository extends GraphRepository<DetailerStock> {
-
     @Query("match (d:DetailerStock) return distinct d.category as category , d.brand as brand order by category, brand")
     Iterable<CategoryBrandResult> findAllCategoriesAndBrands()
+}
 
+interface MalariaStockRepository extends GraphRepository<DetailerMalariaStock> {
+    @Query("match (d:DetailerMalariaStock) return distinct d.category as category , d.brand as brand order by category, brand")
+    Iterable<CategoryBrandResult> findAllCategoriesAndBrands()
 }
 
 @CompileStatic

@@ -33,6 +33,10 @@ class DetailerTaskController extends TaskController {
         super.export DetailerTask
     }
 
+    def exportMalaria() {
+        super.export MalariaDetails
+    }
+
     def search(Integer max) {
         super.search max, DetailerTask, [view: '/task/index', taskRole: SALES_ROLE_NAME]
     }
