@@ -228,12 +228,14 @@ class SaleController extends BaseRestController {
     private Product getOrCreateProduct(String uuid) {
         def versionCode = request.getHeader('app-version-code')
         def product
+        /*
         if (versionCode) {
             product = productService.findProductByUuid(uuid)
             assert product, "Product with id [$uuid] Should Exist In the DB"
-        } else {
+        } else { 
             product = productService.getOrCreateProductByUuid(uuid)
-        }
+        }*/
+        product = productService.getOrCreateProductByUuid(uuid)
         return product
     }
 
