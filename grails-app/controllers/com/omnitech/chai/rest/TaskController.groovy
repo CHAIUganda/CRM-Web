@@ -71,10 +71,6 @@ class TaskController extends BaseRestController {
         }
     }
 
-    def test(){
-        
-    }
-
     def malariaUpdate(){
         def user = neoSecurityService.currentUser
         log.debug("Req:${user}   - Update Task")

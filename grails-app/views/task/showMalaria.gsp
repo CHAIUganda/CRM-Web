@@ -1,4 +1,4 @@
-<%@ page import="com.omnitech.chai.model.DetailerTask; com.omnitech.chai.util.ChaiUtils; com.omnitech.chai.model.Task" %>
+<%@ page import="com.omnitech.chai.model.MalariaDetails; com.omnitech.chai.util.ChaiUtils; com.omnitech.chai.model.Task" %>
 <!DOCTYPE html>
 <html>
 

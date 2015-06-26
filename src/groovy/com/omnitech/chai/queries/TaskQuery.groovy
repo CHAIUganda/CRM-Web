@@ -66,8 +66,9 @@ class TaskQuery {
                     .or(identifier('customer').string('tradingCenter').regexp(search))
         }
 
+        /*
         if (status) {
-
+            print "Using status"
             def statusFilter = identifier(varName).property('status').eq(status)
 
             if (search) {
@@ -77,23 +78,24 @@ class TaskQuery {
             query.where(statusFilter)
         } else if (search) {
             query.where(searchFilter())
+        }*/
+        if (search) {
+            query.where(searchFilter())
         }
-
         //add district path
         query.match(node('sc').in(HAS_SUB_COUNTY).node('di')).optional()
-
+        print query
         return query
     }
 
     static <T extends Task> Match mathQueryForUserTasks(Long userId, Class<T> taskType) {
+        print "Searching task: " + taskType.simpleName + " User ID: " + userId
         def varName = taskType.simpleName.toLowerCase()
         start(nodesById('u', userId))
                 .match(node('u').out(USER_TERRITORY, SUPERVISES_TERRITORY).node('ut')
                 .in(SC_IN_TERRITORY).node('sc')
                 .in(CUST_IN_SC).node('customer')
                 .out(CUST_TASK).node(varName).label(taskType.simpleName))
-
-
     }
 
     static Match getTaskQuery(String status, Class<? extends Task> taskType) {

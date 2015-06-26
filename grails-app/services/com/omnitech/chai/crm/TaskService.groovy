@@ -109,7 +109,7 @@ class TaskService {
      */
     def List loadPageDataForUser(User user, Class taskType, Map params, Integer max, String filter) {
 
-        def roleNeeded = taskType == DetailerTask ? Role.DETAILER_ROLE_NAME : Role.SALES_ROLE_NAME
+        def roleNeeded = taskType == DetailerTask || MalariaDetails ? Role.DETAILER_ROLE_NAME : Role.SALES_ROLE_NAME
         Page page
         def users
         if (user.hasRole(Role.ADMIN_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME)) {

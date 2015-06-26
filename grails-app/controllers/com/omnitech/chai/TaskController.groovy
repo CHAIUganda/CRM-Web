@@ -43,6 +43,7 @@ class TaskController extends BaseController {
             redirect(action: 'map', params: params)
             return
         }
+        print params
         def (page, users) = taskService.loadPageDataForUser(user, type, params, max, null)
         assert otherParams.view, 'View not specified for this action'
         render(view: otherParams.view, model: [taskInstanceList: page.content, taskInstanceCount: page.totalElements, users: users, taskRole: otherParams.taskRole])

@@ -44,6 +44,9 @@ abstract class AbstractChaiRepository {
     static String nodeName(Class aClass) { aClass.simpleName.toLowerCase() }
 
     def export(String query, List<String> queryReturnLabels, Class type) {
+        print query
+        print queryReturnLabels
+        
         queryReturnLabels.removeAll('COMMENT', 'IS ADHOCK', 'WKT')
         log.trace("Export: Tasks:$type.simpleName: $query")
         def results = neo.query(query, Collections.EMPTY_MAP).collect()

@@ -196,16 +196,33 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
 
         def queryString = query.returns(queryReturnFields).toString()
 
-        //add stock quantity
         def categoriesAndBrands = bean(MalariaStockRepository).findAllCategoriesAndBrands()
-        ['stockLevel', 'buyingPrice', 'sellingPrice'].each { String property ->
-            def fieldLabel = getNaturalName(property)
-            queryString = addRepeatElementStatements(queryString, categoriesAndBrands) {CategoryBrandResult d ->
-                def aliasName = "$d.category-$d.brand-($fieldLabel)"
-                queryReturnLabels << aliasName
-                return "sum (case when ${stockNode}.category = '$d.category' and ${stockNode}.brand = '$d.brand' then ${stockNode}.$property else null end) as `$aliasName`"
-            }
+        // Add Stock level
+        def fieldLabel = "stockLevel"
+        queryString = addRepeatElementStatements(queryString, categoriesAndBrands) {CategoryBrandResult d ->
+            def aliasName = "$d.category-$d.brand-($fieldLabel)"
+            queryReturnLabels << aliasName
+            return "sum (case when ${stockNode}.category = '$d.category' and ${stockNode}.brand = '$d.brand' then ${stockNode}.$fieldLabel else null end) as `$aliasName`"
         }
+
+        // Add buying Price
+        categoriesAndBrands = bean(MalariaStockRepository).findAllCategoriesAndBrands()
+        fieldLabel = "buyingPrice"
+        queryString = addRepeatElementStatements(queryString, categoriesAndBrands) {CategoryBrandResult d ->
+            def aliasName = "$d.category-$d.brand-($fieldLabel)"
+            queryReturnLabels << aliasName
+            return "sum (case when ${stockNode}.category = '$d.category' and ${stockNode}.brand = '$d.brand' then ${stockNode}.$fieldLabel else null end) as `$aliasName`"
+        }
+
+        // Add selling Price
+        categoriesAndBrands = bean(MalariaStockRepository).findAllCategoriesAndBrands()
+        fieldLabel = "sellingPrice"
+        queryString = addRepeatElementStatements(queryString, categoriesAndBrands) {CategoryBrandResult d ->
+            def aliasName = "$d.category-$d.brand-($fieldLabel)"
+            queryReturnLabels << aliasName
+            return "sum (case when ${stockNode}.category = '$d.category' and ${stockNode}.brand = '$d.brand' then ${stockNode}.$fieldLabel else null end) as `$aliasName`"
+        }
+
         export(queryString, queryReturnLabels, task)
     }
 

@@ -61,8 +61,8 @@ class DetailerMalariaStock extends AbstractEntity {
     /** Not-null value. */
     String category;
     double stockLevel;
-    Double buyingPrice;
-    Double sellingPrice;
+    double buyingPrice;
+    double sellingPrice;
     String detailerId;
     String malariadetailId;
 }
