@@ -171,8 +171,8 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
         def queryString = query.returns(queryReturnFields).toString()
 
         //add stock quantity
-        def categoriesAndBrands = bean(DetailerStockRepository).findAllCategoriesAndBrands()
         ['stockLevel', 'buyingPrice', 'sellingPrice'].each { String property ->
+            def categoriesAndBrands = bean(DetailerStockRepository).findAllCategoriesAndBrands()
             def fieldLabel = getNaturalName(property)
             queryString = addRepeatElementStatements(queryString, categoriesAndBrands) {CategoryBrandResult d ->
                 def aliasName = "$d.category-$d.brand-($fieldLabel)"
