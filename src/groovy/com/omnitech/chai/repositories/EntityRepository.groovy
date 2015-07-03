@@ -79,6 +79,17 @@ interface CustomerRepository extends GraphRepository<Customer>, CypherDslReposit
     @Query('start t=node({territoryId}) MATCH (t)<-[:`SC_IN_TERRITORY`]-(sc)<-[:CUST_IN_SC]-(c) RETURN c')
     Iterable<Customer> findByTerritory(@Param('territoryId') Long territoryId)
 
+    
+
+    @Query('MATCH n-[rel:IN_SEGMENT]->r WHERE id(n)={node_id} DELETE rel')
+    void deleteSegment(@Param('node_id') Long node_id)
+
+    @Query('MATCH (a:`Customer`),(b:`CustomerSegment`) WHERE id(a) = {node_id} AND id(b) = {segment_id} CREATE (a)-[r:IN_SEGMENT]->(b)')
+    void addSegment(@Param('node_id') Long node_id, @Param('segment_id') Long segment_id)
+
+    @Query('match n where id(n) = {node_id} set n.segmentScore = {segmentScore}')
+    void updateWithQuery(@Param('node_id') Long node_id, @Param('segmentScore') Double segmentScore)
+
     @Query("""start t = node({territoryId}), cs = node({segmentId})
 match (cs)<-[:IN_SEGMENT]-(customer)-[:CUST_IN_SC]->(sc)-[:SC_IN_TERRITORY]->(t)
 where not(customer-[:CUST_TASK]->(:DetailerTask{status:'new'}))

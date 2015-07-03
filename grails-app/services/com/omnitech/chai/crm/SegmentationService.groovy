@@ -62,17 +62,19 @@ class SegmentationService {
         cSs.each { cs ->
             def script = cs.getSegmentationScript()
 
-
             if (script) {
                 def result = ChaiUtils.execSilently("Failed to execute segmentation script on customer") {
                     evaluateScript(script, [customer: custWithTask.customer, segment: cs, customerScore: customerScore])
                 }
 
-                if (result == true) {
-                    log.info("CustomerScore[$custWithTask.customer]Score[$customerScore] ---> $cs.name")
-                    custWithTask.customer.segment = cs
-                    custWithTask.customer.segmentScore = customerScore
-                    customerRepository.save(custWithTask.customer)
+                if (result == true && custWithTask.customer.uuid) {
+                    log.info("CustomerScore [$custWithTask.customer] Score [$customerScore] ---> $cs.name")
+                    //custWithTask.customer.segment = cs
+                    //custWithTask.customer.segmentScore = customerScore
+                    //customerRepository.save(custWithTask.customer)
+                    customerRepository.updateWithQuery(custWithTask.customer.id, customerScore)
+                    customerRepository.deleteSegment(custWithTask.customer.id)
+                    customerRepository.addSegment(custWithTask.customer.id, cs.id)
                 }
             }
         }

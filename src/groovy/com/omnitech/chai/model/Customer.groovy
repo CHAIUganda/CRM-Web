@@ -149,7 +149,7 @@ public class Customer extends AbstractEntity implements LeafNode {
         }
     }
 
-    String toString() { outletName }
+    String toString() { "$outletName $id"}
 
     def beforeSave() {
         createWkt()
