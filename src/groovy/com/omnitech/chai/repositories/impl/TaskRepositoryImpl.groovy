@@ -169,10 +169,10 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
         queryReturnLabels.addAll(fieldLabels)
 
         def queryString = query.returns(queryReturnFields).toString()
-
+        def categoriesAndBrands
         //add stock quantity
         ['stockLevel', 'buyingPrice', 'sellingPrice'].each { String property ->
-            def categoriesAndBrands = bean(DetailerStockRepository).findAllCategoriesAndBrands()
+            categoriesAndBrands = bean(DetailerStockRepository).findAllCategoriesAndBrands()
             def fieldLabel = getNaturalName(property)
             queryString = addRepeatElementStatements(queryString, categoriesAndBrands) {CategoryBrandResult d ->
                 def aliasName = "$d.category-$d.brand-($fieldLabel)"
