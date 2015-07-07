@@ -266,3 +266,7 @@ a:link, a:active, a:visited {
 #Content .nav li i{margin-right:5px;display:inline-block;}
 .sticky-wrapper.is-sticky{width:1170px !important;}
 .sticky-wrapper.is-sticky #navbarCollapse{width:1170px !important;background:#FFF;padding:10px;z-index:999;box-shadow:1px 2px 2px #CCC;}
+.glyphicon{margin-right:5px;}
+.navbar-right .glyphicon-user:before{margin-right:5px;display:inline-block;}
+table.dataTable{border-collapse:collapse !important;}
+.home-det-search{padding:10px;background:#dae3f2;border:1px solid #4e77bd;}

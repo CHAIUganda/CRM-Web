@@ -7,6 +7,7 @@
     <g:set var="entityName" value="${message(code: 'task.label', default: 'Task')}"/>
     <g:set var="layout_nosecondarymenu" value="${true}" scope="request"/>
     <title><g:message code="default.index.label" args="[entityName]"/></title>
+    <r:require module="dataTable"/>
 </head>
 
 <body>
@@ -74,7 +75,7 @@
 
                     <td>${ChaiUtils.truncateString(taskInstance.customer, 10)}</td>
 
-                    <td>${taskInstance.territoryUser()}</td>
+                    <td>${taskInstance.territoryUser()} - ${taskInstance.completedBy}</td>
 
                     %{--<td>--}%
                     %{--<g:link action="edit" id="${taskInstance.id}" title="Edit/Schedule"><i--}%

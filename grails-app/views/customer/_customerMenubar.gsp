@@ -138,7 +138,7 @@
                 %{--<input type="hidden" name="domain" value="${clazz}"/>--}%
                 <form>
                     <input class="form-control" name="search" value="${params.search}"
-                           placeholder="Search..."/>
+                           placeholder="Search by Outlet name"/>
                 </form>
             </div>
         </li>
