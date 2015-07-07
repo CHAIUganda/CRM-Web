@@ -8,7 +8,7 @@ import org.apache.commons.math3.ml.clustering.KMeansPlusPlusClusterer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.support.Neo4jTemplate
 import org.springframework.data.neo4j.transaction.Neo4jTransactional
-
+import org.apache.commons.logging.LogFactory
 import static com.omnitech.chai.util.ChaiUtils.getNextWorkDay
 import static com.omnitech.chai.util.ChaiUtils.nextDayOfWeek
 import static java.util.Calendar.*
@@ -206,6 +206,7 @@ class ClusterService {
     }
 
     static int calculateBestNumberOfCluster(int taskSize, int absoluteTaskPerDay) {
+        LogFactory.getLog(this).info("Task Size: $taskSize AbosoluteTaskPerDay $absoluteTaskPerDay")
         return ChaiUtils.roundUpward(taskSize, absoluteTaskPerDay) / absoluteTaskPerDay
 
     }

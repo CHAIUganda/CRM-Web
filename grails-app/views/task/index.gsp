@@ -74,7 +74,7 @@
 
                     <td>${ChaiUtils.truncateString(taskInstance.customer, 10)}</td>
 
-                    <td>${taskInstance.territoryUser()}</td>
+                    <td>${taskInstance.territoryUser()[0].username} - ${taskInstance.completedBy}</td>
 
                     %{--<td>--}%
                     %{--<g:link action="edit" id="${taskInstance.id}" title="Edit/Schedule"><i--}%
