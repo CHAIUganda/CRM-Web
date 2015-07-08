@@ -3,10 +3,8 @@ package com.omnitech.chai
 import com.omnitech.chai.model.Role
 import com.omnitech.chai.model.Task
 import com.omnitech.chai.util.ChaiUtils
-import com.omnitech.chai.util.ExportUtil
 import com.omnitech.chai.util.ModelFunctions
 import com.omnitech.chai.util.ServletUtil
-import fuzzycsv.FuzzyCSV
 import grails.converters.JSON
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.support.Neo4jTemplate
@@ -15,6 +13,7 @@ import org.springframework.security.access.AccessDeniedException
 
 import java.text.SimpleDateFormat
 
+import static com.omnitech.chai.util.ChaiUtils.time
 import static com.omnitech.chai.util.ControllerUtils.customerToJsonMap
 import static com.omnitech.chai.util.ControllerUtils.taskToJsonMap
 import static com.omnitech.chai.util.ModelFunctions.extractId
@@ -38,6 +37,8 @@ class TaskController extends BaseController {
     Neo4jTemplate neo
 
     protected def index(Integer max, Class type, Map otherParams) {
+        params.max = max = Math.min(max ?: 50, 100)
+
         def user = neoSecurityService.currentUser
         if (params.remove('ui') == 'map') {
             redirect(action: 'map', params: params)
@@ -50,10 +51,11 @@ class TaskController extends BaseController {
     }
 
     protected def map(Integer max, Class type, Map otherParams) {
+        params.max = max = Math.min(max ?: 50, 100)
 
         def user = neoSecurityService.currentUser
         def (page, users) = taskService.loadPageDataForUser(user, type, params, max, null)
-        def taskData = page.content.collect { Task task ->
+        def taskData = page.content.collect { task ->
             return taskToJsonMap(task)
         }
 
@@ -61,9 +63,11 @@ class TaskController extends BaseController {
         if (params.user) {
             def userInContext = userService.findUserByName(params.user)
             //todo use a query for this section to improve performance
-            def customers = customerService.findAllCustomersByUser(userInContext.id, true, [max: 2000])
+            def customers = time("Loading All Customers for map [${userInContext}]") {
+                customerService.findAllCustomersByUser(userInContext.id, true, [max: 2000])
+            }
             customers.removeAll { c ->
-                page.any { it?.customer?.id == c.id }
+                page.any { it?.customerId == c.id }
             }
             def customerData = customers.findAll { it.wkt != null }.collect { customerToJsonMap(it) }
             taskData.addAll(customerData)
@@ -81,7 +85,7 @@ class TaskController extends BaseController {
         def user = params.user ? userService.findUserByName(params.user) : null
         def filePrefix = type.simpleName
         if (user) {
-            if(!taskService.isAllowedToViewUserTasks(user)){
+            if (!taskService.isAllowedToViewUserTasks(user)) {
                 notFound()
                 return
             }
@@ -91,7 +95,7 @@ class TaskController extends BaseController {
             def csvData = taskService.exportAllTasks(type)
             ServletUtil.exportCSV(response, "${filePrefix}-Tasks-All.csv", csvData)
         } else {
-            def csvData= taskService.exportTasksForUser(currentUser.id, type)
+            def csvData = taskService.exportTasksForUser(currentUser.id, type)
             ServletUtil.exportCSV(response, "${filePrefix}-Tasks-${params.user}.csv", csvData)
         }
     }
@@ -167,9 +171,9 @@ class TaskController extends BaseController {
     }
 
     protected def deleteAll(Map otherParams) {
-        def taskIds = extractTaskIds().collect {it as Long}
+        def taskIds = extractTaskIds().collect { it as Long }
         def deleted = taskService.deleteTasks(taskIds as Long[])
-        flash.message ="Deleted ${deleted.size()} Task(s)"
+        flash.message = "Deleted ${deleted.size()} Task(s)"
         redirect action: 'index'
     }
 

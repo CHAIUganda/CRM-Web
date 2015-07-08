@@ -85,7 +85,7 @@ class ReportController {
     }
 
     def save(Report reportInstance) {
-        println(params)
+        log.debug(params)
         if (reportInstance == null) {
             notFound()
             return

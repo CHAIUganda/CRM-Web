@@ -80,6 +80,7 @@ grails.project.dependency.resolution = {
 //      Dynamics
         compile ('net.sourceforge.dynamicreports:dynamicreports-core:3.1.2') {
             excludes 'jdtcore:eclipse'
+            excludes 'xml-apis:xml-apis'
         }
         build "com.lowagie:itext:2.1.7"
         compile 'com.lowagie:itext:2.1.7'

@@ -1,36 +1,31 @@
 package com.omnitech.chai.crm
 
-import com.omnitech.chai.model.*
-import com.omnitech.chai.util.ChaiUtils
+import com.omnitech.chai.model.LatLng
+import com.omnitech.chai.model.Task
+import com.omnitech.chai.util.SimpleClusterer
 import org.apache.commons.math3.ml.clustering.CentroidCluster
 import org.apache.commons.math3.ml.clustering.Clusterable
 import org.apache.commons.math3.ml.clustering.KMeansPlusPlusClusterer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.neo4j.support.Neo4jTemplate
-import org.springframework.data.neo4j.transaction.Neo4jTransactional
-import org.apache.commons.logging.LogFactory
-import static com.omnitech.chai.util.ChaiUtils.getNextWorkDay
-import static com.omnitech.chai.util.ChaiUtils.nextDayOfWeek
-import static java.util.Calendar.*
+import static com.omnitech.chai.util.ChaiUtils.*
+import static java.util.Calendar.MONDAY
 
 /**
  * Created by kay on 12/19/2014.
  */
 class ClusterService {
 
-    def territoryRepository
+    public static final float MAXIMUM_THRESHOLD = 0.4f
+    public static final float MINIMUM_THRESHOLD = 0.3f
+    public static final int MAXIMUM_RECLUSTERS = 100
+
     def taskRepository
     def detailerTaskRepository
-    def orderRepository
     @Autowired
     Neo4jTemplate neo
     static int TASKS_PER_DAY = 10
     static int NUMBER_OF_USERS = 1
-
-
-    static public double distanceBetweenPoints(LatLng pointA, LatLng pointB) {
-        distanceBetweenPoints([pointA.lat, pointA.lng] as double[], [pointA.lat, pointB.lng] as double[])
-    }
 
 
     static public double distanceBetweenPoints(double[] pointA, double[] pointB) {
@@ -52,38 +47,11 @@ class ClusterService {
     }
 
 
-    @Neo4jTransactional
-    void scheduleDetailerTasks() {
-        territoryRepository.findAll().each {
-            clusterAndGeneratesTasks(it, TASKS_PER_DAY, NUMBER_OF_USERS, DetailerTask)
-        }
-    }
-
-    @Neo4jTransactional
-    void scheduleOrders() {
-        territoryRepository.findAll().each {
-            clusterAndGeneratesTasks(it, TASKS_PER_DAY, NUMBER_OF_USERS, Order)
-        }
-    }
-
-    List<CentroidCluster<LocatableTask>> clusterAndGeneratesTasks(Territory territory, int tasksPerDay, int numberOfUsers, Class type) {
-
-        def locatableTasks = getLocatableTasks(territory, type)
-        if (!locatableTasks) return []
-        def clusters = getClusters(locatableTasks, tasksPerDay, numberOfUsers)
-
-        assignDueDateToClusters(clusters, new Date(), [MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY])
-
-        clusters.each { c -> c.getPoints().each { lt -> taskRepository.save(lt.task) } }
-        return clusters
-    }
-
-
     static List<CentroidCluster<LocatableTask>> assignDueDateToClusters(List<CentroidCluster<LocatableTask>> clusters, Date startDate, List<Integer> workDays, boolean flowIntoNextWeek = true) {
 
         def nextAvailableDate = startDate
 
-        def nextMonday = nextDayOfWeek(startDate,MONDAY).time
+        def nextMonday = nextDayOfWeek(startDate, MONDAY).time
 
         def assignedClusters = []
 
@@ -91,7 +59,7 @@ class ClusterService {
 
             nextAvailableDate = getNextWorkDay(workDays, nextAvailableDate)
 
-            if (!flowIntoNextWeek && (nextMonday - nextAvailableDate) <= 0  ) {
+            if (!flowIntoNextWeek && (nextMonday - nextAvailableDate) <= 0) {
                 break;
             }
 
@@ -120,117 +88,27 @@ class ClusterService {
             return null
         } as List<LocatableTask>
 
-        def (List<CentroidCluster<LocatableTask>> clusters, List other) = getClusters2(locatableTasks, tasksPerDay, 20, 0.3f, true)
-
-
-        clusters.sort { CentroidCluster<LocatableTask> a, CentroidCluster<LocatableTask> b ->
-            def dis = distanceBetweenPoints(
-                    [getLat: { a.center.point[0] }, getLng: { a.center.point[1] }] as LatLng,
-                    [getLat: { b.center.point[0] }, getLng: { b.center.point[1] }] as LatLng)
-            return dis
+        List<CentroidCluster<LocatableTask>> clusters = time("Clustering [${locatableTasks.size()}]...") {
+            getClusters2(locatableTasks, tasksPerDay)
         }
 
-        def assignedClusters = assignDueDateToClusters(clusters, startDate, allowedDays, false)
+
+        time("Sorting Generated Clusters [${clusters?.size()}]") {
+            clusters.sort { CentroidCluster<LocatableTask> a, CentroidCluster<LocatableTask> b ->
+                def dis = distanceBetweenPoints(a.center.point, b.center.point)
+                return dis
+            }
+        }
+
+        def assignedClusters = time("Assigning DueDates TO Clusters [${clusters?.size()}]") {
+            assignDueDateToClusters(clusters, startDate, allowedDays, false)
+        }
         return assignedClusters
     }
 
-
-    static List<CentroidCluster<LocatableTask>> getClusters(List<LocatableTask> locatableTasks, int tasksPerDay, int numberOfUsers) {
-        def taskSize = locatableTasks.size()
-        def numberOfClusters = calculateClustersNeeded(taskSize, tasksPerDay, numberOfUsers)
-        def clusterer = new KMeansPlusPlusClusterer<LocatableTask>(numberOfClusters as int, 10000);
-        List<CentroidCluster<LocatableTask>> clusters = clusterer.cluster(locatableTasks);
-        return clusters
-    }
     //20 is a magic number to reduce the number of clusters
-    static List getClusters2(List<LocatableTask> locatableTasks, int tasksPerDay, int _magicTasksPerDay, float _percOverheadTaskPerDay, boolean processMissedPoint = false) {
-        def taskSize = locatableTasks.size()
-
-        def numberOfClusters = calculateBestNumberOfCluster(taskSize, _magicTasksPerDay)
-        def clusterer = new KMeansPlusPlusClusterer<LocatableTask>(numberOfClusters as int, 10000);
-        List<CentroidCluster<LocatableTask>> clusters = clusterer.cluster(locatableTasks);
-
-        if (clusters.size() == 1) return [clusters, []]
-
-
-        List<CentroidCluster<LocatableTask>> finalSmallClusters = []
-        List<LocatableTask> missedPoints = []
-
-        def maximumNumberOfTask = (tasksPerDay + (tasksPerDay * _percOverheadTaskPerDay)).toInteger()
-        def minimumSize = (tasksPerDay - (tasksPerDay * 0.2)).toInteger()
-        for (cluster in clusters) {
-            if (cluster.points.size() > maximumNumberOfTask) {
-                def (subClusters, mp) = getClusters2(cluster.points, tasksPerDay, maximumNumberOfTask, 0.3f)
-                missedPoints.addAll(mp)
-                finalSmallClusters.addAll(subClusters)
-            } else if (cluster.points.size() < minimumSize) {
-                missedPoints.addAll(cluster.points)
-            } else {
-                finalSmallClusters << cluster
-            }
-        }
-
-        if (processMissedPoint && missedPoints) {
-            def (smallSubCluster, List<LocatableTask> mp) = getClusters2(missedPoints, tasksPerDay, maximumNumberOfTask, 0.3f)
-            finalSmallClusters.addAll(smallSubCluster)
-            if (mp) {
-                //add remaining tasks to closest clusters
-                mp.each { t ->
-                    def closestCluster = finalSmallClusters.min { CentroidCluster a ->
-
-                        def distance = distanceBetweenPoints([t.lat, t.lng] as double[], a.center.point)
-                        log.trace("t[${t.task.description}] ->[${a.points[0].task.description}] = $distance")
-                        return distance
-                    }
-                    log.trace("t[${t.task.description}] is clossest to : [${closestCluster.points[0].task.description}]")
-                    closestCluster.addPoint(t)
-                }
-            }
-
-            //go through each on for the clusters generate one more time and make sure none passes the maximum threshhold
-            def reClusteredTasks = []
-            def newSmallClusters = []
-            finalSmallClusters.each { sc ->
-                if (sc.points.size() > maximumNumberOfTask) {
-                    def (smallerSubClusters, otherMissedPoints) = getClusters2(sc.points, tasksPerDay, maximumNumberOfTask, 0.3f, true)
-                    newSmallClusters.addAll(smallerSubClusters)
-                    reClusteredTasks << sc
-                }
-            }
-            finalSmallClusters.removeAll(reClusteredTasks)
-            finalSmallClusters.addAll(newSmallClusters)
-
-        }
-
-        return [finalSmallClusters, missedPoints]
-    }
-
-    static int calculateBestNumberOfCluster(int taskSize, int absoluteTaskPerDay) {
-        LogFactory.getLog(this).info("Task Size: $taskSize AbosoluteTaskPerDay $absoluteTaskPerDay")
-        return ChaiUtils.roundUpward(taskSize, absoluteTaskPerDay) / absoluteTaskPerDay
-
-    }
-
-
-    private List<LocatableTask> getLocatableTasks(Territory territory, Class type) {
-        def tasks
-        if (type == DetailerTask)
-            tasks = detailerTaskRepository.findAllInTerritory(territory.id)
-        else
-            tasks = orderRepository.findAllInTerritory(territory.id)
-
-
-        List<LocatableTask> locatableTasks = []
-
-        tasks.each { t ->
-            if (t.isLocatable()) locatableTasks << new LocatableTask(task: t)
-        }
-        return locatableTasks
-    }
-
-
-    static int calculateClustersNeeded(int taskSize, int tasksPerDay, int numberOfUser) {
-        taskSize / (tasksPerDay * numberOfUser)
+    static List getClusters2(List<LocatableTask> locatableTasks, int tasksPerDay) {
+        new SimpleClusterer(tasksPerDay: tasksPerDay, locatableTasks: locatableTasks).cluster()
     }
 
 }

@@ -1,7 +1,6 @@
 package com.omnitech.chai.migrations
 
 import com.omnitech.chai.crm.MigrationService
-import com.omnitech.chai.crm.TxHelperService
 import com.omnitech.chai.model.CustomerSegment
 import com.omnitech.chai.model.RequestMap
 import com.omnitech.chai.repositories.RequestMapRepository
@@ -16,7 +15,7 @@ import static com.omnitech.chai.util.ModelFunctions.getOrCreate
 /**
  * Created by kay on 3/12/2015.
  */
-class DbMigrations {
+class DbMigrations2 implements IMigration {
 
     @Autowired
     Neo4jTemplate neo
@@ -24,14 +23,12 @@ class DbMigrations {
     MigrationService migrationService
     @Autowired
     RequestMapRepository requestMapRepository
-    @Autowired
-    TxHelperService txHelperService
 
-    DbMigrations() {
+    DbMigrations2() {
         Holders.applicationContext.autowireCapableBeanFactory.autowireBean(this);
     }
 
-    final def migrations() {
+    final List<ChangeSet> migrations() {
         MigrationDSL.make {
 
             changeSet(id: 'supervisors-delete-tasks', desc: 'Allow Supervisors to Delete Tasks') {
@@ -50,7 +47,7 @@ class DbMigrations {
                 }
             }
 
-            changeSet(id: 'add-default-segment'){
+            changeSet(id: 'add-default-segment') {
                 test "match (c:CustomerSegment) where c.name = 'Default' with count(c) as segments return segments = 0 as answer"
                 update {
                     neo.save(new CustomerSegment(name: 'Default', callFrequency: 1, segmentationScript: 'true'))
@@ -61,7 +58,7 @@ class DbMigrations {
                 update 'MATCH (n:CustomerContact) WHERE has(n.`surname`) set n.names = n.surname remove n.surname'
             }
 
-            changeSet(id:'set-detailing-type-on-all-det-territories'){
+            changeSet(id: 'set-detailing-type-on-all-det-territories') {
                 update("match (t:Territory) where t.name =~ 'DET_.*' set t.type = 'detailing'")
             }
 

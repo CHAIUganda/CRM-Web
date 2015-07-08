@@ -2,6 +2,7 @@ package com.omnitech.chai.util
 
 import com.omnitech.chai.model.Customer
 import com.omnitech.chai.model.Task
+import com.omnitech.chai.repositories.dto.TaskDTO
 
 /**
  * Created by kay on 12/28/2014.
@@ -9,6 +10,21 @@ import com.omnitech.chai.model.Task
 class ControllerUtils {
 
 
+    static Map taskToJsonMap(TaskDTO task) {
+        def map = task.properties
+        map.description = "$task.description - (${ChaiUtils.fromNow(task.dueDate)})"
+        if (task.dueDate) {
+            //used in the js to get the icon color
+            map.dueDays = ChaiUtils.dayDiffFomNow(task.dueDate)
+            map.dueDateText = ChaiUtils.formatDate(task.dueDate)
+        }
+        map.assignedUser = task.assignedUser?.toString();
+        map.type = 'task'
+
+        return map
+    }
+
+    @Deprecated
     static Map taskToJsonMap(Task task) {
         def map = ReflectFunctions.extractProperties(task)
         if (!(map.lat && map.lng)) {
@@ -34,6 +50,28 @@ class ControllerUtils {
         map.type = 'task'
 
         return map
+    }
+
+    static TaskDTO taskToTaskDTO(Task task) {
+
+        TaskDTO dto = ModelFunctions.bind(new TaskDTO(),task.properties,true)
+        dto.subCountyId = task.customer?.subCounty?.id
+        dto.customer = task.customer.name
+
+        if (!(dto.lat && dto.lng)) {
+            dto.lat = task.customer.lat
+            dto.lng = task.customer.lng
+        }
+        dto.description = "$task.description - (${ChaiUtils.fromNow(task.dueDate)})"
+
+        if (task.customer?.segment)
+            dto.segment = task.customer.segment.name
+
+        if (task.customer) {
+            dto.customer = task.customer.outletName
+            dto.customerDescription = task.customer.descriptionOfOutletLocation
+        }
+        return dto
     }
 
     static Map customerToJsonMap(Customer customer) {

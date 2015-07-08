@@ -121,6 +121,14 @@ class Task extends AbstractEntity {
         }?.findResults { it } as Set
     }
 
+
+    //quick fix to optimise loading of territoritories
+    Set<User> loadTerritory(){
+        bean(TxHelperService).doInTransaction {
+            neo.fetch(this.customer?.subCounty?.territory)
+        }
+    }
+
     Set<User> loadTerritoryUsers() {
         bean(TxHelperService).doInTransaction {
             neo.fetch(this.customer?.subCounty?.territory)

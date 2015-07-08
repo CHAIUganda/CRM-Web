@@ -134,7 +134,7 @@ class TaskController extends BaseRestController {
         //todo fixme
         json.clientRefId = json.uuid
 
-        println(request.JSON.toString())
+        log.debug(request.JSON.toString())
         def task = ModelFunctions.createObj(DetailerTask, json)
 
         if (task.isCancelled()) {

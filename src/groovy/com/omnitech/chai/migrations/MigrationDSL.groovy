@@ -54,7 +54,7 @@ class MigrationDSL {
 
 }
 
-@ToString(includes = ["id", "description"],includePackage = false,ignoreNulls = true)
+@ToString(includes = ["id", "description"], includePackage = false, ignoreNulls = true)
 class ChangeSet {
 
     Closure testClosure
@@ -64,4 +64,8 @@ class ChangeSet {
     String updateCypher
     String id
     String description
+}
+
+interface IMigration {
+    List<ChangeSet> migrations()
 }

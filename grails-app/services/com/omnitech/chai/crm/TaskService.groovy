@@ -15,6 +15,7 @@ import org.springframework.util.Assert
 
 import static com.omnitech.chai.model.Relations.CUST_TASK
 import static com.omnitech.chai.util.ChaiUtils.getNextWorkDay
+import static com.omnitech.chai.util.ChaiUtils.time
 import static java.util.Collections.EMPTY_MAP
 import static java.util.Collections.max
 import static org.neo4j.cypherdsl.CypherQuery.*
@@ -33,97 +34,53 @@ class TaskService {
     def userService
     def clusterService
 
-    /* Tasks */
-
-    def <T extends Task> Page<T> listTasks(Class<T> taskType, Map params) {
-        ModelFunctions.listAll(neo, taskType, params, Task)
-    }
-
-    def <T extends Task> Page<T> listTasksByStatus(String status, Map params, Class<T> taskType) {
-
-        def resultQuery = TaskQuery.getTaskQuery(status, taskType).returns(identifier('task'))
-        PageUtils.addSorting(resultQuery, params, Task)
-
-        def countyQuery = TaskQuery.getTaskQuery(status, taskType).returns(count(identifier('task')))
-        log.trace("listTasksByStatus: countQuery: $countyQuery")
-        log.trace("listTasksByStatus: dataQuery: $resultQuery")
-
-        taskRepository.query(resultQuery, countyQuery, EMPTY_MAP, PageUtils.create(params))
-    }
-
-    def <T extends Task> Page<T> loadPageData(Integer max, Map params, Class<T> taskType, String filter) {
-        params.max = max ?: 50
-        if (!params.sort) {
-            params.sort = 'dueDate'
-        }
-
-        Page<T> page
-        def user = params.user ? userRepository.findByUsername(params.user) : null
-        if (filter) {
-            page = searchTasks(filter, params, taskType)
-        } else if (user) {
-            def status = params.status ?: Task.STATUS_NEW
-            params.status = status
-            page = findAllTasksForUser(user.id, status, params, taskType, null)
-        } else {
-            page = listTasksByStatus(params.status as String, params, taskType)
-        }
-
-        page.content.each { neo.fetch(it.loadTerritoryUsers()) }
-        return page as Page<T>
-    }
-
-    def <T extends Task> Page<T> loadSuperVisorUserData(Integer max, Map params, Class<T> taskType, Long supervisorUserId, String filter) {
-        params.max = max ?: 50
-        if (!params.sortt) {
-            params.sort = 'dueDate'
-        }
-
-        def user = params.user ? userRepository.findByUsername(params.user) : null
-
-        if (user && !isAllowedToViewUserTasks(user)) {
-            throw new AccessDeniedException('You Cannot View This Users Tasks')
-        }
-
-        String status = params.status
-
-        Page<T> page
-        if (user) {
-            page = findAllTasksForUser(user.id, status, params, taskType, filter)
-        } else {
-            page = findAllTasksForUser(supervisorUserId, status, params, taskType, filter)
-        }
-
-        page.content.each { neo.fetch(it?.loadTerritoryUsers()) }
-
-        return page as Page<T>
-    }
-
     /**
      * Used by task controllers to load page data
-     * @param user
+     * @param loggedInUser
      * @param taskType
      * @param params
      * @param max
      * @return
      */
-    def List loadPageDataForUser(User user, Class taskType, Map params, Integer max, String filter) {
+    def List loadPageDataForUser(User loggedInUser, Class taskType, Map params, Integer max, String filter) {
 
         def roleNeeded = taskType == DetailerTask || MalariaDetails ? Role.DETAILER_ROLE_NAME : Role.SALES_ROLE_NAME
         Page page
-        def users
-        if (user.hasRole(Role.ADMIN_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME)) {
-            page = loadPageData(max, params, taskType, filter)
-            users = userService.listUsersByRole(roleNeeded)
-        } else {
-            page = loadSuperVisorUserData(max, params, taskType, user.id, filter)
-            users = userService.listUsersSupervisedBy(user.id, roleNeeded)
+        Iterable<User> users
+        User contextUser = null
+        if (params.user) {
+            contextUser = params.user ? userRepository.findByUsername(params.user) : null
+            time("Cheking if User [${loggedInUser}] can view [${contextUser}] Has Access Rights") {
+                if (!isAllowedToViewUserTasks(contextUser))
+                    throw new AccessDeniedException("You Are Not Allowed To View This Data")
+            }
+        }
+
+        if (!contextUser && !loggedInUser.hasRole(Role.ADMIN_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME)) {
+            contextUser = loggedInUser
+        }
+
+        time("Preparing to Load Page Data") {
+            time("Loading Task Data") {
+                if (contextUser) {
+                    page = taskRepository.findAllTasksForUser(contextUser.id, taskType, params)
+                } else {
+                    page = taskRepository.findAllTasks(taskType, params)
+                }
+            }
+
+            time("Loading Territory User") {
+                if (loggedInUser.hasRole(Role.ADMIN_ROLE_NAME, Role.SUPER_ADMIN_ROLE_NAME)) {
+                    users = userService.listUsersByRole(roleNeeded)
+                } else {
+                    users = userService.listUsersSupervisedBy(loggedInUser.id, roleNeeded)
+                }
+            }
         }
         users = users.collect().sort { it.username }
         return [page, users]
     }
 
-    //todo optimise this with query
     boolean isAllowedToViewUserTasks(User otherUser) {
         def currentUser = neoSecurityService.currentUser
 
@@ -132,18 +89,12 @@ class TaskService {
         }
 
         if (currentUser.hasRole(Role.DETAILING_SUPERVISOR_ROLE_NAME)) {
-            return userService.listUsersSupervisedBy(currentUser.id, Role.DETAILER_ROLE_NAME).any {
-                otherUser.id == it.id
-            }
+            return taskRepository.canSupervisorViewUserTasks(currentUser.id, otherUser.id, Role.DETAILING_SUPERVISOR_ROLE_NAME)
         }
 
         if (currentUser.hasRole(Role.SALES_SUPERVISOR_ROLE_NAME)) {
-            return userService.listUsersSupervisedBy(currentUser.id, Role.SALES_ROLE_NAME).any {
-                otherUser.id == it.id
-            }
+            return taskRepository.canSupervisorViewUserTasks(currentUser.id, otherUser.id, Role.SALES_SUPERVISOR_ROLE_NAME)
         }
-
-
         return false;
 
     }
@@ -171,12 +122,6 @@ class TaskService {
         return deleted
     }
 
-    def <T extends Task> Page<T> searchTasks(String search, Map params, Class<T> taskType) {
-        def (ReturnNext q, ReturnNext cq) = TaskQuery.filterAllTasksQuery(search, taskType)
-        log.trace("Query:Search Tasks: $q")
-        PageUtils.addSorting(q, params, taskType)
-        taskRepository.query(q, cq, EMPTY_MAP, PageUtils.create(params))
-    }
 
     /* Detailer Tasks*/
 
@@ -358,28 +303,31 @@ class TaskService {
         def messages = []
         def allTasks = []
 
-        territories.each { t ->
-            def tasks = []
+        time("Genrating possible tasks for $territories") {
+            territories.each { t ->
+                def tasks = []
 
-            segments.each { s ->
-                log.info("Generating Tasks for: Territory[$t] and Segment[$s]")
-                tasks.addAll generateTasks(t, s, startDate, workDays, taskType)
-            }
-
-            if (tasks) {
-                log.info "***** Clustering: Territory[$t] Tasks[${tasks.size()}]"
-//                messages << "$t(${tasks.size()})"
-                if (clusterTasks) {
-                    def clusters = clusterService.assignDueDates(tasks, startDate, workDays, tasksPerDay)
-                    tasks = clusters.collect { it.points.collect { it.task } }.flatten()
+                segments.each { s ->
+                    time("Generating Tasks for: Territory[$t] and Segment[$s]") {
+                        tasks.addAll generateTasks(t, s, startDate, workDays, taskType)
+                    }
                 }
-                messages << "$t(${tasks.size()})"
-                taskRepository.save(tasks)
-                allTasks.addAll(tasks)
-            } else {
-                log.warn "***WARNING:***No Tasks Generated for Territory[$t]"
+
+                if (tasks) {
+                    log.info "***** Clustering: Territory[$t] Tasks[${tasks.size()}]"
+//                messages << "$t(${tasks.size()})"
+                    if (clusterTasks) {
+                        def clusters = clusterService.assignDueDates(tasks, startDate, workDays, tasksPerDay)
+                        tasks = clusters.collect { it.points.collect { it.task } }.flatten()
+                    }
+                    messages << "$t(${tasks.size()})"
+                    allTasks.addAll(tasks)
+                } else {
+                    log.warn "***WARNING:***No Tasks Generated for Territory[$t]"
+                }
             }
         }
+        time("Saving Generated Tasks ${allTasks.size()}") { taskRepository.save(allTasks) }
 
         return [messages, allTasks]
 
