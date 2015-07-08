@@ -49,29 +49,26 @@
         }
     %>
 <body>
-<div class="container" style=" max-width: 1170px; padding: 0; background: #f6f6f6; box-shadow: 0px 0px 5px #888888;">
+<div class="container" style=" max-width: 1170px; padding: 0; background: fff; box-shadow: none;">
     <script>
         omnitechBase = '${request.contextPath}';
     </script>
-    <div id="header">
-        <div class="logo">
-            <a href="http://www.omnitech.co.ug"></a>
-        </div>
-        <div style="background: ${bannerBackground}">
+    <div class="container" id="header" style="margin-top: 10px; max-width: 1170px; padding: 0;">
+    	<div class="server-status" style="background: ${bannerBackground}">
            ${bannerText}
         </div>
-        <br clear="all">
-    <sec:ifLoggedIn>
-        %{--<g:render template="/_menu/navbar"/>--}%
-    </sec:ifLoggedIn>
-    <!-- Enable to overwrite Header by individual page -->
-    %{--<g:if test="${ pageProperty(name:'page.header') }">--}%
-    %{--<g:pageProperty name="page.header" />--}%
-    %{--</g:if>--}%
-    %{--<g:else>--}%
-    %{--<g:render template="/layouts/header"/>														--}%
-    %{--</g:else>--}%
-    </div>
+        <div class="clear"></div>
+        <div class="logo">
+            <a href="${createLink(uri: '/', absolute: true)}">
+            	<g:img uri="/images/Clinton-Health.png" absolute="true" />
+            </a>
+        </div>
+	    <!-- Main menu in one row (e.g., controller entry points -->
+	    <g:if test="${!layout_nomainmenu}">
+	        <g:render template="/_menu/menubar"/>
+	    </g:if>
+	</div>
+
     <div ng-app="omnitechApp">
         <g:render template="/layouts/content"/>
     </div>
@@ -94,6 +91,7 @@
     </g:else>
 
     <!-- Included Javascript files and other resources -->
+    <g:javascript src="jquery.sticky.js"/>
     <g:javascript src="utils.js"/>
     <r:layoutResources />
 </div>

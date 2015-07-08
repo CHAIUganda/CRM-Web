@@ -7,6 +7,7 @@
     <g:set var="entityName" value="${message(code: 'product.label', default: 'Product')}"/>
     <title><g:message code="default.index.label" args="[entityName]"/></title>
     <r:require module="jqueryTreeTable"/>
+    <r:require module="dataTable"/>
 </head>
 
 <body>

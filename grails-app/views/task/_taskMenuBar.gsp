@@ -130,7 +130,7 @@
                 <div class="col-lg-12">
                     <form action="search">
                         <input class="form-control" name="term" value="${(params.term ?: params.id)}"
-                               placeholder="Please type search item and press enter" style="width: 300px;"/>
+                               placeholder="Search by Outlet Name" style="width: 300px;"/>
                     </form>
                 </div>
             </li>

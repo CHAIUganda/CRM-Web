@@ -4,6 +4,10 @@
 /*
 my own custom styles to make the field set look better
 */
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
+body{
+	font-family: 'Open Sans', sans-serif !important;
+}
 fieldset.scheduler-border {
     border: 1px groove #09f !important;
     padding: 0 1.4em 1.4em 1.4em !important;
@@ -128,19 +132,17 @@ a {
 .logo {
     float: left;
     height: 88px;
-    margin: 12px 0 20px 20px;
+    margin: 10px 10px 10px 0;
     width: 322px;
 }
 
-.logo a {
-    background: url("../images/Clinton-Health.png") no-repeat scroll left bottom rgba(0, 0, 0, 0);
-    display: block;
+.logo a img {
     height: 88px;
-    width: 322px;
+    width: 180px;
 }
 
 a:link, a:active, a:visited {
-    color: #0000FF;
+    color: #243C63;
     text-decoration: none;
 }
 
@@ -222,7 +224,8 @@ a:link, a:active, a:visited {
 
 /*Override the text links on NavBars*/
 .navbar-inverse .navbar-nav > li > a {
-    color: #f5f5f5 !important;
+    color: #243b65 !important;
+    text-transform:uppercase;
 }
 
 
@@ -242,7 +245,7 @@ a:link, a:active, a:visited {
 .labels {
     color: white;
     background-color: red;
-    font-family: "Lucida Grande", "Arial", sans-serif;
+    font-family: 'Open Sans', sans-serif;;
     font-size: 10px;
     text-align: center;
     /*width: 10px;*/
@@ -254,3 +257,16 @@ a:link, a:active, a:visited {
     /*Just about the one of bootstrap model*/
     z-index: 2000 !important;;
 }
+.footer .pull-right{
+	display:none;
+}
+.footer p{margin-bottom:0;}
+.clear{clear:both}
+.server-status{text-align: center}
+#Content .nav li i{margin-right:5px;display:inline-block;}
+.sticky-wrapper.is-sticky{width:1170px !important;}
+.sticky-wrapper.is-sticky #navbarCollapse{width:1170px !important;background:#FFF;padding:10px;z-index:999;box-shadow:1px 2px 2px #CCC;}
+.glyphicon{margin-right:5px;}
+.navbar-right .glyphicon-user:before{margin-right:5px;display:inline-block;}
+table.dataTable{border-collapse:collapse !important;}
+.home-det-search{padding:10px;background:#dae3f2;border:1px solid #4e77bd;}

@@ -7,6 +7,7 @@
     <meta name="layout" content="kickstart"/>
     <g:set var="entityName" value="${message(code: 'district.label', default: 'District')}"/>
     <title><g:message code="default.list.label" args="[entityName]"/></title>
+    <r:require module="dataTable"/>
 </head>
 
 <body>

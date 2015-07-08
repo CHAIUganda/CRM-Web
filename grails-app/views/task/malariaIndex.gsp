@@ -7,6 +7,7 @@
     <g:set var="entityName" value="${message(code: 'task.label', default: 'Malaria Details')}"/>
     <g:set var="layout_nosecondarymenu" value="${true}" scope="request"/>
     <title><g:message code="default.index.label" args="[entityName]"/></title>
+    <r:require module="dataTable"/>
 </head>
 
 <body>

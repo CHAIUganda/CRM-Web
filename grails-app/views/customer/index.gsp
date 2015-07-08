@@ -7,6 +7,7 @@
     <g:set var="entityName" value="${message(code: 'customer.label', default: 'Customer')}"/>
     <title><g:message code="default.index.label" args="[entityName]"/></title>
     <g:set var="layout_nosecondarymenu" value="${true}" scope="request"/>
+    <r:require module="dataTable"/>
 </head>
 
 <body>
@@ -50,6 +51,10 @@
             <g:sortableColumn property="isActive"
                               title="${message(code: 'customer.lastVisit.label', default: 'Active')}"
                               params="${params}"/>
+            
+            <td>
+                Action
+            </td>
         </tr>
         </thead>
         <tbody>
@@ -75,6 +80,10 @@
                 <td><g:formatDate date="${customerInstance.lastVisit}" format="dd-MMM-yyyy"/></td>
 
                 <td>${customerInstance.isActive == null ? true : customerInstance.isActive}</td>
+                
+                <td>
+                    <g:link action="edit" id="${customerInstance.id}"><i class="glyphicon glyphicon-pencil"></i></g:link>
+                </td>
 
             </tr>
         </g:each>
