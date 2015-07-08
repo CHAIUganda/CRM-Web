@@ -23,11 +23,11 @@ class BootStrap {
         createUuidConstraints()
 
         //Migrations
-        /*
+        
         [new DbMigrations1(), new DbMigrations2()].each { IMigration m ->
             migrationService.runMigration(m.migrations())
         }
-        */
+        
     }
 
 

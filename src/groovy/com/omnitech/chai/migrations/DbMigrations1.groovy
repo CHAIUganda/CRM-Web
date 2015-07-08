@@ -65,7 +65,10 @@ class DbMigrations1 implements IMigration{
 
     private void insertBootStrapData() {
         //pass salt start u = node(1) set u.password = "$2a$10$.J1svR3w6dQTJqsspc2.0.GJuNdZcB5Xuz892wgMCAHNPT0KpQnmu"
-        /*
+        def userCount = neo.count(User.class)
+        if (userCount > 0) {
+            return
+        }
         println("Inserting bootstrapped data")
         
         def territory = neo.save new Territory(name: 'Root Territory')
@@ -93,7 +96,7 @@ class DbMigrations1 implements IMigration{
                 territory: territory,
                 roles: [roleSuper, roleSaler]
         )
-        */
+        
         neo.save new RequestMap(url: '/**', configAttribute: 'ROLE_SUPER_ADMIN')
         for (String url in [
                 '/login/*', '/logout/*', '/**/js/**', '/**/css/**',
