@@ -42,11 +42,8 @@ class DbMigrations1 implements IMigration{
 
     final List<ChangeSet> migrations() {
         MigrationDSL.make {
-
             changeSet(id: 'insert-bootstrap-data') {
                 test {
-                    def userCount = neo.count(User.class)
-                    println("User count: $userCount")
                     neo.count(User.class) != 0
                  }
                 update { insertBootStrapData() }
@@ -54,8 +51,6 @@ class DbMigrations1 implements IMigration{
 
             changeSet(id: 'insert-essential-roles') {
                 test {
-                    def userCount = neo.count(User.class)
-                    println("User count: $userCount")
                     neo.count(User.class) != 0
                 }
                 update { insertEssentialRoles() }

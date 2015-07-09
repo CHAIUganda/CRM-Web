@@ -163,6 +163,7 @@ class ModelFunctions {
         log.trace("ModelFx.query Count: $countQuery")
         def size = neo.query(countQuery.toString(), EMPTY_MAP).to(Long).single()
 
+        println(query.toString())
         return new PageImpl<T>(data, PageUtils.create(params), size)
     }
 

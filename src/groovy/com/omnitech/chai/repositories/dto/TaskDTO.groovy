@@ -48,10 +48,12 @@ class TaskDTO {
 
     @ResultColumn('customerId')
     Long customerId
+
     @ResultColumn('customerDescription')
     String customerDescription
 
-
+    @ResultColumn('completedBy')
+    String completedBy
 
     @ResultColumn('subCountyId')
     Long subCountyId

@@ -71,7 +71,7 @@
 
                     <td>${taskInstance.getStatusMessage()}</td>
 
-                    <td>${taskInstance.customer?.subCounty?.district}</td>
+                    <td>${taskInstance.district}</td>
 
                     <td>${ChaiUtils.truncateString(taskInstance.customer, 10)}</td>
 

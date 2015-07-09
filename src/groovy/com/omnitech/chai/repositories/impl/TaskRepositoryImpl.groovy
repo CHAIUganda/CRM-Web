@@ -260,18 +260,18 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
 
         def label = type.simpleName
         def taskName = nodeName(type)
-        def roleNeeded = type == DetailerTask ? Role.DETAILER_ROLE_NAME : Role.SALES_ROLE_NAME
-        def territoryType = type == DetailerTask ? Territory.TYPE_DETAILING : Territory.TYPE_SALES
+        def roleNeeded = type == DetailerTask || MalariaDetails ? Role.DETAILER_ROLE_NAME : Role.SALES_ROLE_NAME
+        def territoryType = type == DetailerTask || MalariaDetails ? Territory.TYPE_DETAILING : Territory.TYPE_SALES
 
         def _query = {
-            def q = match(node(taskName).label(label).values(value('status', params.status ?: 'new'))
+            def q = match(node(taskName).label(label)
                     .in(CUST_TASK).node(cName)
                     .out(CUST_IN_SC).node(sName)
                     .in(HAS_SUB_COUNTY).node(dName))
             mayBeAddSearchCriteria(taskName, q, params)
             q.match(node(sName).out(SC_IN_TERRITORY).node(terName).values(value('type', territoryType))).optional()
-            q.match(node(cName).out(IN_SEGMENT).node(csName)) .optional()
-
+            q.match(node(cName).out(IN_SEGMENT).node(csName)).optional()
+            q.match(node(cName).in(COMPLETED_TASK).node(uName)).optional()
             return q
         }
 
@@ -289,8 +289,8 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
 
         def label = type.simpleName
         def taskName = nodeName(type)
-        def roleNeeded = type == DetailerTask ? Role.DETAILER_ROLE_NAME : Role.SALES_ROLE_NAME
-        def territoryType = type == DetailerTask ? Territory.TYPE_DETAILING : Territory.TYPE_SALES
+        def roleNeeded = type == DetailerTask || MalariaDetails ? Role.DETAILER_ROLE_NAME : Role.SALES_ROLE_NAME
+        def territoryType = type == DetailerTask|| MalariaDetails ? Territory.TYPE_DETAILING : Territory.TYPE_SALES
 
         def _query = {
 
@@ -302,8 +302,7 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
 
             mayBeAddSearchCriteria(taskName, q, params)
             q.match(node(sName).in(HAS_SUB_COUNTY).node(dName))
-            q.match(node(cName).out(IN_SEGMENT).node(csName)) .optional()
-
+            q.match(node(cName).out(COMPLETED_TASK).node(uName)) .optional()
 
             return q
         }
@@ -344,7 +343,9 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
          az(id(cName), 'customerId'),
          az(identifier(csName).property('name'), 'segment'),
          az(identifier(dName).property('name'), 'district'),
-         az(id(sName), 'subCountyId')]
+         az(id(sName), 'subCountyId'),
+         az(identifier(uName).property('username'), 'completedBy')
+         ]
     }
 
     List<String> getTerritoryUsers(Long subCountyId, String roleNeeded) {
