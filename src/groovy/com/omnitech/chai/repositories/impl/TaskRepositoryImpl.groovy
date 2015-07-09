@@ -271,7 +271,7 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
             mayBeAddSearchCriteria(taskName, q, params)
             q.match(node(sName).out(SC_IN_TERRITORY).node(terName).values(value('type', territoryType))).optional()
             q.match(node(cName).out(IN_SEGMENT).node(csName)).optional()
-            q.match(node(cName).in(COMPLETED_TASK).node(uName)).optional()
+            q.match(node(taskName).in(COMPLETED_TASK).node(uName)).optional()
             return q
         }
 
@@ -303,7 +303,8 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
             mayBeAddSearchCriteria(taskName, q, params)
             q.match(node(sName).in(HAS_SUB_COUNTY).node(dName))
             q.match(node(cName).out(COMPLETED_TASK).node(uName)) .optional()
-
+            q.match(node(taskName).in(COMPLETED_TASK).node(uName)).optional()
+            
             return q
         }
 
