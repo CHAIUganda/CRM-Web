@@ -52,7 +52,6 @@ class SegmentationService {
                 log.info("Segmented [$count] Customers.. And Commiting Transaction")
             }
         }
-
     }
 
     def gradeCustomer(Script segmentScript, CustomerWithLastTask custWithTask, List<CustomerSegment> cSs) {
