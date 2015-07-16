@@ -302,7 +302,7 @@ interface DbChangeSetRepository extends GraphRepository<DbChangeSet> {
 
 interface DetailerStockRepository extends GraphRepository<DetailerStock> {
     //warning please change the limit in future to something you see fit. 8 was set to improve performance
-    @Query("match (d:DetailerStock) with distinct d.category as category , d.brand as brand limit 8 return category,brand order by category,brand")
+    @Query("match (d:DetailerStock) with distinct d.category as category , d.brand as brand return category,brand order by category,brand")
     Iterable<CategoryBrandResult> findAllCategoriesAndBrands()
 }
 
