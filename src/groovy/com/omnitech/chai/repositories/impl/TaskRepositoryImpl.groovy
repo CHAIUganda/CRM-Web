@@ -45,8 +45,9 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
                 .in(HAS_SUB_COUNTY).node('d'))
                 .match(node('c').out(CUST_IN_VILLAGE).node('v')).optional()
                 .match(node(nodeName).in(COMPLETED_TASK, CANCELED_TASK).node('u')).optional()
+                .match(node('c').out(HAS_CONTACT).node('contact')).optional()
         def fields = essentialExportTaskClauses()
-        def labels = ['DISTRICT', 'SUBCOUNTY', 'VILLAGE', 'OUTLET NAME', 'OUTLET TYPE', 'CANCELED_OR_COMPLETED BY']
+        def labels = ['DISTRICT', 'SUBCOUNTY', 'VILLAGE', 'OUTLET NAME', 'OUTLET TYPE', 'CANCELED_OR_COMPLETED BY', 'Customer Contact', 'Customer Name']
         def className = type.simpleName
         def products = bean(ProductRepository).findAll()
         "customizeExportQuery$className"(query, fields, labels, type, products)
@@ -60,8 +61,9 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
                 .match(node('sc').in(HAS_SUB_COUNTY).node('d')).optional()
                 .match(node('c').out(CUST_IN_VILLAGE).node('v')).optional()
                 .match(node(nodeName).in(COMPLETED_TASK, CANCELED_TASK).node('u')).optional()
+                .match(node('c').out(HAS_CONTACT).node('contact')).optional()
         def fields = essentialExportTaskClauses()
-        def labels = ['DISTRICT', 'SUBCOUNTY', 'VILLAGE', 'OUTLET NAME', 'OUTLET TYPE', 'CANCELED_OR_COMPLETED BY']
+        def labels = ['DISTRICT', 'SUBCOUNTY', 'VILLAGE', 'OUTLET NAME', 'OUTLET TYPE', 'CANCELED_OR_COMPLETED BY', 'Customer Contact', 'Customer Name']
         def className = type.simpleName
         def products = bean(ProductRepository).findAllByUser(userId)
         "customizeExportQuery$className"(query, fields, labels, type, products)
@@ -73,7 +75,10 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
          az(identifier('v').property('name'), 'VILLAGE'),
          az(identifier('c').property('outletName'), 'OUTLET NAME'),
          az(identifier('c').property('outletType'), 'OUTLET TYPE'),
-         az(identifier('u').property('username'), 'CANCELED_OR_COMPLETED BY')]
+         az(identifier('u').property('username'), 'CANCELED_OR_COMPLETED BY'),
+         az(identifier('contact').property('contact'), 'Customer Contact'),
+         az(identifier('contact').property('names'), 'Customer Name')
+         ]
     }
 
     private def customizeExportQueryOrder(Match query,
@@ -163,12 +168,8 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
 
     }
 
-    private def customizeExportQueryDetailerTask(Match query,
-                                                 List<Expression> queryReturnFields,
-                                                 List<String> queryReturnLabels,
-                                                 Class<DetailerTask> task,
-                                                 Iterable<Product> products) {
-
+    private def customizeExportQueryDetailerTask(Match query, List<Expression> queryReturnFields, List<String> queryReturnLabels,
+            Class<DetailerTask> task, Iterable<Product> products) {
 
         def stockNode = nodeName(DetailerStock)
         query.match(node(nodeName(DetailerTask)).out(HAS_DETAILER_STOCK).node(stockNode)).optional()
@@ -179,12 +180,12 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
         queryReturnLabels.addAll(fieldLabels)
 
         def queryString = query.returns(queryReturnFields).toString()
-        def categoriesAndBrands
+        
         //add stock quantity
         //def categoriesAndBrands = time("Loading Categories and Brands For Export"){ bean(DetailerStockRepository).findAllCategoriesAndBrands()} .collect()
+        def categoriesAndBrands = bean(DetailerStockRepository).findAllCategoriesAndBrands().collect()
 
         ['stockLevel', 'buyingPrice', 'sellingPrice'].each { String property ->
-            categoriesAndBrands = bean(DetailerStockRepository).findAllCategoriesAndBrands()
             def fieldLabel = getNaturalName(property)
             queryString = addRepeatElementStatements(queryString, categoriesAndBrands) { CategoryBrandResult d ->
                 def aliasName = "$d.category-$d.brand-($fieldLabel)"
@@ -298,7 +299,7 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
                     .match(node('myUser').out(USER_TERRITORY, SUPERVISES_TERRITORY).node(terName).values(value('type', territoryType))
                     .in(SC_IN_TERRITORY).node(sName)
                     .in(CUST_IN_SC).node(cName)
-                    .out(CUST_TASK).node(taskName).label(label).values(value('status', params.status ?: 'new')))
+                    .out(CUST_TASK).node(taskName).label(label))
 
             mayBeAddSearchCriteria(taskName, q, params)
             q.match(node(sName).in(HAS_SUB_COUNTY).node(dName))
