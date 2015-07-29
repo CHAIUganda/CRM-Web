@@ -287,14 +287,12 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
     }
 
     def Page<TaskDTO> findAllTasksForUser(Long userId, Class<TaskDTO> type, Map params) {
-
         def label = type.simpleName
         def taskName = nodeName(type)
         def roleNeeded = type == DetailerTask || MalariaDetails ? Role.DETAILER_ROLE_NAME : Role.SALES_ROLE_NAME
         def territoryType = type == DetailerTask|| MalariaDetails ? Territory.TYPE_DETAILING : Territory.TYPE_SALES
 
         def _query = {
-
             def q = start(nodesById('myUser', userId))
                     .match(node('myUser').out(USER_TERRITORY, SUPERVISES_TERRITORY).node(terName).values(value('type', territoryType))
                     .in(SC_IN_TERRITORY).node(sName)

@@ -59,7 +59,6 @@ class TaskController extends BaseController {
             return taskToJsonMap(task)
         }
 
-
         if (params.user) {
             def userInContext = userService.findUserByName(params.user)
             //todo use a query for this section to improve performance

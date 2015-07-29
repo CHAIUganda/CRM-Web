@@ -75,6 +75,7 @@ class NeoSecurityService {
         if ('bcrypt' == SpringSecurityUtils.securityConfig.password.algorithm || 'pbkdf2' == SpringSecurityUtils.securityConfig.password.algorithm) {
             salt = null
         }
+
         passwordEncoder.encodePassword password, salt
     }
 

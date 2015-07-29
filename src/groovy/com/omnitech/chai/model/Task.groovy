@@ -29,7 +29,6 @@ class Task extends AbstractEntity {
     @GraphProperty(propertyType = Long.class)
     Date completionDate
 
-
     Boolean isAdhock
 
     @Fetch
@@ -47,6 +46,7 @@ class Task extends AbstractEntity {
     @Fetch
     @RelatedTo(type = Relations.CUST_TASK, direction = Direction.INCOMING)
     Customer customer
+    
     Float lat
     Float lng
     @Indexed(indexType = IndexType.POINT, indexName = 'TASK_LOCATION')

@@ -42,6 +42,105 @@ class TaskController extends BaseRestController {
 
         def tasks = taskService.findAllTasksForUser(user.id, Task.STATUS_NEW, params, taskType, null).content
         def taskMaps = tasks.collect {
+            print it
+            def map = ReflectFunctions.extractProperties(it)
+            map['customerId'] = it.customer.uuid
+            if (Order.isAssignableFrom(it.getClass())) {
+                map['lineItems'] = ((Order) it).lineItems.collect {
+                    ['productId': it.product.uuid,
+                     'quantity' : it.quantity,
+                     'unitPrice': it.unitPrice
+                    ]
+
+                }
+            }
+            return map
+        }
+        log.debug("Resp:${user} - ${taskMaps?.size()} Tasks...")
+        respond taskMaps
+    }
+
+    def listCompleteSales(Integer max) {
+        params.max = Math.min(max ?: 10, 2000)
+        def user = neoSecurityService.currentUser as User
+        
+        Class<Task> taskType
+        if (user.hasRole(SALES_ROLE_NAME))
+            taskType = SalesCall
+        else {
+            log.warn("user: [$user] has no sales role.... sending empty list")
+            respond([])
+            return
+        }
+
+        def tasks = taskService.findAllTasksForUser(user.id, Task.STATUS_COMPLETE, params, taskType, null).content
+        def taskMaps = tasks.collect {
+
+            def map = ReflectFunctions.extractProperties(it)
+            map['customerId'] = it.customer.uuid
+            if (Order.isAssignableFrom(it.getClass())) {
+                map['lineItems'] = ((Order) it).lineItems.collect {
+                    ['productId': it.product.uuid,
+                     'quantity' : it.quantity,
+                     'unitPrice': it.unitPrice
+                    ]
+
+                }
+            }
+            return map
+        }
+
+        respond taskMaps
+    }
+
+    def listCompleteMalaria(Integer max) {
+        params.max = Math.min(max ?: 10, 2000)
+        def user = neoSecurityService.currentUser as User
+        log.debug("Req:${user}  - TaskList: $params")
+        Class<Task> taskType
+        if (user.hasRole(DETAILER_ROLE_NAME))
+            taskType = MalariaDetails
+        else {
+            log.warn("user: [$user] is not sending empty list")
+            respond([])
+            return
+        }
+
+        def tasks = taskService.findAllTasksForUser(user.id, Task.STATUS_COMPLETE, params, taskType, null).content
+        def taskMaps = tasks.collect {
+            print it
+            def map = ReflectFunctions.extractProperties(it)
+            map['customerId'] = it.customer.uuid
+            if (Order.isAssignableFrom(it.getClass())) {
+                map['lineItems'] = ((Order) it).lineItems.collect {
+                    ['productId': it.product.uuid,
+                     'quantity' : it.quantity,
+                     'unitPrice': it.unitPrice
+                    ]
+                }
+            }
+            return map
+        }
+        log.debug("Resp:${user} - ${taskMaps?.size()} Tasks...")
+        respond taskMaps
+    }
+
+    def listCompleteDiarrhoea(Integer max) {
+        params.max = Math.min(max ?: 10, 2000)
+        def user = neoSecurityService.currentUser as User
+        log.debug("Req:${user}  - TaskList: $params")
+        Class<Task> taskType
+        if (user.hasRole(DETAILER_ROLE_NAME))
+            taskType = DetailerTask
+        else {
+            log.warn("user: [$user] is not detailer .... sending empty list")
+            respond([])
+            return
+        }
+
+        def tasks = taskService.findAllTasksForUser(user.id, Task.STATUS_COMPLETE, params, taskType, null).content
+        def taskMaps = tasks.collect {
+            print it
             def map = ReflectFunctions.extractProperties(it)
             map['customerId'] = it.customer.uuid
             if (Order.isAssignableFrom(it.getClass())) {

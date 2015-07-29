@@ -65,8 +65,7 @@ class TaskQuery {
                     .or(identifier('customer').string('outletName').regexp(search))
                     .or(identifier('customer').string('tradingCenter').regexp(search))
         }
-
-        /*
+        
         if (status) {
             print "Using status"
             def statusFilter = identifier(varName).property('status').eq(status)
@@ -78,12 +77,13 @@ class TaskQuery {
             query.where(statusFilter)
         } else if (search) {
             query.where(searchFilter())
-        }*/
+        }
         if (search) {
             query.where(searchFilter())
         }
         //add district path
         query.match(node('sc').in(HAS_SUB_COUNTY).node('di')).optional()
+        query.match(node('customer').in(IN_SEGMENT).node('segment')).optional()
         print query
         return query
     }

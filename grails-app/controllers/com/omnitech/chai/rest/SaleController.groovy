@@ -44,11 +44,9 @@ class SaleController extends BaseRestController {
             validateSale(sale)
             taskService.saveTask(sale)
         }
-
     }
 
     def saleOrder() {
-
         handleSafely {
             def json = request.JSON as Map
             log.debug("A SaleOrder: ${request.JSON}")
