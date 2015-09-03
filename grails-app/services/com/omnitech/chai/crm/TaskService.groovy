@@ -134,6 +134,7 @@ class TaskService {
 
         // ModelFunctions.query(taskRepository,query,countQuery,params,Task)
         // todo hard code pages coz the page query has already been taken care of in the query
+        print query
         taskRepository.query(query, countQuery, EMPTY_MAP, PageUtils.create([max: 2000]))
     }
 

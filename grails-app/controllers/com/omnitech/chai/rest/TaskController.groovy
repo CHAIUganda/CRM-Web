@@ -105,8 +105,10 @@ class TaskController extends BaseRestController {
             respond([])
             return
         }
-
-        def tasks = taskService.findAllTasksForUser(user.id, Task.STATUS_COMPLETE, params, taskType, null).content
+        def ts = taskService.findAllTasksForUser(user.id, Task.STATUS_COMPLETE, params, taskType, null)
+        print ts
+        def tasks = ts.content
+        
         def taskMaps = tasks.collect {
             print it
             def map = ReflectFunctions.extractProperties(it)
@@ -123,6 +125,7 @@ class TaskController extends BaseRestController {
         }
         log.debug("Resp:${user} - ${taskMaps?.size()} Tasks...")
         respond taskMaps
+
     }
 
     def listCompleteDiarrhoea(Integer max) {
