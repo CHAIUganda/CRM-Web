@@ -212,7 +212,7 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
         def categoriesAndBrands = bean(MalariaStockRepository).findAllCategoriesAndBrands().collect()
 
         // ['stockLevel', 'buyingPrice', 'sellingPrice']
-        /*
+        
        ['stockLevel', 'buyingPrice', 'sellingPrice'].each { String property ->
             def fieldLabel = getNaturalName(property)
             queryString = addRepeatElementStatements(queryString, categoriesAndBrands) { CategoryBrandResult d ->
@@ -221,7 +221,7 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
                 return "\nsum (case when ${stockNode}.category = '$d.category' and ${stockNode}.brand = '$d.brand' then ${stockNode}.$property else null end) as `$aliasName`"
             }
         }
-        */
+        
         export(queryString, queryReturnLabels, task)
     }
 
