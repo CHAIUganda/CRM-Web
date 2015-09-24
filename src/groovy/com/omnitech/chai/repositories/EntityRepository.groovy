@@ -304,11 +304,17 @@ interface DetailerStockRepository extends GraphRepository<DetailerStock> {
     //warning please change the limit in future to something you see fit. 8 was set to improve performance
     @Query("match (d:DetailerStock) with distinct d.category as category , d.brand as brand return category,brand order by category,brand")
     Iterable<CategoryBrandResult> findAllCategoriesAndBrands()
+
+    @Query("match (d:DetailerStock) return distinct d.category as category order by category")
+    Iterable<CategoryResult> findAllCategories()
 }
 
 interface MalariaStockRepository extends GraphRepository<DetailerMalariaStock> {
     @Query("match (d:DetailerMalariaStock) return distinct d.category as category , d.brand as brand order by category, brand")
     Iterable<CategoryBrandResult> findAllCategoriesAndBrands()
+
+    @Query("match (d:DetailerMalariaStock) return distinct d.category as category order by category")
+    Iterable<CategoryResult> findAllCategories()
 }
 
 @CompileStatic
@@ -318,5 +324,12 @@ class CategoryBrandResult {
     String category
     @ResultColumn('brand')
     String brand
+}
+
+@CompileStatic
+@QueryResult
+class CategoryResult {
+    @ResultColumn('category')
+    String category
 }
 
