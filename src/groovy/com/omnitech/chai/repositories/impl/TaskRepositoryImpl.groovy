@@ -185,7 +185,7 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
         //add stock quantity
         def categoriesAndBrands = bean(DetailerStockRepository).findAllCategories().collect()
         
-        ['stockLevel', 'buyingPrice', 'sellingPrice'].each { String property ->
+        ['stockLevel'].each { String property ->
             def fieldLabel = getNaturalName(property)
             queryString = addRepeatElementStatements(queryString, categoriesAndBrands) { CategoryResult d ->
                 def aliasName = "$d.category-($fieldLabel)"
@@ -193,6 +193,16 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
                 return "\nsum (case when ${stockNode}.category = '$d.category' then ${stockNode}.$property else null end) as `$aliasName`"
             }
         }
+
+        ['buyingPrice', 'sellingPrice'].each { String property ->
+            def fieldLabel = getNaturalName(property)
+            queryString = addRepeatElementStatements(queryString, categoriesAndBrands) { CategoryResult d ->
+                def aliasName = "$d.category-($fieldLabel)"
+                queryReturnLabels << aliasName
+                return "\navg (case when ${stockNode}.category = '$d.category' then ${stockNode}.$property else null end) as `$aliasName`"
+            }
+        }
+
         
         export(queryString, queryReturnLabels, task)
     }
@@ -214,7 +224,7 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
 
         // ['stockLevel', 'buyingPrice', 'sellingPrice']
         
-       ['stockLevel', 'buyingPrice', 'sellingPrice'].each { String property ->
+       ['stockLevel'].each { String property ->
             def fieldLabel = getNaturalName(property)
             queryString = addRepeatElementStatements(queryString, categoriesAndBrands) { CategoryResult d ->
                 def aliasName = "$d.category-($fieldLabel)"
@@ -223,6 +233,15 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
             }
         }
         
+        ['buyingPrice', 'sellingPrice'].each { String property ->
+            def fieldLabel = getNaturalName(property)
+            queryString = addRepeatElementStatements(queryString, categoriesAndBrands) { CategoryResult d ->
+                def aliasName = "$d.category-($fieldLabel)"
+                queryReturnLabels << aliasName
+                return "\navg (case when ${stockNode}.category = '$d.category' then ${stockNode}.$property else null end) as `$aliasName`"
+            }
+        }
+
         export(queryString, queryReturnLabels, task)
     }
 
