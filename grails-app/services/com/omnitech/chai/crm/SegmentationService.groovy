@@ -35,8 +35,6 @@ class SegmentationService {
 
         def segmentScript = compileScript(segmentSetting.value)
 
-
-
         def territories = txHelperService.doInTransaction {
             territoryRepository.findAllByType(Territory.TYPE_DETAILING).collect()
         }
@@ -55,7 +53,6 @@ class SegmentationService {
     }
 
     def gradeCustomer(Script segmentScript, CustomerWithLastTask custWithTask, List<CustomerSegment> cSs) {
-
         def customerScore = getCustomerScore(segmentScript, custWithTask)
         log.info("CustomerScore[$custWithTask.customer] = $customerScore")
         cSs.each { cs ->

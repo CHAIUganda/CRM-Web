@@ -22,7 +22,6 @@ class TaskController extends BaseRestController {
     static responseFormats = ['json', 'xml']
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
-
     def taskService
 
     def list(Integer max) {
@@ -191,7 +190,6 @@ class TaskController extends BaseRestController {
         println(request.JSON.toString())
         def task = ModelFunctions.createObj(MalariaDetails, json)
 
-
         if (task.isCancelled()) {
             task.uuid = json.uuid
             taskService.completeMalariaTask(task,json.customerId)
@@ -225,7 +223,7 @@ class TaskController extends BaseRestController {
             updateCompletionInfo(task)
             taskService.completeAdhocMalariaTask(task, json.customerId)
         } else {
-            taskService.completeAdhocMalariaTask(task, json.customerId)
+            taskService.completeMalariaTask(task, json.customerId)
         }
         log.debug("Resp:${user}   - OK")
         render([status: HttpStatus.OK.reasonPhrase, message: 'Success'] as JSON)

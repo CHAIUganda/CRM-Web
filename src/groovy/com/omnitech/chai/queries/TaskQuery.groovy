@@ -23,7 +23,8 @@ class TaskQuery {
         def task = taskType.simpleName.toLowerCase()
         def query = _userTasksQuery(userId, status, taskType, filter).with(distinct(identifier(task)), identifier('di'), identifier('detailerStocks'))
         PageUtils.addPagination(query, sortParams, taskType)
-        query.returns(identifier(task), identifier('detailerStocks'))
+        //query.returns(identifier(task), identifier('detailerStocks'))
+        query.returns(identifier(task))
 
         return query
     }
@@ -90,13 +91,14 @@ class TaskQuery {
     static <T extends Task> Match mathQueryForUserTasks(Long userId, Class<T> taskType) {
         print "Searching task: " + taskType.simpleName + " User ID: " + userId
         def varName = taskType.simpleName.toLowerCase()
-        start(nodesById('u', userId))
+            start(nodesById('u', userId))
                 .match(node('u').out(USER_TERRITORY, SUPERVISES_TERRITORY).node('ut')
                 .in(SC_IN_TERRITORY).node('sc')
                 .in(CUST_IN_SC).node('customer')
                 .out(CUST_TASK).node(varName).label(taskType.simpleName)
-                .out(HAS_DETAILER_STOCK).node('detailerStocks')
+                //.out(HAS_DETAILER_STOCK).node('detailerStocks')
                 )
+                .match(node(varName).out(HAS_DETAILER_STOCK).node('detailerStocks')).optional()
                 
     }
 

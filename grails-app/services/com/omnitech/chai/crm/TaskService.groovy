@@ -211,7 +211,7 @@ class TaskService {
         //task could have been deleted
         if (!neoTask) {
             remoteTask.clientRefId = remoteTask.uuid
-            return completeAdhocDetailTask(remoteTask, customerUuid)
+            return completeAdhocMalariaTask(remoteTask, customerUuid)
         }
 
         neoTask = neo.projectTo(neoTask, MalariaDetails)
@@ -358,7 +358,9 @@ class TaskService {
 
     /* Orders */
 
-    Order findOrder(Long id) { orderRepository.findOne(id) }
+    Order findOrder(Long id) {
+        orderRepository.findOne(id)
+    }
 
     SalesCall findOrder(String uuid) {
         salesCallRepository.findByUuidImpl(uuid)
@@ -371,7 +373,6 @@ class TaskService {
     Task findTaskByClientRefId(String refId) {
         taskRepository.findByClientRefId(refId)
     }
-
 
     void assertNotDuplicate(Task task) {
         Assert.notNull(task.clientRefId, "Task: $task Has No Client Ref Id")
