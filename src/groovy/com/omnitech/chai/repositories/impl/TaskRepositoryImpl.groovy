@@ -329,6 +329,9 @@ class TaskRepositoryImpl extends AbstractChaiRepository implements ITaskReposito
                     .or(identifier(cName).property('outletName').regexp(search)))
             )
         }
+        if (params.status) {
+            m.where(identifier(taskName).property('status').eq(params.status))
+        }
     }
 
     private static taskFieldsClause(String taskName) {

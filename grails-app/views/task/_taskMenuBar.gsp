@@ -112,7 +112,13 @@
 
             <li class="navbar-right">
                 <div class="col-lg-12">
-                    <form action="index">
+                    <%
+                    def s = "index"
+                    if (params.action == "salesCall") {
+                        s = "salesCalls"
+                    }
+                    %>
+                    <form action="${s}">
                         <input class="form-control" name="search" value="${params.search}"
                                placeholder="Search by Outlet Name" style="width: 300px;"/>
                     </form>

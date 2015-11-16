@@ -1,6 +1,7 @@
 package com.omnitech.chai
 
 import com.omnitech.chai.model.Sale
+import com.omnitech.chai.model.SalesCall
 import com.omnitech.chai.model.Task
 import org.springframework.security.access.AccessDeniedException
 
@@ -22,6 +23,10 @@ class SaleController extends TaskController {
         super.index max, Sale, [view: '/call/index', taskRole: SALES_ROLE_NAME]
     }
 
+    def salesCalls(Integer max){
+        params.action = "salesCall"
+        super.index max, SalesCall, [view: '/call/salescall', taskRole: SALES_ROLE_NAME]
+    }
     def map(Integer max) {
         super.map max, Sale, [view: '/task/map']
     }
@@ -42,6 +47,10 @@ class SaleController extends TaskController {
         super.show view: '/call/show', taskRole: SALES_ROLE_NAME, viewParams: [noedit_menu: true]
     }
 
+    def showCall() {
+        super.show view: '/call/showCall', taskRole: SALES_ROLE_NAME, viewParams: [noedit_menu: true]
+    }
+
     def handleException(AccessDeniedException ex) {
         render view: '/login/denied', status: FORBIDDEN
     }
@@ -53,7 +62,7 @@ class SaleController extends TaskController {
 
     def beforeInterceptor = {
         params.controller = 'visit'
-        params.status = Task.STATUS_COMPLETE
+        //params.status = Task.STATUS_COMPLETE
     }
 
 }

@@ -326,6 +326,7 @@ class TaskService {
                 }
             }
         }
+        print allTasks
         time("Saving Generated Tasks ${allTasks.size()}") { taskRepository.save(allTasks) }
 
         return [messages, allTasks]

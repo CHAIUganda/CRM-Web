@@ -162,7 +162,6 @@ class CustomerRepositoryImpl extends AbstractChaiRepository implements ICustomer
             else
                 m.where(identifier(cName).property('isActive').eq(false))
         }
-
     }
 
     private static def cName = nodeName(Customer)
