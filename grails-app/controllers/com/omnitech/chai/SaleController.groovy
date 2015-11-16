@@ -27,6 +27,7 @@ class SaleController extends TaskController {
         params.action = "salesCall"
         super.index max, SalesCall, [view: '/call/salescall', taskRole: SALES_ROLE_NAME]
     }
+    
     def map(Integer max) {
         super.map max, Sale, [view: '/task/map']
     }

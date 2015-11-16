@@ -57,6 +57,9 @@
                         <sec2:link controller="sale" action="index" params="[status: Task.STATUS_COMPLETE]">Visits</sec2:link>
                     </li>
                     <li>
+                        <sec2:link controller="sale" action="salesCalls" params="[status: Task.STATUS_NEW]">Sales Calls</sec2:link>
+                    </li>
+                    <li>
                         <sec2:link controller="taskSetting"
                                    action="generationDetailer">Generate Detailing Tasks</sec2:link>
                     </li>
