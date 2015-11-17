@@ -109,9 +109,10 @@ class TaskController extends BaseRestController {
         def tasks = ts.content
         
         def taskMaps = tasks.collect {
-            print it
             def map = ReflectFunctions.extractProperties(it)
             map['customerId'] = it.customer.uuid
+            map['lineItems'] = it.detailerMalariaStocks
+            
             if (Order.isAssignableFrom(it.getClass())) {
                 map['lineItems'] = ((Order) it).lineItems.collect {
                     ['productId': it.product.uuid,
@@ -142,10 +143,12 @@ class TaskController extends BaseRestController {
 
         def tasks = taskService.findAllTasksForUser(user.id, Task.STATUS_COMPLETE, params, taskType, null).content
         def taskMaps = tasks.collect {
-            print it
             def map = ReflectFunctions.extractProperties(it)
             map['customerId'] = it.customer.uuid
+            map['lineItems'] = it.detailerStocks
+            
             if (Order.isAssignableFrom(it.getClass())) {
+                print "Order assignable"
                 map['lineItems'] = ((Order) it).lineItems.collect {
                     ['productId': it.product.uuid,
                      'quantity' : it.quantity,
@@ -154,6 +157,7 @@ class TaskController extends BaseRestController {
 
                 }
             }
+
             return map
         }
         log.debug("Resp:${user} - ${taskMaps?.size()} Tasks...")

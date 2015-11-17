@@ -114,7 +114,7 @@ limit {limit}""")
 
     @Query("""start t = node({territoryId}), cs = node({segmentId})
 match (cs)<-[:IN_SEGMENT]-(customer)-[:CUST_IN_SC]->(sc)-[:SC_IN_TERRITORY]->(t)
-
+where not(customer-[:CUST_TASK]->(:SalesCall{status:'new'}))
 with customer optional match customer-[:CUST_TASK]-(o:SalesCall)
 return customer,max(o.completionDate) as completionDate
 order by completionDate desc
