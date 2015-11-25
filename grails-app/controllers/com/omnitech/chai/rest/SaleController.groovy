@@ -23,8 +23,8 @@ class SaleController extends BaseRestController {
     def taskService
     def customerService
 
+    // Creates SalesCall directly (Unscheduled)
     def directSale() {
-
         handleSafely {
             def json = request.JSON as Map
             //todo fixme
@@ -46,6 +46,7 @@ class SaleController extends BaseRestController {
         }
     }
 
+    // System generated tasks
     def saleOrder() {
         handleSafely {
             def json = request.JSON as Map
@@ -72,6 +73,7 @@ class SaleController extends BaseRestController {
         }
     }
 
+    // 
     def placeOrder() {
         handleSafely {
             def json = request.JSON as Map

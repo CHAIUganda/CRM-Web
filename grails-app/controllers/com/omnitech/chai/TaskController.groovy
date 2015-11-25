@@ -159,8 +159,6 @@ class TaskController extends BaseController {
             neo.fetch(task?.loadTerritoryUsers())
         }
 
-
-
         assert otherParams.view, 'View not specified in action'
         def model = [taskInstance: task, taskRole: otherParams.taskRole]
         if (otherParams.viewParams instanceof Map) {
@@ -195,7 +193,6 @@ class TaskController extends BaseController {
 
         flash.message = message(code: 'default.created.message', args: [message(code: 'Task.label', default: taskInstance.getClass().simpleName), taskInstance.id])
         redirect action: 'show', id: taskInstance.id
-
     }
 
     protected def edit(Map otherParams) {

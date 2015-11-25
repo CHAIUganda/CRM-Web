@@ -11,7 +11,6 @@ import org.springframework.data.neo4j.annotation.RelatedToVia
  */
 
 class SalesCall extends Task {
-
     def beforeSave() {
         super.beforeSave()
         if (!description && getClass() == SalesCall) {
@@ -23,7 +22,6 @@ class SalesCall extends Task {
 @NodeEntity
 @Validateable
 class Order extends SalesCall implements HasLineItem {
-
     @Fetch
     @RelatedToVia
     Set<LineItem> lineItems = new HashSet()
@@ -52,6 +50,4 @@ class Order extends SalesCall implements HasLineItem {
     static Order create(Customer customer, Date date) {
         new Order(customer: customer, dueDate: date)
     }
-
-
 }

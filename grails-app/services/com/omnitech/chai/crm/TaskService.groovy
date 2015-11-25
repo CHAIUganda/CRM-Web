@@ -305,10 +305,16 @@ class TaskService {
         time("Genrating possible tasks for $territories") {
             territories.each { t ->
                 def tasks = []
-
+                def maximumTasks = tasksPerDay * workDays.size()
                 segments.each { s ->
+                    /*
+                    if (tasks.size() > maximumTasks) {
+                        tasks = tasks[0..maximumTasks]
+                        return
+                    }*/
                     time("Generating Tasks for: Territory[$t] and Segment[$s]") {
-                        tasks.addAll generateTasks(t, s, startDate, workDays, taskType)
+                        def ts = generateTasks(t, s, startDate, workDays, taskType)
+                        tasks.addAll ts
                     }
                 }
 
@@ -386,7 +392,6 @@ class TaskService {
     }
 
     def deleteNewConcreteTaskOfType(Customer customerId, Class taskType) {
-
         def labelName = "_${taskType.simpleName}"
         //start c = node({customerId}) match c-[:CUST_TASK]-(t:{taskType}{status:'new'}) delete t
         def q = start(nodesById('c', customerId.id)).match(node('c').out(CUST_TASK).as('r').node('t').label(labelName).values(value('status', Task.STATUS_NEW)))

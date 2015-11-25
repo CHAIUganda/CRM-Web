@@ -43,7 +43,7 @@ class TaskSettingController {
     }
 
     def generateOrderTasks() {
-        def (msgs, tasks) = generateTasks(SalesCall, false)
+        def (msgs, tasks) = generateTasks(SalesCall, true)
         flash.message = "Generated Tasks ${msgs.join(',')}"
         renderOnMap(tasks,SalesCall)
 
@@ -94,7 +94,6 @@ class TaskSettingController {
     }
 
     private def generateTasks(Class taskType, boolean cluster) {
-
         log.debug(params)
         def workDays = params.workDays instanceof String ? [params.workDays] : params.workDays
         workDays = workDays.collect { it as Integer }
@@ -107,7 +106,7 @@ class TaskSettingController {
 
         Assert.notNull params.avgTasksPerDay, 'Please Set Avg Number Of Tasks Per Day'
         def tasksPerDay = params.avgTasksPerDay as Integer
-        Assert.isTrue tasksPerDay <= 30, 'Average Number Of Tasks Is To High(above 30)'
+        Assert.isTrue tasksPerDay <= 30, 'Average Number Of Tasks Is Too High(above 30)'
 
         def segments = extractSegments()
 
@@ -119,9 +118,7 @@ class TaskSettingController {
     }
 
     private def extractTerritories() {
-
         def territoryIds = extractTerritoryIds()
-
         if (!territoryIds) {
             throw new IllegalArgumentException('Please Select Territories')
         }

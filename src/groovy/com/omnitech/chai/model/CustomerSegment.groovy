@@ -47,7 +47,7 @@ class CustomerSegment extends AbstractEntity implements GroupNode {
     boolean shouldGenerateTask(Date lastTaskDate){
         if (!lastTaskDate) return true
         def now = new Date()
-        Assert.isTrue(lastTaskDate.before(now),"Last task date should not before today")
+        Assert.isTrue(lastTaskDate.before(now), "Last task date should not before today")
         def daysBetweenVisits = getSpaceBetweenVisits()
 
 

@@ -78,10 +78,12 @@ class TaskQuery {
         } else if (search) {
             query.where(searchFilter())
         }
+
         if (search) {
             query.where(searchFilter())
         }
         //add district path
+        query.match(node(varName).out(HAS_DETAILER_STOCK).node('detailerStocks')).optional()
         query.match(node('sc').in(HAS_SUB_COUNTY).node('di')).optional()
         query.match(node('customer').in(IN_SEGMENT).node('segment')).optional()
         print query
@@ -98,8 +100,6 @@ class TaskQuery {
                 .out(CUST_TASK).node(varName).label(taskType.simpleName)
                 //.out(HAS_DETAILER_STOCK).node('detailerStocks')
                 )
-                .match(node(varName).out(HAS_DETAILER_STOCK).node('detailerStocks')).optional()
-                
     }
 
     static Match getTaskQuery(String status, Class<? extends Task> taskType) {

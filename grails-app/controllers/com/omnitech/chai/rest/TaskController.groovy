@@ -50,7 +50,6 @@ class TaskController extends BaseRestController {
                      'quantity' : it.quantity,
                      'unitPrice': it.unitPrice
                     ]
-
                 }
             }
             return map

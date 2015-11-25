@@ -129,8 +129,6 @@ class CustomerRepositoryImpl extends AbstractChaiRepository implements ICustomer
             fields << az(max(identifier(tName).property('completionDate')), 'lastVisit')
 
         return fields
-
-
     }
 
     private static matchSegment(Match m, Map params, boolean ignoreIfNotInFilter) {
