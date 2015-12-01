@@ -306,24 +306,57 @@ class TaskService {
             territories.each { t ->
                 def tasks = []
                 def maximumTasks = tasksPerDay * workDays.size()
+
                 segments.each { s ->
-                    /*
-                    if (tasks.size() > maximumTasks) {
-                        tasks = tasks[0..maximumTasks]
-                        return
-                    }*/
                     time("Generating Tasks for: Territory[$t] and Segment[$s]") {
                         def ts = generateTasks(t, s, startDate, workDays, taskType)
+                        
+                        if (ts.size() == 0) {
+                            return
+                        }
+
+                        for (int i = 0; i < ts.size(); i++) {
+                            ts.get(i).segment = s.name
+                        }
+
+                        if(!clusterTasks){
+                            def max = 0
+                            if (maximumTasks/4 > ts.size()) {
+                                max = ts.size() - 1
+                            } else {
+                                max = maximumTasks/4 - 1
+                            }
+
+                            tasks.addAll ts[0..max]
+                            log.info("Added [${ts[0..max].size()}] Tasks for Territory[$t],Segment[$s]")
+                            return
+                        }
+                        
                         tasks.addAll ts
+                        log.info("Added [${ts.size()}] Tasks for Territory[$t],Segment[$s]")
                     }
                 }
 
                 if (tasks) {
                     log.info "***** Clustering: Territory[$t] Tasks[${tasks.size()}]"
-//                messages << "$t(${tasks.size()})"
+                    // messages << "$t(${tasks.size()})"
                     if (clusterTasks) {
                         def clusters = clusterService.assignDueDates(tasks, startDate, workDays, tasksPerDay)
                         tasks = clusters.collect { it.points.collect { it.task } }.flatten()
+
+                    } else {
+                        // Assign due dates
+                        def assignedTasks = 0
+                        def nextAvailableDate = startDate
+                        tasks.each { task ->
+                            if (assignedTasks > (tasksPerDay-1)) {
+                                nextAvailableDate++
+                                assignedTasks = 0
+                            }
+                            task.setDueDate(nextAvailableDate)
+                            assignedTasks++
+                        }
+
                     }
                     messages << "$t(${tasks.size()})"
                     allTasks.addAll(tasks)

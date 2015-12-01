@@ -26,7 +26,7 @@ class CustomerController {
     def regionService
 
     def list(Integer max) {
-        params.max = Math.min(max ?: 10, 2000)
+        params.max = max
         def user = neoSecurityService.currentUser as User
         log.debug("Req:${user}  - CustomerList: $params")
         def customers = customerService.findAllCustomersByUser(user.id,true, params)

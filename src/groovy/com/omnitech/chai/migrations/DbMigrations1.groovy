@@ -140,9 +140,12 @@ class DbMigrations1 implements IMigration{
                 '/task/updateTaskDate'              : [SALES_SUPERVISOR_ROLE_NAME, DETAILING_SUPERVISOR_ROLE_NAME],
 
                 //Task Generation
-                '/taskSetting/generationDetailer'   : [DETAILING_SUPERVISOR_ROLE_NAME],
-                '/taskSetting/generateDetailerTasks': [DETAILING_SUPERVISOR_ROLE_NAME],
+                '/taskSetting/generationDetailer'   : [DETAILING_SUPERVISOR_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
+                '/taskSetting/generateDetailerTasks': [DETAILING_SUPERVISOR_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
 
+                '/taskSetting/generationOrder'   : [DETAILING_SUPERVISOR_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
+                '/taskSetting/generateOrderTasks': [DETAILING_SUPERVISOR_ROLE_NAME, SALES_SUPERVISOR_ROLE_NAME],
+                
                 //Reports
                 '/report/index'                     : [SALES_SUPERVISOR_ROLE_NAME],
                 '/report/getReport/**'              : [SALES_SUPERVISOR_ROLE_NAME],

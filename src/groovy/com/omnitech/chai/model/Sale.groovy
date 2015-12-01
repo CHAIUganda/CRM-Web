@@ -21,6 +21,19 @@ class DirectSale extends Task implements Sale {
     String recommendationNextStep;
     String recommendationLevel;
     Boolean governmentApproval;
+
+    Boolean stocksACTs;
+    Boolean stocksAmox;
+    Boolean stocksORS;
+    Boolean stocksRDT;
+    Boolean stocksZinc;
+
+    Integer minACTPrice;
+    Integer minAmoxPrice;
+    Integer minORSPrice;
+    Integer minRDTPrice;
+    Integer minZincPrice;
+    
     @GraphProperty(propertyType = Long.class)
     Date dateOfSale;
 
@@ -69,6 +82,19 @@ class SaleOrder extends Order implements Sale {
     String recommendationNextStep;
     String recommendationLevel;
     Boolean governmentApproval;
+
+    Boolean stocksACTs;
+    Boolean stocksAmox;
+    Boolean stocksORS;
+    Boolean stocksRDT;
+    Boolean stocksZinc;
+
+    Integer minACTPrice;
+    Integer minAmoxPrice;
+    Integer minORSPrice;
+    Integer minRDTPrice;
+    Integer minZincPrice;
+
     @GraphProperty(propertyType = Long.class)
     Date dateOfSale;
 

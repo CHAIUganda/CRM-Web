@@ -23,7 +23,7 @@ class SaleController extends TaskController {
         super.index max, Sale, [view: '/call/index', taskRole: SALES_ROLE_NAME]
     }
 
-    def salesCalls(Integer max){
+    def salesCall(Integer max){
         params.action = "salesCall"
         super.index max, SalesCall, [view: '/call/salescall', taskRole: SALES_ROLE_NAME]
     }

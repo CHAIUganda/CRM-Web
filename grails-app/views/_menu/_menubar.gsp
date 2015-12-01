@@ -16,7 +16,7 @@
                     class="glyphicon glyphicon-home"></i>Home</sec2:link></li>
 
         %{--    PRODUCTS    --}%
-            <sec:ifAnyGranted roles="${"$Role.ADMIN_ROLE_NAME,$Role.SUPER_ADMIN_ROLE_NAME"}">
+            <sec:ifAnyGranted roles="${"$Role.ADMIN_ROLE_NAME, $Role.SUPER_ADMIN_ROLE_NAME"}">
                 <li>
                     <a data-toggle="dropdown" class="dropdown-toggle" href="#"><i
                             class="glyphicon glyphicon-briefcase"></i>Products <b class="caret"></b></a>
@@ -57,7 +57,7 @@
                         <sec2:link controller="sale" action="index" params="[status: Task.STATUS_COMPLETE]">Visits</sec2:link>
                     </li>
                     <li>
-                        <sec2:link controller="sale" action="salesCalls" params="[status: Task.STATUS_NEW]">Sales Calls</sec2:link>
+                        <sec2:link controller="sale" action="salesCall" params="[status: Task.STATUS_NEW]">Sales Calls</sec2:link>
                     </li>
                     <li>
                         <sec2:link controller="taskSetting"

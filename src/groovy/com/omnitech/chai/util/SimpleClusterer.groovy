@@ -16,13 +16,11 @@ import static com.omnitech.chai.util.ChaiUtils.time
  * Created by kay on 4/27/2015.
  */
 class SimpleClusterer {
-
     static Logger log = LoggerFactory.getLogger(ChaiUtils)
 
     public static final float MAXIMUM_THRESHOLD = 0.4f
     public static final float MINIMUM_THRESHOLD = 0.3f
     public static final int MAXIMUM_RECLUSTERS = 100
-
 
     List<LocatableTask> locatableTasks
     int minimumSize
@@ -31,11 +29,10 @@ class SimpleClusterer {
     private int clusteringCount = 0
 
     List<CentroidCluster<LocatableTask>> cluster() {
-
         initMinAndMax()
 
         def (List<CentroidCluster<LocatableTask>> x, mp) = getClusters2(locatableTasks, 20, true)
-
+        
 
         if (log.traceEnabled) {
             x.eachWithIndex { CentroidCluster<LocatableTask> entry, int i ->
@@ -54,7 +51,6 @@ class SimpleClusterer {
 
     //20 is a magic number to reduce the number of clusters
     List getClusters2(List<LocatableTask> locatableTasks, int _magicMaxTasksPerDay, boolean processMissedPoint = false) {
-
         if(locatableTasks.size() <= maximumNumberOfTask){
             return [[createCluster(locatableTasks)],[]]
         }
@@ -76,17 +72,12 @@ class SimpleClusterer {
         }
 
         clusteringCount = ++clusteringCount
-
-
         clusters.removeAll { it.points.size() == 0 }
 
         //if clusters are small return immediately or if maximum re-cluster count is reached
         if (clusters.size() == 1) return [clusters, []]
 
-
-
         List<LocatableTask> missedPoints = []
-
 
         for (cluster in clusters) {
             if (cluster.points.size() > maximumNumberOfTask) {
@@ -101,10 +92,8 @@ class SimpleClusterer {
         }
 
         if (processMissedPoint && missedPoints) {
-
             def (otherOptimumClusters, List<LocatableTask> mp) = getClusters2(missedPoints, maximumNumberOfTask)
             optimumClusters.addAll(otherOptimumClusters)
-
 
             dissolveSmallPoints(optimumClusters, mp)
 
@@ -153,20 +142,13 @@ class SimpleClusterer {
 
     @CompileStatic
     List<CentroidCluster> attempToCreateClusters(List<LocatableTask> tasks) {
-
         def taskSize = tasks.size()
 
         //find best possible collate value
         def bestCollateValue = (minimumSize..maximumNumberOfTask).min { Integer it -> taskSize.mod(it) }
-
-
-
         def listOfLists = tasks.collate(bestCollateValue)
-
         def optimalLists = listOfLists.findAll { List it -> isOptimalSize(it) }
-
         return optimalLists.collect { List it -> createCluster(it) }
-
     }
 
 

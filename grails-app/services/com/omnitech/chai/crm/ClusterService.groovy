@@ -3,6 +3,7 @@ package com.omnitech.chai.crm
 import com.omnitech.chai.model.LatLng
 import com.omnitech.chai.model.Task
 import com.omnitech.chai.util.SimpleClusterer
+import com.omnitech.chai.util.ChaiSalesClusterer
 import org.apache.commons.math3.ml.clustering.CentroidCluster
 import org.apache.commons.math3.ml.clustering.Clusterable
 import org.apache.commons.math3.ml.clustering.KMeansPlusPlusClusterer
@@ -83,16 +84,19 @@ class ClusterService {
         } as List<LocatableTask>
 
         List<CentroidCluster<LocatableTask>> clusters = time("Clustering [${locatableTasks.size()}]...") {
-            getClusters2(locatableTasks, tasksPerDay)
+            getClusters2(locatableTasks, tasksPerDay, allowedDays)
         }
 
-
+        clusters.each {CentroidCluster<LocatableTask> a ->
+            print a
+        }
         time("Sorting Generated Clusters [${clusters?.size()}]") {
             clusters.sort { CentroidCluster<LocatableTask> a, CentroidCluster<LocatableTask> b ->
                 def dis = distanceBetweenPoints(a.center.point, b.center.point)
                 return dis
             }
         }
+        
 
         def assignedClusters = time("Assigning DueDates TO Clusters [${clusters?.size()}]") {
             assignDueDateToClusters(clusters, startDate, allowedDays, false)
@@ -101,8 +105,8 @@ class ClusterService {
     }
 
     //20 is a magic number to reduce the number of clusters
-    static List getClusters2(List<LocatableTask> locatableTasks, int tasksPerDay) {
-        new SimpleClusterer(tasksPerDay: tasksPerDay, locatableTasks: locatableTasks).cluster()
+    static List getClusters2(List<LocatableTask> locatableTasks, int tasksPerDay, List<Integer> allowedDays) {
+        new ChaiSalesClusterer(tasksPerDay: tasksPerDay, locatableTasks: locatableTasks, numberOfDays: allowedDays.size()).cluster()
     }
 
 }

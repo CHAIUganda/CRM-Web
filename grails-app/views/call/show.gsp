@@ -190,6 +190,80 @@
             </tr>
 
             <tr class="prop">
+                <td valign="top" class="name"><g:message code="task.stocksACTs.label"
+                                                         default="Do you stock ACTs?"/></td>
+
+                <td valign="top" class="value">${fieldValue(bean: taskInstance, field: "stocksACTs")}</td>
+
+            </tr>
+            <tr class="prop">
+                <td valign="top" class="name"><g:message code="task.minACTPrice.label"
+                                                         default="What is the lowest price you sell 1 ACT tablet?"/></td>
+
+                <td valign="top" class="value">${fieldValue(bean: taskInstance, field: "minACTPrice")}</td>
+
+            </tr>
+            <tr class="prop">
+                <td valign="top" class="name"><g:message code="task.stocksZinc.label"
+                                                         default="Do you stock Zinc"/></td>
+
+                <td valign="top" class="value">${fieldValue(bean: taskInstance, field: "stocksZinc")}</td>
+
+            </tr>
+
+            <tr class="prop">
+                <td valign="top" class="name"><g:message code="task.minZincPrice.label"
+                                                         default="What is the lowest price you sell 1 tablet of zinc?"/></td>
+
+                <td valign="top" class="value">${fieldValue(bean: taskInstance, field: "minZincPrice")}</td>
+
+            </tr>
+
+            <tr class="prop">
+                <td valign="top" class="name"><g:message code="task.stocksORS.label"
+                                                         default="Do you stock ORS"/></td>
+
+                <td valign="top" class="value">${fieldValue(bean: taskInstance, field: "stocksORS")}</td>
+
+            </tr>
+
+            <tr class="prop">
+                <td valign="top" class="name"><g:message code="task.minORSPrice.label"
+                                                         default="What is the lowest price you sell 1 sachet of ORS?"/></td>
+
+                <td valign="top" class="value">${fieldValue(bean: taskInstance, field: "minORSPrice")}</td>
+
+            </tr>
+
+            <tr class="prop">
+                <td valign="top" class="name"><g:message code="task.stocksRDT.label"
+                                                         default="Do you stock Malaria Rapid Diagnostic Tests (mRDTs)?"/></td>
+
+                <td valign="top" class="value">${fieldValue(bean: taskInstance, field: "stocksRDT")}</td>
+
+            </tr>
+            <tr class="prop">
+                <td valign="top" class="name"><g:message code="task.minRDTPrice.label"
+                                                         default="What is the lowest price you sell 1 mRDT?"/></td>
+
+                <td valign="top" class="value">${fieldValue(bean: taskInstance, field: "minRDTPrice")}</td>
+
+            </tr>
+            <tr class="prop">
+                <td valign="top" class="name"><g:message code="task.stocksAmox.label"
+                                                         default="Do you stock Amoxicillin 250mg (dispersible tablets)?"/></td>
+
+                <td valign="top" class="value">${fieldValue(bean: taskInstance, field: "stocksAmox")}</td>
+
+            </tr>
+            <tr class="prop">
+                <td valign="top" class="name"><g:message code="task.minAmoxPrice.label"
+                                                         default="What is the lowest price you sell 1 tablet of Amoxicillin 250mg?"/></td>
+
+                <td valign="top" class="value">${fieldValue(bean: taskInstance, field: "minAmoxPrice")}</td>
+
+            </tr>
+            <tr class="prop">
                 <td valign="top" class="name"><g:message code="task.dateOfSale.label" default="Date Of Sale"/></td>
 
                 <td valign="top" class="value">${fieldValue(bean: taskInstance, field: "dateOfSale")}</td>

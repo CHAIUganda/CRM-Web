@@ -19,8 +19,8 @@ import static com.omnitech.chai.util.ChaiUtils.bean
 class Task extends AbstractEntity {
 
     final static String STATUS_NEW = 'new', STATUS_COMPLETE = 'complete', STATUS_CANCELLED = 'cancelled'
-
     String description
+    String segment
     protected String type = Task.simpleName
     String status = STATUS_NEW
 
